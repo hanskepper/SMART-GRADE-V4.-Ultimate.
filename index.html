@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Home</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#0f3b48">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    .student-list-item{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:14px 16px;
+      background:var(--card-bg);
+      border-radius:16px;
+      margin-bottom:8px;
+      border:1px solid var(--border);
+      transition:all 0.2s ease;
+    }
+    .student-list-item:hover{
+      transform:translateX(4px);
+      border-color:var(--primary);
+      box-shadow:0 4px 16px rgba(0,0,0,0.06);
+    }
+    .student-info{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .student-avatar-circle{
+      width:42px;height:42px;
+      border-radius:50%;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:1rem;
+      flex-shrink:0;
+      overflow:hidden;
+    }
+    .student-avatar-circle img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+    .student-details .student-name{
+      font-weight:700;
+      font-size:0.85rem;
+    }
+    .student-details .student-class{
+      font-size:0.6rem;
+      color:var(--text-light);
+    }
+    
+    .delete-btn{
+      display:flex;
+      align-items:center;
+      gap:6px;
+      padding:8px 14px;
+      border-radius:25px;
+      border:2px solid rgba(231,76,60,0.3);
+      background:rgba(231,76,60,0.05);
+      color:#e74c3c;
+      cursor:pointer;
+      font-size:0.65rem;
+      font-weight:600;
+      transition:all 0.25s ease;
+      white-space:nowrap;
+    }
+    .delete-btn:hover{
+      background:#e74c3c;
+      color:white;
+      border-color:#e74c3c;
+      transform:scale(1.05);
+      box-shadow:0 4px 16px rgba(231,76,60,0.3);
+    }
+    .delete-btn:active{transform:scale(0.95);}
+    .delete-btn i{font-size:0.7rem;}
+    
+    .delete-modal{
+      position:fixed;
+      top:0;left:0;width:100%;height:100%;
+      background:rgba(0,0,0,0.7);
+      z-index:400;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      backdrop-filter:blur(4px);
+    }
+    .delete-modal.active{display:flex;}
+    .delete-modal-content{
+      background:var(--card-bg);
+      border-radius:24px;
+      padding:24px;
+      width:85%;
+      max-width:340px;
+      text-align:center;
+      animation:modalPopIn 0.3s ease;
+    }
+    @keyframes modalPopIn{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}
+    .delete-modal-content .warning-icon{font-size:50px;color:#e74c3c;margin-bottom:12px;}
+    .delete-modal-content h3{margin-bottom:8px;font-size:1rem;}
+    .delete-modal-content p{font-size:0.7rem;color:var(--text-light);margin-bottom:16px;}
+    .delete-modal-content input{
+      width:100%;padding:12px;border-radius:12px;
+      border:2px solid var(--border);text-align:center;
+      font-size:1.2rem;letter-spacing:4px;font-weight:700;
+      background:var(--card-bg);color:var(--text);
+      margin-bottom:16px;box-sizing:border-box;
+    }
+    .delete-modal-content input:focus{outline:none;border-color:#e74c3c;}
+    .modal-buttons{display:flex;gap:10px;}
+    .modal-buttons button{flex:1;padding:12px;border-radius:30px;border:none;cursor:pointer;font-weight:600;font-size:0.75rem;transition:all 0.2s;}
+    .btn-cancel-modal{background:rgba(0,0,0,0.05);color:var(--text);border:1px solid var(--border);}
+    .btn-cancel-modal:hover{background:rgba(0,0,0,0.1);}
+    .btn-confirm-delete{background:#e74c3c;color:white;}
+    .btn-confirm-delete:hover{background:#c0392b;box-shadow:0 4px 16px rgba(231,76,60,0.3);}
+    
+    .empty-state{text-align:center;padding:30px;}
+    .empty-state i{font-size:50px;opacity:0.15;margin-bottom:12px;display:block;}
+    .empty-state p{color:var(--text-light);font-size:0.8rem;margin-bottom:16px;}
+    
+    .hero-card{text-align:center;}
+    .hero-card i.hero-icon{font-size:60px;color:var(--primary);margin-bottom:8px;}
+    .hero-card h1{
+      font-size:1.8rem;font-weight:800;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      -webkit-background-clip:text;background-clip:text;color:transparent;
+    }
+    .hero-card .school-info{font-weight:500;font-size:0.8rem;}
+    .hero-card .year-info{font-size:0.65rem;color:var(--text-light);}
+    
+    .stats-banner{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin:16px 0;
+    }
+    .stats-banner .stat-badge{
+      text-align:center;
+      padding:12px 8px;
+      background:var(--card-bg);
+      border-radius:12px;
+      border:1px solid var(--border);
+      font-size:0.6rem;
+    }
+    .stats-banner .stat-badge .num{font-size:1.2rem;font-weight:800;color:var(--primary);}
+    .stats-banner .stat-badge .lbl{color:var(--text-light);text-transform:uppercase;margin-top:2px;}
+    
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+    .update-notification {
+      animation: slideUp 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-book-open"></i><span>SMART GRADE</span></div>
+      <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet">
+          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
+          <div class="font-sheet" data-font="medium">A</div>
+          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="index.html" class="nav-item active"><i class="fas fa-home"></i> Home</a>
+        <a href="login.html" class="nav-item"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="register.html" class="nav-item"><i class="fas fa-user-plus"></i> Register</a>
+        <a href="guide.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+        <a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
+      </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <main class="main-content">
+      
+      <div class="glass-card animated-border hero-card">
+        <i class="fas fa-chalkboard-user hero-icon"></i>
+        <h1>SMART GRADE</h1>
+        <p class="school-info">GBHS FOUMBAN Form 4B Science</p>
+        <p class="year-info">Academic Year 2025-2026</p>
+      </div>
+      
+      <div class="stats-banner">
+        <div class="stat-badge"><div class="num" id="totalStudents">0</div><div class="lbl">Students</div></div>
+        <div class="stat-badge"><div class="num">14</div><div class="lbl">Subjects</div></div>
+        <div class="stat-badge"><div class="num">20</div><div class="lbl">Themes</div></div>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-users"></i> Registered Students</h3>
+        <div id="studentsList" class="mt-1"></div>
+      </div>
+      
+      <div class="btn-group">
+        <a href="login.html" class="btn btn-primary"><i class="fas fa-sign-in-alt"></i> Login</a>
+        <a href="register.html" class="btn btn-secondary"><i class="fas fa-user-plus"></i> Create Account</a>
+      </div>
+      
+    </main>
+  </div>
+  
+  <div class="delete-modal" id="deleteModal">
+    <div class="delete-modal-content">
+      <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3>Delete Account</h3>
+      <p>Enter the PIN to confirm deletion</p>
+      <input type="text" id="deletePin" maxlength="4" placeholder="****" inputmode="numeric" autocomplete="off">
+      <div class="modal-buttons">
+        <button class="btn-cancel-modal" onclick="closeDeleteModal()">Cancel</button>
+        <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <div class="install-prompt" id="installPrompt">
+    <i class="fas fa-mobile-alt"></i>
+    <div class="install-prompt-text">
+      <h4>Install SMART GRADE</h4>
+      <p>Add to home screen for easy access</p>
+    </div>
+    <button onclick="InstallHandler.install()">Install</button>
+  </div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/install-handler.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/storage.js"></script>
+  
+  <script>
+    // ============================================
+    // PERMISSIONS NOTIFICATIONS
+    // ============================================
+    setTimeout(function() {
+      if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+        Notification.requestPermission().then(function(permission) {
+          if (permission === 'granted') {
+            console.log('Notifications activees');
+          }
+        });
+      }
+    }, 3000);
+    
+    // ============================================
+    // GESTION DES ETUDIANTS
+    // ============================================
+    var pd=null;
+    
+    function getStudentAvatar(avatarBase64) {
+      if (avatarBase64 && avatarBase64 !== '') {
+        return '<img src="' + avatarBase64 + '">';
+      }
+      return '<i class="fas fa-user-graduate"></i>';
+    }
+    
+    function renderStudents(){
+      var s=getAllStudents();
+      var c=document.getElementById('studentsList');
+      document.getElementById('totalStudents').innerHTML=s.length;
+      
+      if(s.length===0){
+        c.innerHTML='<div class="empty-state"><i class="fas fa-users-slash"></i><p>No accounts yet</p><a href="register.html" class="btn btn-primary" style="display:inline-flex;width:auto;padding:10px 20px;font-size:0.75rem;"><i class="fas fa-user-plus"></i> Create Account</a></div>';
+        return;
+      }
+      
+      c.innerHTML=s.map(function(x){
+        var profile = getProfile(x.id);
+        var avatarHtml = getStudentAvatar(profile.avatarBase64);
+        return'<div class="student-list-item">'+
+          '<div class="student-info">'+
+            '<div class="student-avatar-circle">'+avatarHtml+'</div>'+
+            '<div class="student-details">'+
+              '<div class="student-name">'+x.name+'</div>'+
+              '<div class="student-class">'+x.class+' - #'+x.number+'</div>'+
+            '</div>'+
+          '</div>'+
+          '<button class="delete-btn" onclick="showDeleteModal('+x.id+')">'+
+            '<i class="fas fa-trash-alt"></i> Delete'+
+          '</button>'+
+        '</div>';
+      }).join('');
+    }
+    
+    function showDeleteModal(id){pd=id;document.getElementById('deleteModal').classList.add('active');document.getElementById('deletePin').value='';document.getElementById('deletePin').focus();}
+    function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('active');pd=null;}
+    
+    function confirmDelete(){
+      var p=document.getElementById('deletePin').value;
+      var s=getStudentById(pd);
+      if(!s){showToast('Account not found');closeDeleteModal();return;}
+      if(s.pin!==p){showToast('Wrong PIN');closeDeleteModal();return;}
+      deleteStudent(pd);
+      renderStudents();
+      showToast(s.name+' deleted');
+      closeDeleteModal();
+    }
+    
+    document.getElementById('deleteModal').addEventListener('click',function(e){if(e.target===this)closeDeleteModal();});
+    
+    renderStudents();
+    initMobileMenu();
+    initThemeSelector();
+    
+    document.querySelectorAll('a[href="guide.html"], a[href="about.html"]').forEach(function(link){
+      link.addEventListener('click',function(){localStorage.setItem('smartgrade_last_page','index.html');});
+    });
+  </script>
+</body>
+</html>

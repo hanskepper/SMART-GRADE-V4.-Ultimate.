@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Notifications</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .notif-card {
+      display: flex;
+      gap: 14px;
+      padding: 16px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      margin-bottom: 10px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+    .notif-card:hover {
+      transform: translateX(4px);
+      border-color: var(--primary);
+    }
+    .notif-card.unread {
+      border-left: 4px solid var(--primary);
+      background: rgba(15, 59, 72, 0.05);
+    }
+    .notif-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      color: white;
+    }
+    .notif-icon.badge { background: linear-gradient(135deg, #f39c12, #e67e22); }
+    .notif-icon.streak { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+    .notif-icon.grade { background: linear-gradient(135deg, #2ecc71, #27ae60); }
+    .notif-icon.system { background: linear-gradient(135deg, #3498db, #2980b9); }
+    .notif-icon.sync { background: linear-gradient(135deg, #00bcd4, #0097a7); }
+    .notif-icon.goal { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+    .notif-icon.transfer { background: linear-gradient(135deg, #1abc9c, #16a085); }
+    .notif-content {
+      flex: 1;
+    }
+    .notif-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+    }
+    .notif-body {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      line-height: 1.4;
+    }
+    .notif-date {
+      font-size: 0.55rem;
+      color: var(--text-light);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .unread-dot {
+      width: 10px;
+      height: 10px;
+      background: var(--primary);
+      border-radius: 50%;
+      flex-shrink: 0;
+      align-self: center;
+      animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .empty-state i {
+      font-size: 60px;
+      opacity: 0.15;
+      margin-bottom: 16px;
+      display: block;
+    }
+    .empty-state p {
+      color: var(--text-light);
+      font-size: 0.8rem;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .filter-chip {
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+    }
+    .filter-chip:active {
+      transform: scale(0.95);
+    }
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .action-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      text-align: center;
+      cursor: pointer;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .action-btn:active {
+      transform: scale(0.97);
+    }
+    .action-btn.danger {
+      color: #e74c3c;
+      border-color: rgba(231,76,60,0.3);
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-book-open"></i><span>NOTIFICATIONS</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html" style="display:flex;align-items:center;text-decoration:none;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet">
+          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
+          <div class="font-sheet" data-font="medium">A</div>
+          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="notifications.html" class="nav-item active"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+        <i class="fas fa-bell" style="font-size:40px;opacity:0.5;"></i>
+        <h2 style="color:white;margin:8px 0;">Notifications</h2>
+        <p style="opacity:0.8;font-size:0.7rem;">Stay updated with your activity</p>
+      </div>
+      
+      <div class="filter-bar">
+        <div class="filter-chip active" data-filter="all" onclick="setFilter('all')">All</div>
+        <div class="filter-chip" data-filter="badge" onclick="setFilter('badge')">Badges</div>
+        <div class="filter-chip" data-filter="streak" onclick="setFilter('streak')">Streaks</div>
+        <div class="filter-chip" data-filter="grade" onclick="setFilter('grade')">Grades</div>
+        <div class="filter-chip" data-filter="system" onclick="setFilter('system')">System</div>
+      </div>
+      
+      <div class="action-buttons">
+        <div class="action-btn" onclick="markAllAsRead()"><i class="fas fa-check-double"></i> Mark all read</div>
+        <div class="action-btn danger" onclick="clearAllNotifications()"><i class="fas fa-trash"></i> Clear all</div>
+      </div>
+      
+      <div id="notificationsList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;">
+        <i class="fas fa-bell-slash"></i>
+        <p>No notifications yet</p>
+        <p style="font-size:0.6rem;">Your activity will appear here</p>
+      </div>
+      
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var cu = null;
+    var currentFilter = 'all';
+    var allNotifications = [];
+    
+    var typeConfig = {
+      badge: { icon: 'fa-medal', color: '#f39c12', bg: 'badge' },
+      streak: { icon: 'fa-fire', color: '#e74c3c', bg: 'streak' },
+      grade: { icon: 'fa-pen', color: '#2ecc71', bg: 'grade' },
+      system: { icon: 'fa-bell', color: '#3498db', bg: 'system' },
+      sync: { icon: 'fa-sync-alt', color: '#00bcd4', bg: 'sync' },
+      goal: { icon: 'fa-bullseye', color: '#9b59b6', bg: 'goal' },
+      transfer: { icon: 'fa-exchange-alt', color: '#1abc9c', bg: 'transfer' },
+      default: { icon: 'fa-bell', color: '#95a5a6', bg: 'system' }
+    };
+    
+    function loadNotifications() {
+      cu = requireAuth();
+      if (!cu) return;
+      
+      var saved = localStorage.getItem('smartgrade_notifications_' + cu.id);
+      if (saved) {
+        allNotifications = JSON.parse(saved);
+      } else {
+        allNotifications = [{
+          id: Date.now(),
+          type: 'system',
+          title: 'Welcome to SMART GRADE!',
+          body: 'Start by adding your first grade to unlock achievements.',
+          date: new Date().toISOString(),
+          read: false
+        }];
+        saveNotifications();
+      }
+      
+      allNotifications.sort(function(a, b) {
+        return new Date(b.date) - new Date(a.date);
+      });
+      
+      displayNotifications();
+      updateHeaderProfile();
+      updateBadgeCount();
+    }
+    
+    function saveNotifications() {
+      localStorage.setItem('smartgrade_notifications_' + cu.id, JSON.stringify(allNotifications));
+    }
+    
+    function displayNotifications() {
+      var container = document.getElementById('notificationsList');
+      var emptyState = document.getElementById('emptyState');
+      
+      var filtered = allNotifications;
+      if (currentFilter !== 'all') {
+        filtered = allNotifications.filter(function(n) {
+          return n.type === currentFilter;
+        });
+      }
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '';
+        emptyState.style.display = 'block';
+        return;
+      }
+      
+      emptyState.style.display = 'none';
+      
+      container.innerHTML = filtered.map(function(notif) {
+        var config = typeConfig[notif.type] || typeConfig.default;
+        var isUnread = !notif.read;
+        var date = new Date(notif.date);
+        var formattedDate = formatRelativeDate(date);
+        
+        return `
+          <div class="notif-card ${isUnread ? 'unread' : ''}" onclick="markAsRead(${notif.id})">
+            <div class="notif-icon ${config.bg}">
+              <i class="fas ${config.icon}"></i>
+            </div>
+            <div class="notif-content">
+              <div class="notif-title">${notif.title}</div>
+              <div class="notif-body">${notif.body}</div>
+              <div class="notif-date">
+                <i class="fas fa-clock"></i> ${formattedDate}
+              </div>
+            </div>
+            ${isUnread ? '<div class="unread-dot"></div>' : ''}
+          </div>
+        `;
+      }).join('');
+    }
+    
+    function formatRelativeDate(date) {
+      var now = new Date();
+      var diff = Math.floor((now - date) / 1000);
+      
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+      if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+      
+      return date.toLocaleDateString();
+    }
+    
+    function markAsRead(id) {
+      for (var i = 0; i < allNotifications.length; i++) {
+        if (allNotifications[i].id === id) {
+          allNotifications[i].read = true;
+          break;
+        }
+      }
+      saveNotifications();
+      displayNotifications();
+      updateBadgeCount();
+    }
+    
+    function markAllAsRead() {
+      for (var i = 0; i < allNotifications.length; i++) {
+        allNotifications[i].read = true;
+      }
+      saveNotifications();
+      displayNotifications();
+      updateBadgeCount();
+      showToast('All notifications marked as read');
+    }
+    
+    function clearAllNotifications() {
+      if (confirm('Delete all notifications? This cannot be undone.')) {
+        allNotifications = [];
+        saveNotifications();
+        displayNotifications();
+        updateBadgeCount();
+        showToast('All notifications cleared');
+      }
+    }
+    
+    function setFilter(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-chip').forEach(function(chip) {
+        chip.classList.remove('active');
+      });
+      document.querySelector('.filter-chip[data-filter="' + filter + '"]').classList.add('active');
+      displayNotifications();
+    }
+    
+    function updateBadgeCount() {
+      var unreadCount = allNotifications.filter(function(n) { return !n.read; }).length;
+      var title = 'Notifications';
+      if (unreadCount > 0) {
+        title += ' (' + unreadCount + ')';
+      }
+      document.title = 'SMART GRADE - ' + title;
+    }
+    
+    function addNotification(type, title, body) {
+      if (!cu) return;
+      
+      var newNotif = {
+        id: Date.now(),
+        type: type,
+        title: title,
+        body: body,
+        date: new Date().toISOString(),
+        read: false
+      };
+      
+      allNotifications.unshift(newNotif);
+      saveNotifications();
+      displayNotifications();
+      updateBadgeCount();
+      
+      if (document.hidden) {
+        sendLocalNotification(title, body);
+      }
+    }
+    
+    window.addNotification = addNotification;
+    
+    loadNotifications();
+    initMobileMenu();
+    initThemeSelector();
+    initHeaderProfile();
+  </script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Subject Detail</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .detail-header{text-align:center;padding:20px;border-radius:20px;color:white;margin-bottom:16px;}
+    .detail-big-avg{font-size:3rem;font-weight:800;}
+    .detail-term-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+    .detail-term-card{text-align:center;padding:14px;background:var(--card-bg);border-radius:14px;border:1px solid var(--border);}
+    .detail-term-card .val{font-size:1.3rem;font-weight:800;color:var(--primary);}
+    .detail-term-card .lbl{font-size:0.55rem;text-transform:uppercase;color:var(--text-light);}
+    .grade-item{display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--card-bg);border-radius:12px;margin-bottom:6px;border:1px solid var(--border);}
+    .grade-item .date{font-size:0.65rem;color:var(--text-light);}
+    .grade-item .val{font-weight:800;font-size:1rem;}
+    .seq-section{margin-bottom:16px;}
+    .seq-title{font-weight:700;font-size:0.8rem;margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+    .empty-seq{text-align:center;padding:20px;color:var(--text-light);font-size:0.7rem;}
+    .stats-grid-subject{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px;}
+    .stat-card-subject{text-align:center;padding:16px;background:var(--card-bg);border-radius:16px;border:1px solid var(--border);}
+    .stat-value-subject{font-size:1.5rem;font-weight:800;}
+    .stat-label-subject{font-size:0.55rem;color:var(--text-light);margin-top:4px;text-transform:uppercase;}
+    .trend-up{color:#2ecc71;}
+    .trend-down{color:#e74c3c;}
+    .trend-neutral{color:var(--text-light);}
+    @media(max-width:500px){.stats-grid-subject{grid-template-columns:repeat(2,1fr);}}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span id="pageTitle">SUBJECT</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="subjects.html" class="nav-item"><i class="fas fa-layer-group"></i> Subjects</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      
+      <div class="detail-header" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">
+        <i class="fas fa-book-open" style="font-size:30px;opacity:0.5;"></i>
+        <h2 id="subjectName" style="color:white;margin:4px 0;">--</h2>
+        <div class="detail-big-avg" id="yearlyAvg">0.00</div>
+      </div>
+      
+      <div class="detail-term-grid">
+        <div class="detail-term-card"><div class="lbl">Term 1</div><div class="val" id="t1Avg">0.00</div></div>
+        <div class="detail-term-card"><div class="lbl">Term 2</div><div class="val" id="t2Avg">0.00</div></div>
+        <div class="detail-term-card"><div class="lbl">Term 3</div><div class="val" id="t3Avg">0.00</div></div>
+        <div class="detail-term-card"><div class="lbl">Yearly</div><div class="val" id="yAvg">0.00</div></div>
+      </div>
+      
+      <div id="gradesContainer"></div>
+      <div id="statsContainer"></div>
+      
+      <a href="add-grade.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Grade</a>
+      
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var subjectId = parseInt(new URLSearchParams(location.search).get('id'));
+    var currentUser = null;
+    var trendChart = null;
+    
+    function loadSubject() {
+      currentUser = requireAuth();
+      if (!currentUser) return;
+      
+      var subjectObj = DEFAULT_SUBJECTS.find(function(s) { return s.id === subjectId; });
+      if (!subjectObj) { location = 'subjects.html'; return; }
+      
+      document.getElementById('pageTitle').innerHTML = subjectObj.name;
+      document.getElementById('subjectName').innerHTML = subjectObj.name;
+      
+      var grades = getStudentGrades(currentUser.id).filter(function(g) { return g.subjectId === subjectId; });
+      var t1 = calculateSubjectTermAverage(subjectId, 1, grades);
+      var t2 = calculateSubjectTermAverage(subjectId, 2, grades);
+      var t3 = calculateSubjectTermAverage(subjectId, 3, grades);
+      var yearly = roundToTwo((t1 + t2 + t3) / 3);
+      
+      document.getElementById('t1Avg').innerHTML = formatNumber(t1);
+      document.getElementById('t2Avg').innerHTML = formatNumber(t2);
+      document.getElementById('t3Avg').innerHTML = formatNumber(t3);
+      document.getElementById('yAvg').innerHTML = formatNumber(yearly);
+      document.getElementById('yearlyAvg').innerHTML = formatNumber(yearly);
+      
+      var gradesHtml = '';
+      for (var seq = 1; seq <= 6; seq++) {
+        var seqGrades = grades.filter(function(g) { return g.sequenceId === seq; });
+        var seqAvg = seqGrades.length ? roundToTwo(seqGrades.reduce(function(a, b) { return a + b.value; }, 0) / seqGrades.length) : 0;
+        gradesHtml += '<div class="seq-section"><div class="seq-title"><i class="fas fa-hashtag"></i> Sequence ' + seq + ' - Avg: <strong>' + formatNumber(seqAvg) + '</strong></div>';
+        
+        if (seqGrades.length === 0) {
+          gradesHtml += '<div class="empty-seq">No grades for this sequence</div>';
+        } else {
+          for (var j = 0; j < seqGrades.length; j++) {
+            var g = seqGrades[j];
+            gradesHtml += '<div class="grade-item">' +
+              '<span><i class="fas fa-calendar"></i> ' + formatDate(g.date) + '</span>' +
+              '<span class="val">' + formatNumber(g.value) + '/20</span>' +
+              '<button onclick="deleteGrade(' + g.id + ', ' + g.value + ', \'' + subjectObj.name + '\')" style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:8px;"><i class="fas fa-trash"></i></button>' +
+            '</div>';
+          }
+        }
+        gradesHtml += '</div>';
+      }
+      document.getElementById('gradesContainer').innerHTML = gradesHtml;
+      
+      addSubjectStats(grades, subjectObj.name);
+      initHeaderProfile();
+    }
+    
+    function addSubjectStats(grades, subjectName) {
+      if (grades.length === 0) {
+        document.getElementById('statsContainer').innerHTML = '';
+        return;
+      }
+      
+      var values = grades.map(function(g) { return g.value; });
+      var best = Math.max.apply(null, values);
+      var worst = Math.min.apply(null, values);
+      var avg = values.reduce(function(a, b) { return a + b; }, 0) / values.length;
+      var trend = values.length >= 2 ? values[values.length - 1] - values[0] : 0;
+      var trendClass = trend > 0 ? 'trend-up' : (trend < 0 ? 'trend-down' : 'trend-neutral');
+      var trendSymbol = trend > 0 ? '+' : '';
+      
+      var statsHtml = '<div class="glass-card" style="margin-top:16px;">' +
+        '<h3><i class="fas fa-chart-line"></i> Subject Statistics</h3>' +
+        '<div class="stats-grid-subject">' +
+          '<div class="stat-card-subject"><div class="stat-value-subject" style="color:#2ecc71;">' + best.toFixed(2) + '</div><div class="stat-label-subject">Best Grade</div></div>' +
+          '<div class="stat-card-subject"><div class="stat-value-subject" style="color:#e74c3c;">' + worst.toFixed(2) + '</div><div class="stat-label-subject">Worst Grade</div></div>' +
+          '<div class="stat-card-subject"><div class="stat-value-subject" style="color:var(--primary);">' + avg.toFixed(2) + '</div><div class="stat-label-subject">Average</div></div>' +
+          '<div class="stat-card-subject"><div class="stat-value-subject ' + trendClass + '">' + trendSymbol + trend.toFixed(2) + '</div><div class="stat-label-subject">Trend</div></div>' +
+        '</div>' +
+        '<canvas id="trendChartCanvas" height="150" style="margin-top:12px;"></canvas>' +
+      '</div>';
+      
+      document.getElementById('statsContainer').innerHTML = statsHtml;
+      drawTrendChart(values);
+    }
+    
+    function drawTrendChart(values) {
+      var ctx = document.getElementById('trendChartCanvas');
+      if (!ctx) return;
+      
+      if (trendChart) trendChart.destroy();
+      
+      var isDark = document.body.classList.contains('night-mode');
+      var textColor = isDark ? '#e0e0e0' : '#1a2a3a';
+      var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+      
+      trendChart = new Chart(ctx.getContext('2d'), {
+        type: 'line',
+        data: {
+          labels: values.map(function(_, i) { return 'Grade ' + (i + 1); }),
+          datasets: [{
+            label: 'Evolution',
+            data: values,
+            borderColor: 'var(--primary)',
+            backgroundColor: 'rgba(15,59,72,0.1)',
+            fill: true,
+            tension: 0.3,
+            pointRadius: 5,
+            pointBackgroundColor: 'var(--primary)'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: true,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.raw.toFixed(2) + ' / 20';
+                }
+              }
+            },
+            legend: { labels: { color: textColor } }
+          },
+          scales: {
+            y: { min: 0, max: 20, ticks: { stepSize: 5, color: textColor }, grid: { color: gridColor } },
+            x: { ticks: { color: textColor }, grid: { color: gridColor } }
+          }
+        }
+      });
+    }
+    
+    function deleteGrade(gradeId, gradeValue, subjectName) {
+      showConfirmDialog(
+        'Delete Grade',
+        'Are you sure you want to delete this grade?',
+        'Grade: ' + gradeValue.toFixed(2) + ' / 20',
+        function() {
+          var grades = getStudentGrades(currentUser.id);
+          grades = grades.filter(function(g) { return g.id !== gradeId; });
+          saveStudentGrades(currentUser.id, grades);
+          showToast('Grade deleted');
+          loadSubject();
+        }
+      );
+    }
+    
+    function showConfirmDialog(title, message, detail, onConfirm) {
+      var existingModal = document.getElementById('customConfirmModal');
+      if (existingModal) existingModal.remove();
+      
+      var modal = document.createElement('div');
+      modal.id = 'customConfirmModal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000;display:flex;align-items:center;justify-content:center;';
+      modal.innerHTML = '<div style="background:var(--card-bg);border-radius:24px;padding:24px;max-width:300px;width:85%;text-align:center;animation:fadeInUp 0.3s ease;">' +
+        '<i class="fas fa-exclamation-triangle" style="font-size:48px;color:#e74c3c;margin-bottom:16px;"></i>' +
+        '<h3 style="margin-bottom:8px;">' + title + '</h3>' +
+        '<p style="font-size:0.75rem;color:var(--text-light);margin-bottom:8px;">' + message + '</p>' +
+        (detail ? '<p style="font-size:0.7rem;font-weight:600;color:#e74c3c;margin-bottom:16px;">' + detail + '</p>' : '') +
+        '<div style="display:flex;gap:12px;">' +
+          '<button id="confirmCancelBtn" style="flex:1;padding:12px;border-radius:40px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;">Cancel</button>' +
+          '<button id="confirmOkBtn" style="flex:1;padding:12px;border-radius:40px;background:#e74c3c;color:white;border:none;cursor:pointer;">Delete</button>' +
+        '</div>' +
+      '</div>';
+      document.body.appendChild(modal);
+      
+      document.getElementById('confirmCancelBtn').onclick = function() { modal.remove(); };
+      document.getElementById('confirmOkBtn').onclick = function() { modal.remove(); onConfirm(); };
+    }
+    
+    var themeObserver = new MutationObserver(function() {
+      if (trendChart) {
+        var isDark = document.body.classList.contains('night-mode');
+        var textColor = isDark ? '#e0e0e0' : '#1a2a3a';
+        var gridColor = isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)';
+        trendChart.options.scales.y.ticks.color = textColor;
+        trendChart.options.scales.y.grid.color = gridColor;
+        trendChart.options.scales.x.ticks.color = textColor;
+        trendChart.options.scales.x.grid.color = gridColor;
+        trendChart.update();
+      }
+    });
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    
+    loadSubject();
+    initMobileMenu();
+    initThemeSelector();
+  </script>
+</body>
+</html>

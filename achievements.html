@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Achievements</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .ach-card-new{display:flex;gap:14px;padding:16px;background:var(--card-bg);border-radius:16px;margin-bottom:10px;border:1px solid var(--border);transition:all 0.2s;}
+    .ach-card-new.locked{opacity:0.5;filter:grayscale(0.5);}
+    .ach-card-new.unlocked{border-left:4px solid #2ecc71;}
+    .ach-icon-circle{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;color:white;}
+    .ach-info{flex:1;}
+    .ach-name{font-weight:700;font-size:0.85rem;}
+    .ach-desc{font-size:0.65rem;color:var(--text-light);margin-top:2px;}
+    .ach-status{font-size:0.6rem;margin-top:4px;}
+    .progress-section{text-align:center;padding:20px;background:var(--card-bg);border-radius:20px;margin-bottom:16px;border:1px solid var(--border);}
+    .big-progress{font-size:2.5rem;font-weight:800;color:var(--primary);}
+    .streak-card{display:flex;gap:12px;padding:14px;background:var(--card-bg);border-radius:14px;margin-bottom:8px;border:1px solid var(--border);align-items:center;}
+    .streak-card.locked{opacity:0.5;}
+    .streak-icon{font-size:1.8rem;width:40px;text-align:center;}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>ACHIEVEMENTS</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="achievements.html" class="nav-item active"><i class="fas fa-medal"></i> Achievements</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      
+      <div class="progress-section">
+        <i class="fas fa-trophy" style="font-size:30px;color:#f39c12;"></i>
+        <div class="big-progress" id="progressPercent">0%</div>
+        <div style="font-size:0.7rem;color:var(--text-light);"><span id="unlockedBadges">0</span> / 14 Badges Unlocked</div>
+        <div class="progress-bar" style="height:8px;margin-top:12px;"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
+        <div style="margin-top:8px;font-size:0.6rem;color:var(--text-light);">Streak: <strong id="streakDays">0</strong> days</div>
+      </div>
+      
+      <div class="glass-card"><h3><i class="fas fa-fire"></i> Streak Badges</h3><div id="streakList"></div></div>
+      
+      <div class="glass-card"><h3><i class="fas fa-medal"></i> Achievement Badges</h3><div id="achievementsList"></div></div>
+      
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+  <script>
+    var cu=null;
+    var bc={1:'#3498db',2:'#f1c40f',3:'#2ecc71',4:'#9b59b6',5:'#e74c3c',6:'#1abc9c',7:'#e67e22',8:'#00bcd4',9:'#27ae60',10:'#8e44ad',11:'#f39c12',12:'#2980b9',13:'#c0392b',14:'#16a085'};
+    var bi={1:'fa-pen',2:'fa-star',3:'fa-arrow-up',4:'fa-book-open',5:'fa-fire',6:'fa-graduation-cap',7:'fa-rocket',8:'fa-bolt',9:'fa-check-double',10:'fa-calendar-check',11:'fa-crown',12:'fa-chart-bar',13:'fa-trophy',14:'fa-medal'};
+    
+    function loadAchievements(){
+      cu=requireAuth();if(!cu)return;
+      updateStreakOnVisit(cu.id);
+      var grades=getStudentGrades(cu.id);
+      var term1=calculateStudentTermAverage(cu.id,1),term2=calculateStudentTermAverage(cu.id,2),term3=calculateStudentTermAverage(cu.id,3);
+      var activeSubs=getActiveSubjectsWithCoefficients(cu.id,getCurrentTerm());
+      
+      var hasPerfect=grades.some(function(g){return g.value===20;});
+      var hasExcellent=grades.some(function(g){return g.value>=19.5;});
+      var allTerms=(term1>0)&&(term2>0)&&(term3>0);
+      var improvement=Math.max(term2-term1,term3-term2);
+      var allSubjHaveGrades=activeSubs.every(function(s){return grades.some(function(g){return g.subjectId===s.id;});});
+      var hasMastery=activeSubs.some(function(s){var sg=grades.filter(function(g){return g.subjectId===s.id;});return sg.length>0&&(sg.reduce(function(a,b){return a+b.value;},0)/sg.length)>=15;});
+      
+      var saved=JSON.parse(localStorage.getItem('smartgrade_achievements_'+cu.id)||'[]');
+      if(saved.length===0){saved=ACHIEVEMENTS.map(function(a){return{id:a.id,name:a.name,desc:a.desc,unlocked:false,unlockDate:null,notified:false};});}
+      
+      saved=saved.map(function(a){
+        var un=false;
+        switch(a.id){case 1:un=grades.length>0;break;case 2:un=hasPerfect;break;case 3:un=calculateYearlyAverage(cu.id)>=12&&grades.length>0;break;case 4:un=grades.length>=10;break;case 5:un=grades.length>=30;break;case 6:un=saved.filter(function(x){return x.unlocked;}).length>=8;break;case 7:un=improvement>=1;break;case 8:un=allTerms;break;case 9:un=allSubjHaveGrades&&activeSubs.length>0;break;case 10:un=false;break;case 11:un=hasMastery;break;case 12:un=grades.length>=25;break;case 13:un=saved.filter(function(x){return x.unlocked&&x.id!==13;}).length>=13;break;case 14:un=hasExcellent;break;}
+        if(un&&!a.unlocked){a.unlocked=true;a.unlockDate=new Date().toLocaleDateString();a.notified=false;}
+        return a;
+      });
+      
+      localStorage.setItem('smartgrade_achievements_'+cu.id,JSON.stringify(saved));
+      
+      var unlocked=saved.filter(function(a){return a.unlocked;}).length;
+      var pct=Math.round((unlocked/14)*100);
+      document.getElementById('progressPercent').innerHTML=pct+'%';
+      document.getElementById('unlockedBadges').innerHTML=unlocked;
+      document.getElementById('progressFill').style.width=pct+'%';
+      
+      document.getElementById('achievementsList').innerHTML=saved.map(function(a){
+        return'<div class="ach-card-new '+(a.unlocked?'unlocked':'locked')+'"><div class="ach-icon-circle" style="background:'+(a.unlocked?bc[a.id]:'#bdc3c7')+';"><i class="fas '+bi[a.id]+'"></i></div><div class="ach-info"><div class="ach-name">'+a.name+'</div><div class="ach-desc">'+a.desc+'</div><div class="ach-status">'+(a.unlocked?'<span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Unlocked: '+a.unlockDate+'</span>':'<span style="color:#95a5a6;"><i class="fas fa-lock"></i> Locked</span>')+'</div></div></div>';
+      }).join('');
+      
+      var streak=getStudentStreak(cu.id);
+      document.getElementById('streakDays').innerHTML=streak.days;
+      document.getElementById('streakList').innerHTML=STREAK_BADGES.map(function(sb){
+        var u=streak.days>=sb.days;
+        var icons={3:'fa-seedling',7:'fa-leaf',15:'fa-tree',30:'fa-mountain'};
+        return'<div class="streak-card'+(u?'':' locked')+'"><div class="streak-icon" style="color:'+(u?'#f39c12':'#95a5a6')+';"><i class="fas '+icons[sb.days]+'"></i></div><div style="flex:1;"><div style="font-weight:700;font-size:0.8rem;">'+sb.name+'</div><div style="font-size:0.6rem;color:var(--text-light);">'+sb.desc+' ('+Math.min(streak.days,sb.days)+'/'+sb.days+')</div></div>'+(u?'<i class="fas fa-check-circle" style="color:#2ecc71;"></i>':'<i class="fas fa-lock" style="color:#95a5a6;"></i>')+'</div>';
+      }).join('');
+      
+      initHeaderProfile();
+    }
+    
+    loadAchievements();initMobileMenu();initThemeSelector();
+    checkAndNotifyAchievements(cu.id);
+  </script>
+</body>
+</html>

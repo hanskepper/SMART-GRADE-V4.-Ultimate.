@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Register</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <link rel="apple-touch-icon" href="icon.svg">
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>REGISTER</span></div><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="index.html" class="nav-item"><i class="fas fa-home"></i> Home</a><a href="login.html" class="nav-item"><i class="fas fa-sign-in-alt"></i> Login</a><a href="register.html" class="nav-item active"><i class="fas fa-user-plus"></i> Register</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      <div class="glass-card animated-border text-center"><i class="fas fa-user-graduate" style="font-size:50px;color:var(--primary);"></i><h2 style="background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent;">Create Account</h2></div>
+      <div class="glass-card">
+        <div id="errorMsg" style="background:#fdeded;color:#e74c3c;padding:10px;border-radius:12px;margin-bottom:15px;display:none;"></div>
+        <div id="successMsg" style="background:#d5f5e3;color:#27ae60;padding:10px;border-radius:12px;margin-bottom:15px;display:none;"></div>
+        <div class="form-group"><label><i class="fas fa-user"></i> Full Name</label><input type="text" id="userName" placeholder="Full name" class="form-input"></div>
+        <div class="form-group"><label><i class="fas fa-school"></i> Class</label><div class="flex gap-1"><button type="button" id="classB1" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;font-weight:600;cursor:pointer;">B1</button><button type="button" id="classB2" style="flex:1;padding:10px;border-radius:12px;border:2px solid var(--border);background:transparent;color:var(--text);font-weight:600;cursor:pointer;">B2</button></div><input type="hidden" id="userClass" value="B1"></div>
+        <div class="form-group"><label><i class="fas fa-hashtag"></i> Number</label><input type="number" id="userNumber" placeholder="Number" class="form-input" min="1"></div>
+        <div class="form-group"><label><i class="fas fa-lock"></i> PIN (4 digits)</label><input type="text" id="userPin" maxlength="4" placeholder="****" class="form-input" inputmode="numeric" autocomplete="off"></div>
+        <div class="form-group"><label><i class="fas fa-check-circle"></i> Confirm PIN</label><input type="text" id="confirmPin" maxlength="4" placeholder="****" class="form-input" inputmode="numeric" autocomplete="off"></div>
+        <div style="margin:20px 0;padding:16px;background:rgba(0,0,0,0.02);border-radius:16px;text-align:center;"><p style="font-size:0.75rem;color:var(--text-light);"><i class="fas fa-fingerprint"></i> Add fingerprint (optional)</p><button class="btn btn-secondary" id="fpBtn" onclick="registerFP()" style="width:auto;display:inline-flex;"><i class="fas fa-fingerprint"></i> Register Fingerprint</button><p id="fpStatus" style="font-size:0.65rem;color:var(--text-light);">Not registered</p></div>
+        <button class="btn btn-primary" onclick="handleRegister()"><i class="fas fa-user-plus"></i> Create Account</button>
+        <div style="text-align:center;margin-top:16px;"><a href="login.html" style="color:var(--primary);font-size:0.8rem;">Already have account?</a></div>
+      </div>
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  <div class="install-prompt" id="installPrompt"><i class="fas fa-mobile-alt"></i><div class="install-prompt-text"><h4>Install</h4></div><button onclick="installApp()">Install</button></div>
+  <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+  <script>
+    var cls='B1',fpDone=false,tmpId=null;
+    document.getElementById('classB1').onclick=function(){cls='B1';document.getElementById('classB1').style.background='linear-gradient(135deg,var(--primary),var(--secondary))';document.getElementById('classB1').style.color='white';document.getElementById('classB2').style.background='transparent';document.getElementById('classB2').style.color='var(--text)';document.getElementById('userClass').value='B1';};
+    document.getElementById('classB2').onclick=function(){cls='B2';document.getElementById('classB2').style.background='linear-gradient(135deg,var(--primary),var(--secondary))';document.getElementById('classB2').style.color='white';document.getElementById('classB1').style.background='transparent';document.getElementById('classB1').style.color='var(--text)';document.getElementById('userClass').value='B2';};
+    function showError(m){var d=document.getElementById('errorMsg');d.innerHTML='<i class="fas fa-circle-exclamation"></i> '+m;d.style.display='block';}
+    function handleRegister(){var n=document.getElementById('userName').value.trim(),num=parseInt(document.getElementById('userNumber').value),p=document.getElementById('userPin').value,c=document.getElementById('confirmPin').value;if(!n){showError('Enter name');return;}if(isNaN(num)||num<1){showError('Enter number');return;}if(!p||p.length!==4||!/^\d+$/.test(p)){showError('PIN 4 digits');return;}if(p!==c){showError('PINs dont match');return;}if(getUsedNumbersInClass(cls).indexOf(num)!==-1){showError('Number taken');return;}var r=createStudentAccount(n,num,cls,p);if(r.success){playActionFeedback();showToast('Created!');setTimeout(function(){location='login.html';},1500);}else showError(r.message);}
+    function registerFP(){var n=document.getElementById('userName').value.trim(),num=parseInt(document.getElementById('userNumber').value),p=document.getElementById('userPin').value,c=document.getElementById('confirmPin').value;if(!n||isNaN(num)||!p||p!==c||p.length!==4){showError('Fill all fields first');return;}if(!tmpId){var r=createStudentAccount(n,num,cls,p);if(!r.success){showError(r.message);return;}tmpId=r.student.id;}registerFingerprint(tmpId,n,function(r){if(r.success){fpDone=true;document.getElementById('fpBtn').innerHTML='<i class="fas fa-check-circle"></i> Saved';document.getElementById('fpStatus').innerHTML='<i class="fas fa-check-circle" style="color:#27ae60;"></i> Registered!';}else{document.getElementById('fpBtn').innerHTML='<i class="fas fa-fingerprint"></i> Register';}});}
+    initMobileMenu();initThemeSelector();
+  </script>
+</body>
+</html>

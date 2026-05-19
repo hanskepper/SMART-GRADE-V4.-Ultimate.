@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Transfer</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .transfer-card{background:var(--card-bg);border-radius:24px;padding:20px;margin-bottom:16px;border:1px solid var(--border);transition:all 0.3s ease;}
+    .transfer-card:hover{border-color:var(--primary);transform:translateY(-3px);}
+    .method-icon{width:60px;height:60px;border-radius:30px;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;margin:0 auto 12px;}
+    .method-icon i{font-size:28px;color:white;}
+    .transfer-code-box{background:rgba(0,0,0,0.03);border-radius:20px;padding:20px;text-align:center;margin-top:16px;border:2px dashed var(--primary);}
+    .transfer-code-text{font-size:2.5rem;font-weight:800;letter-spacing:8px;color:var(--primary);font-family:'Courier Prime',monospace;margin:12px 0;}
+    .code-input{font-size:1.8rem;text-align:center;letter-spacing:8px;font-weight:800;padding:16px;border-radius:20px;border:2px solid var(--primary);width:100%;box-sizing:border-box;background:var(--card-bg);color:var(--text);text-transform:uppercase;}
+    .qr-container{display:flex;justify-content:center;margin:16px 0;padding:16px;background:white;border-radius:20px;box-shadow:0 4px 20px rgba(0,0,0,0.1);}
+    .qr-container canvas, .qr-container img{border-radius:16px;}
+    .tab-bar{display:flex;gap:12px;margin-bottom:20px;}
+    .tab-btn{flex:1;padding:14px;border-radius:60px;text-align:center;cursor:pointer;font-weight:600;background:rgba(0,0,0,0.03);border:1px solid var(--border);transition:all 0.2s;}
+    .tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border-color:transparent;}
+    .hidden{display:none;}
+    .toast-message{position:fixed;bottom:30px;left:20px;right:20px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;padding:14px;border-radius:60px;text-align:center;z-index:1000;animation:fadeUp 0.3s ease;font-size:0.8rem;}
+    .toast-message.error{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+    .scanner-area{margin-top:16px;border-radius:20px;overflow:hidden;border:2px solid var(--primary);}
+    .scanner-area video{width:100%;max-height:300px;object-fit:cover;}
+    .btn-camera{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;padding:12px 20px;border-radius:60px;cursor:pointer;font-weight:600;width:100%;margin-top:12px;}
+    .btn-stop-camera{background:#e74c3c;color:white;border:none;padding:12px 20px;border-radius:60px;cursor:pointer;font-weight:600;width:100%;margin-top:8px;}
+    .copy-btn{background:var(--card-bg);border:1px solid var(--border);padding:8px 16px;border-radius:30px;cursor:pointer;font-size:0.7rem;margin-top:8px;color:var(--text);}
+    .qr-style-selector{display:flex;gap:8px;justify-content:center;margin-top:12px;flex-wrap:wrap;}
+    .qr-style-btn{background:rgba(0,0,0,0.05);border:1px solid var(--border);padding:6px 12px;border-radius:30px;font-size:0.6rem;cursor:pointer;transition:all 0.2s;}
+    .qr-style-btn:hover{background:var(--primary);color:white;}
+    .qr-style-btn.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border-color:transparent;}
+    @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>TRANSFER</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="transfer.html" class="nav-item active"><i class="fas fa-exchange-alt"></i> Transfer</a><a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a><a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;"><i class="fas fa-exchange-alt" style="font-size:40px;opacity:0.5;"></i><h2 style="color:white;margin:8px 0;">Data Transfer</h2><p style="opacity:0.8;font-size:0.7rem;">Transfer your grades between devices</p></div>
+      <div class="tab-bar"><div class="tab-btn active" id="tabExportBtn" onclick="switchTab('export')"><i class="fas fa-upload"></i> Export</div><div class="tab-btn" id="tabImportBtn" onclick="switchTab('import')"><i class="fas fa-download"></i> Import</div></div>
+      <div id="exportTab">
+        <div class="transfer-card"><div class="method-icon"><i class="fas fa-qrcode"></i></div><h3 class="text-center">Generate Transfer Code</h3><p class="text-center" style="font-size:0.7rem;">Generate a 6-character code</p><button class="btn btn-primary" onclick="generateTransferCodeOnly()"><i class="fas fa-code"></i> Generate Code</button><div id="codeArea" style="display:none;"><div class="transfer-code-box"><p style="font-size:0.55rem;">TRANSFER CODE</p><div id="transferCodeDisplay" class="transfer-code-text">--------</div><p style="font-size:0.55rem;color:#e74c3c;">Expires in 5 minutes</p><button class="copy-btn" onclick="copyTransferCodeOnly()"><i class="fas fa-copy"></i> Copy Code</button></div></div></div>
+        <div class="transfer-card"><div class="method-icon"><i class="fas fa-camera"></i></div><h3 class="text-center">QR Code Transfer</h3><p class="text-center" style="font-size:0.7rem;">Generate QR code for another device</p>
+          <button class="btn btn-primary" onclick="generateModernQRCode()"><i class="fas fa-qrcode"></i> Generate QR Code</button>
+          <div id="qrCodeArea" style="display:none;">
+            <div class="transfer-code-box">
+              <p style="font-size:0.55rem;">MODERN QR CODE</p>
+              <div id="qrCodeContainer" class="qr-container"></div>
+              
+              <!-- Sélecteur de style QR -->
+              <div class="qr-style-selector">
+                <span class="qr-style-btn active" data-style="theme" onclick="setQRStyle('theme')"><i class="fas fa-palette"></i> Theme</span>
+                <span class="qr-style-btn" data-style="gradient" onclick="setQRStyle('gradient')"><i class="fas fa-chart-line"></i> Gradient</span>
+                <span class="qr-style-btn" data-style="classic" onclick="setQRStyle('classic')"><i class="fas fa-circle"></i> Classic</span>
+                <span class="qr-style-btn" data-style="rainbow" onclick="setQRStyle('rainbow')"><i class="fas fa-rainbow"></i> Rainbow</span>
+              </div>
+              
+              <p style="font-size:0.55rem;color:#e74c3c;margin-top:12px;"><i class="fas fa-clock"></i> Expires in 5 minutes</p>
+              <button class="copy-btn" onclick="downloadQRCode()"><i class="fas fa-download"></i> Save QR Code</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="importTab" class="hidden">
+        <div class="transfer-card"><div class="method-icon"><i class="fas fa-keyboard"></i></div><h3 class="text-center">Enter Code Manually</h3><p class="text-center" style="font-size:0.7rem;">6-character code (letters + numbers)</p><input type="text" id="importCodeInput" class="code-input" maxlength="6" placeholder="CODE" autocomplete="off" style="text-transform:uppercase;"><button class="btn btn-primary" onclick="importByCodeManually()" style="margin-top:16px;"><i class="fas fa-cloud-download-alt"></i> Import Data</button></div>
+        <div class="transfer-card"><div class="method-icon"><i class="fas fa-camera"></i></div><h3 class="text-center">Scan QR Code</h3><p class="text-center" style="font-size:0.7rem;">Scan QR code from the other device</p><button class="btn-camera" id="startScannerBtn" onclick="startCameraScanner()"><i class="fas fa-camera"></i> Start Camera</button><div id="scannerContainer" class="scanner-area" style="display:none;"></div><button class="btn-stop-camera" id="stopScannerBtn" onclick="stopCameraScanner()" style="display:none;"><i class="fas fa-stop"></i> Stop Camera</button></div>
+      </div>
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/transfer.js"></script>
+  <script src="js/transfer-local.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var currentActiveTab = 'export', qrScanner = null, currentGeneratedCode = null;
+    var currentQRCodeObject = null;
+    var currentQRStyle = 'theme';
+    var currentQRData = null;
+    
+    function switchTab(tab) {
+      currentActiveTab = tab;
+      var exportTab = document.getElementById('exportTab'), importTab = document.getElementById('importTab'), exportBtn = document.getElementById('tabExportBtn'), importBtn = document.getElementById('tabImportBtn');
+      if (tab === 'export') { exportTab.classList.remove('hidden'); importTab.classList.add('hidden'); exportBtn.classList.add('active'); importBtn.classList.remove('active'); stopCameraScanner(); }
+      else { exportTab.classList.add('hidden'); importTab.classList.remove('hidden'); exportBtn.classList.remove('active'); importBtn.classList.add('active'); }
+    }
+    
+    function showToastMessage(message, isError) { var existing = document.querySelector('.toast-message'); if (existing) existing.remove(); var msg = document.createElement('div'); msg.className = 'toast-message' + (isError ? ' error' : ''); msg.innerHTML = '<i class="fas ' + (isError ? 'fa-exclamation-circle' : 'fa-check-circle') + '"></i> ' + message; document.body.appendChild(msg); setTimeout(function() { if (msg.parentNode) msg.remove(); }, 3000); }
+    
+    function generateTransferCodeOnly() { var currentUser = getCurrentStudent(); if (!currentUser) { showToastMessage('Please login first', true); return; } var code = generateSecureCode(); currentGeneratedCode = code; var transferData = { studentId: currentUser.id, data: exportAllData(currentUser.id), expires: Date.now() + 5 * 60 * 1000 }; localStorage.setItem('smartgrade_qr_transfer_' + code, JSON.stringify(transferData)); setTimeout(function() { localStorage.removeItem('smartgrade_qr_transfer_' + code); }, 5 * 60 * 1000); document.getElementById('transferCodeDisplay').textContent = code; document.getElementById('codeArea').style.display = 'block'; showToastMessage('Code generated: ' + code, false); }
+    
+    function copyTransferCodeOnly() { if (currentGeneratedCode) { copyToClipboard(currentGeneratedCode); showToastMessage('Code copied to clipboard', false); } else { showToastMessage('No code to copy', true); } }
+    
+    // ============================================
+    // NOUVEAU: QR CODE MODERNE AVEC COULEURS
+    // ============================================
+    
+    function getThemeColors() {
+      var themeName = localStorage.getItem('smartgrade_theme') || 'default';
+      var themes = {
+        default: { dark: '#0f3b48', light: '#00ffff' },
+        crimson: { dark: '#c0392b', light: '#ff4757' },
+        forest: { dark: '#1e8449', light: '#2ecc71' },
+        ocean: { dark: '#006994', light: '#00b4d8' },
+        royal: { dark: '#6c3483', light: '#a569bd' },
+        sunset: { dark: '#d35400', light: '#f39c12' },
+        rose: { dark: '#c44569', light: '#fd79a8' },
+        turquoise: { dark: '#00897b', light: '#1de9b6' },
+        amber: { dark: '#b7950b', light: '#f1c40f' },
+        graphite: { dark: '#455a64', light: '#90a4ae' },
+        lavender: { dark: '#7b1fa2', light: '#ce93d8' },
+        cherry: { dark: '#b71c1c', light: '#ef5350' },
+        midnight: { dark: '#1a237e', light: '#5c6bc0' },
+        mint: { dark: '#00b894', light: '#55efc4' },
+        coral: { dark: '#e74c3c', light: '#ff6b6b' },
+        indigo: { dark: '#283593', light: '#7986cb' },
+        chocolate: { dark: '#5d4037', light: '#a1887f' },
+        electric: { dark: '#6a1b9a', light: '#e040fb' },
+        steel: { dark: '#37474f', light: '#78909c' },
+        lime: { dark: '#558b2f', light: '#aed581' }
+      };
+      return themes[themeName] || themes.default;
+    }
+    
+    function generateModernQRCode() {
+      var currentUser = getCurrentStudent();
+      if (!currentUser) { showToastMessage('Please login first', true); return; }
+      
+      var code = generateSecureCode();
+      currentGeneratedCode = code;
+      currentQRData = code;
+      
+      var transferData = {
+        studentId: currentUser.id,
+        data: exportAllData(currentUser.id),
+        expires: Date.now() + 5 * 60 * 1000
+      };
+      localStorage.setItem('smartgrade_qr_transfer_' + code, JSON.stringify(transferData));
+      setTimeout(function() { localStorage.removeItem('smartgrade_qr_transfer_' + code); }, 5 * 60 * 1000);
+      
+      var transferUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'transfer.html?code=' + code;
+      
+      var qrContainer = document.getElementById('qrCodeContainer');
+      qrContainer.innerHTML = '';
+      document.getElementById('qrCodeArea').style.display = 'block';
+      document.getElementById('transferCodeDisplay').textContent = code;
+      document.getElementById('codeArea').style.display = 'block';
+      
+      applyQRStyle(transferUrl, qrContainer);
+      showToastMessage('QR Code generated with ' + currentQRStyle + ' style!', false);
+    }
+    
+    function applyQRStyle(url, container) {
+      var colors = getThemeColors();
+      var colorDark, colorLight;
+      
+      switch(currentQRStyle) {
+        case 'theme':
+          colorDark = colors.dark;
+          colorLight = '#ffffff';
+          break;
+        case 'gradient':
+          colorDark = '#2ecc71';
+          colorLight = '#ffffff';
+          break;
+        case 'classic':
+          colorDark = '#000000';
+          colorLight = '#ffffff';
+          break;
+        case 'rainbow':
+          colorDark = '#e74c3c';
+          colorLight = '#ffffff';
+          break;
+        default:
+          colorDark = colors.dark;
+          colorLight = '#ffffff';
+      }
+      
+      if (currentQRStyle === 'rainbow') {
+        // Rainbow effect: random colors for different parts
+        colorDark = '#9b59b6';
+      }
+      
+      container.innerHTML = '';
+      currentQRCodeObject = new QRCode(container, {
+        text: url,
+        width: 220,
+        height: 220,
+        colorDark: colorDark,
+        colorLight: colorLight,
+        correctLevel: QRCode.CorrectLevel.H
+      });
+      
+      // Ajouter un effet visuel supplémentaire pour le style rainbow
+      if (currentQRStyle === 'rainbow') {
+        setTimeout(function() {
+          var canvas = container.querySelector('canvas');
+          if (canvas) {
+            var ctx = canvas.getContext('2d');
+            var imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            for (var i = 0; i < imageData.data.length; i += 4) {
+              if (imageData.data[i] < 50 && imageData.data[i+1] < 50 && imageData.data[i+2] < 50) {
+                var hue = (i / 10) % 360;
+                var rgb = hslToRgb(hue / 360, 0.8, 0.6);
+                imageData.data[i] = rgb.r;
+                imageData.data[i+1] = rgb.g;
+                imageData.data[i+2] = rgb.b;
+              }
+            }
+            ctx.putImageData(imageData, 0, 0);
+          }
+        }, 100);
+      }
+    }
+    
+    function hslToRgb(h, s, l) {
+      var r, g, b;
+      if (s === 0) { r = g = b = l; }
+      else {
+        var hue2rgb = function(p, q, t) {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        var p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return { r: Math.round(r * 255), g: Math.round(g * 255), b: Math.round(b * 255) };
+    }
+    
+    function setQRStyle(style) {
+      currentQRStyle = style;
+      document.querySelectorAll('.qr-style-btn').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      document.querySelector('.qr-style-btn[data-style="' + style + '"]').classList.add('active');
+      
+      if (currentQRData) {
+        var transferUrl = window.location.origin + window.location.pathname.replace(/[^/]*$/, '') + 'transfer.html?code=' + currentQRData;
+        var qrContainer = document.getElementById('qrCodeContainer');
+        applyQRStyle(transferUrl, qrContainer);
+        showToastMessage('QR style changed to ' + style, false);
+      }
+    }
+    
+    function downloadQRCode() {
+      var qrContainer = document.getElementById('qrCodeContainer');
+      var canvas = qrContainer.querySelector('canvas');
+      if (canvas) {
+        var link = document.createElement('a');
+        link.download = 'smartgrade-qrcode.png';
+        link.href = canvas.toDataURL();
+        link.click();
+        showToastMessage('QR Code saved!', false);
+      } else {
+        showToastMessage('No QR code to save', true);
+      }
+    }
+    
+    // Conserver l'ancienne fonction pour compatibilité
+    function generateQRCodeOnly() {
+      generateModernQRCode();
+    }
+    
+    function importByCodeManually() { var currentUser = getCurrentStudent(); if (!currentUser) { showToastMessage('Please login first', true); return; } var inputCode = document.getElementById('importCodeInput').value.trim().toUpperCase(); var codeRegex = /^[A-HJ-NP-Z0-9]{6}$/; if (!inputCode || !codeRegex.test(inputCode)) { showToastMessage('Invalid code: 6 characters (A-Z, 2-9)', true); return; } var storedData = localStorage.getItem('smartgrade_qr_transfer_' + inputCode); if (!storedData) { showToastMessage('Invalid or expired code', true); return; } var parsedData = JSON.parse(storedData); if (parsedData.expires < Date.now()) { localStorage.removeItem('smartgrade_qr_transfer_' + inputCode); showToastMessage('Code expired (5 minutes max)', true); return; } var importResult = importAllData(currentUser.id, parsedData.data); if (importResult.success) { localStorage.removeItem('smartgrade_qr_transfer_' + inputCode); showToastMessage('Import successful! Page will reload.', false); setTimeout(function() { location.reload(); }, 1500); } else { showToastMessage(importResult.message, true); } }
+    
+    function startCameraScanner() { var scannerContainer = document.getElementById('scannerContainer'), startBtn = document.getElementById('startScannerBtn'), stopBtn = document.getElementById('stopScannerBtn'); if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { showToastMessage('Camera not supported', true); return; } navigator.mediaDevices.getUserMedia({ video: true }).then(function(stream) { stream.getTracks().forEach(function(track) { track.stop(); }); scannerContainer.style.display = 'block'; startBtn.style.display = 'none'; stopBtn.style.display = 'block'; qrScanner = new Html5Qrcode("scannerContainer"); qrScanner.start({ facingMode: "environment" }, { fps: 10, qrbox: { width: 250, height: 250 } }, function(decodedText) { stopCameraScanner(); var scannedCode = ''; if (decodedText.includes('code=')) { scannedCode = decodedText.split('code=')[1]; if (scannedCode.length > 6) scannedCode = scannedCode.substring(0, 6); } else { scannedCode = decodedText.toUpperCase(); } if (scannedCode && scannedCode.length === 6) { document.getElementById('importCodeInput').value = scannedCode; showToastMessage('Code found: ' + scannedCode, false); setTimeout(function() { importByCodeManually(); }, 500); } else { showToastMessage('Invalid code scanned', true); } }, function(errorMessage) {}).catch(function(err) { showToastMessage('Camera error', true); scannerContainer.style.display = 'none'; startBtn.style.display = 'block'; stopBtn.style.display = 'none'; }); }).catch(function(err) { showToastMessage('Camera permission denied', true); }); }
+    
+    function stopCameraScanner() { if (qrScanner && qrScanner.isScanning) { qrScanner.stop().then(function() { document.getElementById('scannerContainer').style.display = 'none'; document.getElementById('startScannerBtn').style.display = 'block'; document.getElementById('stopScannerBtn').style.display = 'none'; qrScanner = null; }).catch(function(err) { console.log('Stop scanner error:', err); }); } else { document.getElementById('scannerContainer').style.display = 'none'; document.getElementById('startScannerBtn').style.display = 'block'; document.getElementById('stopScannerBtn').style.display = 'none'; } }
+    
+    function generateSecureCode() { var allowedChars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; var code = ''; for (var i = 0; i < 6; i++) { code += allowedChars.charAt(Math.floor(Math.random() * allowedChars.length)); } return code; }
+    
+    initMobileMenu(); initThemeSelector(); initHeaderProfile();
+    var urlParams = new URLSearchParams(location.search); var urlCode = urlParams.get('code'); if (urlCode && urlCode.length === 6) { document.getElementById('importCodeInput').value = urlCode; switchTab('import'); }
+  </script>
+</body>
+</html>

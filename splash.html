@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      font-family: 'Segoe UI', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    .splash-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #0a1a2a 0%, #0f3b48 40%, #0a2a3a 70%, #0a1a2a 100%);
+      background-size: 300% 300%;
+      animation: gradientShift 8s ease infinite;
+      z-index: 9999;
+    }
+    
+    @keyframes gradientShift {
+      0% { background-position: 0% 0%; }
+      25% { background-position: 100% 50%; }
+      50% { background-position: 100% 100%; }
+      75% { background-position: 0% 100%; }
+      100% { background-position: 0% 0%; }
+    }
+    
+    .logo-wrapper {
+      text-align: center;
+      animation: containerGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes containerGlow {
+      0% { filter: drop-shadow(0 0 5px rgba(0,255,255,0.2)); }
+      50% { filter: drop-shadow(0 0 30px rgba(0,255,255,0.6)); }
+      100% { filter: drop-shadow(0 0 5px rgba(0,255,255,0.2)); }
+    }
+    
+    .logo {
+      width: 160px;
+      height: 160px;
+      margin: 0 auto;
+      display: block;
+      animation: logoFloat 2.5s ease-in-out infinite;
+    }
+    
+    @keyframes logoFloat {
+      0% { transform: translateY(0px) scale(1); }
+      50% { transform: translateY(-15px) scale(1.02); }
+      100% { transform: translateY(0px) scale(1); }
+    }
+    
+    .app-title {
+      margin-top: 24px;
+      font-size: 36px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(135deg, #ffffff, #00ffff, #0f3b48);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: titleGradient 3s ease infinite, titleFadeIn 0.8s ease-out;
+    }
+    
+    @keyframes titleGradient {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    
+    @keyframes titleFadeIn {
+      0% { opacity: 0; transform: translateY(20px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    
+    .subtitle {
+      margin-top: 12px;
+      font-size: 14px;
+      color: rgba(0, 255, 255, 0.7);
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      font-weight: 500;
+      animation: subtitleFade 1.5s ease-out, subtitlePulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes subtitleFade {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    
+    @keyframes subtitlePulse {
+      0%, 100% { opacity: 0.5; }
+      50% { opacity: 1; }
+    }
+    
+    .progress-container {
+      position: absolute;
+      bottom: 80px;
+      left: 10%;
+      width: 80%;
+    }
+    
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,0.5);
+      letter-spacing: 1px;
+    }
+    
+    .progress-bar {
+      width: 100%;
+      height: 3px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #00ffff, #0f3b48, #00ffff);
+      background-size: 200% 100%;
+      border-radius: 3px;
+      animation: progressAnimation 10s linear forwards, progressShine 1.5s ease infinite;
+    }
+    
+    @keyframes progressAnimation {
+      0% { width: 0%; }
+      100% { width: 100%; }
+    }
+    
+    @keyframes progressShine {
+      0% { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+    
+    .version-text {
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(255,255,255,0.3);
+      font-family: monospace;
+      letter-spacing: 1px;
+    }
+    
+    .particles-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 1;
+    }
+    
+    .particle {
+      position: absolute;
+      background: radial-gradient(circle, rgba(0,255,255,0.8), rgba(0,255,255,0));
+      border-radius: 50%;
+      pointer-events: none;
+      animation: particleFloat linear infinite;
+    }
+    
+    @keyframes particleFloat {
+      0% {
+        transform: translateY(100vh) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: 0.6;
+      }
+      90% {
+        opacity: 0.3;
+      }
+      100% {
+        transform: translateY(-20vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    
+    .glow-circle {
+      position: absolute;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0,255,255,0.15), transparent 70%);
+      animation: circlePulse 3s ease-in-out infinite;
+      z-index: 0;
+    }
+    
+    @keyframes circlePulse {
+      0%, 100% { transform: scale(0.8); opacity: 0.3; }
+      50% { transform: scale(1.2); opacity: 0.6; }
+    }
+    
+    .loading-text {
+      position: absolute;
+      bottom: 130px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 11px;
+      color: rgba(0, 255, 255, 0.5);
+      font-weight: 600;
+      letter-spacing: 2px;
+      animation: loadingBlink 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes loadingBlink {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <div class="splash-container" id="splashContainer">
+    <div class="particles-container" id="particlesContainer"></div>
+    
+    <div style="position: relative; z-index: 2; text-align: center;">
+      <div class="glow-circle" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);"></div>
+      <div class="logo-wrapper">
+        <img src="icon.svg" class="logo" alt="SMART GRADE">
+        <div class="app-title">SMART GRADE</div>
+        <div class="subtitle">Grade Management System</div>
+      </div>
+    </div>
+    
+    <div class="progress-container">
+      <div class="progress-label">
+        <span>LOADING</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+    </div>
+    
+    <div class="loading-text">P R E P A R I N G    S M A R T     G R A D E</div>
+    <div class="version-text">SMART GRADE v4.0.Ultimate | GBHS FOUMBAN</div>
+  </div>
+  
+  <script>
+    // ============================================
+    // SPLASH SCREEN - FORCER AFFICHAGE DIRECT
+    // ============================================
+    
+    function createParticles() {
+      var container = document.getElementById('particlesContainer');
+      if (!container) return;
+      container.innerHTML = '';
+      for (var i = 0; i < 40; i++) {
+        var particle = document.createElement('div');
+        particle.className = 'particle';
+        var size = Math.random() * 6 + 2;
+        particle.style.width = size + 'px';
+        particle.style.height = size + 'px';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = Math.random() * 8 + 6 + 's';
+        container.appendChild(particle);
+      }
+    }
+    
+    function updatePercentage() {
+      var startTime = Date.now();
+      var duration = 10000;
+      var percentElement = document.getElementById('progressPercent');
+      var interval = setInterval(function() {
+        var elapsed = Date.now() - startTime;
+        var percent = Math.min(100, Math.floor((elapsed / duration) * 100));
+        if (percentElement) percentElement.textContent = percent + '%';
+        if (elapsed >= duration) clearInterval(interval);
+      }, 100);
+    }
+    
+    // Initialisation immédiate
+    createParticles();
+    updatePercentage();
+    
+    // Redirection après 10 secondes
+    setTimeout(function() {
+      var splash = document.getElementById('splashContainer');
+      if (splash) {
+        splash.style.opacity = '0';
+        splash.style.transition = 'opacity 0.5s ease';
+        setTimeout(function() {
+          window.location.href = 'index.html';
+        }, 500);
+      } else {
+        window.location.href = 'index.html';
+      }
+    }, 10000);
+  </script>
+</body>
+</html>

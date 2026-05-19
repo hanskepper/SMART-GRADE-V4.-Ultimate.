@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Subjects</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .subjects-grid-new{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;}
+    .subject-card-new{background:var(--card-bg);border-radius:18px;padding:18px 14px;border:1px solid var(--border);cursor:pointer;transition:all 0.25s ease;text-align:center;position:relative;overflow:hidden;}
+    .subject-card-new:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.1);border-color:var(--primary);}
+    .subject-card-new:active{transform:scale(0.96);}
+    .subject-card-new .subj-icon-circle{width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px;color:white;font-size:1.3rem;transition:all 0.3s ease;}
+    .subject-card-new:hover .subj-icon-circle{transform:scale(1.1) rotate(-5deg);}
+    .subject-card-new .subj-name{font-weight:700;font-size:0.7rem;margin-bottom:6px;line-height:1.2;}
+    .subject-card-new .subj-avg{font-size:2rem;font-weight:800;line-height:1;margin-bottom:4px;}
+    .subject-card-new .subj-coeff{font-size:0.55rem;color:var(--text-light);background:rgba(0,0,0,0.03);padding:4px 10px;border-radius:20px;display:inline-block;}
+    .subject-card-new .subj-status{position:absolute;top:10px;right:10px;font-size:0.55rem;padding:3px 8px;border-radius:10px;font-weight:600;}
+    .status-excellent{background:rgba(46,204,113,0.15);color:#27ae60;}
+    .status-verygood{background:rgba(52,152,219,0.15);color:#2980b9;}
+    .status-good{background:rgba(241,196,15,0.15);color:#f39c12;}
+    .status-average{background:rgba(230,126,34,0.15);color:#e67e22;}
+    .status-needs{background:rgba(231,76,60,0.15);color:#e74c3c;}
+    .subject-card-new.danger{border-left:4px solid #e74c3c;}
+    
+    .term-tabs-new{display:flex;gap:8px;margin-bottom:16px;}
+    .term-tab-new{flex:1;padding:12px;border-radius:14px;text-align:center;cursor:pointer;font-weight:600;font-size:0.75rem;background:rgba(0,0,0,0.03);border:2px solid var(--border);transition:all 0.2s ease;color:var(--text);}
+    .term-tab-new.active{background:var(--primary);color:white;border-color:var(--primary);box-shadow:0 4px 16px rgba(15,59,72,0.2);}
+    
+    .stats-mini{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+    .stat-mini{text-align:center;padding:14px 8px;background:var(--card-bg);border-radius:14px;border:1px solid var(--border);transition:all 0.2s ease;}
+    .stat-mini:hover{transform:translateY(-2px);box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+    .stat-mini .val{font-size:1.4rem;font-weight:800;color:var(--primary);line-height:1;}
+    .stat-mini .lbl{font-size:0.5rem;text-transform:uppercase;color:var(--text-light);margin-top:4px;letter-spacing:1px;}
+    .stat-mini .icon-mini{font-size:1rem;margin-bottom:4px;opacity:0.5;}
+    
+    .empty-state{text-align:center;padding:40px 20px;}
+    .empty-state i{font-size:50px;opacity:0.15;margin-bottom:12px;display:block;}
+    .empty-state p{color:var(--text-light);font-size:0.8rem;}
+    
+    @media(max-width:400px){.subjects-grid-new{grid-template-columns:1fr;}.stats-mini{grid-template-columns:repeat(2,1fr);}}
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>SUBJECTS</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="subjects.html" class="nav-item active"><i class="fas fa-layer-group"></i> Subjects</a><a href="add-grade.html" class="nav-item"><i class="fas fa-pen-fancy"></i> Add Grade</a><a href="timetable.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Timetable</a><a href="term1.html" class="nav-item"><i class="fas fa-1"></i> Term 1</a><a href="term2.html" class="nav-item"><i class="fas fa-2"></i> Term 2</a><a href="term3.html" class="nav-item"><i class="fas fa-3"></i> Term 3</a><a href="yearly.html" class="nav-item"><i class="fas fa-chart-line"></i> Yearly</a><a href="statistics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Statistics</a><a href="achievements.html" class="nav-item"><i class="fas fa-medal"></i> Achievements</a><a href="flashcards.html" class="nav-item"><i class="fas fa-clone"></i> Flashcards</a><a href="goals.html" class="nav-item"><i class="fas fa-bullseye"></i> Goals</a><a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a><a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;"><i class="fas fa-layer-group" style="font-size:35px;opacity:0.5;"></i><h2 style="color:white;margin:6px 0;">All Subjects</h2><p style="opacity:0.8;font-size:0.7rem;">Track your performance in each subject</p></div>
+      
+      <div class="term-tabs-new" id="termTabs">
+        <div class="term-tab-new active" data-term="1"><i class="fas fa-1"></i> Term 1</div>
+        <div class="term-tab-new" data-term="2"><i class="fas fa-2"></i> Term 2</div>
+        <div class="term-tab-new" data-term="3"><i class="fas fa-3"></i> Term 3</div>
+      </div>
+      
+      <div class="stats-mini">
+        <div class="stat-mini"><div class="icon-mini"><i class="fas fa-layer-group"></i></div><div class="val" id="totalSelected">0</div><div class="lbl">Selected</div></div>
+        <div class="stat-mini"><div class="icon-mini"><i class="fas fa-pen"></i></div><div class="val" id="totalGrades">0</div><div class="lbl">Grades</div></div>
+        <div class="stat-mini"><div class="icon-mini"><i class="fas fa-star"></i></div><div class="val" id="overallAvg">0.00</div><div class="lbl">Overall</div></div>
+        <div class="stat-mini"><div class="icon-mini"><i class="fas fa-trophy"></i></div><div class="val" id="bestAvg">--</div><div class="lbl">Best</div></div>
+      </div>
+      
+      <div class="subjects-grid-new" id="subjectsList"></div>
+      <div class="empty-state" id="emptyState" style="display:none;"><i class="fas fa-book-open"></i><p>No subjects selected for this term.<br>Go to Settings to select subjects.</p><a href="settings.html" class="btn btn-primary mt-1" style="display:inline-flex;width:auto;padding:10px 20px;"><i class="fas fa-sliders-h"></i> Settings</a></div>
+    </main>
+  </div>
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var ct = 1;
+    var sc = ['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
+    
+    function loadSubjects() {
+      var cu = requireAuth();
+      if (!cu) return;
+      
+      var subs = getActiveSubjectsWithCoefficients(cu.id, ct);
+      var g = getStudentGrades(cu.id);
+      
+      document.getElementById('totalSelected').innerHTML = subs.length;
+      document.getElementById('totalGrades').innerHTML = g.length;
+      
+      var termAvg = calculateStudentTermAverage(cu.id, ct);
+      document.getElementById('overallAvg').innerHTML = formatNumber(termAvg);
+      
+      var best = null, ba = -1;
+      var data = subs.map(function(s, i) {
+        var seq1 = (ct-1)*2+1, seq2 = seq1+1;
+        var n1 = [], n2 = [];
+        for (var k = 0; k < g.length; k++) {
+          if (g[k].subjectId === s.id && g[k].sequenceId === seq1) n1.push(g[k].value);
+          if (g[k].subjectId === s.id && g[k].sequenceId === seq2) n2.push(g[k].value);
+        }
+        var a1 = 0, a2 = 0;
+        if (n1.length > 0) { var sum = 0; for (var j = 0; j < n1.length; j++) sum += n1[j]; a1 = Math.round((sum/n1.length)*100)/100; }
+        if (n2.length > 0) { var sum = 0; for (var j = 0; j < n2.length; j++) sum += n2[j]; a2 = Math.round((sum/n2.length)*100)/100; }
+        var a = Math.round(((a1+a2)/2)*100)/100;
+        
+        if (a > ba && a > 0) { ba = a; best = s; }
+        
+        return {
+          id: s.id,
+          name: s.name,
+          icon: s.icon,
+          avg: a,
+          coeff: s.coefficient,
+          color: sc[i] || '#3498db',
+          danger: a > 0 && a < 10,
+          hasNotes: (n1.length > 0 || n2.length > 0)
+        };
+      });
+      
+      document.getElementById('bestAvg').innerHTML = best ? formatNumber(ba, 1) : '--';
+      
+      if (subs.length === 0) {
+        document.getElementById('subjectsList').innerHTML = '';
+        document.getElementById('emptyState').style.display = 'block';
+      } else {
+        document.getElementById('emptyState').style.display = 'none';
+        
+        document.getElementById('subjectsList').innerHTML = data.map(function(s) {
+          var statusHtml = '';
+          var statusClass = '';
+          if (s.hasNotes) {
+            if (s.avg >= 16) { statusHtml = 'Excellent'; statusClass = 'status-excellent'; }
+            else if (s.avg >= 14) { statusHtml = 'Very Good'; statusClass = 'status-verygood'; }
+            else if (s.avg >= 12) { statusHtml = 'Good'; statusClass = 'status-good'; }
+            else if (s.avg >= 10) { statusHtml = 'Average'; statusClass = 'status-average'; }
+            else { statusHtml = 'Needs Work'; statusClass = 'status-needs'; }
+          }
+          
+          return '<div class="subject-card-new' + (s.danger ? ' danger' : '') + '" onclick="location=\'subject-detail.html?id=' + s.id + '\'">' +
+            (statusHtml ? '<div class="subj-status ' + statusClass + '">' + statusHtml + '</div>' : '') +
+            '<div class="subj-icon-circle" style="background:' + s.color + ';">' +
+              '<i class="fas ' + s.icon + '"></i>' +
+            '</div>' +
+            '<div class="subj-name">' + s.name + '</div>' +
+            '<div class="subj-avg" style="color:' + s.color + ';">' + formatNumber(s.avg) + '</div>' +
+            '<div class="subj-coeff">Coeff: ' + s.coeff + '</div>' +
+          '</div>';
+        }).join('');
+      }
+      
+      initHeaderProfile();
+    }
+    
+    document.querySelectorAll('.term-tab-new').forEach(function(t, i) {
+      t.addEventListener('click', function() {
+        document.querySelectorAll('.term-tab-new').forEach(function(x) { x.classList.remove('active'); });
+        t.classList.add('active');
+        ct = i + 1;
+        loadSubjects();
+      });
+    });
+    
+    loadSubjects();
+    initMobileMenu();
+    initThemeSelector();
+  </script>
+</body>
+</html>

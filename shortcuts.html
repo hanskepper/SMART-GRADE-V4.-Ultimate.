@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Shortcuts</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>SHORTCUTS</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="shortcuts.html" class="nav-item active"><i class="fas fa-bolt"></i> Shortcuts</a><a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;"><i class="fas fa-bolt" style="font-size:40px;"></i><h2 style="color:white;">Quick Shortcuts</h2></div>
+      <div class="glass-card"><h3><i class="fas fa-star"></i> Favorites</h3><div id="favoritesGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;"></div></div>
+      <div class="glass-card"><h3><i class="fas fa-link"></i> All Pages</h3><div id="allPagesGrid" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px;"></div></div>
+    </main>
+  </div>
+  <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+  <script>
+    var cu=null;
+    var PAGES=[{name:'Dashboard',icon:'fa-chalkboard-user',url:'dashboard.html'},{name:'Subjects',icon:'fa-layer-group',url:'subjects.html'},{name:'Add Grade',icon:'fa-pen-fancy',url:'add-grade.html'},{name:'Timetable',icon:'fa-calendar-alt',url:'timetable.html'},{name:'Term 1',icon:'fa-1',url:'term1.html'},{name:'Term 2',icon:'fa-2',url:'term2.html'},{name:'Term 3',icon:'fa-3',url:'term3.html'},{name:'Yearly',icon:'fa-chart-line',url:'yearly.html'},{name:'Statistics',icon:'fa-chart-pie',url:'statistics.html'},{name:'Achievements',icon:'fa-medal',url:'achievements.html'},{name:'Flashcards',icon:'fa-clone',url:'flashcards.html'},{name:'Goals',icon:'fa-bullseye',url:'goals.html'},{name:'Profile',icon:'fa-user',url:'profile.html'},{name:'History',icon:'fa-history',url:'history.html'},{name:'Export',icon:'fa-file-export',url:'export.html'},{name:'Settings',icon:'fa-sliders-h',url:'settings.html'}];
+    function loadShortcuts(){cu=requireAuth();if(!cu)return;var p=getProfile(cu.id);document.getElementById('headerAvatar').innerHTML='<i class="fas '+p.avatar+'"></i>';var favs=JSON.parse(localStorage.getItem('smartgrade_favorites_'+cu.id)||'[]');renderFavs(favs);renderAll(favs);}
+    function renderFavs(favs){var g=document.getElementById('favoritesGrid');if(favs.length===0){g.innerHTML='<div class="text-center" style="grid-column:1/-1;font-size:0.7rem;">Click <i class="fas fa-star"></i> to favorite</div>';return;}g.innerHTML=favs.map(function(f){return'<div class="text-center" style="cursor:pointer;padding:12px;background:rgba(0,0,0,0.03);border-radius:14px;" onclick="location=\''+f.url+'\'"><i class="fas '+f.icon+'" style="font-size:1.5rem;color:var(--primary);"></i><br><small>'+f.name+'</small></div>';}).join('');}
+    function renderAll(favs){document.getElementById('allPagesGrid').innerHTML=PAGES.map(function(p){var isFav=favs.some(function(f){return f.url===p.url;});return'<div class="text-center" style="cursor:pointer;padding:10px;background:rgba(0,0,0,0.02);border-radius:12px;border:1px solid var(--border);" onclick="location=\''+p.url+'\'"><i class="fas '+p.icon+'" style="font-size:1.2rem;color:var(--primary);"></i><br><small>'+p.name+'</small><br><i class="fas fa-star" style="color:'+(isFav?'#f39c12':'var(--border)')+';cursor:pointer;" onclick="event.stopPropagation();toggleFav(\''+p.name+'\',\''+p.icon+'\',\''+p.url+'\')"></i></div>';}).join('');}
+    function toggleFav(name,icon,url){var favs=JSON.parse(localStorage.getItem('smartgrade_favorites_'+cu.id)||'[]');var ex=favs.findIndex(function(f){return f.url===url;});if(ex!==-1){favs.splice(ex,1);}else{if(favs.length>=6){showToast('Max 6 favorites');return;}favs.push({name:name,icon:icon,url:url});}localStorage.setItem('smartgrade_favorites_'+cu.id,JSON.stringify(favs));loadShortcuts();}
+    loadShortcuts();initMobileMenu();initThemeSelector();
+  </script>
+</body>
+</html>

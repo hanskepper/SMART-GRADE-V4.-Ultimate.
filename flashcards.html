@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Flashcards</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .flashcard{
+      perspective:1000px;
+      width:100%;
+      max-width:320px;
+      height:200px;
+      margin:0 auto 20px;
+      cursor:pointer;
+    }
+    .flashcard-inner{
+      position:relative;
+      width:100%;
+      height:100%;
+      transition:transform 0.6s;
+      transform-style:preserve-3d;
+    }
+    .flashcard.flipped .flashcard-inner{
+      transform:rotateY(180deg);
+    }
+    .flashcard-front,.flashcard-back{
+      position:absolute;
+      width:100%;
+      height:100%;
+      backface-visibility:hidden;
+      border-radius:16px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+      text-align:center;
+      font-size:0.9rem;
+      word-break:break-word;
+    }
+    .flashcard-front{
+      background:var(--card-bg);
+      border:1px solid var(--border);
+      font-weight:600;
+    }
+    .flashcard-back{
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:white;
+      transform:rotateY(180deg);
+    }
+    .flashcard-counter{
+      text-align:center;
+      font-size:0.75rem;
+      font-weight:600;
+      color:var(--primary);
+      margin:8px 0;
+    }
+    .flashcard-controls{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+    .flashcard-controls button{
+      width:auto;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--card-bg);
+      color:var(--text);
+      cursor:pointer;
+      font-size:0.8rem;
+      transition:all 0.2s;
+    }
+    .flashcard-controls button:active{
+      transform:scale(0.95);
+    }
+    .flashcard-controls button.primary{
+      background:var(--primary);
+      color:white;
+      border:none;
+    }
+    .flashcard-controls button.danger{
+      background:rgba(231,76,60,0.1);
+      color:#e74c3c;
+      border:1px solid rgba(231,76,60,0.3);
+    }
+    .form-group-flash{
+      margin-bottom:12px;
+    }
+    .form-group-flash label{
+      display:block;
+      margin-bottom:4px;
+      font-weight:500;
+      color:var(--text-light);
+      font-size:0.7rem;
+    }
+    .form-group-flash input{
+      width:100%;
+      padding:12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background:var(--card-bg);
+      color:var(--text);
+      font-size:0.85rem;
+      box-sizing:border-box;
+    }
+    .form-group-flash input:focus{
+      outline:none;
+      border-color:var(--primary);
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-book-open"></i><span>FLASHCARDS</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html" style="display:flex;align-items:center;text-decoration:none;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-graduation-cap"></i>
+          </div>
+        </a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet">
+          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
+          <div class="font-sheet" data-font="medium">A</div>
+          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="flashcards.html" class="nav-item active"><i class="fas fa-clone"></i> Flashcards</a>
+        <a href="goals.html" class="nav-item"><i class="fas fa-bullseye"></i> Goals</a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <main class="main-content">
+      
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+        <i class="fas fa-clone" style="font-size:40px;"></i>
+        <h2 style="color:white;margin:8px 0;">Flashcards</h2>
+        <p style="opacity:0.8;font-size:0.75rem;">Tap card to flip - Study smarter!</p>
+      </div>
+      
+      <div class="glass-card">
+        <label style="font-weight:500;color:var(--text-light);font-size:0.7rem;">
+          <i class="fas fa-layer-group"></i> Select Subject
+        </label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;" id="subjectSelector"></div>
+      </div>
+      
+      <div class="glass-card">
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="flashcard-inner">
+            <div class="flashcard-front" id="fcFront"><p>Select a subject<br>to start studying</p></div>
+            <div class="flashcard-back" id="fcBack"><p>Answer</p></div>
+          </div>
+        </div>
+        <div class="flashcard-counter" id="fcCounter">0 / 0</div>
+        <div class="flashcard-controls">
+          <button onclick="prevCard()"><i class="fas fa-arrow-left"></i> Prev</button>
+          <button class="primary" onclick="flipCard()"><i class="fas fa-sync-alt"></i> Flip</button>
+          <button onclick="nextCard()"><i class="fas fa-arrow-right"></i> Next</button>
+          <button class="danger" onclick="deleteCurrentCard()"><i class="fas fa-trash"></i> Delete</button>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-plus-circle"></i> Add New Card</h3>
+        <div class="form-group-flash"><label><i class="fas fa-question"></i> Question</label><input type="text" id="newQuestion" placeholder="Enter question..."></div>
+        <div class="form-group-flash"><label><i class="fas fa-lightbulb"></i> Answer</label><input type="text" id="newAnswer" placeholder="Enter answer..."></div>
+        <button class="btn btn-primary" onclick="addCard()"><i class="fas fa-plus"></i> Add Card</button>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-list"></i> All Cards (<span id="totalCardsCount">0</span>)</h3>
+        <div id="allCardsList" style="max-height:300px;overflow-y:auto;"></div>
+      </div>
+      
+    </main>
+  </div>
+  
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var cu = null;
+    var fcSubj = null;
+    var fcCards = [];
+    var fcIndex = 0;
+    var fcFlipped = false;
+    var allSaved = [];
+    var allSubs = [];
+    
+    var DEFAULT_CARDS = {
+      1: [{ q: "What is an algorithm?", a: "A step-by-step procedure to solve a problem" }, { q: "What does CPU stand for?", a: "Central Processing Unit" }, { q: "What is binary code?", a: "Number system using only 0 and 1" }],
+      2: [{ q: "What is the Pythagorean theorem?", a: "a² + b² = c²" }, { q: "What is Pi (π)?", a: "3.14159..." }, { q: "What is the area of a circle?", a: "π × r²" }],
+      3: [{ q: "What is the chemical formula of water?", a: "H₂O" }, { q: "What does pH measure?", a: "Acidity or alkalinity" }, { q: "What is the symbol for gold?", a: "Au" }],
+      4: [{ q: "What does DNA stand for?", a: "Deoxyribonucleic Acid" }, { q: "How many chromosomes do humans have?", a: "46" }, { q: "What do red blood cells do?", a: "Carry oxygen" }],
+      5: [{ q: "What are the 3 types of rocks?", a: "Igneous, Sedimentary, Metamorphic" }, { q: "What is the hardest mineral?", a: "Diamond" }, { q: "What is magma?", a: "Molten rock" }],
+      6: [{ q: "What is Newton's 2nd law?", a: "F = ma" }, { q: "What is the speed of light?", a: "300,000 km/s" }, { q: "What is the unit of force?", a: "Newton" }],
+      7: [{ q: "What is a derivative?", a: "Rate of change" }, { q: "What is the integral of x?", a: "x²/2 + C" }, { q: "What is log₁₀(100)?", a: "2" }],
+      8: [{ q: "What is photosynthesis?", a: "CO₂ + H₂O + light → Glucose + O₂" }, { q: "What are cell walls made of?", a: "Cellulose" }, { q: "What is mitosis?", a: "Cell division" }],
+      9: [{ q: "What is the law of supply?", a: "Higher price → More supply" }, { q: "What does GDP stand for?", a: "Gross Domestic Product" }, { q: "What is inflation?", a: "General increase in prices" }],
+      10: [{ q: "What is a noun?", a: "Person, place, thing, or idea" }, { q: "What is the past tense of 'go'?", a: "Went" }, { q: "What is the opposite of 'brave'?", a: "Cowardly" }],
+      11: [{ q: "What is the capital of Cameroon?", a: "Yaoundé" }, { q: "What is the longest river?", a: "The Nile" }, { q: "What is the largest continent?", a: "Asia" }],
+      12: [{ q: "What is democracy?", a: "Government by the people" }, { q: "What is a constitution?", a: "Supreme law" }, { q: "What is the national symbol of Cameroon?", a: "The Lion" }],
+      13: [{ q: "How do you say 'Hello' in French?", a: "Bonjour" }, { q: "How do you say 'Thank you' in French?", a: "Merci" }, { q: "How do you say 'Goodbye' in French?", a: "Au revoir" }],
+      14: [{ q: "What is a good source of Vitamin C?", a: "Citrus fruits" }, { q: "What is the function of proteins?", a: "Build and repair tissues" }, { q: "How many food groups are there?", a: "5" }]
+    };
+    
+    function initFC() {
+      cu = requireAuth();
+      if (!cu) return;
+      allSaved = getFlashcards(cu.id);
+      allSubs = getActiveSubjectsWithCoefficients(cu.id, getCurrentTerm());
+      buildSubjectSelector();
+      if (allSubs.length > 0) selectSubject(allSubs[0].id);
+      updateHeaderAvatar();
+    }
+    
+    function updateHeaderAvatar() { if (cu) { var p = getProfile(cu.id); var avatar = p.avatar || 'fa-graduation-cap'; document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + avatar + '"></i>'; } }
+    
+    function buildSubjectSelector() {
+      var container = document.getElementById('subjectSelector');
+      container.innerHTML = '';
+      allSubs.forEach(function(s) {
+        var btn = document.createElement('button');
+        btn.className = 'btn ' + (fcSubj === s.id ? 'btn-primary' : 'btn-secondary');
+        btn.style.cssText = 'width:auto;padding:8px 12px;font-size:0.7rem;flex:1;min-width:80px;';
+        btn.innerHTML = '<i class="fas ' + s.icon + '"></i> ' + s.code;
+        btn.onclick = function() { selectSubject(s.id); };
+        container.appendChild(btn);
+      });
+    }
+    
+    function selectSubject(sid) {
+      fcSubj = sid;
+      fcIndex = 0;
+      fcFlipped = false;
+      allSaved = getFlashcards(cu.id);
+      var savedForSubject = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      if (savedForSubject.length > 0) {
+        fcCards = savedForSubject;
+      } else {
+        fcCards = (DEFAULT_CARDS[fcSubj] || []).map(function(c) { return { id: Date.now() + Math.floor(Math.random() * 10000), subjectId: fcSubj, question: c.q, answer: c.a }; });
+        allSaved = allSaved.concat(fcCards);
+        saveFlashcards(cu.id, allSaved);
+      }
+      updateCard();
+      buildSubjectSelector();
+      renderAllCardsList();
+    }
+    
+    function updateCard() {
+      if (fcCards.length === 0) {
+        document.getElementById('fcFront').innerHTML = '<p style="opacity:0.5;">No cards for this subject</p>';
+        document.getElementById('fcBack').innerHTML = '<p style="opacity:0.5;">Add cards below</p>';
+        document.getElementById('fcCounter').textContent = '0 / 0';
+        document.getElementById('totalCardsCount').textContent = '0';
+        return;
+      }
+      document.getElementById('fcFront').innerHTML = '<p style="font-weight:600;">' + fcCards[fcIndex].question + '</p>';
+      document.getElementById('fcBack').innerHTML = '<p>' + fcCards[fcIndex].answer + '</p>';
+      document.getElementById('fcCounter').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
+      document.getElementById('totalCardsCount').textContent = fcCards.length;
+      document.getElementById('flashcard').classList.remove('flipped');
+      fcFlipped = false;
+    }
+    
+    function flipCard() { if (fcCards.length === 0) return; fcFlipped = !fcFlipped; var f = document.getElementById('flashcard'); if (fcFlipped) f.classList.add('flipped'); else f.classList.remove('flipped'); }
+    function prevCard() { if (fcCards.length === 0) return; fcIndex = (fcIndex - 1 + fcCards.length) % fcCards.length; updateCard(); }
+    function nextCard() { if (fcCards.length === 0) return; fcIndex = (fcIndex + 1) % fcCards.length; updateCard(); }
+    
+    function addCard() {
+      var q = document.getElementById('newQuestion').value.trim();
+      var a = document.getElementById('newAnswer').value.trim();
+      if (!q || !a) { showToast('Please enter both question and answer'); return; }
+      if (!fcSubj) { showToast('Please select a subject first'); return; }
+      allSaved = getFlashcards(cu.id);
+      var newCard = { id: Date.now(), subjectId: fcSubj, question: q, answer: a };
+      allSaved.push(newCard);
+      saveFlashcards(cu.id, allSaved);
+      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      fcIndex = fcCards.length - 1;
+      updateCard();
+      renderAllCardsList();
+      document.getElementById('newQuestion').value = '';
+      document.getElementById('newAnswer').value = '';
+      playActionFeedback();
+      showToast('Card added! (' + fcCards.length + ' total)');
+    }
+    
+    function deleteCurrentCard() {
+      if (fcCards.length === 0) { showToast('No cards to delete'); return; }
+      if (!confirm('Delete this card? "' + fcCards[fcIndex].question + '"')) return;
+      var cardToDelete = fcCards[fcIndex];
+      allSaved = getFlashcards(cu.id);
+      allSaved = allSaved.filter(function(c) { return c.id !== cardToDelete.id; });
+      saveFlashcards(cu.id, allSaved);
+      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      if (fcCards.length === 0) fcIndex = 0;
+      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
+      updateCard();
+      renderAllCardsList();
+      showToast('Card deleted');
+    }
+    
+    function renderAllCardsList() {
+      var container = document.getElementById('allCardsList');
+      var cards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      document.getElementById('totalCardsCount').textContent = cards.length;
+      if (cards.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No cards for this subject yet.<br>Add your first card above!</p>'; return; }
+      container.innerHTML = cards.map(function(c, i) {
+        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:10px;margin-bottom:6px;' + (i === fcIndex ? 'border:1px solid var(--primary);' : '') + '">' +
+          '<div style="flex:1;font-size:0.7rem;"><strong>Q:</strong> ' + c.question + '<br><small style="color:var(--text-light);"><strong>A:</strong> ' + c.answer + '</small></div>' +
+          '<button onclick="deleteCardById(' + c.id + ')" style="background:none;border:none;color:#e74c3c;cursor:pointer;flex-shrink:0;"><i class="fas fa-trash"></i></button>' +
+        '</div>';
+      }).join('');
+    }
+    
+    function deleteCardById(id) {
+      if (!confirm('Delete this card?')) return;
+      allSaved = getFlashcards(cu.id);
+      allSaved = allSaved.filter(function(c) { return c.id !== id; });
+      saveFlashcards(cu.id, allSaved);
+      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      if (fcCards.length === 0) fcIndex = 0;
+      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
+      updateCard();
+      renderAllCardsList();
+      showToast('Card deleted');
+    }
+    
+    initFC();
+    initMobileMenu();
+    initThemeSelector();
+  </script>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Welcome</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <style>
+    @keyframes floatUp {
+      0% { transform: translateY(60px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes popIn {
+      0% { transform: scale(0); opacity: 0; }
+      60% { transform: scale(1.15); }
+      80% { transform: scale(0.95); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes slideRight {
+      0% { transform: translateX(-80px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideLeft {
+      0% { transform: translateX(80px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideUp {
+      0% { transform: translateY(50px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes glowPulse {
+      0%, 100% { box-shadow: 0 0 20px rgba(255,255,255,0.3); }
+      50% { box-shadow: 0 0 50px rgba(255,255,255,0.6), 0 0 80px rgba(0,255,255,0.4); }
+    }
+    @keyframes stripeMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-30px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(500px) rotate(720deg); opacity: 0; }
+    }
+    @keyframes iconBounce {
+      0%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-15px); }
+      50% { transform: translateY(0); }
+      70% { transform: translateY(-8px); }
+    }
+    @keyframes ripple {
+      0% { transform: scale(0); opacity: 1; }
+      100% { transform: scale(4); opacity: 0; }
+    }
+    @keyframes sparkle {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-80px) scale(0); opacity: 0; }
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(30px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes numberCount {
+      0% { opacity: 0; transform: scale(0.5); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    
+    .anim-float-up { animation: floatUp 0.8s ease forwards; opacity: 0; }
+    .anim-pop { animation: popIn 0.7s cubic-bezier(0.68,-0.55,0.27,1.55) forwards; opacity: 0; }
+    .anim-slide-right { animation: slideRight 0.7s ease forwards; opacity: 0; }
+    .anim-slide-left { animation: slideLeft 0.7s ease forwards; opacity: 0; }
+    .anim-slide-up { animation: slideUp 0.7s ease forwards; opacity: 0; }
+    .anim-fade-up { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+    .anim-number { animation: numberCount 0.5s ease forwards; opacity: 0; }
+    
+    .delay-1 { animation-delay: 0.1s; }
+    .delay-2 { animation-delay: 0.25s; }
+    .delay-3 { animation-delay: 0.4s; }
+    .delay-4 { animation-delay: 0.55s; }
+    .delay-5 { animation-delay: 0.7s; }
+    .delay-6 { animation-delay: 0.85s; }
+    .delay-7 { animation-delay: 1.0s; }
+    .delay-8 { animation-delay: 1.15s; }
+    
+    .welcome-hero {
+      text-align: center;
+      padding: 40px 24px 32px;
+      border-radius: 28px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .welcome-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+      animation: stripeMove 3s linear infinite;
+      z-index: 0;
+    }
+    .welcome-hero::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.15), transparent 70%);
+      z-index: 0;
+    }
+    .welcome-hero > * { position: relative; z-index: 1; }
+    
+    .welcome-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      background: rgba(255,255,255,0.2);
+      border: 2px solid rgba(255,255,255,0.5);
+      animation: glowPulse 3s ease infinite, iconBounce 3s ease infinite;
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-avatar .ripple-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid rgba(255,255,255,0.4);
+      animation: ripple 2s ease-out infinite;
+    }
+    .welcome-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
+    .welcome-avatar i {
+      font-size: 48px;
+      color: white;
+    }
+    
+    .welcome-name {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+      text-shadow: 0 3px 12px rgba(0,0,0,0.2);
+    }
+    .welcome-class {
+      font-size: 0.9rem;
+      opacity: 0.9;
+      color: white;
+      font-weight: 500;
+      margin-bottom: 12px;
+    }
+    .welcome-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .stats-grid-welcome {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-card-welcome {
+      text-align: center;
+      padding: 22px 14px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .stat-card-welcome:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+    .stat-card-welcome .stat-number {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .stat-card-welcome .stat-text {
+      font-size: 0.65rem;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      margin-top: 6px;
+      opacity: 0.7;
+    }
+    
+    .quote-card-welcome {
+      text-align: center;
+      padding: 24px 20px;
+      border-radius: 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .quote-card-welcome .quote-text {
+      font-style: italic;
+      font-size: 0.95rem;
+      font-weight: 500;
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    .quote-card-welcome .quote-author {
+      font-size: 0.7rem;
+      opacity: 0.5;
+      font-weight: 600;
+    }
+    
+    .welcome-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    
+    .confetti-piece {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      border-radius: 2px;
+      z-index: 999;
+      pointer-events: none;
+      animation: confettiFall 3s ease-in forwards;
+    }
+    
+    .sparkle-dot {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: white;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: sparkle 0.8s ease forwards;
+    }
+    
+    @media (min-width: 600px) {
+      .stats-grid-welcome { grid-template-columns: repeat(4, 1fr); }
+      .welcome-buttons { flex-direction: row; }
+      .welcome-name { font-size: 2rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div id="confettiContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998;"></div>
+  
+  <div class="app-container">
+    
+    <div class="mobile-header">
+      <div class="header-logo"><i class="fas fa-book-open"></i><span>WELCOME</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html" style="display:flex;align-items:center;text-decoration:none;">
+          <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.85rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <main class="main-content">
+      
+      <!-- HERO AVEC AVATAR ANIMÉ -->
+      <div class="welcome-hero anim-pop" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+        <div class="welcome-avatar" id="welcomeAvatar">
+          <div class="ripple-ring"></div>
+          <i class="fas fa-user-graduate"></i>
+        </div>
+        <div class="welcome-name anim-float-up delay-2" id="welcomeName">Welcome!</div>
+        <div class="welcome-class anim-float-up delay-3" id="welcomeInfo"></div>
+        <div class="welcome-badge anim-float-up delay-4">
+          <i class="fas fa-star"></i> SMART GRADE v4.0
+        </div>
+      </div>
+      
+      <!-- STATS -->
+      <div class="stats-grid-welcome">
+        <div class="stat-card-welcome anim-slide-right delay-5">
+          <div class="stat-number anim-number delay-5" id="wOverall">0.00</div>
+          <div class="stat-text">Overall</div>
+        </div>
+        <div class="stat-card-welcome anim-slide-left delay-5">
+          <div class="stat-number anim-number delay-5" id="wGrades">0</div>
+          <div class="stat-text">Grades</div>
+        </div>
+        <div class="stat-card-welcome anim-slide-right delay-6">
+          <div class="stat-number anim-number delay-6" id="wBadges">0</div>
+          <div class="stat-text">Badges</div>
+        </div>
+        <div class="stat-card-welcome anim-slide-left delay-6">
+          <div class="stat-number anim-number delay-6" id="wStreak">0</div>
+          <div class="stat-text">Day Streak</div>
+        </div>
+      </div>
+      
+      <!-- QUOTE -->
+      <div class="quote-card-welcome anim-slide-up delay-7">
+        <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
+        <p class="quote-text" id="wQuote"></p>
+        <p class="quote-author" id="wAuthor"></p>
+      </div>
+      
+      <!-- BUTTONS -->
+      <div class="welcome-buttons anim-slide-up delay-8">
+        <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-chalkboard-user"></i> Go to Dashboard</a>
+        <a href="notifications.html" class="btn btn-secondary"><i class="fas fa-bell"></i> Notifications</a>
+      </div>
+      
+    </main>
+  </div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var cu = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
+    if (!cu) { location = 'login.html'; }
+    
+    var profile = getProfile(cu.id);
+    
+    var avatarContainer = document.getElementById('welcomeAvatar');
+    if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+      avatarContainer.innerHTML = '<div class="ripple-ring"></div><img src="' + profile.avatarBase64 + '" alt="Avatar">';
+    } else {
+      avatarContainer.innerHTML = '<div class="ripple-ring"></div><i class="fas fa-user-graduate"></i>';
+    }
+    
+    document.getElementById('welcomeName').textContent = 'Welcome, ' + cu.name + '!';
+    document.getElementById('welcomeInfo').textContent = cu.class + ' - #' + cu.number;
+    
+    var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + cu.id) || '[]');
+    var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + cu.id) || '[]');
+    var streak = JSON.parse(localStorage.getItem('smartgrade_streak_' + cu.id) || '{"days":0}');
+    
+    var t1 = calculateStudentTermAverage ? calculateStudentTermAverage(cu.id, 1) : 0;
+    var t2 = calculateStudentTermAverage ? calculateStudentTermAverage(cu.id, 2) : 0;
+    var t3 = calculateStudentTermAverage ? calculateStudentTermAverage(cu.id, 3) : 0;
+    var overall = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
+    
+    document.getElementById('wOverall').textContent = overall.toFixed(2);
+    document.getElementById('wGrades').textContent = grades.length;
+    document.getElementById('wBadges').textContent = ach.filter(function(a) { return a.unlocked; }).length;
+    document.getElementById('wStreak').textContent = streak.days || 0;
+    
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+      headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+    } else {
+      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+    }
+    
+    var quotes = [
+      { q: "Success is not final, failure is not fatal. It is the courage to continue that counts.", a: "Winston Churchill" },
+      { q: "The future belongs to those who believe in the beauty of their dreams.", a: "Eleanor Roosevelt" },
+      { q: "Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", a: "Malcolm X" },
+      { q: "It does not matter how slowly you go as long as you do not stop.", a: "Confucius" },
+      { q: "The expert in anything was once a beginner.", a: "Helen Hayes" },
+      { q: "The beautiful thing about learning is that no one can take it away from you.", a: "B.B. King" },
+      { q: "Education is not the filling of a pail, but the lighting of a fire.", a: "W.B. Yeats" }
+    ];
+    var q = quotes[Math.floor(Math.random() * quotes.length)];
+    document.getElementById('wQuote').textContent = '"' + q.q + '"';
+    document.getElementById('wAuthor').textContent = '- ' + q.a;
+    
+    function launchConfetti() {
+      var container = document.getElementById('confettiContainer');
+      var colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#00bcd4', '#ff6b6b', '#ffd93d'];
+      for (var i = 0; i < 60; i++) {
+        var piece = document.createElement('div');
+        piece.className = 'confetti-piece';
+        piece.style.left = Math.random() * 100 + '%';
+        piece.style.top = -(Math.random() * 30) + 'px';
+        piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        piece.style.animationDelay = Math.random() * 2 + 's';
+        piece.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
+        piece.style.width = (Math.random() * 8 + 4) + 'px';
+        piece.style.height = (Math.random() * 8 + 4) + 'px';
+        container.appendChild(piece);
+        setTimeout(function() { if (piece.parentNode) piece.remove(); }, 4000);
+      }
+    }
+    setTimeout(launchConfetti, 400);
+    
+    document.getElementById('welcomeAvatar').addEventListener('click', function(e) {
+      var sparkColors = ['#fff', '#ffd93d', '#ff6b6b', '#00ffff', '#ff69b4'];
+      for (var i = 0; i < 15; i++) {
+        var dot = document.createElement('div');
+        dot.className = 'sparkle-dot';
+        dot.style.left = (e.clientX + (Math.random() - 0.5) * 100) + 'px';
+        dot.style.top = (e.clientY + (Math.random() - 0.5) * 100) + 'px';
+        dot.style.backgroundColor = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+        dot.style.width = (Math.random() * 8 + 3) + 'px';
+        dot.style.height = dot.style.width;
+        dot.style.animationDuration = (Math.random() * 0.5 + 0.8) + 's';
+        document.body.appendChild(dot);
+        setTimeout(function() { if (dot.parentNode) dot.remove(); }, 1000);
+      }
+    });
+    
+    initThemeSelector();
+    localStorage.setItem('smartgrade_last_page', 'welcome.html');
+    
+    requestNotificationPermission();
+    checkStreakMilestone(cu.id);
+    checkAndNotifyAchievements(cu.id);
+  </script>
+</body>
+</html>

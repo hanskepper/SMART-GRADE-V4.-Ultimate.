@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Settings</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .subjects-beautiful-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:500px;overflow-y:auto;padding:2px;}
+    .subject-beautiful-card{background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.25s ease;display:flex;align-items:center;gap:10px;}
+    .subject-beautiful-card:active{transform:scale(0.97);}
+    .subject-beautiful-card.selected{border-color:var(--primary);background:rgba(15,59,72,0.04);}
+    .subject-beautiful-card.selected .subject-check-circle{background:var(--primary);color:white;border-color:var(--primary);}
+    .subject-beautiful-card.selected .subject-check-circle i{display:block;}
+    .subject-icon-circle{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;color:white;}
+    .subject-info-flex{flex:1;min-width:0;}
+    .subject-name-beautiful{font-weight:600;font-size:0.75rem;line-height:1.2;margin-bottom:4px;}
+    .coeff-row-modern{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);padding:4px 8px;border-radius:30px;width:fit-content;}
+    .coeff-row-modern span{font-size:0.6rem;color:var(--text-light);font-weight:500;}
+    .coeff-value-modern{font-weight:800;font-size:0.85rem;color:var(--primary);min-width:28px;text-align:center;}
+    .coeff-btn-modern{width:26px;height:26px;border-radius:50%;border:none;background:var(--card-bg);color:var(--text);font-weight:700;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.1);}
+    .coeff-btn-modern:active{transform:scale(0.9);}
+    .coeff-btn-modern.minus{background:rgba(231,76,60,0.12);color:#e74c3c;}
+    .coeff-btn-modern.plus{background:rgba(46,204,113,0.12);color:#27ae60;}
+    .subject-check-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.7rem;}
+    .subject-check-circle i{display:none;}
+    .subjects-counter{text-align:center;padding:12px;border-radius:14px;margin-top:12px;font-weight:600;font-size:0.8rem;}
+    .subjects-counter.valid{background:rgba(46,204,113,0.1);color:#27ae60;border:1px solid rgba(46,204,113,0.3);}
+    .subjects-counter.invalid{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);}
+    .term-selector-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;}
+    .term-btn-modern{flex:1;min-width:100px;padding:12px 16px;border-radius:60px;text-align:center;cursor:pointer;font-weight:600;font-size:0.75rem;background:rgba(0,0,0,0.03);border:2px solid var(--border);color:var(--text);transition:all 0.25s ease;display:flex;align-items:center;justify-content:center;gap:8px;}
+    .term-btn-modern i{font-size:0.85rem;}
+    .term-btn-modern.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border-color:transparent;box-shadow:0 4px 15px rgba(15,59,72,0.25);}
+    .term-btn-modern:active{transform:scale(0.96);}
+    .sc-1{background:linear-gradient(135deg,#3498db,#2980b9);}
+    .sc-2{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+    .sc-3{background:linear-gradient(135deg,#9b59b6,#8e44ad);}
+    .sc-4{background:linear-gradient(135deg,#2ecc71,#27ae60);}
+    .sc-5{background:linear-gradient(135deg,#e67e22,#d35400);}
+    .sc-6{background:linear-gradient(135deg,#00bcd4,#0097a7);}
+    .sc-7{background:linear-gradient(135deg,#f39c12,#e67e22);}
+    .sc-8{background:linear-gradient(135deg,#1abc9c,#16a085);}
+    .sc-9{background:linear-gradient(135deg,#27ae60,#1e8449);}
+    .sc-10{background:linear-gradient(135deg,#3498db,#2471a3);}
+    .sc-11{background:linear-gradient(135deg,#e74c3c,#c0392b);}
+    .sc-12{background:linear-gradient(135deg,#8e44ad,#7d3c98);}
+    .sc-13{background:linear-gradient(135deg,#2980b9,#1a5276);}
+    .sc-14{background:linear-gradient(135deg,#f39c12,#d68910);}
+    @media(max-width:500px){
+      .subjects-beautiful-grid{grid-template-columns:1fr;}
+      .term-btn-modern{min-width:80px;padding:10px 12px;font-size:0.7rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-sliders-h"></i><span>SETTINGS</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet">
+          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
+          <div class="font-sheet" data-font="medium">A</div>
+          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
+        </div>
+      </div>
+    </div>
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="settings.html" class="nav-item active"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <main class="main-content">
+      
+      <!-- SECTION: MISE A JOUR -->
+      <div class="glass-card" id="updateSection">
+        <h3><i class="fas fa-sync-alt"></i> Update</h3>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
+          <div>
+            <span style="font-size:0.75rem;">Current version: <strong id="currentVersion">4.0.Ultimate</strong></span>
+            <div id="updateStatus" style="font-size:0.65rem;color:var(--text-light);margin-top:4px;">
+              <i class="fas fa-check-circle" style="color:#27ae60;"></i> Up to date
+            </div>
+          </div>
+          <button class="btn btn-primary" id="checkUpdateBtn" style="width:auto;padding:8px 20px;">
+            <i class="fas fa-search"></i> Check
+          </button>
+        </div>
+        <div id="updateInfo" style="display:none;margin-top:12px;padding:12px;background:rgba(46,204,113,0.1);border-radius:12px;">
+          <div style="font-weight:700;color:#27ae60;">New version available!</div>
+          <div id="releaseNotes" style="font-size:0.65rem;margin:8px 0;"></div>
+          <button class="btn btn-primary" id="downloadUpdateBtn" style="background:linear-gradient(135deg,#e74c3c,#c0392b);margin-top:8px;">
+            <i class="fas fa-download"></i> Download Update
+          </button>
+        </div>
+      </div>
+      
+      <!-- SECTION: SUBJECTS BY TERM -->
+      <div class="glass-card">
+        <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
+        <div class="term-selector-row" id="termSelector">
+          <div class="term-btn-modern" data-term="1"><i class="fas fa-1"></i> Term 1</div>
+          <div class="term-btn-modern" data-term="2"><i class="fas fa-2"></i> Term 2</div>
+          <div class="term-btn-modern" data-term="3"><i class="fas fa-3"></i> Term 3</div>
+        </div>
+        <div class="subjects-beautiful-grid" id="settingsSubjectsList"></div>
+        <div class="subjects-counter valid" id="settingsCounter"><span id="counterText">0 subjects</span></div>
+        <div id="compAlert" style="display:none;padding:12px;border-radius:12px;margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-primary" onclick="saveSubjects()" style="flex:1;"><i class="fas fa-save"></i> Save Subjects</button>
+          <button class="btn btn-secondary" id="compBtn" onclick="showCompensation()" style="display:none;flex:1;"><i class="fas fa-balance-scale"></i> Compensate</button>
+        </div>
+      </div>
+      
+      <!-- SECTION: PROFILE INFO -->
+      <div class="glass-card">
+        <h3><i class="fas fa-user"></i> Profile</h3>
+        <div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div>
+        <div class="info-row"><div class="info-label">Number</div><div class="info-value" id="profileNumber">--</div></div>
+        <div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div>
+      </div>
+      
+      <!-- SECTION: CHANGE PIN -->
+      <div class="glass-card">
+        <h3><i class="fas fa-key"></i> Change PIN</h3>
+        <button class="btn btn-secondary" onclick="showPinModal()"><i class="fas fa-key"></i> Change PIN</button>
+      </div>
+      
+      <!-- SECTION: FINGERPRINT -->
+      <div class="glass-card">
+        <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
+        <div id="fingerprintSection"></div>
+      </div>
+      
+      <!-- SECTION: IMPORT BACKUP -->
+      <div class="glass-card">
+        <h3><i class="fas fa-file-import"></i> Import Backup File</h3>
+        <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleImport(event)">
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Import Backup (.json)</button>
+      </div>
+      
+      <!-- SECTION: DANGER ZONE -->
+      <div class="danger-zone">
+        <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+        <button class="btn btn-danger" onclick="resetAllGrades()"><i class="fas fa-trash"></i> Reset All Grades</button>
+        <button class="btn btn-danger mt-1" onclick="deleteAccount()"><i class="fas fa-user-slash"></i> Delete Account</button>
+      </div>
+      
+    </main>
+  </div>
+  
+  <!-- MODALS -->
+  <div id="pinModal" class="modal">
+    <div class="modal-content">
+      <i class="fas fa-lock" style="font-size:40px;color:var(--primary);"></i>
+      <h3>Change PIN</h3>
+      <input type="text" id="oldPin" placeholder="Current PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="text" id="newPin" placeholder="New PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="text" id="confirmNewPin" placeholder="Confirm PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closePinModal()">Cancel</button>
+        <button class="btn-confirm" onclick="changePin()">Save</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="compModal" class="modal">
+    <div class="modal-content">
+      <i class="fas fa-balance-scale" style="font-size:40px;color:var(--primary);"></i>
+      <h3>Confirm Compensation</h3>
+      <div id="compConfirmInfo"></div>
+      <input type="text" id="compPin" placeholder="Enter PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closeCompModal()">Cancel</button>
+        <button class="btn-confirm" onclick="confirmCompensation()">Confirm</button>
+      </div>
+    </div>
+  </div>
+  
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/confirm-dialog.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    var currentUser = null;
+    var currentTerm = 1;
+    var subjectToRemove = null;
+    var subjectNameToRemove = null;
+    var SUBJECT_COLORS = ['sc-1','sc-2','sc-3','sc-4','sc-5','sc-6','sc-7','sc-8','sc-9','sc-10','sc-11','sc-12','sc-13','sc-14'];
+    
+    function loadSettings() {
+      currentUser = requireAuth();
+      if (!currentUser) return;
+      
+      document.getElementById('profileName').innerHTML = currentUser.name;
+      document.getElementById('profileNumber').innerHTML = currentUser.number;
+      document.getElementById('profileClass').innerHTML = currentUser.class;
+      
+      loadSubjects();
+      loadFingerprintSection();
+      initHeaderProfile();
+    }
+    
+    function loadSubjects() {
+      var selected = getStudentSelectedSubjects(currentUser.id, currentTerm);
+      var coeffs = getSubjectCoefficients(currentUser.id);
+      
+      var container = document.getElementById('settingsSubjectsList');
+      var html = '';
+      for (var i = 0; i < DEFAULT_SUBJECTS.length; i++) {
+        var subject = DEFAULT_SUBJECTS[i];
+        var isSelected = selected.indexOf(subject.id) !== -1;
+        var colorClass = SUBJECT_COLORS[i] || 'sc-1';
+        var coeff = coeffs[subject.id] || 5;
+        
+        html += '<div class="subject-beautiful-card ' + (isSelected ? 'selected' : '') + '" data-id="' + subject.id + '" onclick="toggleSubject(' + subject.id + ', this)">';
+        html += '<div class="subject-icon-circle ' + colorClass + '"><i class="fas ' + subject.icon + '"></i></div>';
+        html += '<div class="subject-info-flex">';
+        html += '<div class="subject-name-beautiful">' + subject.name + '</div>';
+        html += '<div class="coeff-row-modern" onclick="event.stopPropagation()">';
+        html += '<span>Coeff:</span>';
+        html += '<button class="coeff-btn-modern minus" onclick="adjustCoefficient(' + subject.id + ', -1)">-</button>';
+        html += '<span class="coeff-value-modern" id="coeff-' + subject.id + '">' + coeff + '</span>';
+        html += '<button class="coeff-btn-modern plus" onclick="adjustCoefficient(' + subject.id + ', 1)">+</button>';
+        html += '</div></div>';
+        html += '<div class="subject-check-circle"><i class="fas fa-check"></i></div></div>';
+      }
+      container.innerHTML = html;
+      
+      updateCounter();
+      checkCompensation();
+    }
+    
+    function toggleSubject(subjectId, element) {
+      var selected = getStudentSelectedSubjects(currentUser.id, currentTerm);
+      var index = selected.indexOf(subjectId);
+      
+      if (index !== -1) {
+        selected.splice(index, 1);
+        element.classList.remove('selected');
+      } else {
+        if (selected.length >= 14) {
+          showToast('Maximum 14 subjects allowed per term');
+          return;
+        }
+        selected.push(subjectId);
+        element.classList.add('selected');
+      }
+      
+      saveStudentSelectedSubjects(currentUser.id, currentTerm, selected);
+      updateCounter();
+      checkCompensation();
+      playActionFeedback();
+    }
+    
+    function adjustCoefficient(subjectId, delta) {
+      var coeffs = getSubjectCoefficients(currentUser.id);
+      var current = coeffs[subjectId] || 5;
+      var newValue = current + delta;
+      
+      if (newValue >= 1 && newValue <= 10) {
+        coeffs[subjectId] = newValue;
+        saveSubjectCoefficients(currentUser.id, coeffs);
+        document.getElementById('coeff-' + subjectId).innerHTML = newValue;
+        playActionFeedback();
+      }
+    }
+    
+    function updateCounter() {
+      var selected = document.querySelectorAll('.subject-beautiful-card.selected');
+      var count = selected.length;
+      var counterDiv = document.getElementById('settingsCounter');
+      var counterText = document.getElementById('counterText');
+      
+      if (count >= 10 && count <= 14) {
+        counterDiv.className = 'subjects-counter valid';
+        counterText.innerHTML = '<i class="fas fa-check-circle"></i> ' + count + ' subjects selected (min 10, max 14)';
+      } else {
+        counterDiv.className = 'subjects-counter invalid';
+        counterText.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + count + ' selected - Need 10-14 subjects';
+      }
+    }
+    
+    function saveSubjects() {
+      var selected = [];
+      document.querySelectorAll('.subject-beautiful-card.selected').forEach(function(card) {
+        selected.push(parseInt(card.dataset.id));
+      });
+      
+      if (selected.length < 10 || selected.length > 14) {
+        showToast('Please select between 10 and 14 subjects');
+        return;
+      }
+      
+      saveStudentSelectedSubjects(currentUser.id, currentTerm, selected);
+      playActionFeedback();
+      showToast('Subjects saved successfully!');
+    }
+    
+    function checkCompensation() {
+      var selected = [];
+      document.querySelectorAll('.subject-beautiful-card.selected').forEach(function(card) {
+        selected.push(parseInt(card.dataset.id));
+      });
+      
+      var t1 = getStudentSelectedSubjects(currentUser.id, 1).length;
+      var t2 = getStudentSelectedSubjects(currentUser.id, 2).length;
+      var t3 = getStudentSelectedSubjects(currentUser.id, 3).length;
+      var minCount = Math.min(t1, t2, t3);
+      var compBtn = document.getElementById('compBtn');
+      var compAlert = document.getElementById('compAlert');
+      
+      if (selected.length > minCount) {
+        compBtn.style.display = 'flex';
+        compAlert.style.display = 'block';
+        compAlert.style.background = 'rgba(231,76,60,0.08)';
+        compAlert.style.color = '#e74c3c';
+        compAlert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + selected.length + ' subjects vs ' + minCount + ' in other terms';
+      } else {
+        compBtn.style.display = 'none';
+        compAlert.style.display = 'none';
+      }
+    }
+    
+    function showCompensation() {
+      var t1 = getStudentSelectedSubjects(currentUser.id, 1);
+      var t2 = getStudentSelectedSubjects(currentUser.id, 2);
+      var t3 = getStudentSelectedSubjects(currentUser.id, 3);
+      var minCount = Math.min(t1.length, t2.length, t3.length);
+      var current = getStudentSelectedSubjects(currentUser.id, currentTerm);
+      
+      if (current.length <= minCount) {
+        showToast('No surplus subjects to compensate');
+        return;
+      }
+      
+      var others = currentTerm === 1 ? t2.concat(t3) : (currentTerm === 2 ? t1.concat(t3) : t1.concat(t2));
+      var extra = null;
+      
+      for (var i = 0; i < current.length; i++) {
+        if (others.indexOf(current[i]) === -1) {
+          extra = current[i];
+          break;
+        }
+      }
+      
+      if (!extra) {
+        showToast('All subjects are present in other terms');
+        return;
+      }
+      
+      subjectToRemove = extra;
+      var subjectObj = DEFAULT_SUBJECTS.find(function(s) { return s.id === extra; });
+      subjectNameToRemove = subjectObj ? subjectObj.name : 'Unknown';
+      
+      var grades = getStudentGrades(currentUser.id);
+      var termAvg = calculateStudentTermAverage(currentUser.id, currentTerm);
+      var subjectAvg = calculateSubjectTermAverage(extra, currentTerm, grades);
+      var remaining = current.length - 1;
+      var adjustment = remaining > 0 ? (subjectAvg - termAvg) / remaining : 0;
+      
+      document.getElementById('compConfirmInfo').innerHTML = '<p style="margin:10px 0;">Remove: <strong>' + subjectNameToRemove + '</strong> (' + formatNumber(subjectAvg) + ')</p><p>Current Term Avg: <strong>' + formatNumber(termAvg) + '</strong></p><p>Adjustment: <strong>+' + formatNumber(adjustment) + '</strong> per remaining subject</p>';
+      
+      document.getElementById('compModal').classList.add('active');
+    }
+    
+    function closeCompModal() {
+      document.getElementById('compModal').classList.remove('active');
+      document.getElementById('compPin').value = '';
+    }
+    
+    function confirmCompensation() {
+      var pin = document.getElementById('compPin').value;
+      if (pin !== currentUser.pin) {
+        showToast('Wrong PIN');
+        return;
+      }
+      
+      applyCompensation(currentUser.id, currentTerm, subjectToRemove);
+      playActionFeedback();
+      showToast('Compensation applied!');
+      closeCompModal();
+      loadSubjects();
+    }
+    
+    function loadFingerprintSection() {
+      var container = document.getElementById('fingerprintSection');
+      if (currentUser.hasFingerprint) {
+        container.innerHTML = '<div style="background:rgba(46,204,113,0.1);padding:12px;border-radius:12px;margin-bottom:8px;"><i class="fas fa-check-circle" style="color:#27ae60;"></i> Fingerprint enabled</div><div style="display:flex;gap:8px;"><button class="btn btn-secondary" onclick="registerFingerprint()">Change</button><button class="btn btn-danger" onclick="removeFingerprint()">Remove</button></div>';
+      } else {
+        container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>';
+      }
+    }
+    
+    function registerFingerprint() {
+      registerFingerprint(currentUser.id, currentUser.name, function(result) {
+        if (result.success) {
+          currentUser = getStudentById(currentUser.id);
+          setCurrentStudent(currentUser);
+          loadFingerprintSection();
+          showToast(result.message);
+        } else {
+          showToast(result.message);
+        }
+      });
+    }
+    
+    function removeFingerprint() {
+      if (confirm('Remove fingerprint from this account?')) {
+        removeFingerprint(currentUser.id);
+        currentUser = getStudentById(currentUser.id);
+        setCurrentStudent(currentUser);
+        loadFingerprintSection();
+        showToast('Fingerprint removed');
+      }
+    }
+    
+    function showPinModal() {
+      document.getElementById('pinModal').classList.add('active');
+    }
+    
+    function closePinModal() {
+      document.getElementById('pinModal').classList.remove('active');
+      document.getElementById('oldPin').value = '';
+      document.getElementById('newPin').value = '';
+      document.getElementById('confirmNewPin').value = '';
+    }
+    
+    function changePin() {
+      var oldPin = document.getElementById('oldPin').value;
+      var newPin = document.getElementById('newPin').value;
+      var confirmPin = document.getElementById('confirmNewPin').value;
+      
+      if (!newPin || newPin.length !== 4) {
+        showToast('PIN must be 4 digits');
+        return;
+      }
+      if (newPin !== confirmPin) {
+        showToast('PINs do not match');
+        return;
+      }
+      
+      var result = changePin(currentUser.id, oldPin, newPin);
+      if (result.success) {
+        currentUser = getStudentById(currentUser.id);
+        setCurrentStudent(currentUser);
+        showToast('PIN changed successfully');
+        closePinModal();
+      } else {
+        showToast(result.message);
+      }
+    }
+    
+    function handleImport(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        showConfirmDialog({
+          title: 'Import Backup',
+          message: 'This will overwrite your current data. Are you sure?',
+          icon: 'fa-exclamation-triangle',
+          iconColor: '#f39c12',
+          confirmText: 'Import',
+          confirmColor: '#f39c12',
+          onConfirm: function() {
+            var result = importAllData(currentUser.id, ev.target.result);
+            if (result.success) {
+              showToast('Import successful! Reloading...');
+              setTimeout(function() { location.reload(); }, 1500);
+            } else {
+              showToast(result.message);
+            }
+          }
+        });
+      };
+      reader.readAsText(file);
+      event.target.value = '';
+    }
+    
+    function resetAllGrades() {
+      showConfirmDialog({
+        title: 'Reset All Grades',
+        message: 'This will delete ALL your grades. This cannot be undone!',
+        icon: 'fa-trash-alt',
+        iconColor: '#e74c3c',
+        confirmText: 'Reset',
+        confirmColor: '#e74c3c',
+        onConfirm: function() {
+          saveStudentGrades(currentUser.id, []);
+          saveStudentAchievements(currentUser.id, []);
+          showToast('All grades deleted');
+          setTimeout(function() { location.reload(); }, 1000);
+        }
+      });
+    }
+    
+    function deleteAccount() {
+      showConfirmDialog({
+        title: 'Delete Account',
+        message: 'This will permanently delete your account. This cannot be undone!',
+        icon: 'fa-user-slash',
+        iconColor: '#e74c3c',
+        confirmText: 'Delete',
+        confirmColor: '#e74c3c',
+        onConfirm: function() {
+          showPromptDialog({
+            title: 'Confirm Deletion',
+            message: 'Enter your PIN to confirm account deletion',
+            inputType: 'password',
+            maxlength: '4',
+            placeholder: '****',
+            onConfirm: function(pin) {
+              if (pin === currentUser.pin) {
+                deleteStudent(currentUser.id);
+                clearCurrentStudent();
+                showToast('Account deleted');
+                setTimeout(function() { location.href = 'index.html'; }, 1500);
+              } else {
+                showToast('Wrong PIN');
+              }
+            }
+          });
+        }
+      });
+    }
+    
+    document.querySelectorAll('.term-btn-modern').forEach(function(btn, index) {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.term-btn-modern').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        currentTerm = index + 1;
+        loadSubjects();
+      });
+    });
+    
+    document.querySelector('.term-btn-modern[data-term="1"]').classList.add('active');
+    
+    loadSettings();
+    initMobileMenu();
+    initThemeSelector();
+    
+    // ============================================
+    // GESTION MISE A JOUR DANS SETTINGS
+    // ============================================
+    function refreshUpdateStatus() {
+      var updateAvailable = localStorage.getItem('smartgrade_update_available') === 'true';
+      var newVersion = localStorage.getItem('smartgrade_new_version');
+      var releaseNotes = localStorage.getItem('smartgrade_release_notes');
+      var updateInfoDiv = document.getElementById('updateInfo');
+      var updateStatusDiv = document.getElementById('updateStatus');
+      
+      if (updateAvailable && newVersion) {
+        updateInfoDiv.style.display = 'block';
+        document.getElementById('releaseNotes').innerHTML = releaseNotes || 'New features and improvements';
+        updateStatusDiv.innerHTML = '<i class="fas fa-download" style="color:#f39c12;"></i> Version ' + newVersion + ' available';
+      } else {
+        updateInfoDiv.style.display = 'none';
+        updateStatusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#27ae60;"></i> Up to date';
+      }
+    }
+    
+    if (document.getElementById('checkUpdateBtn')) {
+      document.getElementById('checkUpdateBtn').onclick = function() {
+        showToast('Checking for updates...');
+        if (typeof checkForUpdates === 'function') {
+          checkForUpdates();
+          setTimeout(refreshUpdateStatus, 2000);
+        } else {
+          fetch('https://smart-grade-v4.github.io/version.json?t=' + Date.now())
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              if (data.version && data.version !== '4.0.3') {
+                localStorage.setItem('smartgrade_update_available', 'true');
+                localStorage.setItem('smartgrade_new_version', data.version);
+                localStorage.setItem('smartgrade_release_notes', data.releaseNotes || '');
+                refreshUpdateStatus();
+                showToast('New version available!');
+              } else {
+                showToast('Up to date');
+              }
+            })
+            .catch(function() { showToast('Check failed'); });
+        }
+      };
+    }
+    
+    if (document.getElementById('downloadUpdateBtn')) {
+      document.getElementById('downloadUpdateBtn').onclick = function() {
+        if (typeof downloadUpdate === 'function') {
+          downloadUpdate();
+        } else {
+          showToast('Download function not available');
+        }
+      };
+    }
+    
+    refreshUpdateStatus();
+  </script>
+</body>
+</html>

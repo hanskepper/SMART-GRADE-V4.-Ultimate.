@@ -27,12 +27,21 @@
     .streak-card{display:flex;gap:12px;padding:14px;background:var(--card-bg);border-radius:14px;margin-bottom:8px;border:1px solid var(--border);align-items:center;}
     .streak-card.locked{opacity:0.5;}
     .streak-icon{font-size:1.8rem;width:40px;text-align:center;}
+    .streak-info{flex:1;}
+    .streak-name{font-weight:700;font-size:0.8rem;}
+    .streak-desc{font-size:0.6rem;color:var(--text-light);}
+    .streak-status{font-size:0.55rem;min-width:80px;text-align:right;}
+    .streak-status.unlocked{color:#2ecc71;}
+    .streak-status.locked{color:#95a5a6;}
+    .load-more-btn{text-align:center;margin-top:16px;padding:12px;background:var(--card-bg);border-radius:40px;cursor:pointer;border:1px solid var(--border);transition:all 0.2s;}
+    .load-more-btn:active{transform:scale(0.97);}
+    .load-more-btn i{color:var(--primary);margin-right:8px;}
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>ACHIEVEMENTS</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-medal"></i><span>ACHIEVEMENTS</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
     <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
     <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="achievements.html" class="nav-item active"><i class="fas fa-medal"></i> Achievements</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
     <div class="overlay" id="overlay"></div>
@@ -46,18 +55,143 @@
         <div style="margin-top:8px;font-size:0.6rem;color:var(--text-light);">Streak: <strong id="streakDays">0</strong> days</div>
       </div>
       
+      <!-- STREAK BADGES -->
       <div class="glass-card"><h3><i class="fas fa-fire"></i> Streak Badges</h3><div id="streakList"></div></div>
       
+      <!-- ACHIEVEMENT BADGES -->
       <div class="glass-card"><h3><i class="fas fa-medal"></i> Achievement Badges</h3><div id="achievementsList"></div></div>
       
     </main>
   </div>
   <div id="toastContainer" class="toast-container"></div>
-  <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
   <script>
     var cu=null;
     var bc={1:'#3498db',2:'#f1c40f',3:'#2ecc71',4:'#9b59b6',5:'#e74c3c',6:'#1abc9c',7:'#e67e22',8:'#00bcd4',9:'#27ae60',10:'#8e44ad',11:'#f39c12',12:'#2980b9',13:'#c0392b',14:'#16a085'};
     var bi={1:'fa-pen',2:'fa-star',3:'fa-arrow-up',4:'fa-book-open',5:'fa-fire',6:'fa-graduation-cap',7:'fa-rocket',8:'fa-bolt',9:'fa-check-double',10:'fa-calendar-check',11:'fa-crown',12:'fa-chart-bar',13:'fa-trophy',14:'fa-medal'};
+    
+    // Variables pour le chargement infini des streaks
+    var currentCycleDisplay = 1;
+    var allStreakBadges = [];
+    var isLoading = false;
+    
+    // Générer tous les streaks badges (cycles infinis)
+    function generateAllStreakBadges(streakDays) {
+      var badges = [];
+      var cycle = 1;
+      var baseDays = 0;
+      var maxCycles = 20; // Générer 20 cycles (assez pour 600+ jours)
+      
+      while (cycle <= maxCycles) {
+        var cycleName = '';
+        if (cycle === 1) cycleName = '';
+        else if (cycle === 2) cycleName = 'Silver ';
+        else if (cycle === 3) cycleName = 'Gold ';
+        else if (cycle === 4) cycleName = 'Platinum ';
+        else if (cycle === 5) cycleName = 'Diamond ';
+        else if (cycle === 6) cycleName = 'Master ';
+        else if (cycle === 7) cycleName = 'Grand Master ';
+        else cycleName = 'Ultra ' + cycle + ' ';
+        
+        var milestones = [
+          { days: baseDays + 3, name: cycleName + 'Beginner', icon: 'fa-seedling', order: 1 },
+          { days: baseDays + 7, name: cycleName + 'Regular', icon: 'fa-leaf', order: 2 },
+          { days: baseDays + 15, name: cycleName + 'Dedicated', icon: 'fa-tree', order: 3 },
+          { days: baseDays + 30, name: cycleName + 'Legendary', icon: 'fa-mountain', order: 4 }
+        ];
+        
+        for (var i = 0; i < milestones.length; i++) {
+          badges.push({
+            days: milestones[i].days,
+            name: milestones[i].name,
+            icon: milestones[i].icon,
+            cycle: cycle,
+            order: milestones[i].order,
+            fullName: milestones[i].name + ' Streak'
+          });
+        }
+        
+        baseDays += 30;
+        cycle++;
+      }
+      
+      return badges;
+    }
+    
+    // Afficher les streaks (4 par cycle)
+    function displayStreakBadges(loadMore) {
+      var streakDays = parseInt(document.getElementById('streakDays').innerHTML) || 0;
+      var container = document.getElementById('streakList');
+      
+      if (!loadMore) {
+        currentCycleDisplay = 1;
+        allStreakBadges = generateAllStreakBadges(streakDays);
+      }
+      
+      // Calculer combien de cycles afficher (chaque cycle = 4 badges)
+      var cyclesToShow = currentCycleDisplay;
+      var badgesToShow = allStreakBadges.filter(function(b) {
+        return b.cycle <= cyclesToShow;
+      });
+      
+      // Vérifier si tous les badges du cycle sont débloqués pour charger le suivant
+      var currentCycleBadges = allStreakBadges.filter(function(b) { return b.cycle === currentCycleDisplay; });
+      var allUnlockedInCycle = currentCycleBadges.every(function(b) { return streakDays >= b.days; });
+      
+      var html = '';
+      for (var i = 0; i < badgesToShow.length; i++) {
+        var sb = badgesToShow[i];
+        var isUnlocked = streakDays >= sb.days;
+        
+        var statusHtml = '';
+        if (isUnlocked) {
+          statusHtml = '<span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Unlocked</span>';
+        } else {
+          statusHtml = '<span style="color:#95a5a6;">' + streakDays + '/' + sb.days + ' days</span>';
+        }
+        
+        html += '<div class="streak-card' + (isUnlocked ? '' : ' locked') + '">' +
+          '<div class="streak-icon" style="color:' + (isUnlocked ? '#f39c12' : '#95a5a6') + ';"><i class="fas ' + sb.icon + '"></i></div>' +
+          '<div class="streak-info">' +
+            '<div class="streak-name">' + sb.fullName + '</div>' +
+            '<div class="streak-desc">Use the app for ' + sb.days + ' days</div>' +
+          '</div>' +
+          '<div class="streak-status ' + (isUnlocked ? 'unlocked' : 'locked') + '">' + statusHtml + '</div>' +
+        '</div>';
+      }
+      
+      container.innerHTML = html;
+      
+      // Ajouter bouton "Load More" si nécessaire
+      var existingBtn = document.querySelector('.load-more-btn');
+      if (existingBtn) existingBtn.remove();
+      
+      // Vérifier si on peut charger plus (si le cycle actuel est complètement débloqué)
+      if (allUnlockedInCycle && currentCycleDisplay < 20) {
+        var loadMoreBtn = document.createElement('div');
+        loadMoreBtn.className = 'load-more-btn';
+        loadMoreBtn.innerHTML = '<i class="fas fa-chevron-down"></i> Show next cycle (' + (currentCycleDisplay + 1) + ')';
+        loadMoreBtn.onclick = function() {
+          if (isLoading) return;
+          isLoading = true;
+          currentCycleDisplay++;
+          displayStreakBadges(true);
+          isLoading = false;
+        };
+        container.parentNode.appendChild(loadMoreBtn);
+      } else if (allUnlockedInCycle && currentCycleDisplay >= 20) {
+        var endMsg = document.createElement('div');
+        endMsg.className = 'load-more-btn';
+        endMsg.style.opacity = '0.5';
+        endMsg.innerHTML = '<i class="fas fa-infinity"></i> All cycles completed';
+        container.parentNode.appendChild(endMsg);
+      }
+    }
     
     function loadAchievements(){
       cu=requireAuth();if(!cu)return;
@@ -69,7 +203,7 @@
       var hasPerfect=grades.some(function(g){return g.value===20;});
       var hasExcellent=grades.some(function(g){return g.value>=19.5;});
       var allTerms=(term1>0)&&(term2>0)&&(term3>0);
-      var improvement=Math.max(term2-term1,term3-term2);
+      var improvement=Math.max(term2-term1,term3-term1);
       var allSubjHaveGrades=activeSubs.every(function(s){return grades.some(function(g){return g.subjectId===s.id;});});
       var hasMastery=activeSubs.some(function(s){var sg=grades.filter(function(g){return g.subjectId===s.id;});return sg.length>0&&(sg.reduce(function(a,b){return a+b.value;},0)/sg.length)>=15;});
       
@@ -96,18 +230,19 @@
       }).join('');
       
       var streak=getStudentStreak(cu.id);
-      document.getElementById('streakDays').innerHTML=streak.days;
-      document.getElementById('streakList').innerHTML=STREAK_BADGES.map(function(sb){
-        var u=streak.days>=sb.days;
-        var icons={3:'fa-seedling',7:'fa-leaf',15:'fa-tree',30:'fa-mountain'};
-        return'<div class="streak-card'+(u?'':' locked')+'"><div class="streak-icon" style="color:'+(u?'#f39c12':'#95a5a6')+';"><i class="fas '+icons[sb.days]+'"></i></div><div style="flex:1;"><div style="font-weight:700;font-size:0.8rem;">'+sb.name+'</div><div style="font-size:0.6rem;color:var(--text-light);">'+sb.desc+' ('+Math.min(streak.days,sb.days)+'/'+sb.days+')</div></div>'+(u?'<i class="fas fa-check-circle" style="color:#2ecc71;"></i>':'<i class="fas fa-lock" style="color:#95a5a6;"></i>')+'</div>';
-      }).join('');
+      var streakDays = streak.days;
+      document.getElementById('streakDays').innerHTML=streakDays;
+      
+      // Afficher les streaks (4 par cycle)
+      displayStreakBadges(false);
       
       initHeaderProfile();
     }
     
-    loadAchievements();initMobileMenu();initThemeSelector();
-    checkAndNotifyAchievements(cu.id);
+    loadAchievements();
+    initMobileMenu();
+    initThemeSelector();
+    checkAndNotifyAchievements(cu && cu.id);
   </script>
 </body>
 </html>

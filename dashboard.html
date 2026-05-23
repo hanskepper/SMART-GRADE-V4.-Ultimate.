@@ -28,7 +28,7 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>DASHBOARD</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-chalkboard-user"></i><span>DASHBOARD</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
     <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
     <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav">
       <a href="dashboard.html" class="nav-item active"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
@@ -42,13 +42,13 @@
       <a href="statistics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Statistics</a>
       <a href="achievements.html" class="nav-item"><i class="fas fa-medal"></i> Achievements</a>
       <a href="history.html" class="nav-item"><i class="fas fa-history"></i> History</a>
-       <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
+      <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
       <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
       <a href="shortcuts.html" class="nav-item"><i class="fas fa-bolt"></i> Shortcuts</a>
       <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
       <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
       <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
-      <a href="guide.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+      <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
       <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
       <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </nav></div>
@@ -104,9 +104,29 @@
       {id:13,name:"FRENCH",icon:"fa-flag"},
       {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
     ];
+    
+    // 20 CITATIONS INSPIRANTES
     var MQ = [
       {q:"Success is not final, failure is not fatal.",a:"Churchill"},
-      {q:"Education is the passport to the future.",a:"Malcolm X"}
+      {q:"Education is the passport to the future.",a:"Malcolm X"},
+      {q:"The future belongs to those who believe in their dreams.",a:"Eleanor Roosevelt"},
+      {q:"It does not matter how slowly you go as long as you do not stop.",a:"Confucius"},
+      {q:"The expert in anything was once a beginner.",a:"Helen Hayes"},
+      {q:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
+      {q:"Strive for progress, not perfection.",a:"Unknown"},
+      {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
+      {q:"Fall seven times, stand up eight.",a:"Japanese Proverb"},
+      {q:"The only limit is your mind.",a:"Unknown"},
+      {q:"Start where you are. Use what you have.",a:"Arthur Ashe"},
+      {q:"Little by little, one travels far.",a:"Tolkien"},
+      {q:"You don't have to be great to start.",a:"Zig Ziglar"},
+      {q:"Make today so awesome that yesterday gets jealous.",a:"Unknown"},
+      {q:"Consistency is more important than perfection.",a:"Unknown"},
+      {q:"Every day is a new opportunity.",a:"Unknown"},
+      {q:"The difference between ordinary and extraordinary is that little extra.",a:"Jimmy Johnson"},
+      {q:"Small progress is still progress.",a:"Unknown"},
+      {q:"Never give up on a dream.",a:"Unknown"},
+      {q:"You are stronger than you think.",a:"A.A. Milne"}
     ];
     
     function getChartColors() {
@@ -188,7 +208,10 @@
       
       document.getElementById('greeting').innerHTML = getGreeting() + ', ' + current.name + '!';
       document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + current.class;
-      var q = MQ[Math.floor(Math.random() * MQ.length)];
+      
+      // Citation aléatoire
+      var randomIndex = Math.floor(Math.random() * MQ.length);
+      var q = MQ[randomIndex];
       document.getElementById('motivationQuote').innerHTML = '"' + q.q + '"';
       document.getElementById('motivationAuthor').innerHTML = '- ' + q.a;
       

@@ -14,55 +14,228 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .subjects-beautiful-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;max-height:500px;overflow-y:auto;padding:2px;}
-    .subject-beautiful-card{background:var(--card-bg);border:2px solid var(--border);border-radius:16px;padding:12px;cursor:pointer;transition:all 0.25s ease;display:flex;align-items:center;gap:10px;}
-    .subject-beautiful-card:active{transform:scale(0.97);}
-    .subject-beautiful-card.selected{border-color:var(--primary);background:rgba(15,59,72,0.04);}
-    .subject-beautiful-card.selected .subject-check-circle{background:var(--primary);color:white;border-color:var(--primary);}
-    .subject-beautiful-card.selected .subject-check-circle i{display:block;}
-    .subject-icon-circle{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;color:white;}
-    .subject-info-flex{flex:1;min-width:0;}
-    .subject-name-beautiful{font-weight:600;font-size:0.75rem;line-height:1.2;margin-bottom:4px;}
-    .coeff-row-modern{display:flex;align-items:center;gap:8px;background:rgba(0,0,0,0.03);padding:4px 8px;border-radius:30px;width:fit-content;}
-    .coeff-row-modern span{font-size:0.6rem;color:var(--text-light);font-weight:500;}
-    .coeff-value-modern{font-weight:800;font-size:0.85rem;color:var(--primary);min-width:28px;text-align:center;}
-    .coeff-btn-modern{width:26px;height:26px;border-radius:50%;border:none;background:var(--card-bg);color:var(--text);font-weight:700;font-size:0.9rem;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.1);}
-    .coeff-btn-modern:active{transform:scale(0.9);}
-    .coeff-btn-modern.minus{background:rgba(231,76,60,0.12);color:#e74c3c;}
-    .coeff-btn-modern.plus{background:rgba(46,204,113,0.12);color:#27ae60;}
-    .subject-check-circle{width:28px;height:28px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:0.7rem;}
-    .subject-check-circle i{display:none;}
-    .subjects-counter{text-align:center;padding:12px;border-radius:14px;margin-top:12px;font-weight:600;font-size:0.8rem;}
-    .subjects-counter.valid{background:rgba(46,204,113,0.1);color:#27ae60;border:1px solid rgba(46,204,113,0.3);}
-    .subjects-counter.invalid{background:rgba(231,76,60,0.1);color:#e74c3c;border:1px solid rgba(231,76,60,0.3);}
-    .term-selector-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;justify-content:center;}
-    .term-btn-modern{flex:1;min-width:100px;padding:12px 16px;border-radius:60px;text-align:center;cursor:pointer;font-weight:600;font-size:0.75rem;background:rgba(0,0,0,0.03);border:2px solid var(--border);color:var(--text);transition:all 0.25s ease;display:flex;align-items:center;justify-content:center;gap:8px;}
-    .term-btn-modern i{font-size:0.85rem;}
-    .term-btn-modern.active{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border-color:transparent;box-shadow:0 4px 15px rgba(15,59,72,0.25);}
-    .term-btn-modern:active{transform:scale(0.96);}
-    .sc-1{background:linear-gradient(135deg,#3498db,#2980b9);}
-    .sc-2{background:linear-gradient(135deg,#e74c3c,#c0392b);}
-    .sc-3{background:linear-gradient(135deg,#9b59b6,#8e44ad);}
-    .sc-4{background:linear-gradient(135deg,#2ecc71,#27ae60);}
-    .sc-5{background:linear-gradient(135deg,#e67e22,#d35400);}
-    .sc-6{background:linear-gradient(135deg,#00bcd4,#0097a7);}
-    .sc-7{background:linear-gradient(135deg,#f39c12,#e67e22);}
-    .sc-8{background:linear-gradient(135deg,#1abc9c,#16a085);}
-    .sc-9{background:linear-gradient(135deg,#27ae60,#1e8449);}
-    .sc-10{background:linear-gradient(135deg,#3498db,#2471a3);}
-    .sc-11{background:linear-gradient(135deg,#e74c3c,#c0392b);}
-    .sc-12{background:linear-gradient(135deg,#8e44ad,#7d3c98);}
-    .sc-13{background:linear-gradient(135deg,#2980b9,#1a5276);}
-    .sc-14{background:linear-gradient(135deg,#f39c12,#d68910);}
-    @media(max-width:500px){
-      .subjects-beautiful-grid{grid-template-columns:1fr;}
-      .term-btn-modern{min-width:80px;padding:10px 12px;font-size:0.7rem;}
+    .subjects-beautiful-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    
+    .subject-beautiful-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .subject-beautiful-card:active {
+      transform: scale(0.97);
+    }
+    
+    .subject-beautiful-card.selected {
+      border-color: var(--primary);
+      background: rgba(15,59,72,0.04);
+    }
+    
+    .subject-beautiful-card.selected .subject-check-circle {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+    
+    .subject-beautiful-card.selected .subject-check-circle i {
+      display: block;
+    }
+    
+    .subject-icon-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      color: white;
+    }
+    
+    .subject-info-flex {
+      flex: 1;
+      min-width: 0;
+    }
+    
+    .subject-name-beautiful {
+      font-weight: 600;
+      font-size: 0.75rem;
+      line-height: 1.2;
+      margin-bottom: 4px;
+    }
+    
+    .coeff-row-modern {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.03);
+      padding: 4px 8px;
+      border-radius: 30px;
+      width: fit-content;
+    }
+    
+    .coeff-row-modern span {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+    
+    .coeff-value-modern {
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--primary);
+      min-width: 28px;
+      text-align: center;
+    }
+    
+    .coeff-btn-modern {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+    
+    .coeff-btn-modern:active {
+      transform: scale(0.9);
+    }
+    
+    .coeff-btn-modern.minus {
+      background: rgba(231,76,60,0.12);
+      color: #e74c3c;
+    }
+    
+    .coeff-btn-modern.plus {
+      background: rgba(46,204,113,0.12);
+      color: #27ae60;
+    }
+    
+    .subject-check-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+    }
+    
+    .subject-check-circle i {
+      display: none;
+    }
+    
+    .subjects-counter {
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
+    
+    .subjects-counter.valid {
+      background: rgba(46,204,113,0.1);
+      color: #27ae60;
+      border: 1px solid rgba(46,204,113,0.3);
+    }
+    
+    .subjects-counter.invalid {
+      background: rgba(231,76,60,0.1);
+      color: #e74c3c;
+      border: 1px solid rgba(231,76,60,0.3);
+    }
+    
+    .term-selector-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    
+    .term-btn-modern {
+      flex: 1;
+      min-width: 100px;
+      padding: 12px 16px;
+      border-radius: 60px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.75rem;
+      background: rgba(0,0,0,0.03);
+      border: 2px solid var(--border);
+      color: var(--text);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .term-btn-modern i {
+      font-size: 0.85rem;
+    }
+    
+    .term-btn-modern.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+      box-shadow: 0 4px 15px rgba(15,59,72,0.25);
+    }
+    
+    .term-btn-modern:active {
+      transform: scale(0.96);
+    }
+    
+    .sc-1 { background: linear-gradient(135deg,#3498db,#2980b9); }
+    .sc-2 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
+    .sc-3 { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
+    .sc-4 { background: linear-gradient(135deg,#2ecc71,#27ae60); }
+    .sc-5 { background: linear-gradient(135deg,#e67e22,#d35400); }
+    .sc-6 { background: linear-gradient(135deg,#00bcd4,#0097a7); }
+    .sc-7 { background: linear-gradient(135deg,#f39c12,#e67e22); }
+    .sc-8 { background: linear-gradient(135deg,#1abc9c,#16a085); }
+    .sc-9 { background: linear-gradient(135deg,#27ae60,#1e8449); }
+    .sc-10 { background: linear-gradient(135deg,#3498db,#2471a3); }
+    .sc-11 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
+    .sc-12 { background: linear-gradient(135deg,#8e44ad,#7d3c98); }
+    .sc-13 { background: linear-gradient(135deg,#2980b9,#1a5276); }
+    .sc-14 { background: linear-gradient(135deg,#f39c12,#d68910); }
+    
+    @media(max-width:500px) {
+      .subjects-beautiful-grid { grid-template-columns: 1fr; }
+      .term-btn-modern { min-width: 80px; padding: 10px 12px; font-size: 0.7rem; }
     }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
+    
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-sliders-h"></i><span>SETTINGS</span></div>
@@ -75,6 +248,7 @@
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
+    
     <div class="sheet-overlay" id="sheetOverlay"></div>
     <div class="bottom-sheet" id="bottomSheet">
       <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
@@ -87,6 +261,7 @@
         </div>
       </div>
     </div>
+    
     <div class="sidebar-menu" id="sidebarMenu">
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
@@ -96,6 +271,7 @@
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
+    
     <main class="main-content">
       
       <!-- SECTION: MISE A JOUR -->
@@ -103,7 +279,7 @@
         <h3><i class="fas fa-sync-alt"></i> Update</h3>
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;">
           <div>
-            <span style="font-size:0.75rem;">Current version: <strong id="currentVersion">4.0.Ultimate</strong></span>
+            <span style="font-size:0.75rem;">Current version: <strong>4.0 Ultimate</strong></span>
             <div id="updateStatus" style="font-size:0.65rem;color:var(--text-light);margin-top:4px;">
               <i class="fas fa-check-circle" style="color:#27ae60;"></i> Up to date
             </div>
@@ -124,13 +300,18 @@
       <!-- SECTION: SUBJECTS BY TERM -->
       <div class="glass-card">
         <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
+        
         <div class="term-selector-row" id="termSelector">
           <div class="term-btn-modern" data-term="1"><i class="fas fa-1"></i> Term 1</div>
           <div class="term-btn-modern" data-term="2"><i class="fas fa-2"></i> Term 2</div>
           <div class="term-btn-modern" data-term="3"><i class="fas fa-3"></i> Term 3</div>
         </div>
+        
+        
         <div class="subjects-beautiful-grid" id="settingsSubjectsList"></div>
-        <div class="subjects-counter valid" id="settingsCounter"><span id="counterText">0 subjects</span></div>
+        <div class="subjects-counter valid" id="settingsCounter">
+          <span id="counterText">0 subjects</span>
+        </div>
         <div id="compAlert" style="display:none;padding:12px;border-radius:12px;margin-top:8px;"></div>
         <div style="display:flex;gap:8px;margin-top:12px;">
           <button class="btn btn-primary" onclick="saveSubjects()" style="flex:1;"><i class="fas fa-save"></i> Save Subjects</button>
@@ -162,7 +343,9 @@
       <div class="glass-card">
         <h3><i class="fas fa-file-import"></i> Import Backup File</h3>
         <input type="file" id="importFile" accept=".json" style="display:none;" onchange="handleImport(event)">
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()"><i class="fas fa-upload"></i> Import Backup (.json)</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+          <i class="fas fa-upload"></i> Import Backup (.json)
+        </button>
       </div>
       
       <!-- SECTION: DANGER ZONE -->
@@ -175,14 +358,14 @@
     </main>
   </div>
   
-  <!-- MODALS -->
+  <!-- MODAL PIN -->
   <div id="pinModal" class="modal">
     <div class="modal-content">
       <i class="fas fa-lock" style="font-size:40px;color:var(--primary);"></i>
       <h3>Change PIN</h3>
-      <input type="text" id="oldPin" placeholder="Current PIN" maxlength="4" inputmode="numeric" autocomplete="off">
-      <input type="text" id="newPin" placeholder="New PIN" maxlength="4" inputmode="numeric" autocomplete="off">
-      <input type="text" id="confirmNewPin" placeholder="Confirm PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="password" id="oldPin" placeholder="Current PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="password" id="newPin" placeholder="New PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="password" id="confirmNewPin" placeholder="Confirm PIN" maxlength="4" inputmode="numeric" autocomplete="off">
       <div class="modal-buttons">
         <button class="btn-cancel" onclick="closePinModal()">Cancel</button>
         <button class="btn-confirm" onclick="changePin()">Save</button>
@@ -190,12 +373,13 @@
     </div>
   </div>
   
+  <!-- MODAL COMPENSATION -->
   <div id="compModal" class="modal">
     <div class="modal-content">
       <i class="fas fa-balance-scale" style="font-size:40px;color:var(--primary);"></i>
       <h3>Confirm Compensation</h3>
       <div id="compConfirmInfo"></div>
-      <input type="text" id="compPin" placeholder="Enter PIN" maxlength="4" inputmode="numeric" autocomplete="off">
+      <input type="password" id="compPin" placeholder="Enter PIN" maxlength="4" inputmode="numeric" autocomplete="off">
       <div class="modal-buttons">
         <button class="btn-cancel" onclick="closeCompModal()">Cancel</button>
         <button class="btn-confirm" onclick="confirmCompensation()">Confirm</button>
@@ -237,6 +421,7 @@
       
       var container = document.getElementById('settingsSubjectsList');
       var html = '';
+      
       for (var i = 0; i < DEFAULT_SUBJECTS.length; i++) {
         var subject = DEFAULT_SUBJECTS[i];
         var isSelected = selected.indexOf(subject.id) !== -1;
@@ -445,8 +630,15 @@
       }
     }
     
+    // ============================================
+    // CHANGEMENT PIN - VERSION CORRIGEE
+    // ============================================
+    
     function showPinModal() {
       document.getElementById('pinModal').classList.add('active');
+      document.getElementById('oldPin').value = '';
+      document.getElementById('newPin').value = '';
+      document.getElementById('confirmNewPin').value = '';
     }
     
     function closePinModal() {
@@ -461,25 +653,59 @@
       var newPin = document.getElementById('newPin').value;
       var confirmPin = document.getElementById('confirmNewPin').value;
       
+      if (!oldPin || oldPin.length !== 4) {
+        showToast('Please enter current PIN');
+        return;
+      }
       if (!newPin || newPin.length !== 4) {
-        showToast('PIN must be 4 digits');
+        showToast('New PIN must be 4 digits');
+        return;
+      }
+      if (!/^\d+$/.test(newPin)) {
+        showToast('PIN must contain only numbers');
         return;
       }
       if (newPin !== confirmPin) {
-        showToast('PINs do not match');
+        showToast('New PINs do not match');
+        return;
+      }
+      if (oldPin === newPin) {
+        showToast('New PIN must be different from current PIN');
         return;
       }
       
-      var result = changePin(currentUser.id, oldPin, newPin);
-      if (result.success) {
-        currentUser = getStudentById(currentUser.id);
-        setCurrentStudent(currentUser);
-        showToast('PIN changed successfully');
-        closePinModal();
-      } else {
-        showToast(result.message);
+      var students = getAllStudents();
+      var studentIndex = -1;
+      for (var i = 0; i < students.length; i++) {
+        if (students[i].id === currentUser.id) {
+          studentIndex = i;
+          break;
+        }
       }
+      
+      if (studentIndex === -1) {
+        showToast('Account not found');
+        return;
+      }
+      
+      if (students[studentIndex].pin !== oldPin) {
+        showToast('Current PIN is incorrect');
+        return;
+      }
+      
+      students[studentIndex].pin = newPin;
+      saveAllStudents(students);
+      
+      currentUser.pin = newPin;
+      setCurrentStudent(currentUser);
+      
+      showToast('PIN changed successfully');
+      closePinModal();
     }
+    
+    // ============================================
+    // IMPORT BACKUP
+    // ============================================
     
     function handleImport(event) {
       var file = event.target.files[0];
@@ -508,6 +734,10 @@
       reader.readAsText(file);
       event.target.value = '';
     }
+    
+    // ============================================
+    // DANGER ZONE
+    // ============================================
     
     function resetAllGrades() {
       showConfirmDialog({
@@ -556,6 +786,10 @@
       });
     }
     
+    // ============================================
+    // SELECTEUR DE TERM
+    // ============================================
+    
     document.querySelectorAll('.term-btn-modern').forEach(function(btn, index) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.term-btn-modern').forEach(function(b) { b.classList.remove('active'); });
@@ -567,27 +801,23 @@
     
     document.querySelector('.term-btn-modern[data-term="1"]').classList.add('active');
     
-    loadSettings();
-    initMobileMenu();
-    initThemeSelector();
+    // ============================================
+    // GESTION MISE A JOUR
+    // ============================================
     
-    // ============================================
-    // GESTION MISE A JOUR DANS SETTINGS
-    // ============================================
     function refreshUpdateStatus() {
       var updateAvailable = localStorage.getItem('smartgrade_update_available') === 'true';
       var newVersion = localStorage.getItem('smartgrade_new_version');
-      var releaseNotes = localStorage.getItem('smartgrade_release_notes');
       var updateInfoDiv = document.getElementById('updateInfo');
       var updateStatusDiv = document.getElementById('updateStatus');
       
       if (updateAvailable && newVersion) {
         updateInfoDiv.style.display = 'block';
-        document.getElementById('releaseNotes').innerHTML = releaseNotes || 'New features and improvements';
+        document.getElementById('releaseNotes').innerHTML = 'Version ' + newVersion + ' is available';
         updateStatusDiv.innerHTML = '<i class="fas fa-download" style="color:#f39c12;"></i> Version ' + newVersion + ' available';
       } else {
         updateInfoDiv.style.display = 'none';
-        updateStatusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#27ae60;"></i> Up to date';
+        updateStatusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#27ae60;"></i> Up to date (4.0 Ultimate)';
       }
     }
     
@@ -597,21 +827,6 @@
         if (typeof checkForUpdates === 'function') {
           checkForUpdates();
           setTimeout(refreshUpdateStatus, 2000);
-        } else {
-          fetch('https://smart-grade-v4.github.io/version.json?t=' + Date.now())
-            .then(function(r) { return r.json(); })
-            .then(function(data) {
-              if (data.version && data.version !== '4.0.3') {
-                localStorage.setItem('smartgrade_update_available', 'true');
-                localStorage.setItem('smartgrade_new_version', data.version);
-                localStorage.setItem('smartgrade_release_notes', data.releaseNotes || '');
-                refreshUpdateStatus();
-                showToast('New version available!');
-              } else {
-                showToast('Up to date');
-              }
-            })
-            .catch(function() { showToast('Check failed'); });
         }
       };
     }
@@ -620,12 +835,17 @@
       document.getElementById('downloadUpdateBtn').onclick = function() {
         if (typeof downloadUpdate === 'function') {
           downloadUpdate();
-        } else {
-          showToast('Download function not available');
         }
       };
     }
     
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    
+    loadSettings();
+    initMobileMenu();
+    initThemeSelector();
     refreshUpdateStatus();
   </script>
 </body>

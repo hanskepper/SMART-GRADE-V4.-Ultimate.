@@ -69,18 +69,6 @@
       font-size: 16px;
       color: white;
     }
-    .avatar-placeholder {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-    }
-    .avatar-placeholder i {
-      font-size: 48px;
-      color: white;
-    }
     .upload-hint {
       text-align: center;
       font-size: 0.65rem;
@@ -108,7 +96,7 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.92);
+      background: rgba(0,0,0,0.92);
       z-index: 1000;
       display: none;
       align-items: center;
@@ -151,6 +139,67 @@
       background: rgba(255,255,255,0.3);
       transform: scale(1.1);
     }
+    
+    /* Badges en grille ordonnée */
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .badge-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 30px;
+      font-size: 0.7rem;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .badge-item:hover {
+      transform: translateX(4px);
+      border-color: var(--primary);
+    }
+    .badge-item i {
+      width: 24px;
+      color: #f39c12;
+      font-size: 0.9rem;
+    }
+    .badge-item .badge-name {
+      flex: 1;
+      font-weight: 500;
+    }
+    .badge-item .badge-date {
+      font-size: 0.55rem;
+      color: var(--text-light);
+    }
+    .badge-item.locked {
+      opacity: 0.5;
+      filter: grayscale(0.3);
+    }
+    .badge-item.locked i {
+      color: #95a5a6;
+    }
+    .badges-section h3 {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .badges-section .badge-count {
+      background: var(--primary);
+      color: white;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+    @media (max-width: 550px) {
+      .badges-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
 </head>
 <body>
@@ -158,7 +207,7 @@
   <div class="app-container">
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-      <div class="header-logo"><i class="fas fa-book-open"></i><span>PROFILE</span></div>
+      <div class="header-logo"><i class="fas fa-user"></i><span>PROFILE</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
         <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
           <i class="fas fa-user-graduate"></i>
@@ -221,9 +270,9 @@
         <p id="saveStatus" style="font-size:0.6rem;color:#2ecc71;text-align:center;margin-top:6px;display:none;"><i class="fas fa-check-circle"></i> Profile saved!</p>
       </div>
       
-      <div class="glass-card">
-        <h3><i class="fas fa-medal"></i> Your Badges</h3>
-        <div id="profileBadges" style="line-height:2;"></div>
+      <div class="glass-card badges-section">
+        <h3><i class="fas fa-medal"></i> Your Badges <span class="badge-count" id="badgeCount">0</span></h3>
+        <div id="profileBadges" class="badges-grid"></div>
       </div>
       
     </main>
@@ -244,6 +293,24 @@
   <script>
     var cu = null;
     var currentAvatarBase64 = '';
+    
+    // Ordre des badges (identique à achievements.html)
+    var BADGES_ORDER = [
+      { id: 1, name: 'First Grade', icon: 'fa-pen' },
+      { id: 2, name: 'Perfect Score', icon: 'fa-star' },
+      { id: 3, name: 'High Average', icon: 'fa-arrow-up' },
+      { id: 4, name: 'Bookworm', icon: 'fa-book-open' },
+      { id: 5, name: 'Dedication', icon: 'fa-fire' },
+      { id: 6, name: 'Scholar', icon: 'fa-graduation-cap' },
+      { id: 7, name: 'Rising Star', icon: 'fa-rocket' },
+      { id: 8, name: 'Unstoppable', icon: 'fa-bolt' },
+      { id: 9, name: 'Subject Completion', icon: 'fa-check-double' },
+      { id: 10, name: 'Active Semester', icon: 'fa-calendar-check' },
+      { id: 11, name: 'Discipline Mastery', icon: 'fa-crown' },
+      { id: 12, name: 'Study Progress', icon: 'fa-chart-bar' },
+      { id: 13, name: 'Full Achievement', icon: 'fa-trophy' },
+      { id: 14, name: 'Excellent Result', icon: 'fa-medal' }
+    ];
     
     function resizeImage(file, maxWidth, maxHeight, callback) {
       var reader = new FileReader();
@@ -386,12 +453,33 @@
       initAvatarClick();
       initHeaderProfile();
       
-      var achievements = getStudentAchievements(cu.id).filter(function(a) { return a.unlocked; });
-      document.getElementById('profileBadges').innerHTML = achievements.length === 0 
-        ? '<span style="color:var(--text-light);font-size:0.7rem;">No badges yet. Keep adding grades!</span>' 
-        : achievements.map(function(a) {
-            return '<span style="display:inline-block;padding:5px 12px;margin:3px;background:rgba(46,204,113,0.1);border-radius:20px;font-size:0.65rem;border:1px solid rgba(46,204,113,0.2);"><i class="fas fa-medal" style="color:#f39c12;"></i> ' + a.name + '</span>';
-          }).join('');
+      // Afficher les badges dans l'ordre
+      var achievements = getStudentAchievements(cu.id);
+      var unlockedMap = {};
+      for (var i = 0; i < achievements.length; i++) {
+        unlockedMap[achievements[i].id] = achievements[i];
+      }
+      
+      var unlockedCount = 0;
+      var badgesHtml = '';
+      
+      for (var i = 0; i < BADGES_ORDER.length; i++) {
+        var badge = BADGES_ORDER[i];
+        var achievement = unlockedMap[badge.id];
+        var isUnlocked = achievement && achievement.unlocked;
+        var unlockDate = achievement ? achievement.unlockDate : null;
+        
+        if (isUnlocked) unlockedCount++;
+        
+        badgesHtml += '<div class="badge-item ' + (isUnlocked ? '' : 'locked') + '">' +
+          '<i class="fas ' + badge.icon + '"></i>' +
+          '<span class="badge-name">' + badge.name + '</span>' +
+          (isUnlocked ? '<span class="badge-date"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + (unlockDate || 'Unlocked') + '</span>' : '<span class="badge-date"><i class="fas fa-lock" style="color:#95a5a6;"></i> Locked</span>') +
+        '</div>';
+      }
+      
+      document.getElementById('profileBadges').innerHTML = badgesHtml;
+      document.getElementById('badgeCount').innerHTML = unlockedCount + ' / 14';
     }
     
     function saveProfileData() {

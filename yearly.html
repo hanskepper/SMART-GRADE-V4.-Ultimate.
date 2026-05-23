@@ -14,38 +14,132 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .yearly-header-card{text-align:center;padding:28px 20px;border-radius:20px;color:white;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));}
-    .yearly-big-number{font-size:3rem;font-weight:800;}
-    .yearly-grade-letter{font-size:2rem;font-weight:800;margin-top:4px;}
-    .yearly-label{font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;opacity:0.8;}
-    .yearly-report-table{width:100%;border-collapse:collapse;font-size:0.7rem;background:var(--card-bg);border-radius:16px;overflow:hidden;}
-    .yearly-report-table th{background:var(--primary);color:white;padding:12px 8px;text-align:center;font-weight:700;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px;}
-    .yearly-report-table td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border);}
-    .yearly-report-table .subject-name{text-align:left;font-weight:600;display:flex;align-items:center;gap:8px;}
-    .yearly-report-table .subject-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.7rem;}
-    .yearly-report-table .total-row{background:rgba(15,59,72,0.05);font-weight:800;}
-    .yearly-report-table .total-row td{border-top:2px solid var(--primary);}
-    .grade-A{color:#2ecc71;font-weight:800;}.grade-B{color:#3498db;font-weight:800;}.grade-C{color:#f39c12;font-weight:800;}.grade-D{color:#e67e22;font-weight:800;}.grade-F{color:#e74c3c;font-weight:800;}
+    .yearly-header-card{
+      text-align:center;
+      padding:28px 20px;
+      border-radius:20px;
+      color:white;
+      margin-bottom:16px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+    }
+    .yearly-big-number{
+      font-size:3rem;
+      font-weight:800;
+    }
+    .yearly-grade-letter{
+      font-size:2rem;
+      font-weight:800;
+      margin-top:4px;
+    }
+    .yearly-label{
+      font-size:0.8rem;
+      text-transform:uppercase;
+      letter-spacing:2px;
+      opacity:0.8;
+    }
+    
+    /* Tableau avec bordures arrondies (identique à term1/term2/term3) */
+    .yearly-report-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.7rem;
+      background:var(--card-bg);
+      border-radius:16px;
+      overflow:hidden;
+    }
+    .yearly-report-table th{
+      background:var(--primary);
+      color:white;
+      padding:12px 8px;
+      text-align:center;
+      font-weight:700;
+      font-size:0.65rem;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .yearly-report-table td{
+      padding:10px 8px;
+      text-align:center;
+      border-bottom:1px solid var(--border);
+    }
+    .yearly-report-table .subject-name{
+      text-align:left;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .yearly-report-table .subject-icon{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:0.7rem;
+    }
+    .yearly-report-table .total-row{
+      background:rgba(15,59,72,0.05);
+      font-weight:800;
+    }
+    .yearly-report-table .total-row td{
+      border-top:2px solid var(--primary);
+    }
+    .grade-A{color:#2ecc71;font-weight:800;}
+    .grade-B{color:#3498db;font-weight:800;}
+    .grade-C{color:#f39c12;font-weight:800;}
+    .grade-D{color:#e67e22;font-weight:800;}
+    .grade-F{color:#e74c3c;font-weight:800;}
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>YEARLY</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-chart-line"></i><span>YEARLY</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
     <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
     <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="term1.html" class="nav-item"><i class="fas fa-1"></i> Term 1</a><a href="term2.html" class="nav-item"><i class="fas fa-2"></i> Term 2</a><a href="term3.html" class="nav-item"><i class="fas fa-3"></i> Term 3</a><a href="yearly.html" class="nav-item active"><i class="fas fa-chart-line"></i> Yearly</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
     <div class="overlay" id="overlay"></div>
     <main class="main-content">
       <div class="yearly-header-card"><div class="yearly-label">Yearly Overall</div><div class="yearly-big-number" id="overallYearly">0.00</div><div class="yearly-grade-letter" id="yearlyGrade"></div></div>
       <div id="compSummary"></div>
-      <div class="glass-card" style="overflow-x:auto;"><table class="yearly-report-table"><thead><tr><th>Subject</th><th>T1</th><th>T2</th><th>T3</th><th>Yearly</th><th>Grade</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+      <div class="glass-card" style="overflow-x:auto;padding:0;">
+        <table class="yearly-report-table">
+          <thead>
+            <tr>
+              <th>SUBJECT</th>
+              <th>T1</th>
+              <th>T2</th>
+              <th>T3</th>
+              <th>YEARLY</th>
+              <th>GRADE</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
     </main>
   </div>
   <div id="toastContainer" class="toast-container"></div>
   <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
   <script>
     var sc=['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
-    var allSubs=[{id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},{id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},{id:3,name:"CHEMISTRY",icon:"fa-flask"},{id:4,name:"HUMAN BIOLOGY",icon:"fa-dna"},{id:5,name:"GEOLOGY",icon:"fa-mountain"},{id:6,name:"PHYSICS",icon:"fa-atom"},{id:7,name:"ADDITIONAL MATHEMATICS",icon:"fa-calculator"},{id:8,name:"BIOLOGY",icon:"fa-leaf"},{id:9,name:"ECONOMICS",icon:"fa-chart-line"},{id:10,name:"ENGLISH LANGUAGE",icon:"fa-language"},{id:11,name:"GEOGRAPHY",icon:"fa-earth-africa"},{id:12,name:"CITIZENSHIP",icon:"fa-landmark"},{id:13,name:"FRENCH",icon:"fa-flag"},{id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}];
+    var allSubs=[
+      {id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},
+      {id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},
+      {id:3,name:"CHEMISTRY",icon:"fa-flask"},
+      {id:4,name:"HUMAN BIOLOGY",icon:"fa-dna"},
+      {id:5,name:"GEOLOGY",icon:"fa-mountain"},
+      {id:6,name:"PHYSICS",icon:"fa-atom"},
+      {id:7,name:"ADDITIONAL MATHEMATICS",icon:"fa-calculator"},
+      {id:8,name:"BIOLOGY",icon:"fa-leaf"},
+      {id:9,name:"ECONOMICS",icon:"fa-chart-line"},
+      {id:10,name:"ENGLISH LANGUAGE",icon:"fa-language"},
+      {id:11,name:"GEOGRAPHY",icon:"fa-earth-africa"},
+      {id:12,name:"CITIZENSHIP",icon:"fa-landmark"},
+      {id:13,name:"FRENCH",icon:"fa-flag"},
+      {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
+    ];
     
     function getGradeLetter(a){if(a>=18)return'A+';if(a>=16)return'A';if(a>=14)return'B+';if(a>=12)return'B';if(a>=10)return'C';if(a>=8)return'D';return'F';}
     function getGradeClass(a){if(a>=14)return'grade-A';if(a>=12)return'grade-B';if(a>=10)return'grade-C';if(a>=8)return'grade-D';return'grade-F';}
@@ -71,14 +165,33 @@
       
       for(var i=0;i<subs.length;i++){
         var s=subs[i];
-        function calcTermAvg(t){var seq1=(t-1)*2+1,seq2=seq1+1,n1=[],n2=[];for(var k=0;k<grades.length;k++){if(grades[k].subjectId===s.id&&grades[k].sequenceId===seq1)n1.push(grades[k].value);if(grades[k].subjectId===s.id&&grades[k].sequenceId===seq2)n2.push(grades[k].value);}var a1=0,a2=0;if(n1.length>0){var sum=0;for(var j=0;j<n1.length;j++)sum+=n1[j];a1=sum/n1.length;}if(n2.length>0){var sum=0;for(var j=0;j<n2.length;j++)sum+=n2[j];a2=sum/n2.length;}return(a1+a2)/2;}
+        function calcTermAvg(t){
+          var seq1=(t-1)*2+1,seq2=seq1+1,n1=[],n2=[];
+          for(var k=0;k<grades.length;k++){
+            if(grades[k].subjectId===s.id&&grades[k].sequenceId===seq1)n1.push(grades[k].value);
+            if(grades[k].subjectId===s.id&&grades[k].sequenceId===seq2)n2.push(grades[k].value);
+          }
+          var a1=0,a2=0;
+          if(n1.length>0){var sum=0;for(var j=0;j<n1.length;j++)sum+=n1[j];a1=sum/n1.length;}
+          if(n2.length>0){var sum=0;for(var j=0;j<n2.length;j++)sum+=n2[j];a2=sum/n2.length;}
+          return (a1+a2)/2;
+        }
         var ct1=calcTermAvg(1),ct2=calcTermAvg(2),ct3=calcTermAvg(3);
         var y=Math.round(((ct1+ct2+ct3)/3)*100)/100;
         if(ct1>0||ct2>0||ct3>0){tw+=y*s.coefficient;tc+=s.coefficient;}
-        rows+='<tr><td class="subject-name"><div class="subject-icon" style="background:'+(sc[i]||'#3498db')+';"><i class="fas '+s.icon+'"></i></div>'+s.name+'</td><td class="grade-col">'+ct1.toFixed(2)+'</td><td class="grade-col">'+ct2.toFixed(2)+'</td><td class="grade-col">'+ct3.toFixed(2)+'</td><td class="avg-col"><strong>'+y.toFixed(2)+'</strong></td><td class="'+getGradeClass(y)+'">'+getGradeLetter(y)+'</td></tr>';
+        
+        rows+='<tr>'+
+          '<td class="subject-name"><div class="subject-icon" style="background:'+(sc[i%sc.length]||'#3498db')+';"><i class="fas '+s.icon+'"></i></div>'+s.name+'</td>'+
+          '<td>'+ct1.toFixed(2)+'</td>'+
+          '<td>'+ct2.toFixed(2)+'</td>'+
+          '<td>'+ct3.toFixed(2)+'</td>'+
+          '<td class="avg-col"><strong>'+y.toFixed(2)+'</strong></td>'+
+          '<td class="'+getGradeClass(y)+'">'+getGradeLetter(y)+'</td>'+
+        '</tr>';
       }
       
       var overall=tc>0?Math.round((tw/tc)*100)/100:0;
+      rows+='<tr class="total-row"><td class="subject-name"><strong>OVERALL</strong></td><td colspan="3"><strong>'+subs.length+' subjects</strong></td><td class="avg-col"><strong>'+overall.toFixed(2)+' / 20</strong></td><td class="'+getGradeClass(overall)+'">'+getGradeLetter(overall)+'</td></tr>';
       document.getElementById('tableBody').innerHTML=rows;
       document.getElementById('overallYearly').innerHTML=overall.toFixed(2);
       document.getElementById('yearlyGrade').innerHTML='<span class="'+getGradeClass(overall)+'">'+getGradeLetter(overall)+'</span>';

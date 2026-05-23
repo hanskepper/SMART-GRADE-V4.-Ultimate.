@@ -318,10 +318,9 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
-    <!-- HEADER PUBLIC -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-      <div class="header-logo"><i class="fas fa-book-open"></i><span>GUIDE</span></div>
+      <div class="header-logo"><i class="fas fa-question-circle"></i><span>GUIDE</span></div>
       <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
     </div>
     
@@ -363,7 +362,7 @@
       
       <div class="glass-card">
         <h3><i class="fas fa-list-ol"></i> Tutorial Chapters</h3>
-        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">Click any chapter to listen with synchronized text</p>
+        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">Click any chapter to listen</p>
         <div id="stepsList"></div>
       </div>
       
@@ -384,7 +383,6 @@
     </main>
   </div>
   
-  <!-- MODAL AVEC BOUTON X CORRIGÉ -->
   <div class="video-modal" id="videoModal">
     <div class="video-modal-content">
       <div class="video-modal-header">
@@ -416,13 +414,10 @@
   <script src="js/utils.js"></script>
   <script src="js/database.js"></script>
   <script src="js/auth.js"></script>
+  <script src="js/confirm-dialog.js"></script>
   <script src="js/app.js"></script>
   
   <script>
-    // ============================================
-    // 16 CHAPITRES COMPLETS
-    // ============================================
-    
     var TUTORIALS = [
       { id: 1, icon: 'fa-user-plus', title: '1. Create an Account', desc: 'Step by step guide to register', tip: 'Write down your PIN somewhere safe.',
         text: "Welcome to SMART GRADE, the ultimate grade management system for students. Let me guide you through creating your account. From the Home page, tap the menu button in the top left corner, then select Register. First, enter your full name exactly as it appears on your school records. Next, select your class. You can choose between B1 and B2. Then, enter your unique student number. Now, create a secure 4-digit PIN. This is like your password. You will also see an option to enable fingerprint login. Confirm your PIN by typing it again. Click the Create Account button. Congratulations! Your account is now created." },
@@ -458,38 +453,15 @@
         text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic/Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology/Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
     ];
     
-    // ============================================
-    // TTS OPTIMISÉ AVEC GESTION COMPLÈTE
-    // ============================================
-    
     var currentIndex = 0;
     var isPlaying = false;
     var progressInterval = null;
-    var startTime = 0;
-    var speechReady = false;
-    var currentSentences = [];
-    var currentTotalChars = 0;
+    var currentUtterance = null;
     
-    // Initialisation TTS
-    function initTTS() {
-      if (!('speechSynthesis' in window)) return;
-      var silent = new SpeechSynthesisUtterance(' ');
-      silent.volume = 0;
-      speechSynthesis.speak(silent);
-      setTimeout(function() {
-        speechSynthesis.cancel();
-        speechReady = true;
-        console.log('TTS ready');
-      }, 300);
-    }
-    setTimeout(initTTS, 500);
-    
-    // Découpage en phrases
     function splitIntoSentences(text) {
       return text.split(/(?<=[.!?])\s+/);
     }
     
-    // Mise à jour de la ligne active
     function updateActiveLine(index) {
       var lines = document.querySelectorAll('.lyrics-line');
       for (var i = 0; i < lines.length; i++) lines[i].classList.remove('active');
@@ -499,7 +471,6 @@
       }
     }
     
-    // Mise à jour par position
     function updateActiveLineByCharPosition(charIndex, totalChars, sentences) {
       if (!sentences || sentences.length === 0) return;
       var charCount = 0;
@@ -512,43 +483,46 @@
       }
     }
     
-    // Lecture du chapitre
-    function speakCurrentChapter() {
-      if (!speechReady) {
-        showToast('Loading voice... please wait');
-        setTimeout(speakCurrentChapter, 500);
-        return;
+    function stopPlayback() {
+      if (currentUtterance) {
+        try { speechSynthesis.cancel(); } catch(e) {}
+        currentUtterance = null;
       }
-      
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      isPlaying = false;
+      var playBtn = document.getElementById('playPauseBtn');
+      if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      document.getElementById('audioStatus').textContent = 'Ready';
+    }
+    
+    function speakCurrentChapter() {
       var t = TUTORIALS[currentIndex];
       if (!t) return;
       
-      // Arrêter tout
-      if (progressInterval) clearInterval(progressInterval);
-      speechSynthesis.cancel();
+      stopPlayback();
       
       var text = t.text;
       var sentences = splitIntoSentences(text);
       var totalChars = text.length;
       
-      currentSentences = sentences;
-      currentTotalChars = totalChars;
-      
-      var utterance = new SpeechSynthesisUtterance(text);
-      utterance.lang = 'en-US';
-      utterance.rate = 0.85;
-      utterance.pitch = 1.0;
+      currentUtterance = new SpeechSynthesisUtterance(text);
+      currentUtterance.lang = 'en-US';
+      currentUtterance.rate = 0.85;
+      currentUtterance.pitch = 1.0;
       
       var voices = speechSynthesis.getVoices();
       for (var i = 0; i < voices.length; i++) {
         if (voices[i].lang === 'en-US') {
-          utterance.voice = voices[i];
+          currentUtterance.voice = voices[i];
           break;
         }
       }
       
-      utterance.onstart = function() {
-        startTime = Date.now();
+      currentUtterance.onstart = function() {
+        var startTime = Date.now();
         progressInterval = setInterval(function() {
           if (!isPlaying) return;
           var elapsed = (Date.now() - startTime) / 1000;
@@ -563,57 +537,48 @@
         document.getElementById('audioStatus').textContent = 'Playing...';
       };
       
-      utterance.onend = function() {
+      currentUtterance.onend = function() {
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
+        currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('videoProgressFill').style.width = '100%';
         document.getElementById('audioStatus').textContent = 'Completed';
       };
       
-      utterance.onerror = function() {
+      currentUtterance.onerror = function() {
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
+        currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('audioStatus').textContent = 'Error';
         showToast('Voice error, please retry');
       };
       
-      speechSynthesis.speak(utterance);
+      speechSynthesis.speak(currentUtterance);
     }
     
-    // Pause / Reprise
     function togglePlayPause() {
       if (isPlaying) {
-        speechSynthesis.cancel();
-        if (progressInterval) clearInterval(progressInterval);
-        isPlaying = false;
-        document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('audioStatus').textContent = 'Paused';
+        stopPlayback();
       } else {
         speakCurrentChapter();
       }
     }
     
-    // Ouvrir un chapitre
     function openModal(index) {
       currentIndex = index;
       updateModalContent();
       document.getElementById('videoModal').classList.add('active');
       document.body.style.overflow = 'hidden';
-      if (progressInterval) clearInterval(progressInterval);
-      speechSynthesis.cancel();
-      isPlaying = false;
+      stopPlayback();
       document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
       document.getElementById('videoProgressFill').style.width = '0%';
-      document.getElementById('audioStatus').textContent = 'Ready. Click play to listen.';
+      document.getElementById('audioStatus').textContent = 'Ready';
     }
     
-    // Chapitre précédent
     function prevChapter() {
-      if (progressInterval) clearInterval(progressInterval);
-      speechSynthesis.cancel();
-      isPlaying = false;
+      stopPlayback();
       currentIndex--;
       if (currentIndex < 0) currentIndex = TUTORIALS.length - 1;
       updateModalContent();
@@ -622,11 +587,8 @@
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
-    // Chapitre suivant
     function nextChapter() {
-      if (progressInterval) clearInterval(progressInterval);
-      speechSynthesis.cancel();
-      isPlaying = false;
+      stopPlayback();
       currentIndex++;
       if (currentIndex >= TUTORIALS.length) currentIndex = 0;
       updateModalContent();
@@ -635,35 +597,12 @@
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
-    // FERMER LA FENÊTRE - CORRIGÉ
     function closeModal() {
-      console.log('Fermeture du modal');
-      
-      // Arrêter la lecture audio
-      if (window.speechSynthesis) {
-        window.speechSynthesis.cancel();
-      }
-      
-      // Arrêter l'intervalle
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
-      
-      // Réinitialiser
-      isPlaying = false;
-      
-      // Cacher le modal
-      var modal = document.getElementById('videoModal');
-      if (modal) {
-        modal.classList.remove('active');
-      }
-      
-      // Réactiver le scroll
+      stopPlayback();
+      document.getElementById('videoModal').classList.remove('active');
       document.body.style.overflow = '';
     }
     
-    // Mettre à jour le contenu
     function updateModalContent() {
       var t = TUTORIALS[currentIndex];
       document.getElementById('modalTitle').innerHTML = '<i class="fas ' + t.icon + '"></i> ' + t.title;
@@ -681,7 +620,6 @@
       document.getElementById('lyricsBox').innerHTML = lyricsHTML;
     }
     
-    // Afficher la liste
     function renderSteps() {
       var container = document.getElementById('stepsList');
       container.innerHTML = TUTORIALS.map(function(t, i) {

@@ -1,5 +1,6 @@
 {
-  "version": "4.0.Ultimate",
-  "releaseDate": "2025-05-19",
-  "releaseNotes": "Fixed statistics display, Added QR code colors, Performance improvements"
+  "version": "4.0",
+  "codename": "Ultimate",
+  "releaseDate": "2025-05-20",
+  "releaseNotes": "Version finale Ultimate - Splash screen animé, Auto-update, QR code couleur"
 }

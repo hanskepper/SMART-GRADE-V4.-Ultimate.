@@ -2,6 +2,7 @@
   "name": "SMART GRADE - GBHS Foumban",
   "short_name": "SMART GRADE",
   "description": "Ultimate Grade Management System",
+  "version": "4.0",
   "start_url": "./splash.html",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
@@ -19,6 +20,10 @@
     {
       "name": "Add Grade",
       "url": "./add-grade.html"
+    },
+    {
+      "name": "Statistics",
+      "url": "./statistics.html"
     }
   ],
   "icons": [

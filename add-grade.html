@@ -14,7 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .grade-table-new {
+    .grade-table {
       width: 100%;
       border-collapse: collapse;
       font-size: 0.7rem;
@@ -22,37 +22,39 @@
       border-radius: 16px;
       overflow: hidden;
     }
-    .grade-table-new th {
+    .grade-table th {
       background: var(--primary);
       color: white;
-      padding: 12px 6px;
+      padding: 12px 8px;
+      text-align: center;
+      font-weight: 700;
       font-size: 0.65rem;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
-    .grade-table-new td {
-      padding: 10px 6px;
+    .grade-table td {
+      padding: 10px 8px;
       text-align: center;
       border-bottom: 1px solid var(--border);
     }
-    .grade-table-new .subj-col {
+    .grade-table .subject-name {
       text-align: left;
       font-weight: 600;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
-    .grade-table-new .icon-sm {
+    .grade-table .subject-icon {
       width: 28px;
       height: 28px;
       border-radius: 8px;
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
       color: white;
       font-size: 0.7rem;
     }
-    .grade-table-new input {
+    .grade-table input {
       width: 70px;
       padding: 8px;
       border-radius: 8px;
@@ -64,12 +66,12 @@
       color: var(--text);
       transition: all 0.2s;
     }
-    .grade-table-new input:focus {
+    .grade-table input:focus {
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(15,59,72,0.1);
     }
-    .grade-table-new .avg-col {
+    .grade-table .avg-col {
       font-weight: 800;
       color: var(--primary);
       font-size: 0.85rem;
@@ -90,23 +92,35 @@
       background: rgba(0,0,0,0.03);
       border: 1px solid var(--border);
       transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .term-tab-btn i {
+      font-size: 0.75rem;
     }
     .term-tab-btn.active {
-      background: var(--primary);
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
-      border-color: var(--primary);
+      border-color: transparent;
     }
     .coeff-col {
       font-weight: 700;
       width: 55px;
     }
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      margin-top: 16px;
+    }
     @media (max-width: 600px) {
-      .grade-table-new input {
-        width: 60px;
+      .grade-table input {
+        width: 55px;
         padding: 6px;
         font-size: 0.7rem;
       }
-      .grade-table-new th, .grade-table-new td {
+      .grade-table th, .grade-table td {
         padding: 8px 4px;
       }
     }
@@ -117,7 +131,7 @@
   <div class="app-container">
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-      <div class="header-logo"><i class="fas fa-book-open"></i><span>ADD GRADE</span></div>
+      <div class="header-logo"><i class="fas fa-pen-fancy"></i><span>ADD GRADE</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
         <a href="profile.html">
           <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
@@ -158,19 +172,21 @@
     <main class="main-content">
       
       <div class="term-tabs-row" id="termTabs">
-        <div class="term-tab-btn active" data-term="1">Term 1 (S1+S2)</div>
-        <div class="term-tab-btn" data-term="2">Term 2 (S3+S4)</div>
-        <div class="term-tab-btn" data-term="3">Term 3 (S5+S6)</div>
+        <div class="term-tab-btn active" data-term="1"><i class="fas fa-1"></i> Term 1</div>
+        <div class="term-tab-btn" data-term="2"><i class="fas fa-2"></i> Term 2</div>
+        <div class="term-tab-btn" data-term="3"><i class="fas fa-3"></i> Term 3</div>
       </div>
       
-      <div class="glass-card" style="overflow-x:auto;">
-        <table class="grade-table-new" id="gradeTable">
+      <div class="glass-card" style="overflow-x:auto;padding:0;">
+        <table class="grade-table" id="gradeTable">
           <thead id="tableHeader"></thead>
           <tbody id="tableBody"></tbody>
         </table>
       </div>
       
-      <button class="btn btn-primary mt-1" onclick="saveAll()"><i class="fas fa-save"></i> Save All Grades</button>
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="saveAllGrades()"><i class="fas fa-save"></i> Save All Grades</button>
+      </div>
       
     </main>
   </div>
@@ -183,117 +199,111 @@
   <script src="js/app.js"></script>
   
   <script>
-    var cu = null;
-    var cTerm = 1;
-    var sc = ['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
+    var currentUser = null;
+    var currentTerm = 1;
+    var subjectColors = ['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
     
     function loadAddGrade() {
-      cu = requireAuth();
-      if (!cu) return;
+      currentUser = requireAuth();
+      if (!currentUser) return;
       
-      var subs = getActiveSubjectsWithCoefficients(cu.id, cTerm);
-      var g = getStudentGrades(cu.id);
-      var s1 = (cTerm - 1) * 2 + 1;
-      var s2 = s1 + 1;
+      var subjects = getActiveSubjectsWithCoefficients(currentUser.id, currentTerm);
+      var grades = getStudentGrades(currentUser.id);
+      var seq1 = (currentTerm - 1) * 2 + 1;
+      var seq2 = seq1 + 1;
       
-      // Header du tableau - CORRIGÉ
       var headerHtml = '<tr>' +
         '<th style="text-align:left;">SUBJECT</th>' +
         '<th>COEFF</th>' +
-        '<th>S' + s1 + '</th>' +
-        '<th>S' + s2 + '</th>' +
-        '<th>AVG</th>' +
+        '<th>S' + seq1 + '</th>' +
+        '<th>S' + seq2 + '</th>' +
+        '<th>AVERAGE</th>' +
         '</tr>';
       document.getElementById('tableHeader').innerHTML = headerHtml;
       
-      // Body du tableau - CORRIGÉ
       var bodyHtml = '';
-      for (var i = 0; i < subs.length; i++) {
-        var s = subs[i];
-        var g1 = g.find(function(x) { return x.subjectId === s.id && x.sequenceId === s1; });
-        var g2 = g.find(function(x) { return x.subjectId === s.id && x.sequenceId === s2; });
+      for (var i = 0; i < subjects.length; i++) {
+        var s = subjects[i];
+        var g1 = grades.find(function(x) { return x.subjectId === s.id && x.sequenceId === seq1; });
+        var g2 = grades.find(function(x) { return x.subjectId === s.id && x.sequenceId === seq2; });
         var v1 = g1 ? g1.value : '';
         var v2 = g2 ? g2.value : '';
         var avg = (v1 !== '' && v2 !== '') ? formatNumber((parseFloat(v1) + parseFloat(v2)) / 2) : '--';
         
         bodyHtml += '<tr>' +
-          '<td class="subj-col">' +
-            '<span class="icon-sm" style="background:' + (sc[i % sc.length] || '#3498db') + ';">' +
+          '<td class="subject-name">' +
+            '<div class="subject-icon" style="background:' + (subjectColors[i % subjectColors.length] || '#3498db') + ';">' +
               '<i class="fas ' + s.icon + '"></i>' +
-            '</span>' +
+            '</div>' +
             '<span>' + s.name + '</span>' +
           '</td>' +
           '<td class="coeff-col">' + s.coefficient + '</td>' +
-          '<td><input type="number" step="0.01" min="0" max="20" class="gi" data-subj="' + s.id + '" data-seq="' + s1 + '" value="' + (v1 !== '' ? v1 : '') + '"></td>' +
-          '<td><input type="number" step="0.01" min="0" max="20" class="gi" data-subj="' + s.id + '" data-seq="' + s2 + '" value="' + (v2 !== '' ? v2 : '') + '"></td>' +
-          '<td class="avg-col ad" data-subj="' + s.id + '">' + avg + '</td>' +
+          '<td><input type="number" step="0.01" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq1 + '" value="' + (v1 !== '' ? v1 : '') + '"></td>' +
+          '<td><input type="number" step="0.01" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq2 + '" value="' + (v2 !== '' ? v2 : '') + '"></td>' +
+          '<td class="avg-col" id="avg-' + s.id + '">' + avg + '</td>' +
         '</tr>';
       }
       document.getElementById('tableBody').innerHTML = bodyHtml;
       
-      // Ajouter les événements pour mise à jour en temps réel
-      document.querySelectorAll('.gi').forEach(function(input) {
-        input.addEventListener('input', updateAvg);
+      document.querySelectorAll('.grade-input').forEach(function(input) {
+        input.addEventListener('input', function() {
+          updateAverageForSubject(parseInt(this.dataset.subj));
+        });
       });
       
       initHeaderProfile();
     }
     
-    function updateAvg() {
-      var s1 = (cTerm - 1) * 2 + 1;
-      var s2 = s1 + 1;
+    function updateAverageForSubject(subjectId) {
+      var seq1 = (currentTerm - 1) * 2 + 1;
+      var seq2 = seq1 + 1;
       
-      document.querySelectorAll('.gi').forEach(function(input) {
-        var sj = parseInt(input.dataset.subj);
-        var sq = parseInt(input.dataset.seq);
-        
-        if (sq === s1 || sq === s2) {
-          var v1 = document.querySelector('.gi[data-subj="' + sj + '"][data-seq="' + s1 + '"]');
-          var v2 = document.querySelector('.gi[data-subj="' + sj + '"][data-seq="' + s2 + '"]');
-          var ad = document.querySelector('.ad[data-subj="' + sj + '"]');
-          
-          if (v1 && v2 && ad) {
-            var val1 = v1.value !== '' ? parseFloat(v1.value) : NaN;
-            var val2 = v2.value !== '' ? parseFloat(v2.value) : NaN;
-            var a = '--';
-            
-            if (!isNaN(val1) && !isNaN(val2)) {
-              a = formatNumber((val1 + val2) / 2);
-            } else if (!isNaN(val1)) {
-              a = formatNumber(val1);
-            } else if (!isNaN(val2)) {
-              a = formatNumber(val2);
-            }
-            ad.innerHTML = a;
-          }
-        }
-      });
+      var input1 = document.querySelector('.grade-input[data-subj="' + subjectId + '"][data-seq="' + seq1 + '"]');
+      var input2 = document.querySelector('.grade-input[data-subj="' + subjectId + '"][data-seq="' + seq2 + '"]');
+      var avgCell = document.getElementById('avg-' + subjectId);
+      
+      var val1 = input1 ? parseFloat(input1.value) : NaN;
+      var val2 = input2 ? parseFloat(input2.value) : NaN;
+      
+      var avg = '--';
+      if (!isNaN(val1) && !isNaN(val2) && val1 !== '' && val2 !== '') {
+        avg = ((val1 + val2) / 2).toFixed(2);
+      } else if (!isNaN(val1) && val1 !== '') {
+        avg = val1.toFixed(2);
+      } else if (!isNaN(val2) && val2 !== '') {
+        avg = val2.toFixed(2);
+      }
+      
+      if (avgCell) avgCell.innerHTML = avg;
     }
     
-    function saveAll() {
-      var inputs = document.querySelectorAll('.gi');
-      var g = getStudentGrades(cu.id);
+    function saveAllGrades() {
+      var grades = getStudentGrades(currentUser.id);
+      var inputs = document.querySelectorAll('.grade-input');
       var changed = false;
       
       inputs.forEach(function(input) {
-        var sj = parseInt(input.dataset.subj);
-        var sq = parseInt(input.dataset.seq);
-        var v = parseFloat(input.value);
+        var subjectId = parseInt(input.dataset.subj);
+        var sequenceId = parseInt(input.dataset.seq);
+        var value = parseFloat(input.value);
         
-        if (!isNaN(v) && v >= 0 && v <= 20) {
-          var ei = g.findIndex(function(x) { return x.subjectId === sj && x.sequenceId === sq; });
-          var roundedV = roundToTwo(v);
+        if (!isNaN(value) && value >= 0 && value <= 20) {
+          var existingIndex = grades.findIndex(function(g) {
+            return g.subjectId === subjectId && g.sequenceId === sequenceId;
+          });
           
-          if (ei !== -1) {
-            g[ei].value = roundedV;
-            g[ei].date = new Date().toISOString().split('T')[0];
+          var roundedValue = Math.round(value * 100) / 100;
+          
+          if (existingIndex !== -1) {
+            grades[existingIndex].value = roundedValue;
+            grades[existingIndex].date = new Date().toISOString().split('T')[0];
           } else {
-            var nid = g.length > 0 ? Math.max.apply(null, g.map(function(x) { return x.id; })) + 1 : 1;
-            g.push({
-              id: nid,
-              subjectId: sj,
-              sequenceId: sq,
-              value: roundedV,
+            var newId = grades.length > 0 ? Math.max.apply(null, grades.map(function(g) { return g.id; })) + 1 : 1;
+            grades.push({
+              id: newId,
+              subjectId: subjectId,
+              sequenceId: sequenceId,
+              value: roundedValue,
               date: new Date().toISOString().split('T')[0]
             });
           }
@@ -302,23 +312,23 @@
       });
       
       if (changed) {
-        saveStudentGrades(cu.id, g);
+        saveStudentGrades(currentUser.id, grades);
+        addHistory(currentUser.id, 'Grades updated for Term ' + currentTerm);
         playActionFeedback();
-        showToast('✅ Grades saved successfully!');
+        showToast('Grades saved successfully!');
         loadAddGrade();
       } else {
-        showToast('⚠️ No valid grades to save');
+        showToast('No valid grades to save');
       }
     }
     
-    // Gestion des onglets
     document.querySelectorAll('.term-tab-btn').forEach(function(tab, index) {
       tab.addEventListener('click', function() {
         document.querySelectorAll('.term-tab-btn').forEach(function(t) {
           t.classList.remove('active');
         });
         tab.classList.add('active');
-        cTerm = index + 1;
+        currentTerm = index + 1;
         loadAddGrade();
       });
     });

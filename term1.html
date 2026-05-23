@@ -14,39 +14,142 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .term-header-card{text-align:center;padding:28px 20px;border-radius:20px;color:white;margin-bottom:16px;background:linear-gradient(135deg,var(--primary),var(--secondary));}
-    .term-big-number{font-size:3rem;font-weight:800;}
-    .term-label{font-size:0.8rem;text-transform:uppercase;letter-spacing:2px;opacity:0.8;}
-    .subjects-count-badge{display:inline-block;background:rgba(255,255,255,0.2);padding:4px 12px;border-radius:20px;font-size:0.65rem;margin-top:6px;}
-    .term-report-table{width:100%;border-collapse:collapse;font-size:0.7rem;background:var(--card-bg);border-radius:16px;overflow:hidden;}
-    .term-report-table th{background:var(--primary);color:white;padding:12px 8px;text-align:center;font-weight:700;font-size:0.65rem;text-transform:uppercase;letter-spacing:0.5px;}
-    .term-report-table td{padding:10px 8px;text-align:center;border-bottom:1px solid var(--border);}
-    .term-report-table .subject-name{text-align:left;font-weight:600;display:flex;align-items:center;gap:8px;}
-    .term-report-table .subject-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:white;font-size:0.7rem;}
-    .term-report-table .total-row{background:rgba(15,59,72,0.05);font-weight:800;}
-    .term-report-table .total-row td{border-top:2px solid var(--primary);}
-    .grade-excellent{color:#2ecc71;font-weight:700;}.grade-verygood{color:#3498db;font-weight:700;}.grade-good{color:#f39c12;font-weight:700;}.grade-average{color:#e67e22;font-weight:700;}.grade-needs{color:#e74c3c;font-weight:700;}
-    .comp-alert{background:rgba(231,76,60,0.1);border-left:4px solid #e74c3c;padding:12px;border-radius:8px;margin-bottom:12px;font-size:0.7rem;}
+    .term-header-card{
+      text-align:center;
+      padding:28px 20px;
+      border-radius:20px;
+      color:white;
+      margin-bottom:16px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+    }
+    .term-big-number{
+      font-size:3rem;
+      font-weight:800;
+    }
+    .term-label{
+      font-size:0.8rem;
+      text-transform:uppercase;
+      letter-spacing:2px;
+      opacity:0.8;
+    }
+    .subjects-count-badge{
+      display:inline-block;
+      background:rgba(255,255,255,0.2);
+      padding:4px 12px;
+      border-radius:20px;
+      font-size:0.65rem;
+      margin-top:6px;
+    }
+    
+    /* Tableau avec bordures arrondies (comme yearly) */
+    .term-report-table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.7rem;
+      background:var(--card-bg);
+      border-radius:16px;
+      overflow:hidden;
+    }
+    .term-report-table th{
+      background:var(--primary);
+      color:white;
+      padding:12px 8px;
+      text-align:center;
+      font-weight:700;
+      font-size:0.65rem;
+      text-transform:uppercase;
+      letter-spacing:0.5px;
+    }
+    .term-report-table td{
+      padding:10px 8px;
+      text-align:center;
+      border-bottom:1px solid var(--border);
+    }
+    .term-report-table .subject-name{
+      text-align:left;
+      font-weight:600;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .term-report-table .subject-icon{
+      width:28px;
+      height:28px;
+      border-radius:8px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:white;
+      font-size:0.7rem;
+    }
+    .term-report-table .total-row{
+      background:rgba(15,59,72,0.05);
+      font-weight:800;
+    }
+    .term-report-table .total-row td{
+      border-top:2px solid var(--primary);
+    }
+    .grade-excellent{color:#2ecc71;font-weight:700;}
+    .grade-verygood{color:#3498db;font-weight:700;}
+    .grade-good{color:#f39c12;font-weight:700;}
+    .grade-average{color:#e67e22;font-weight:700;}
+    .grade-needs{color:#e74c3c;font-weight:700;}
+    .comp-alert{
+      background:rgba(231,76,60,0.1);
+      border-left:4px solid #e74c3c;
+      padding:12px;
+      border-radius:8px;
+      margin-bottom:12px;
+      font-size:0.7rem;
+    }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span>TERM 1</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
+    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-1"></i><span>TERM 1</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
     <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
     <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="term1.html" class="nav-item active"><i class="fas fa-1"></i> Term 1</a><a href="term2.html" class="nav-item"><i class="fas fa-2"></i> Term 2</a><a href="term3.html" class="nav-item"><i class="fas fa-3"></i> Term 3</a><a href="yearly.html" class="nav-item"><i class="fas fa-chart-line"></i> Yearly</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
     <div class="overlay" id="overlay"></div>
     <main class="main-content">
       <div class="term-header-card"><div class="term-label">Overall Term 1</div><div class="term-big-number" id="overallTerm1">0.00</div><div class="subjects-count-badge" id="subjectsCount1">0 subjects</div></div>
       <div class="comp-alert" id="compMsg" style="display:none;"></div>
-      <div class="glass-card" style="overflow-x:auto;"><table class="term-report-table"><thead><tr><th>Subject</th><th>Seq 1</th><th>Seq 2</th><th>Term 1</th><th>Status</th></tr></thead><tbody id="tableBody"></tbody></table></div>
+      <div class="glass-card" style="overflow-x:auto;padding:0;">
+        <table class="term-report-table">
+          <thead>
+            <tr>
+              <th>SUBJECT</th>
+              <th>SEQ 1</th>
+              <th>SEQ 2</th>
+              <th>TERM 1</th>
+              <th>STATUS</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
     </main>
   </div>
   <div id="toastContainer" class="toast-container"></div>
   <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
   <script>
     var sc=['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
-    var allSubs=[{id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},{id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},{id:3,name:"CHEMISTRY",icon:"fa-flask"},{id:4,name:"HUMAN BIOLOGY",icon:"fa-dna"},{id:5,name:"GEOLOGY",icon:"fa-mountain"},{id:6,name:"PHYSICS",icon:"fa-atom"},{id:7,name:"ADDITIONAL MATHEMATICS",icon:"fa-calculator"},{id:8,name:"BIOLOGY",icon:"fa-leaf"},{id:9,name:"ECONOMICS",icon:"fa-chart-line"},{id:10,name:"ENGLISH LANGUAGE",icon:"fa-language"},{id:11,name:"GEOGRAPHY",icon:"fa-earth-africa"},{id:12,name:"CITIZENSHIP",icon:"fa-landmark"},{id:13,name:"FRENCH",icon:"fa-flag"},{id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}];
+    var allSubs=[
+      {id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},
+      {id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},
+      {id:3,name:"CHEMISTRY",icon:"fa-flask"},
+      {id:4,name:"HUMAN BIOLOGY",icon:"fa-dna"},
+      {id:5,name:"GEOLOGY",icon:"fa-mountain"},
+      {id:6,name:"PHYSICS",icon:"fa-atom"},
+      {id:7,name:"ADDITIONAL MATHEMATICS",icon:"fa-calculator"},
+      {id:8,name:"BIOLOGY",icon:"fa-leaf"},
+      {id:9,name:"ECONOMICS",icon:"fa-chart-line"},
+      {id:10,name:"ENGLISH LANGUAGE",icon:"fa-language"},
+      {id:11,name:"GEOGRAPHY",icon:"fa-earth-africa"},
+      {id:12,name:"CITIZENSHIP",icon:"fa-landmark"},
+      {id:13,name:"FRENCH",icon:"fa-flag"},
+      {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
+    ];
     
     function loadTerm1(){
       var current=JSON.parse(localStorage.getItem('smartgrade_current')||'null');
@@ -61,19 +164,45 @@
       document.getElementById('headerAvatar').innerHTML='<i class="fas '+(profile.avatar||'fa-graduation-cap')+'"></i>';
       
       var subs=[];
-      for(var i=0;i<allSubs.length;i++){if(selected.indexOf(allSubs[i].id)!==-1){var s=allSubs[i];s.coefficient=coeffs[s.id]||5;subs.push(s);}}
+      for(var i=0;i<allSubs.length;i++){
+        if(selected.indexOf(allSubs[i].id)!==-1){
+          var s=allSubs[i];
+          s.coefficient=coeffs[s.id]||5;
+          subs.push(s);
+        }
+      }
       
       var tw=0,tc=0,rows='';
       for(var i=0;i<subs.length;i++){
         var s=subs[i],n1=[],n2=[];
-        for(var k=0;k<grades.length;k++){if(grades[k].subjectId===s.id&&grades[k].sequenceId===1)n1.push(grades[k].value);if(grades[k].subjectId===s.id&&grades[k].sequenceId===2)n2.push(grades[k].value);}
-        var a1=0,a2=0;if(n1.length>0){var sum=0;for(var j=0;j<n1.length;j++)sum+=n1[j];a1=Math.round((sum/n1.length)*100)/100;}if(n2.length>0){var sum=0;for(var j=0;j<n2.length;j++)sum+=n2[j];a2=Math.round((sum/n2.length)*100)/100;}
-        var ma=Math.round(((a1+a2)/2)*100)/100;tw+=ma*s.coefficient;tc+=s.coefficient;
-        var st='',cl='';if(ma>=16){st='Excellent';cl='grade-excellent';}else if(ma>=14){st='Very Good';cl='grade-verygood';}else if(ma>=12){st='Good';cl='grade-good';}else if(ma>=10){st='Average';cl='grade-average';}else if(ma>0){st='Needs Work';cl='grade-needs';}else{st='-';cl='';}
-        rows+='<tr><td class="subject-name"><div class="subject-icon" style="background:'+(sc[i]||'#3498db')+';"><i class="fas '+s.icon+'"></i></div>'+s.name+'</td><td class="grade-col">'+(n1.length>0?a1.toFixed(2):'0.00')+'</td><td class="grade-col">'+(n2.length>0?a2.toFixed(2):'0.00')+'</td><td class="avg-col"><strong>'+ma.toFixed(2)+'</strong></td><td class="'+cl+'">'+st+'</td></tr>';
+        for(var k=0;k<grades.length;k++){
+          if(grades[k].subjectId===s.id&&grades[k].sequenceId===1)n1.push(grades[k].value);
+          if(grades[k].subjectId===s.id&&grades[k].sequenceId===2)n2.push(grades[k].value);
+        }
+        var a1=0,a2=0;
+        if(n1.length>0){var sum=0;for(var j=0;j<n1.length;j++)sum+=n1[j];a1=Math.round((sum/n1.length)*100)/100;}
+        if(n2.length>0){var sum=0;for(var j=0;j<n2.length;j++)sum+=n2[j];a2=Math.round((sum/n2.length)*100)/100;}
+        var ma=Math.round(((a1+a2)/2)*100)/100;
+        tw+=ma*s.coefficient;
+        tc+=s.coefficient;
+        var st='',cl='';
+        if(ma>=16){st='Excellent';cl='grade-excellent';}
+        else if(ma>=14){st='Very Good';cl='grade-verygood';}
+        else if(ma>=12){st='Good';cl='grade-good';}
+        else if(ma>=10){st='Average';cl='grade-average';}
+        else if(ma>0){st='Needs Work';cl='grade-needs';}
+        else{st='-';cl='';}
+        
+        rows+='<tr>'+
+          '<td class="subject-name"><div class="subject-icon" style="background:'+(sc[i%sc.length]||'#3498db')+';"><i class="fas '+s.icon+'"></i></div>'+s.name+'</td>'+
+          '<td>'+(n1.length>0?a1.toFixed(2):'0.00')+'</td>'+
+          '<td>'+(n2.length>0?a2.toFixed(2):'0.00')+'</td>'+
+          '<td class="avg-col"><strong>'+ma.toFixed(2)+'</strong></td>'+
+          '<td class="'+cl+'">'+st+'</td>'+
+        '</tr>';
       }
-      var avg=Math.round((tw/tc)*100)/100;
-      rows+='<tr class="total-row"><td class="subject-name"><strong>OVERALL</strong></td><td colspan="3"><strong>'+subs.length+' subjects</strong></td><td class="avg-col"><strong>'+avg.toFixed(2)+' / 20</strong></td><td></td></tr>';
+      var avg=tc>0?Math.round((tw/tc)*100)/100:0;
+      rows+='<tr class="total-row"><td class="subject-name"><strong>OVERALL</strong></td><td colspan="2"><strong>'+subs.length+' subjects</strong></td><td class="avg-col"><strong>'+avg.toFixed(2)+' / 20</strong></td><td class="grade-needs"></td></tr>';
       document.getElementById('tableBody').innerHTML=rows;
       document.getElementById('overallTerm1').innerHTML=avg.toFixed(2);
       document.getElementById('subjectsCount1').innerHTML=subs.length+' subjects selected';

@@ -34,9 +34,9 @@ body {
 body { animation: pageIn 0.3s ease; }
 
 /* Tailles de police */
-body.font-small { font-size: 12px; }
-body.font-medium { font-size: 14px; }
-body.font-large { font-size: 16px; }
+body.font-small { font-size: 14px; }
+body.font-medium { font-size: 16px; }
+body.font-large { font-size: 18px; }
 
 /* Polices de base */
 body.font-inter { font-family: 'Inter', sans-serif; }

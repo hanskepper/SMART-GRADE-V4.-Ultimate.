@@ -1,9 +1,8 @@
 // ============================================
-// SMART GRADE v4.0 - AUTHENTIFICATION SIMPLE
-// PIN uniquement (fiable à 100%)
+// SMART GRADE v4.0 - AUTHENTIFICATION SYSTEM
+// Version: 4.0 Ultimate
 // ============================================
 
-// Connexion par PIN
 function authenticateWithPin(studentId, pin) {
   var s = getStudentById(studentId);
   if (!s) return { success: false, message: 'Account not found' };
@@ -13,29 +12,51 @@ function authenticateWithPin(studentId, pin) {
   return { success: true, student: s };
 }
 
-// Changer le PIN
-function changePin(studentId, oldPin, newPin) {
-  var s = getStudentById(studentId);
-  if (!s) return { success: false, message: 'Account not found' };
-  if (s.pin !== oldPin) return { success: false, message: 'Incorrect current PIN' };
-  if (!newPin || newPin.length !== 4 || !/^\d+$/.test(newPin)) return { success: false, message: 'PIN must be 4 digits' };
+// ============================================
+// CHANGER LE PIN - FONCTION PRINCIPALE
+// ============================================
+
+function updateUserPin(studentId, oldPin, newPin) {
+  console.log('updateUserPin called with:', studentId, oldPin, newPin);
   
-  var st = getAllStudents();
-  var i = st.findIndex(function(x) { return x.id === studentId; });
-  if (i !== -1) {
-    st[i].pin = newPin;
-    saveAllStudents(st);
+  if (!studentId) return { success: false, message: 'Invalid student ID' };
+  if (!oldPin || oldPin.length !== 4) return { success: false, message: 'Current PIN must be 4 digits' };
+  if (!newPin || newPin.length !== 4) return { success: false, message: 'New PIN must be 4 digits' };
+  if (!/^\d+$/.test(newPin)) return { success: false, message: 'PIN must contain only numbers' };
+  
+  var students = getAllStudents();
+  var studentIndex = -1;
+  var student = null;
+  
+  for (var i = 0; i < students.length; i++) {
+    if (students[i].id === studentId) {
+      studentIndex = i;
+      student = students[i];
+      break;
+    }
   }
+  
+  if (!student) return { success: false, message: 'Account not found' };
+  if (student.pin !== oldPin) return { success: false, message: 'Current PIN is incorrect' };
+  
+  students[studentIndex].pin = newPin;
+  saveAllStudents(students);
+  
+  var current = getCurrentStudent();
+  if (current && current.id === studentId) {
+    current.pin = newPin;
+    setCurrentStudent(current);
+  }
+  
+  console.log('PIN changed successfully for user:', student.name);
   return { success: true, message: 'PIN changed successfully' };
 }
 
-// Déconnexion
 function logout() {
   clearCurrentStudent();
   window.location.href = 'index.html';
 }
 
-// Vérifier si connecté
 function requireAuth() {
   var u = getCurrentStudent();
   if (!u) {
@@ -45,23 +66,15 @@ function requireAuth() {
   return u;
 }
 
-// ============================================
-// FINGERPRINT - VERSION SIMPLIFIÉE
-// Cette version essaie d'utiliser le capteur
-// mais si ça échoue, demande le PIN
-// ============================================
-
 function isBiometricAvailable() {
-  // Vérifier si le navigateur supporte WebAuthn
   if (typeof PublicKeyCredential === 'undefined') return false;
   if (typeof navigator.credentials === 'undefined') return false;
   return true;
 }
 
-// Enregistrer une empreinte
 function registerFingerprint(studentId, studentName, callback) {
   if (!isBiometricAvailable()) {
-    callback({ success: false, message: 'Your device does not support fingerprint authentication. Please use PIN instead.' });
+    callback({ success: false, message: 'Fingerprint not supported on this device' });
     return;
   }
 
@@ -80,37 +93,29 @@ function registerFingerprint(studentId, studentName, callback) {
       pubKeyCredParams: [{ type: 'public-key', alg: -7 }],
       timeout: 60000,
       attestation: 'none',
-      authenticatorSelection: {
-        userVerification: 'required'
-      }
+      authenticatorSelection: { userVerification: 'required' }
     }
   };
 
   navigator.credentials.create(createOptions)
     .then(function(credential) {
-      // Stocker un marqueur simple
       var students = getAllStudents();
-      var i = students.findIndex(function(x) { return x.id === studentId; });
-      if (i !== -1) {
-        students[i].hasFingerprint = true;
-        students[i].fingerprintHash = 'enabled';
+      var index = students.findIndex(function(s) { return s.id === studentId; });
+      if (index !== -1) {
+        students[index].hasFingerprint = true;
+        students[index].fingerprintHash = 'enabled';
         saveAllStudents(students);
       }
-      callback({ success: true, message: 'Fingerprint enabled! You can now use it to login.' });
+      callback({ success: true, message: 'Fingerprint enabled successfully' });
     })
     .catch(function(err) {
-      console.log('Fingerprint registration failed:', err.message);
-      callback({ 
-        success: false, 
-        message: 'Could not register fingerprint. Please make sure you have fingerprints set up in your phone settings.' 
-      });
+      callback({ success: false, message: 'Could not register fingerprint' });
     });
 }
 
-// Connexion par empreinte
 function loginWithFingerprint(callback) {
   if (!isBiometricAvailable()) {
-    callback({ success: false, message: 'Fingerprint not available on this device. Use PIN.' });
+    callback({ success: false, message: 'Fingerprint not available' });
     return;
   }
 
@@ -119,7 +124,7 @@ function loginWithFingerprint(callback) {
   });
 
   if (students.length === 0) {
-    callback({ success: false, message: 'No accounts with fingerprint. Register one in Settings or use PIN.' });
+    callback({ success: false, message: 'No fingerprint registered' });
     return;
   }
 
@@ -137,30 +142,23 @@ function loginWithFingerprint(callback) {
 
   navigator.credentials.get(getOptions)
     .then(function(assertion) {
-      // Si on arrive ici, l'empreinte est valide
-      // Prendre le premier compte avec fingerprint
       var student = students[0];
       setCurrentStudent(student);
       updateStreakOnVisit(student.id);
       callback({ success: true, student: student });
     })
     .catch(function(err) {
-      console.log('Fingerprint login failed:', err.message);
-      callback({ 
-        success: false, 
-        message: 'Fingerprint not recognized. Use your PIN to login.' 
-      });
+      callback({ success: false, message: 'Fingerprint not recognized' });
     });
 }
 
-// Supprimer l'empreinte
 function removeFingerprint(studentId) {
-  var s = getAllStudents();
-  var i = s.findIndex(function(x) { return x.id === studentId; });
-  if (i !== -1) {
-    s[i].hasFingerprint = false;
-    s[i].fingerprintHash = null;
-    saveAllStudents(s);
+  var students = getAllStudents();
+  var index = students.findIndex(function(s) { return s.id === studentId; });
+  if (index !== -1) {
+    students[index].hasFingerprint = false;
+    students[index].fingerprintHash = null;
+    saveAllStudents(students);
     return true;
   }
   return false;

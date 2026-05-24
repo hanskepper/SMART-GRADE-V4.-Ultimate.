@@ -15,13 +15,12 @@ function generateTransferCode(studentId) {
     code += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   
-  // Sauvegarder dans localStorage
   var codes = JSON.parse(localStorage.getItem('smartgrade_transfer_codes') || '{}');
   codes[code] = {
     studentId: studentId,
     data: exportAllData(studentId),
     created: Date.now(),
-    expires: Date.now() + (30 * 60 * 1000) // 30 minutes
+    expires: Date.now() + (30 * 60 * 1000)
   };
   localStorage.setItem('smartgrade_transfer_codes', JSON.stringify(codes));
   
@@ -94,7 +93,7 @@ function exportAllData(id) {
 }
 
 // ============================================
-// IMPORTER TOUTES LES DONNÉES
+// IMPORTER TOUTES LES DONNÉES (CORRIGÉ)
 // ============================================
 function importAllData(id, json) {
   try {
@@ -113,7 +112,10 @@ function importAllData(id, json) {
     if (d.coeffs) saveSubjectCoefficients(id, d.coeffs);
     if (d.achievements) localStorage.setItem('smartgrade_achievements_' + id, JSON.stringify(d.achievements));
     if (d.goal !== undefined) saveStudentGoal(id, d.goal);
+    
+    // RESTAURATION DU STREAK (AJOUTÉ)
     if (d.streak) saveStudentStreak(id, d.streak);
+    
     if (d.compensations) localStorage.setItem('smartgrade_compensations_' + id, JSON.stringify(d.compensations));
     if (d.profile) localStorage.setItem('smartgrade_profile_' + id, JSON.stringify(d.profile));
     if (d.flashcards) localStorage.setItem('smartgrade_flashcards_' + id, JSON.stringify(d.flashcards));

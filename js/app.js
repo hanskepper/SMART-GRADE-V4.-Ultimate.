@@ -1,7 +1,6 @@
 // ============================================
-// SMART GRADE v4.0 - APP.JS COMPLET
-// 12 POLICES | MODE NUIT | AVATAR | BOUTON CLAIR/SOMBRE
-// SÉLECTEUR DE POLICES INTÉGRÉ DANS LE THEME SHEET
+// SMART GRADE v4.0 Ultimate - APP.JS
+// Sans fonctions dupliquées
 // ============================================
 
 var THEMES = [
@@ -27,6 +26,161 @@ var THEMES = [
   { name: 'lime', color: '#558b2f', label: 'Lime' }
 ];
 
+// ============================================
+// CONSISTENT THEME SYSTEM
+// ============================================
+
+function initThemeConsistent() {
+  var savedTheme = localStorage.getItem('smartgrade_theme') || 'default';
+  
+  var themeClasses = [
+    'theme-default', 'theme-crimson', 'theme-forest', 'theme-ocean', 
+    'theme-royal', 'theme-sunset', 'theme-rose', 'theme-turquoise', 
+    'theme-amber', 'theme-graphite', 'theme-lavender', 'theme-cherry', 
+    'theme-midnight', 'theme-mint', 'theme-coral', 'theme-indigo', 
+    'theme-chocolate', 'theme-electric', 'theme-steel', 'theme-lime'
+  ];
+  
+  for (var i = 0; i < themeClasses.length; i++) {
+    document.body.classList.remove(themeClasses[i]);
+  }
+  
+  document.body.classList.add('theme-' + savedTheme);
+  
+  var themesColors = {
+    default: { primary: '#0f3b48', secondary: '#00ffff' },
+    crimson: { primary: '#c0392b', secondary: '#ff4757' },
+    forest: { primary: '#1e8449', secondary: '#2ecc71' },
+    ocean: { primary: '#006994', secondary: '#00b4d8' },
+    royal: { primary: '#6c3483', secondary: '#a569bd' },
+    sunset: { primary: '#d35400', secondary: '#f39c12' },
+    rose: { primary: '#c44569', secondary: '#fd79a8' },
+    turquoise: { primary: '#00897b', secondary: '#1de9b6' },
+    amber: { primary: '#b7950b', secondary: '#f1c40f' },
+    graphite: { primary: '#455a64', secondary: '#90a4ae' },
+    lavender: { primary: '#7b1fa2', secondary: '#ce93d8' },
+    cherry: { primary: '#b71c1c', secondary: '#ef5350' },
+    midnight: { primary: '#1a237e', secondary: '#5c6bc0' },
+    mint: { primary: '#00b894', secondary: '#55efc4' },
+    coral: { primary: '#e74c3c', secondary: '#ff6b6b' },
+    indigo: { primary: '#283593', secondary: '#7986cb' },
+    chocolate: { primary: '#5d4037', secondary: '#a1887f' },
+    electric: { primary: '#6a1b9a', secondary: '#e040fb' },
+    steel: { primary: '#37474f', secondary: '#78909c' },
+    lime: { primary: '#558b2f', secondary: '#aed581' }
+  };
+  
+  var themeColors = themesColors[savedTheme] || themesColors.default;
+  
+  document.documentElement.style.setProperty('--primary', themeColors.primary);
+  document.documentElement.style.setProperty('--secondary', themeColors.secondary);
+  document.body.style.setProperty('--primary', themeColors.primary);
+  document.body.style.setProperty('--secondary', themeColors.secondary);
+  
+  var style = document.getElementById('theme-vars-style');
+  if (!style) {
+    style = document.createElement('style');
+    style.id = 'theme-vars-style';
+    document.head.appendChild(style);
+  }
+  style.textContent = ':root { --primary: ' + themeColors.primary + '; --secondary: ' + themeColors.secondary + '; }';
+}
+
+function changeTheme(themeName, showToastMessage) {
+  if (showToastMessage === undefined) {
+    showToastMessage = false;
+  }
+  
+  localStorage.setItem('smartgrade_theme', themeName);
+  sessionStorage.setItem('smartgrade_last_theme', themeName);
+  
+  var cu = getCurrentStudent();
+  if (cu && cu.id && typeof recordUsedTheme === 'function') {
+    recordUsedTheme(cu.id, themeName);
+    if (typeof checkAndUnlockAllNewBadges === 'function') {
+      checkAndUnlockAllNewBadges(cu.id);
+    }
+  }
+  
+  var themesColors = {
+    default: { primary: '#0f3b48', secondary: '#00ffff' },
+    crimson: { primary: '#c0392b', secondary: '#ff4757' },
+    forest: { primary: '#1e8449', secondary: '#2ecc71' },
+    ocean: { primary: '#006994', secondary: '#00b4d8' },
+    royal: { primary: '#6c3483', secondary: '#a569bd' },
+    sunset: { primary: '#d35400', secondary: '#f39c12' },
+    rose: { primary: '#c44569', secondary: '#fd79a8' },
+    turquoise: { primary: '#00897b', secondary: '#1de9b6' },
+    amber: { primary: '#b7950b', secondary: '#f1c40f' },
+    graphite: { primary: '#455a64', secondary: '#90a4ae' },
+    lavender: { primary: '#7b1fa2', secondary: '#ce93d8' },
+    cherry: { primary: '#b71c1c', secondary: '#ef5350' },
+    midnight: { primary: '#1a237e', secondary: '#5c6bc0' },
+    mint: { primary: '#00b894', secondary: '#55efc4' },
+    coral: { primary: '#e74c3c', secondary: '#ff6b6b' },
+    indigo: { primary: '#283593', secondary: '#7986cb' },
+    chocolate: { primary: '#5d4037', secondary: '#a1887f' },
+    electric: { primary: '#6a1b9a', secondary: '#e040fb' },
+    steel: { primary: '#37474f', secondary: '#78909c' },
+    lime: { primary: '#558b2f', secondary: '#aed581' }
+  };
+  
+  var themeColors = themesColors[themeName] || themesColors.default;
+  
+  document.documentElement.style.setProperty('--primary', themeColors.primary);
+  document.documentElement.style.setProperty('--secondary', themeColors.secondary);
+  document.body.style.setProperty('--primary', themeColors.primary);
+  document.body.style.setProperty('--secondary', themeColors.secondary);
+  
+  var styleEl = document.getElementById('theme-vars-style');
+  if (styleEl) {
+    styleEl.textContent = ':root { --primary: ' + themeColors.primary + '; --secondary: ' + themeColors.secondary + '; }';
+  }
+  
+  var themeClasses = [
+    'theme-default', 'theme-crimson', 'theme-forest', 'theme-ocean', 
+    'theme-royal', 'theme-sunset', 'theme-rose', 'theme-turquoise', 
+    'theme-amber', 'theme-graphite', 'theme-lavender', 'theme-cherry', 
+    'theme-midnight', 'theme-mint', 'theme-coral', 'theme-indigo', 
+    'theme-chocolate', 'theme-electric', 'theme-steel', 'theme-lime'
+  ];
+  for (var i = 0; i < themeClasses.length; i++) {
+    document.body.classList.remove(themeClasses[i]);
+  }
+  document.body.classList.add('theme-' + themeName);
+  
+  document.querySelectorAll('.theme-rect').forEach(function(rect) {
+    if (rect.dataset.theme === themeName) {
+      rect.classList.add('active');
+    } else {
+      rect.classList.remove('active');
+    }
+  });
+  
+  if (showToastMessage === true && typeof showToast === 'function') {
+    showToast('Theme: ' + themeName);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initThemeConsistent);
+} else {
+  initThemeConsistent();
+}
+
+var nightObserver = new MutationObserver(function(mutations) {
+  mutations.forEach(function(mutation) {
+    if (mutation.attributeName === 'class') {
+      setTimeout(initThemeConsistent, 10);
+    }
+  });
+});
+nightObserver.observe(document.body, { attributes: true });
+
+// ============================================
+// MOBILE HEIGHT FIX
+// ============================================
+
 function fixMobileHeight() {
   var vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', vh + 'px');
@@ -36,7 +190,7 @@ window.addEventListener('resize', fixMobileHeight);
 window.addEventListener('orientationchange', fixMobileHeight);
 
 // ============================================
-// MODE NUIT - AUTO (20h-6h) + MANUEL
+// NIGHT MODE
 // ============================================
 
 var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
@@ -68,10 +222,6 @@ window.addEventListener('storage', function(e) {
   }
 });
 
-// ============================================
-// BOUTON CLAIR/SOMBRE
-// ============================================
-
 function toggleDarkLightMode() {
   var btn = document.getElementById('darkLightBtn');
   
@@ -79,25 +229,24 @@ function toggleDarkLightMode() {
     manualThemeFlag = 'light';
     document.body.classList.remove('night-mode');
     if (btn) btn.innerHTML = '<i class="fas fa-moon"></i> Switch to Dark Mode';
-    showToast('Light mode activated');
+    if (typeof showToast === 'function') showToast('Light mode activated');
   } else {
     manualThemeFlag = 'dark';
     document.body.classList.add('night-mode');
     if (btn) btn.innerHTML = '<i class="fas fa-sun"></i> Switch to Light Mode';
-    showToast('Dark mode activated');
+    if (typeof showToast === 'function') showToast('Dark mode activated');
   }
   
   localStorage.setItem('smartgrade_manual_theme', manualThemeFlag);
 }
 
 // ============================================
-// INITIALISATION PRINCIPALE
+// INITIALISATION
 // ============================================
 (function initApp() {
   var ss = document.createElement('style');
   ss.textContent = '@keyframes floatParticle{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(-20vh) rotate(360deg);opacity:0}}';
   document.head.appendChild(ss);
-  document.body.classList.add('theme-' + getSavedTheme());
   document.body.classList.add('font-' + getSavedFontSize());
   
   initFontFamily();
@@ -133,7 +282,7 @@ function toggleDarkLightMode() {
 })();
 
 // ============================================
-// INIT THEME SELECTOR - AVEC SÉLECTEUR DE POLICES
+// THEME SELECTOR
 // ============================================
 
 function initThemeSelector() {
@@ -142,7 +291,6 @@ function initThemeSelector() {
   
   var bottomSheetContent = document.querySelector('.bottom-sheet-content');
   
-  // AJOUTER LE BOUTON CLAIR/SOMBRE
   if (bottomSheetContent && !document.getElementById('darkLightBtn')) {
     var modeBtn = document.createElement('div');
     modeBtn.style.cssText = 'margin-bottom: 16px; padding: 0 4px;';
@@ -183,10 +331,6 @@ function initThemeSelector() {
     }
   }
   
-  // ============================================
-  // SÉLECTEUR DE POLICES (INTÉGRÉ)
-  // ============================================
-  
   if (bottomSheetContent && !document.getElementById('fontSelectorSection')) {
     var fontSection = document.createElement('div');
     fontSection.id = 'fontSelectorSection';
@@ -210,7 +354,6 @@ function initThemeSelector() {
     }
   }
   
-  // CHARGER LES 12 POLICES
   var fontGrid = document.getElementById('fontSelectorGrid');
   if (fontGrid) {
     var currentFont = localStorage.getItem('smartgrade_font_family') || 'inter';
@@ -250,14 +393,13 @@ function initThemeSelector() {
         this.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
         this.style.color = 'white';
         
-        showToast('Font: ' + this.textContent);
+        if (typeof showToast === 'function') showToast('Font: ' + this.textContent);
         setTimeout(function() { closeBottomSheet(); }, 500);
       });
     });
   }
   
-  // AFFICHER LES 20 THÈMES
-  var st = getSavedTheme();
+  var st = localStorage.getItem('smartgrade_theme') || 'default';
   c.innerHTML = THEMES.map(function(t) {
     return '<div class="theme-rect ' + (st === t.name ? 'active' : '') + '" data-theme="' + t.name + '" style="background:' + t.color + ';" title="' + t.label + '">' + t.label + '</div>';
   }).join('');
@@ -265,19 +407,12 @@ function initThemeSelector() {
   document.querySelectorAll('.theme-rect').forEach(function(r) {
     r.addEventListener('click', function(e) {
       e.stopPropagation();
-      var t = this.dataset.theme;
-      document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
-      document.body.classList.add('theme-' + t);
-      saveTheme(t);
-      document.querySelectorAll('.theme-rect').forEach(function(x) { x.classList.remove('active'); });
-      this.classList.add('active');
-      checkNightMode();
-      showToast('Theme: ' + t);
+      var themeName = this.dataset.theme;
+      changeTheme(themeName, true);
       closeBottomSheet();
     });
   });
   
-  // TAILLES DE POLICE
   var sf = getSavedFontSize();
   document.querySelectorAll('.font-sheet').forEach(function(o) {
     if (o.dataset.font === sf) o.classList.add('active');
@@ -289,11 +424,10 @@ function initThemeSelector() {
       document.body.classList.add('font-' + f);
       document.querySelectorAll('.font-sheet').forEach(function(x) { x.classList.remove('active'); });
       this.classList.add('active');
-      showToast('Font size: ' + f);
+      if (typeof showToast === 'function') showToast('Font size: ' + f);
     });
   });
   
-  // GESTION DU BOTTOM SHEET
   var tb = document.getElementById('themeBtn');
   var bs = document.getElementById('bottomSheet');
   var so = document.getElementById('sheetOverlay');
@@ -326,6 +460,15 @@ function initThemeSelector() {
 
 function selectFontFamilyFromSheet(fontId) {
   localStorage.setItem('smartgrade_font_family', fontId);
+  
+  var cu = getCurrentStudent();
+  if (cu && cu.id && typeof recordUsedFont === 'function') {
+    recordUsedFont(cu.id, fontId);
+    if (typeof checkAndUnlockAllNewBadges === 'function') {
+      checkAndUnlockAllNewBadges(cu.id);
+    }
+  }
+  
   if (typeof initFontFamily === 'function') {
     initFontFamily();
   }
@@ -350,7 +493,7 @@ function initMobileMenu() {
 }
 
 // ============================================
-// INIT HEADER PROFILE
+// HEADER PROFILE
 // ============================================
 function initHeaderProfile() {
   var ha = document.getElementById('headerAvatar');
@@ -408,7 +551,7 @@ function saveProfile(studentId, profile) {
 }
 
 // ============================================
-// GESTION DES 12 POLICES
+// FONT FAMILY
 // ============================================
 
 function initFontFamily() {
@@ -446,7 +589,7 @@ window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault();
 function installApp() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(r) { if (r.outcome === 'accepted') showToast('App installed!'); deferredPrompt = null; });
+    deferredPrompt.userChoice.then(function(r) { if (r.outcome === 'accepted' && typeof showToast === 'function') showToast('App installed!'); deferredPrompt = null; });
     var p = document.getElementById('installPrompt'); if (p) p.classList.remove('show');
   } else { alert('Menu > Add to Home Screen'); }
 }
@@ -469,21 +612,6 @@ function initParticles() {
     c.appendChild(p);
   }
 }
-
-function getSequencesForTerm(t) { var s = (t - 1) * 2 + 1; return [s, s + 1]; }
-
-function roundToTwo(num) { if (isNaN(num) || !isFinite(num)) return 0; return Math.round((num + Number.EPSILON) * 100) / 100; }
-
-function showToast(m) {
-  var c = document.getElementById('toastContainer');
-  if (!c) { c = document.createElement('div'); c.id = 'toastContainer'; c.className = 'toast-container'; document.body.appendChild(c); }
-  var t = document.createElement('div'); t.className = 'toast'; t.innerHTML = '<i class="fas fa-info-circle"></i> ' + m; c.appendChild(t);
-  setTimeout(function() { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(function() { t.remove(); }, 300); }, 3000);
-}
-
-function formatDate(d) { if (!d) return '--'; var dt = new Date(d); var m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; return dt.getDate() + ' ' + m[dt.getMonth()] + ' ' + dt.getFullYear(); }
-
-function getGreeting() { var h = new Date().getHours(); if (h < 12) return 'Good Morning'; if (h < 18) return 'Good Afternoon'; return 'Good Evening'; }
 
 // ============================================
 // NOTIFICATIONS
@@ -576,20 +704,18 @@ function checkAndNotifyAchievements(id) {
   }
 }
 
-console.log('SMART GRADE v4.0 - App initialized with 12 fonts and font selector in theme sheet');
+console.log('SMART GRADE v4.0 Ultimate - App initialized');
 
 // ============================================
-// VERSION DE L'APPLICATION
+// VERSION
 // ============================================
 
 var APP_VERSION = '4.0.3';
 
-// Sauvegarder la version
 if (!localStorage.getItem('smartgrade_version')) {
   localStorage.setItem('smartgrade_version', APP_VERSION);
 }
 
-// Protection contre les rechargements pendant la saisie
 var isTyping = false;
 
 document.addEventListener('focusin', function(e) {
@@ -604,15 +730,12 @@ document.addEventListener('focusout', function(e) {
   }
 });
 
-// Exporter pour debugging (optionnel)
 window.getAppVersion = function() {
   return APP_VERSION;
 };
 
 // ============================================
-// SMART GRADE - AUTO UPDATE SYSTEM
-// Version: 4.1
-// Vérification toutes les 10 minutes sur TOUTES les pages
+// AUTO UPDATE
 // ============================================
 
 var AutoUpdate = {
@@ -626,7 +749,6 @@ var AutoUpdate = {
   releaseNotes: null
 };
 
-// Vérifier les mises à jour
 function checkForUpdates() {
   if (AutoUpdate.checking) return;
   if (AutoUpdate.downloading) return;
@@ -646,18 +768,15 @@ function checkForUpdates() {
         AutoUpdate.newVersion = data.version;
         AutoUpdate.releaseNotes = data.releaseNotes || '';
         
-        // Sauvegarder pour affichage dans Settings
         localStorage.setItem('smartgrade_update_available', 'true');
         localStorage.setItem('smartgrade_new_version', AutoUpdate.newVersion);
         localStorage.setItem('smartgrade_release_notes', AutoUpdate.releaseNotes);
         
-        // Notification silencieuse (pas de popup automatique)
-        console.log('[AutoUpdate] Nouvelle version disponible:', AutoUpdate.newVersion);
+        console.log('[AutoUpdate] New version available:', AutoUpdate.newVersion);
         
-        // Notification système seulement si permission accordée
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('SMART GRADE', {
-            body: 'Version ' + AutoUpdate.newVersion + ' disponible. Allez dans Paramètres pour télécharger.',
+            body: 'Version ' + AutoUpdate.newVersion + ' available. Go to Settings to download.',
             icon: 'icon.svg',
             silent: true
           });
@@ -668,25 +787,24 @@ function checkForUpdates() {
     })
     .catch(function(err) {
       AutoUpdate.checking = false;
-      console.log('[AutoUpdate] Erreur:', err.message);
+      console.log('[AutoUpdate] Error:', err.message);
     });
 }
 
-// Télécharger la mise à jour (appelé depuis Settings)
 function downloadUpdate() {
   if (AutoUpdate.downloading) {
-    showToast('Téléchargement déjà en cours...');
+    if (typeof showToast === 'function') showToast('Download already in progress...');
     return;
   }
   
   if (!AutoUpdate.updateAvailable) {
-    showToast('Aucune mise à jour disponible');
+    if (typeof showToast === 'function') showToast('No update available');
     return;
   }
   
   AutoUpdate.downloading = true;
   
-  showToast('Téléchargement de la mise à jour...');
+  if (typeof showToast === 'function') showToast('Downloading update...');
   
   var link = document.createElement('a');
   link.href = AutoUpdate.apkUrl;
@@ -698,24 +816,21 @@ function downloadUpdate() {
   setTimeout(function() {
     document.body.removeChild(link);
     AutoUpdate.downloading = false;
-    showToast('Téléchargement terminé! Ouvrez le fichier pour installer.');
+    if (typeof showToast === 'function') showToast('Download complete! Open the file to install.');
   }, 3000);
 }
 
-// Démarrer la vérification périodique
 setTimeout(checkForUpdates, 5000);
-setInterval(checkForUpdates, 10 * 60 * 1000); // Toutes les 10 minutes
+setInterval(checkForUpdates, 10 * 60 * 1000);
 
 // ============================================
-// GESTION DES LIENS - EMPÊCHE L'OUVERTURE DE LIENS EXTERNES
+// EXTERNAL LINKS
 // ============================================
 
 (function() {
-  // Configuration - MODIFIEZ ICI SI NÉCESSAIRE
   var APP_DOMAIN = 'hanskepper.github.io';
   var APP_PATH = '/SMART-GRAD/';
   
-  // Pages autorisées dans l'application
   var allowedPages = [
     'index.html', 'dashboard.html', 'login.html', 'register.html',
     'add-grade.html', 'subjects.html', 'subject-detail.html',
@@ -727,36 +842,26 @@ setInterval(checkForUpdates, 10 * 60 * 1000); // Toutes les 10 minutes
     'notifications.html', 'shortcuts.html', 'welcome.html', '404.html'
   ];
   
-  // Intercepter tous les clics sur les liens
   document.addEventListener('click', function(e) {
     var link = e.target.closest('a');
     if (!link) return;
     
     var href = link.getAttribute('href');
     if (!href) return;
-    
-    // Ignorer les ancres et liens vides
     if (href === '#' || href === '') return;
-    
-    // Ignorer les liens mailto, tel, etc.
     if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
     
     var isExternal = false;
     
-    // Cas 1: Lien absolu (http:// ou https://)
     if (href.indexOf('http') === 0) {
-      // Vérifier si le lien appartient à votre application
       if (!href.includes(APP_DOMAIN)) {
         isExternal = true;
       } else if (APP_PATH && !href.includes(APP_PATH)) {
-        // Même domaine mais autre dossier (autre projet)
         isExternal = true;
       }
     }
     
-    // Cas 2: Lien relatif
     if (!isExternal && href.indexOf('http') !== 0 && href.indexOf('/') !== 0) {
-      // Vérifier si c'est une page autorisée
       var isAllowed = false;
       for (var i = 0; i < allowedPages.length; i++) {
         if (href === allowedPages[i] || href.indexOf(allowedPages[i]) !== -1) {
@@ -764,20 +869,29 @@ setInterval(checkForUpdates, 10 * 60 * 1000); // Toutes les 10 minutes
           break;
         }
       }
-      
-      // Si ce n'est pas une page autorisée (fichier .html externe)
       if (!isAllowed && href.indexOf('.html') !== -1) {
         isExternal = true;
       }
     }
     
-    // Si lien externe, ouvrir dans le navigateur
     if (isExternal) {
       e.preventDefault();
       window.open(href, '_blank');
-      console.log('[LinkHandler] Lien externe ouvert:', href);
+      console.log('[LinkHandler] External link opened:', href);
     }
   });
   
-  console.log('[LinkHandler] Activé - ' + allowedPages.length + ' pages autorisées');
+  console.log('[LinkHandler] Active - ' + allowedPages.length + ' allowed pages');
 })();
+
+// ============================================
+// NOTIFICATION PERMISSION
+// ============================================
+
+setTimeout(function() {
+  if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
+    Notification.requestPermission();
+  }
+}, 3000);
+
+console.log('SMART GRADE v4.0 Ultimate - Ready');

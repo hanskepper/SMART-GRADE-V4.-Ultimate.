@@ -94,6 +94,11 @@
       color:#e74c3c;
       border:1px solid rgba(231,76,60,0.3);
     }
+    .flashcard-controls button.danger:disabled{
+      opacity:0.5;
+      cursor:not-allowed;
+      transform:none;
+    }
     .form-group-flash{
       margin-bottom:12px;
     }
@@ -117,6 +122,53 @@
     .form-group-flash input:focus{
       outline:none;
       border-color:var(--primary);
+    }
+    .card-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 10px;
+      margin-bottom: 6px;
+    }
+    .card-item.default-card {
+      background: rgba(15,59,72,0.08);
+      border-left: 3px solid var(--primary);
+    }
+    .card-question {
+      flex: 1;
+      font-size: 0.7rem;
+    }
+    .card-question strong {
+      color: var(--primary);
+    }
+    .card-question small {
+      color: var(--text-light);
+    }
+    .default-badge {
+      background: var(--primary);
+      color: white;
+      font-size: 0.55rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      margin-left: 8px;
+    }
+    .delete-card-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      cursor: pointer;
+      padding: 8px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+    .delete-card-btn:hover {
+      background: rgba(231,76,60,0.1);
+    }
+    .delete-card-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
   </style>
 </head>
@@ -172,7 +224,7 @@
       
       <div class="glass-card">
         <label style="font-weight:500;color:var(--text-light);font-size:0.7rem;">
-          <i class="fas fa-layer-group"></i> Select Subject
+          <i class="fas fa-layer-group"></i> Select Subject (All 14 Subjects)
         </label>
         <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;" id="subjectSelector"></div>
       </div>
@@ -189,7 +241,7 @@
           <button onclick="prevCard()"><i class="fas fa-arrow-left"></i> Prev</button>
           <button class="primary" onclick="flipCard()"><i class="fas fa-sync-alt"></i> Flip</button>
           <button onclick="nextCard()"><i class="fas fa-arrow-right"></i> Next</button>
-          <button class="danger" onclick="deleteCurrentCard()"><i class="fas fa-trash"></i> Delete</button>
+          <button class="danger" id="deleteCardBtn" onclick="deleteCurrentCard()" disabled><i class="fas fa-trash"></i> Delete</button>
         </div>
       </div>
       
@@ -222,8 +274,26 @@
     var fcIndex = 0;
     var fcFlipped = false;
     var allSaved = [];
-    var allSubs = [];
     
+    // ALL 14 SUBJECTS (complete list)
+    var ALL_SUBJECTS = [
+      { id: 1, name: "COMPUTER SCIENCES", code: "CS", icon: "fa-laptop-code" },
+      { id: 2, name: "MATHEMATICS", code: "MATH", icon: "fa-square-root-variable" },
+      { id: 3, name: "CHEMISTRY", code: "CHM", icon: "fa-flask" },
+      { id: 4, name: "HUMAN BIOLOGY", code: "HBIO", icon: "fa-dna" },
+      { id: 5, name: "GEOLOGY", code: "GEL", icon: "fa-mountain" },
+      { id: 6, name: "PHYSICS", code: "PHY", icon: "fa-atom" },
+      { id: 7, name: "ADDITIONAL MATHEMATICS", code: "AMATH", icon: "fa-calculator" },
+      { id: 8, name: "BIOLOGY", code: "BIO", icon: "fa-leaf" },
+      { id: 9, name: "ECONOMICS", code: "ECO", icon: "fa-chart-line" },
+      { id: 10, name: "ENGLISH LANGUAGE", code: "ENG", icon: "fa-language" },
+      { id: 11, name: "GEOGRAPHY", code: "GEO", icon: "fa-earth-africa" },
+      { id: 12, name: "CITIZENSHIP", code: "CIV", icon: "fa-landmark" },
+      { id: 13, name: "FRENCH", code: "FR", icon: "fa-flag" },
+      { id: 14, name: "FOOD AND NUTRITION", code: "FDN", icon: "fa-apple-whole" }
+    ];
+    
+    // DEFAULT CARDS FOR ALL 14 SUBJECTS
     var DEFAULT_CARDS = {
       1: [{ q: "What is an algorithm?", a: "A step-by-step procedure to solve a problem" }, { q: "What does CPU stand for?", a: "Central Processing Unit" }, { q: "What is binary code?", a: "Number system using only 0 and 1" }],
       2: [{ q: "What is the Pythagorean theorem?", a: "a² + b² = c²" }, { q: "What is Pi (π)?", a: "3.14159..." }, { q: "What is the area of a circle?", a: "π × r²" }],
@@ -245,9 +315,8 @@
       cu = requireAuth();
       if (!cu) return;
       allSaved = getFlashcards(cu.id);
-      allSubs = getActiveSubjectsWithCoefficients(cu.id, getCurrentTerm());
       buildSubjectSelector();
-      if (allSubs.length > 0) selectSubject(allSubs[0].id);
+      if (ALL_SUBJECTS.length > 0) selectSubject(ALL_SUBJECTS[0].id);
       updateHeaderAvatar();
     }
     
@@ -256,7 +325,7 @@
     function buildSubjectSelector() {
       var container = document.getElementById('subjectSelector');
       container.innerHTML = '';
-      allSubs.forEach(function(s) {
+      ALL_SUBJECTS.forEach(function(s) {
         var btn = document.createElement('button');
         btn.className = 'btn ' + (fcSubj === s.id ? 'btn-primary' : 'btn-secondary');
         btn.style.cssText = 'width:auto;padding:8px 12px;font-size:0.7rem;flex:1;min-width:80px;';
@@ -271,33 +340,58 @@
       fcIndex = 0;
       fcFlipped = false;
       allSaved = getFlashcards(cu.id);
-      var savedForSubject = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
-      if (savedForSubject.length > 0) {
-        fcCards = savedForSubject;
-      } else {
-        fcCards = (DEFAULT_CARDS[fcSubj] || []).map(function(c) { return { id: Date.now() + Math.floor(Math.random() * 10000), subjectId: fcSubj, question: c.q, answer: c.a }; });
-        allSaved = allSaved.concat(fcCards);
-        saveFlashcards(cu.id, allSaved);
-      }
+      
+      var userCardsForSubject = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      userCardsForSubject.forEach(function(card) { card.isOriginal = false; });
+      
+      var defaultCardsForSubject = (DEFAULT_CARDS[fcSubj] || []).map(function(c, idx) {
+        return {
+          id: 'default_' + fcSubj + '_' + idx,
+          subjectId: fcSubj,
+          question: c.q,
+          answer: c.a,
+          isOriginal: true
+        };
+      });
+      
+      fcCards = [...defaultCardsForSubject, ...userCardsForSubject];
+      
+      var cardsToSave = fcCards.filter(function(c) { return !c.isOriginal; });
+      saveFlashcards(cu.id, cardsToSave);
+      
       updateCard();
       buildSubjectSelector();
       renderAllCardsList();
     }
     
     function updateCard() {
+      var deleteBtn = document.getElementById('deleteCardBtn');
+      
       if (fcCards.length === 0) {
         document.getElementById('fcFront').innerHTML = '<p style="opacity:0.5;">No cards for this subject</p>';
         document.getElementById('fcBack').innerHTML = '<p style="opacity:0.5;">Add cards below</p>';
         document.getElementById('fcCounter').textContent = '0 / 0';
         document.getElementById('totalCardsCount').textContent = '0';
+        if (deleteBtn) deleteBtn.disabled = true;
         return;
       }
+      
       document.getElementById('fcFront').innerHTML = '<p style="font-weight:600;">' + fcCards[fcIndex].question + '</p>';
       document.getElementById('fcBack').innerHTML = '<p>' + fcCards[fcIndex].answer + '</p>';
       document.getElementById('fcCounter').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
       document.getElementById('totalCardsCount').textContent = fcCards.length;
       document.getElementById('flashcard').classList.remove('flipped');
       fcFlipped = false;
+      
+      if (deleteBtn) {
+        if (fcCards[fcIndex].isOriginal === true) {
+          deleteBtn.disabled = true;
+          deleteBtn.title = "Original cards cannot be deleted";
+        } else {
+          deleteBtn.disabled = false;
+          deleteBtn.title = "Delete this card";
+        }
+      }
     }
     
     function flipCard() { if (fcCards.length === 0) return; fcFlipped = !fcFlipped; var f = document.getElementById('flashcard'); if (fcFlipped) f.classList.add('flipped'); else f.classList.remove('flipped'); }
@@ -309,28 +403,72 @@
       var a = document.getElementById('newAnswer').value.trim();
       if (!q || !a) { showToast('Please enter both question and answer'); return; }
       if (!fcSubj) { showToast('Please select a subject first'); return; }
-      allSaved = getFlashcards(cu.id);
-      var newCard = { id: Date.now(), subjectId: fcSubj, question: q, answer: a };
-      allSaved.push(newCard);
-      saveFlashcards(cu.id, allSaved);
-      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
-      fcIndex = fcCards.length - 1;
+      
+      var existingUserCards = getFlashcards(cu.id);
+      var newCard = { 
+        id: Date.now(), subjectId: fcSubj, question: q, answer: a,
+        isOriginal: false, createdAt: new Date().toISOString()
+      };
+      existingUserCards.push(newCard);
+      saveFlashcards(cu.id, existingUserCards);
+      
+      // Vérifier les badges #58 et #59
+      if (cu && cu.id && typeof checkAndUnlockAllNewBadges === 'function') {
+        checkAndUnlockAllNewBadges(cu.id);
+      }
+      
+      selectSubject(fcSubj);
+      for (var i = 0; i < fcCards.length; i++) {
+        if (fcCards[i].id === newCard.id) {
+          fcIndex = i;
+          break;
+        }
+      }
       updateCard();
       renderAllCardsList();
       document.getElementById('newQuestion').value = '';
       document.getElementById('newAnswer').value = '';
       playActionFeedback();
-      showToast('Card added! (' + fcCards.length + ' total)');
+      showToast('Card added!');
     }
     
     function deleteCurrentCard() {
       if (fcCards.length === 0) { showToast('No cards to delete'); return; }
-      if (!confirm('Delete this card? "' + fcCards[fcIndex].question + '"')) return;
-      var cardToDelete = fcCards[fcIndex];
-      allSaved = getFlashcards(cu.id);
-      allSaved = allSaved.filter(function(c) { return c.id !== cardToDelete.id; });
-      saveFlashcards(cu.id, allSaved);
-      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
+      var currentCard = fcCards[fcIndex];
+      if (currentCard.isOriginal === true) {
+        showToast('Original cards cannot be deleted');
+        return;
+      }
+      if (!confirm('Delete this card? "' + currentCard.question + '"')) return;
+      var userCards = getFlashcards(cu.id);
+      userCards = userCards.filter(function(c) { return c.id !== currentCard.id; });
+      saveFlashcards(cu.id, userCards);
+      selectSubject(fcSubj);
+      if (fcCards.length === 0) fcIndex = 0;
+      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
+      updateCard();
+      renderAllCardsList();
+      showToast('Card deleted');
+    }
+    
+    function deleteCardById(id) {
+      var cardToDelete = null;
+      for (var i = 0; i < fcCards.length; i++) {
+        if (fcCards[i].id === id) {
+          cardToDelete = fcCards[i];
+          break;
+        }
+      }
+      if (!cardToDelete) return;
+      if (cardToDelete.isOriginal === true) {
+        showToast('Original cards cannot be deleted');
+        return;
+      }
+      if (!confirm('Delete this card? "' + cardToDelete.question + '"')) return;
+      var userCards = getFlashcards(cu.id);
+      userCards = userCards.filter(function(c) { return c.id !== id; });
+      saveFlashcards(cu.id, userCards);
+      selectSubject(fcSubj);
       if (fcCards.length === 0) fcIndex = 0;
       else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
       updateCard();
@@ -340,28 +478,29 @@
     
     function renderAllCardsList() {
       var container = document.getElementById('allCardsList');
-      var cards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
-      document.getElementById('totalCardsCount').textContent = cards.length;
-      if (cards.length === 0) { container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No cards for this subject yet.<br>Add your first card above!</p>'; return; }
-      container.innerHTML = cards.map(function(c, i) {
-        return '<div style="display:flex;align-items:center;gap:10px;padding:8px;background:rgba(0,0,0,0.02);border-radius:10px;margin-bottom:6px;' + (i === fcIndex ? 'border:1px solid var(--primary);' : '') + '">' +
-          '<div style="flex:1;font-size:0.7rem;"><strong>Q:</strong> ' + c.question + '<br><small style="color:var(--text-light);"><strong>A:</strong> ' + c.answer + '</small></div>' +
-          '<button onclick="deleteCardById(' + c.id + ')" style="background:none;border:none;color:#e74c3c;cursor:pointer;flex-shrink:0;"><i class="fas fa-trash"></i></button>' +
+      if (fcCards.length === 0) {
+        container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No cards for this subject yet.<br>Add your first card above!</p>';
+        return;
+      }
+      
+      container.innerHTML = fcCards.map(function(c, i) {
+        var isDefault = (c.isOriginal === true);
+        var defaultBadge = isDefault ? '<span class="default-badge"><i class="fas fa-lock"></i> Original</span>' : '';
+        var deleteButton = '';
+        if (!isDefault) {
+          deleteButton = '<button class="delete-card-btn" onclick="deleteCardById(' + c.id + ')" title="Delete card"><i class="fas fa-trash"></i></button>';
+        } else {
+          deleteButton = '<button class="delete-card-btn" disabled style="opacity:0.3;cursor:not-allowed;" title="Original cards cannot be deleted"><i class="fas fa-lock"></i></button>';
+        }
+        return '<div class="card-item ' + (isDefault ? 'default-card' : '') + '">' +
+          '<div class="card-question">' +
+            '<strong>Q:</strong> ' + c.question + '<br>' +
+            '<small><strong>A:</strong> ' + c.answer + '</small>' +
+            defaultBadge +
+          '</div>' +
+          deleteButton +
         '</div>';
       }).join('');
-    }
-    
-    function deleteCardById(id) {
-      if (!confirm('Delete this card?')) return;
-      allSaved = getFlashcards(cu.id);
-      allSaved = allSaved.filter(function(c) { return c.id !== id; });
-      saveFlashcards(cu.id, allSaved);
-      fcCards = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
-      if (fcCards.length === 0) fcIndex = 0;
-      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
-      updateCard();
-      renderAllCardsList();
-      showToast('Card deleted');
     }
     
     initFC();

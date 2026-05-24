@@ -97,7 +97,7 @@
           </thead>
           <tbody>
             <tr><td class="day-cell">MON</td><td class="tt-bio"><i class="fas fa-leaf"></i>Biology</td><td class="tt-phy"><i class="fas fa-atom"></i>Physics</td><td class="tt-civ"><i class="fas fa-landmark"></i>Citizenship</td><td class="break-cell" rowspan="5">FIRST BREAK</td><td class="tt-log" ><i class="fas fa-brain"></i>Logic / Geology</td><td class="tt-log" ><i class="fas fa-brain"></i>Logic / Geology</td><td class="break-cell" rowspan="5">SECOND BREAK</td><td class="tt-amath"><i class="fas fa-calculator"></i>Additional Mathematics</td><td class="tt-fr" ><i class="fas fa-flag"></i>French</td><td class="tt-fr" ><i class="fas fa-flag"></i>French</td></tr>
-            <tr><td class="day-cell">TUE</td><td class="tt-civ" ><i class="fas fa-landmark"></i>Citizenship</td><td class="tt-civ" ><i class="fas fa-landmark"></i>Citizenship</td><td class="tt-pe"><i class="fas fa-person-running"></i>P.E</td><td class="tt-eng"><i class="fas fa-language"></i>English Language</td><td class="tt-hbio"><i class="fas fa-dna"></i>Human Biology / Geology</td> <td class="tt-hbio"><i class="fas fa-dna"></i>Human Biology / Geology</td><td class="tt-geo" ><i class="fas fa-earth-africa"></i>Geography</td><td class="tt-geo" ><i class="fas fa-earth-africa"></i>Geography</td> </tr>
+            <tr><td class="day-cell">TUE</td><td class="tt-civ" ><i class="fas fa-landmark"></i>Citizenship</td><td class="tt-civ" ><i class="fas fa-landmark"></i>Citizenship</td><td class="tt-pe"><i class="fas fa-person-running"></i>P.E</td><td class="tt-eng"><i class="fas fa-language"></i>English Language</td><td class="tt-hbio"><i class="fas fa-dna"></i>Human Biology / Geology</td> <td class="tt-hbio"><i class="fas fa-dna"></i>Human Biology / Geology</td><td class="tt-geo" ><i class="fas fa-earth-africa"></i>Geography</td><td class="tt-geo" ><i class="fas fa-earth-africa"></i>Geography</td></tr>
             <tr><td class="day-cell">WED</td><td class="tt-phy" ><i class="fas fa-atom"></i>Physics</td><td class="tt-phy" ><i class="fas fa-atom"></i>Physics</td><td class="tt-math"><i class="fas fa-square-root-variable"></i>Mathematics</td><td class="tt-bio" ><i class="fas fa-leaf"></i>Biology</td><td class="tt-bio"><i class="fas fa-leaf"></i>Biology</td><td class="tt-fr"><i class="fas fa-flag"></i>French</td><td class="tt-chm"><i class="fas fa-flask"></i>Chemistry</td><td class="tt-geo"><i class="fas fa-earth-africa"></i>Geography</td></tr>
             <tr><td class="day-cell">THU</td><td class="tt-cs" ><i class="fas fa-laptop-code"></i>Computer Science</td><td class="tt-cs" ><i class="fas fa-laptop-code"></i>Computer Science</td><td class="tt-eco"><i class="fas fa-chart-line"></i>Economics</td><td class="tt-eng"><i class="fas fa-language"></i>English Language</td><td class="tt-eng"><i class="fas fa-language"></i>English Language</td><td class="tt-food"><i class="fas fa-apple-whole"></i>Food and Nutrition</td><td class="tt-eco" ><i class="fas fa-chart-line"></i>Economics</td><td class="tt-eco" ><i class="fas fa-chart-line"></i>Economics</td></tr>
             <tr><td class="day-cell">FRI</td><td class="tt-math" ><i class="fas fa-square-root-variable"></i>Mathematics</td><td class="tt-math" ><i class="fas fa-square-root-variable"></i>Mathematics</td><td class="tt-food"><i class="fas fa-apple-whole"></i>Food and Nutrition</td><td class="empty-cell">—</td><td class="empty-cell">—</td><td class="tt-chm"><i class="fas fa-flask"></i>Chemistry</td><td class="tt-chm"><i class="fas fa-flask"></i>Chemistry</td><td class="tt-food"><i class="fas fa-apple-whole"></i>Food and Nutrition</td></tr>
@@ -133,9 +133,28 @@
   <script src="js/database.js"></script>
   <script src="js/app.js"></script>
   <script>
+    // Charger l'avatar
     var cu = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-    if (cu) { var p = JSON.parse(localStorage.getItem('smartgrade_profile_' + cu.id) || '{}'); document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + (p.avatar || 'fa-graduation-cap') + '"></i>'; }
-    initMobileMenu(); initThemeSelector();
+    if (cu) { 
+      var p = JSON.parse(localStorage.getItem('smartgrade_profile_' + cu.id) || '{}'); 
+      document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + (p.avatar || 'fa-graduation-cap') + '"></i>'; 
+    }
+    initMobileMenu(); 
+    initThemeSelector();
+    
+    // Badge #57: Timetable Viewer - compter les visites
+    (function() {
+      var currentUser = getCurrentStudent();
+      if (currentUser && currentUser.id) {
+        if (typeof incrementTimetableView === 'function') {
+          var viewCount = incrementTimetableView(currentUser.id);
+          console.log('[Timetable] View count:', viewCount);
+          if (typeof checkAndUnlockAllNewBadges === 'function') {
+            checkAndUnlockAllNewBadges(currentUser.id);
+          }
+        }
+      }
+    })();
   </script>
 </body>
 </html>

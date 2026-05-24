@@ -18,24 +18,194 @@
     .about-hero{text-align:center;padding:30px 20px;border-radius:20px;color:white;margin-bottom:16px;}
     .about-hero h1{font-size:1.5rem;margin:8px 0;}
     .about-hero .version-badge{display:inline-block;background:rgba(255,255,255,0.2);padding:6px 16px;border-radius:20px;font-size:0.7rem;}
-    .tech-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:16px;}
-    .tech-item{text-align:center;padding:16px 10px;background:var(--card-bg);border-radius:14px;border:1px solid var(--border);transition:all 0.2s;}
-    .tech-item:hover{transform:translateY(-3px);border-color:var(--primary);}
-    .tech-item i{font-size:1.8rem;color:var(--primary);margin-bottom:8px;display:block;}
-    .tech-item .tech-name{font-weight:700;font-size:0.75rem;}
-    .tech-item .tech-desc{font-size:0.6rem;color:var(--text-light);margin-top:4px;}
+    
+    /* Grille technologies élargie avec couleurs originales */
+    .tech-grid-extended {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tech-item {
+      text-align: center;
+      padding: 16px 10px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .tech-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    .tech-item i {
+      font-size: 2rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .tech-item .tech-name {
+      font-weight: 700;
+      font-size: 0.7rem;
+    }
+    .tech-item .tech-desc {
+      font-size: 0.55rem;
+      color: var(--text-light);
+      margin-top: 4px;
+    }
+    
+    /* Couleurs originales des technologies */
+    .tech-html5 { color: #E44D26; }
+    .tech-css3 { color: #264DE4; }
+    .tech-js { color: #F7DF1E; text-shadow: 0 0 2px #000; }
+    .tech-json { color: #000000; }
+    .tech-pwa { color: #5A0FC8; }
+    .tech-storage { color: #F39C12; }
+    .tech-webauthn { color: #2ECC71; }
+    .tech-qr { color: #1ABC9C; }
+    .tech-chart { color: #FF6384; }
+    .tech-database { color: #3498DB; }
+    .tech-api { color: #9B59B6; }
+    .tech-sw { color: #E67E22; }
+    
     .info-row-about{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:0.75rem;}
     .info-row-about i{width:28px;color:var(--primary);text-align:center;}
     .feature-list{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px;}
     .feature-item{display:flex;align-items:center;gap:8px;font-size:0.7rem;padding:6px 0;}
     .feature-item i{width:20px;color:#2ecc71;font-size:0.7rem;}
-    .stats-badge{display:inline-block;background:rgba(15,59,72,0.08);padding:4px 12px;border-radius:20px;font-size:0.6rem;margin:2px;}
-    .html5-badge{background:#E44D26;color:white;}
-    .css3-badge{background:#264DE4;color:white;}
-    .js-badge{background:#F7DF1E;color:#000;}
-    @media(max-width:400px){
-      .tech-grid{grid-template-columns:1fr;}
-      .feature-list{grid-template-columns:1fr;}
+    
+    /* Modal Technologies amélioré */
+    .tech-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .tech-modal.active { display: flex; }
+    .tech-modal-content {
+      background: var(--card-bg);
+      border-radius: 28px;
+      width: 95%;
+      max-width: 550px;
+      max-height: 85%;
+      overflow: hidden;
+      animation: techFadeIn 0.3s ease;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    @keyframes techFadeIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .tech-modal-header {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .tech-modal-header h3 {
+      color: white;
+      margin: 0;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .tech-modal-close {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 28px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+    .tech-modal-close:hover { background: rgba(255,255,255,0.2); }
+    .tech-modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
+    
+    .tech-tabs {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 20px;
+      background: rgba(0,0,0,0.05);
+      padding: 6px;
+      border-radius: 50px;
+      flex-wrap: wrap;
+    }
+    .tech-tab {
+      flex: 1;
+      padding: 10px 8px;
+      border-radius: 40px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .tech-tab.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    .tech-content { display: none; animation: techContentFade 0.3s ease; }
+    .tech-content.active { display: block; }
+    @keyframes techContentFade {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .tech-icon-large { text-align: center; font-size: 55px; margin-bottom: 15px; }
+    .tech-content h4 { text-align: center; margin-bottom: 15px; font-size: 0.9rem; color: var(--primary); }
+    .tech-content ul {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .tech-content li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 30px;
+    }
+    .tech-content li i { width: 20px; font-size: 0.7rem; }
+    .tech-content li i.fa-html5 { color: #E44D26; }
+    .tech-content li i.fa-css3-alt { color: #264DE4; }
+    .tech-content li i.fa-js { color: #F7DF1E; text-shadow: 0 0 1px #000; }
+    .tech-content li i.fa-database { color: #3498DB; }
+    .tech-content li i.fa-file-code { color: #000000; }
+    .tech-content li i.fa-mobile-alt { color: #5A0FC8; }
+    .tech-content li i.fa-fingerprint { color: #2ECC71; }
+    .tech-content li i.fa-qrcode { color: #1ABC9C; }
+    .tech-content li i.fa-chart-line { color: #FF6384; }
+    .tech-content li i.fa-cloud-upload-alt { color: #E67E22; }
+    .tech-content li i.fa-check-circle { color: #2ecc71; }
+    
+    @media (max-width: 550px) {
+      .tech-grid-extended { grid-template-columns: repeat(2, 1fr); }
+      .tech-content ul { grid-template-columns: 1fr; }
+      .tech-tab span { display: none; }
     }
   </style>
 </head>
@@ -43,10 +213,10 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
-    <!-- HEADER PRIVÉ (avec avatar) -->
+    <!-- HEADER PRIVE -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-      <div class="header-logo"><i class="fas fa-book-open"></i><span>ABOUT</span></div>
+      <div class="header-logo"><i class="fas fa-info-circle"></i><span>ABOUT</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
         <a href="profile.html">
           <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
@@ -70,7 +240,6 @@
       </div>
     </div>
     
-    <!-- SIDEBAR PRIVÉ -->
     <div class="sidebar-menu" id="sidebarMenu">
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
@@ -90,26 +259,74 @@
         <div class="version-badge">Version 4.0 "Ultimate"</div>
       </div>
       
-      <div class="glass-card">
-        <h3><i class="fas fa-microchip"></i> Technical Specifications</h3>
-        <div class="tech-grid">
-          <div class="tech-item"><i class="fab fa-html5" style="color:#E44D26;"></i><div class="tech-name">HTML5</div><div class="tech-desc">Semantic markup, LocalStorage, Canvas</div></div>
-          <div class="tech-item"><i class="fab fa-css3-alt" style="color:#264DE4;"></i><div class="tech-name">CSS3</div><div class="tech-desc">Flexbox, Grid, Animations, Variables</div></div>
-          <div class="tech-item"><i class="fab fa-js" style="color:#F7DF1E;"></i><div class="tech-name">JavaScript ES6+</div><div class="tech-desc">Promises, Async/Await, Modules</div></div>
-          <div class="tech-item"><i class="fas fa-database"></i><div class="tech-name">localStorage</div><div class="tech-desc">Client-side Database</div></div>
-          <div class="tech-item"><i class="fas fa-wifi"></i><div class="tech-name">PWA</div><div class="tech-desc">Offline Capable</div></div>
-          <div class="tech-item"><i class="fas fa-paint-brush"></i><div class="tech-name">CSS3 + Glassmorphism</div><div class="tech-desc">20 Themes, Backdrop-filter</div></div>
-          <div class="tech-item"><i class="fas fa-chart-bar"></i><div class="tech-name">Chart.js 4.4</div><div class="tech-desc">Interactive Graphs</div></div>
-          <div class="tech-item"><i class="fas fa-fingerprint"></i><div class="tech-name">WebAuthn API</div><div class="tech-desc">Biometric Login</div></div>
-          <div class="tech-item"><i class="fas fa-mobile-alt"></i><div class="tech-name">Responsive Design</div><div class="tech-desc">Mobile First</div></div>
-          <div class="tech-item"><i class="fas fa-shield-halved"></i><div class="tech-name">Secure</div><div class="tech-desc">4-digit PIN Protection</div></div>
-          <div class="tech-item"><i class="fas fa-qrcode"></i><div class="tech-name">QR Code API</div><div class="tech-desc">Data Transfer</div></div>
-          <div class="tech-item"><i class="fas fa-exchange-alt"></i><div class="tech-name">BroadcastChannel API</div><div class="tech-desc">Cross-Tab Sync</div></div>
-          <div class="tech-item"><i class="fas fa-camera"></i><div class="tech-name">MediaDevices API</div><div class="tech-desc">Camera access</div></div>
-          <div class="tech-item"><i class="fas fa-file-image"></i><div class="tech-name">FileReader API</div><div class="tech-desc">Image upload</div></div>
-          <div class="tech-item"><i class="fas fa-chart-line"></i><div class="tech-name">Canvas API</div><div class="tech-desc">Chart rendering</div></div>
-          <div class="tech-item"><i class="fas fa-bell"></i><div class="tech-name">Notification API</div><div class="tech-desc">Push notifications</div></div>
+      <!-- Technologies Section avec couleurs originales -->
+      <div class="glass-card text-center">
+        <h3><i class="fas fa-microchip"></i> Core Technologies</h3>
+        <div class="tech-grid-extended">
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fab fa-html5 tech-html5"></i>
+            <div class="tech-name">HTML5</div>
+            <div class="tech-desc">Semantic Markup + APIs</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fab fa-css3-alt tech-css3"></i>
+            <div class="tech-name">CSS3</div>
+            <div class="tech-desc">Flexbox, Grid, Animations</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fab fa-js tech-js"></i>
+            <div class="tech-name">JavaScript ES6+</div>
+            <div class="tech-desc">Promises, Async/Await</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-database tech-database"></i>
+            <div class="tech-name">localStorage</div>
+            <div class="tech-desc">Client-side Database</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-file-code tech-json"></i>
+            <div class="tech-name">JSON</div>
+            <div class="tech-desc">Data Interchange Format</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-mobile-alt tech-pwa"></i>
+            <div class="tech-name">PWA</div>
+            <div class="tech-desc">Offline + Installable</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-fingerprint tech-webauthn"></i>
+            <div class="tech-name">WebAuthn</div>
+            <div class="tech-desc">Biometric Authentication</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-qrcode tech-qr"></i>
+            <div class="tech-name">QR Code API</div>
+            <div class="tech-desc">Data Transfer</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-chart-line tech-chart"></i>
+            <div class="tech-name">Chart.js</div>
+            <div class="tech-desc">Interactive Graphs</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-cloud-upload-alt tech-sw"></i>
+            <div class="tech-name">Service Worker</div>
+            <div class="tech-desc">Offline Caching</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-bell tech-api"></i>
+            <div class="tech-name">Notification API</div>
+            <div class="tech-desc">Push Alerts</div>
+          </div>
+          <div class="tech-item" onclick="openTechModal()">
+            <i class="fas fa-camera tech-api"></i>
+            <div class="tech-name">MediaDevices</div>
+            <div class="tech-desc">Camera QR Scanning</div>
+          </div>
         </div>
+        <button class="btn btn-secondary" onclick="openTechModal()" style="margin-top:8px;width:auto;padding:8px 20px;">
+          <i class="fas fa-code"></i> View All Technologies (60+)
+        </button>
       </div>
       
       <div class="glass-card">
@@ -156,47 +373,6 @@
       </div>
       
       <div class="glass-card">
-        <h3><i class="fas fa-cogs"></i> Technologies & APIs Used</h3>
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-          <span class="stats-badge html5-badge">HTML5</span>
-          <span class="stats-badge css3-badge">CSS3</span>
-          <span class="stats-badge js-badge">JavaScript ES6+</span>
-          <span class="stats-badge">Font Awesome 6</span>
-          <span class="stats-badge">Google Fonts API</span>
-          <span class="stats-badge">Chart.js 4.4</span>
-          <span class="stats-badge">WebAuthn API</span>
-          <span class="stats-badge">BroadcastChannel API</span>
-          <span class="stats-badge">LocalStorage API</span>
-          <span class="stats-badge">Service Workers</span>
-          <span class="stats-badge">Manifest.json</span>
-          <span class="stats-badge">QRCode.js</span>
-          <span class="stats-badge">html5-qrcode</span>
-          <span class="stats-badge">Canvas API</span>
-          <span class="stats-badge">FileReader API</span>
-          <span class="stats-badge">MediaDevices API</span>
-          <span class="stats-badge">Notification API</span>
-          <span class="stats-badge">Vibration API</span>
-          <span class="stats-badge">Clipboard API</span>
-        </div>
-      </div>
-      
-      <div class="glass-card">
-        <h3><i class="fab fa-html5"></i> HTML5 Features Used</h3>
-        <div class="feature-list">
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Semantic Elements</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> LocalStorage API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Canvas API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> FileReader API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> MediaDevices API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Notification API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Vibration API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Clipboard API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Web Storage API</div>
-          <div class="feature-item"><i class="fas fa-check-circle"></i> Viewport meta</div>
-        </div>
-      </div>
-      
-      <div class="glass-card">
         <h3><i class="fas fa-user-astronaut"></i> Developer</h3>
         <div class="info-row-about"><i class="fas fa-user"></i><strong>HANS KEEPER</strong></div>
         <div class="info-row-about"><i class="fas fa-envelope"></i> hanskepper52@gmail.com</div>
@@ -212,18 +388,6 @@
         <div class="info-row-about"><i class="fas fa-graduation-cap"></i> Form 4B Science</div>
         <div class="info-row-about"><i class="fas fa-calendar"></i> Academic Year 2025-2026</div>
         <div class="info-row-about"><i class="fas fa-flag-checkered"></i> Cameroon National Curriculum</div>
-      </div>
-      
-      <div class="glass-card">
-        <h3><i class="fas fa-chart-simple"></i> Project Statistics</h3>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;">
-          <div class="tech-item"><i class="fas fa-file-code"></i><div class="tech-name">30+ Files</div><div class="tech-desc">HTML, CSS, JS</div></div>
-          <div class="tech-item"><i class="fas fa-code"></i><div class="tech-name">10000+ Lines</div><div class="tech-desc">of Code</div></div>
-          <div class="tech-item"><i class="fas fa-palette"></i><div class="tech-name">20 Themes</div><div class="tech-desc">Customizable</div></div>
-          <div class="tech-item"><i class="fas fa-font"></i><div class="tech-name">12 Fonts</div><div class="tech-desc">Google Fonts</div></div>
-          <div class="tech-item"><i class="fas fa-database"></i><div class="tech-name">50+ Storage Keys</div><div class="tech-desc">localStorage</div></div>
-          <div class="tech-item"><i class="fas fa-mobile"></i><div class="tech-name">100% Responsive</div><div class="tech-desc">Mobile First</div></div>
-        </div>
       </div>
       
       <div class="glass-card">
@@ -245,6 +409,119 @@
     </main>
   </div>
   
+  <!-- MODAL TECHNOLOGIES COMPLET (5 onglets) -->
+  <div id="techModal" class="tech-modal">
+    <div class="tech-modal-content">
+      <div class="tech-modal-header">
+        <h3><i class="fas fa-code"></i> Technologies Used</h3>
+        <button class="tech-modal-close" onclick="closeTechModal()">&times;</button>
+      </div>
+      <div class="tech-modal-body">
+        <div class="tech-tabs">
+          <button class="tech-tab active" data-tech="html5" onclick="showTechTab('html5')"><i class="fab fa-html5"></i> <span>HTML5</span></button>
+          <button class="tech-tab" data-tech="css3" onclick="showTechTab('css3')"><i class="fab fa-css3-alt"></i> <span>CSS3</span></button>
+          <button class="tech-tab" data-tech="js" onclick="showTechTab('js')"><i class="fab fa-js"></i> <span>JavaScript</span></button>
+          <button class="tech-tab" data-tech="storage" onclick="showTechTab('storage')"><i class="fas fa-database"></i> <span>Storage</span></button>
+          <button class="tech-tab" data-tech="pwa" onclick="showTechTab('pwa')"><i class="fas fa-mobile-alt"></i> <span>PWA & APIs</span></button>
+        </div>
+        
+        <!-- HTML5 -->
+        <div id="techHtml5" class="tech-content active">
+          <div class="tech-icon-large"><i class="fab fa-html5" style="color:#E44D26;"></i></div>
+          <h4>HTML5 Features</h4>
+          <ul>
+            <li><i class="fas fa-html5"></i> Semantic Elements</li>
+            <li><i class="fas fa-check-circle"></i> LocalStorage API</li>
+            <li><i class="fas fa-check-circle"></i> Canvas API</li>
+            <li><i class="fas fa-check-circle"></i> FileReader API</li>
+            <li><i class="fas fa-check-circle"></i> MediaDevices API</li>
+            <li><i class="fas fa-check-circle"></i> Notification API</li>
+            <li><i class="fas fa-check-circle"></i> Vibration API</li>
+            <li><i class="fas fa-check-circle"></i> Clipboard API</li>
+            <li><i class="fas fa-check-circle"></i> Web Storage API</li>
+            <li><i class="fas fa-check-circle"></i> Viewport meta for mobile</li>
+          </ul>
+        </div>
+        
+        <!-- CSS3 -->
+        <div id="techCss3" class="tech-content">
+          <div class="tech-icon-large"><i class="fab fa-css3-alt" style="color:#264DE4;"></i></div>
+          <h4>CSS3 Features</h4>
+          <ul>
+            <li><i class="fas fa-css3-alt"></i> Flexbox & Grid Layout</li>
+            <li><i class="fas fa-check-circle"></i> CSS Animations & Keyframes</li>
+            <li><i class="fas fa-check-circle"></i> CSS Variables (Custom Properties)</li>
+            <li><i class="fas fa-check-circle"></i> Glassmorphism (backdrop-filter)</li>
+            <li><i class="fas fa-check-circle"></i> Media Queries (Responsive)</li>
+            <li><i class="fas fa-check-circle"></i> Gradients & Transforms</li>
+            <li><i class="fas fa-check-circle"></i> 20 Color Themes</li>
+            <li><i class="fas fa-check-circle"></i> Dark / Light Mode (Night mode)</li>
+            <li><i class="fas fa-check-circle"></i> Custom Scrollbar</li>
+            <li><i class="fas fa-check-circle"></i> Box Shadow & Border Radius</li>
+          </ul>
+        </div>
+        
+        <!-- JavaScript -->
+        <div id="techJs" class="tech-content">
+          <div class="tech-icon-large"><i class="fab fa-js" style="color:#F7DF1E; text-shadow:0 0 2px #000;"></i></div>
+          <h4>JavaScript ES6+ Features</h4>
+          <ul>
+            <li><i class="fab fa-js"></i> ES6+ Syntax (let, const, arrow)</li>
+            <li><i class="fas fa-check-circle"></i> Promises & Async/Await</li>
+            <li><i class="fas fa-check-circle"></i> LocalStorage Database Management</li>
+            <li><i class="fas fa-chart-line"></i> Chart.js Integration</li>
+            <li><i class="fas fa-fingerprint"></i> WebAuthn API (Fingerprint)</li>
+            <li><i class="fas fa-mobile-alt"></i> Service Worker (PWA)</li>
+            <li><i class="fas fa-qrcode"></i> QR Code Generation & Scanning</li>
+            <li><i class="fas fa-volume-up"></i> Speech Synthesis (TTS Audio Guide)</li>
+            <li><i class="fas fa-camera"></i> Camera & QR Scanning (html5-qrcode)</li>
+            <li><i class="fas fa-palette"></i> Dynamic Theme Switching</li>
+          </ul>
+        </div>
+        
+        <!-- Storage & Data -->
+        <div id="techStorage" class="tech-content">
+          <div class="tech-icon-large"><i class="fas fa-database" style="color:#3498DB;"></i></div>
+          <h4>Storage & Data Management</h4>
+          <ul>
+            <li><i class="fas fa-database"></i> localStorage (Client-side DB)</li>
+            <li><i class="fas fa-file-code"></i> JSON Data Exchange Format</li>
+            <li><i class="fas fa-file-export"></i> Export/Import (CSV, JSON, PDF, HTML)</li>
+            <li><i class="fas fa-cloud-upload-alt"></i> Backup & Restore System</li>
+            <li><i class="fas fa-sync-alt"></i> Cross-tab Data Sync (storage event)</li>
+            <li><i class="fas fa-qrcode"></i> QR Code Data Transfer</li>
+            <li><i class="fas fa-key"></i> 6-Character Secure Transfer Codes</li>
+            <li><i class="fas fa-chart-bar"></i> Data Compression (Base64 for images)</li>
+            <li><i class="fas fa-chart-simple"></i> Storage Usage Monitoring</li>
+            <li><i class="fas fa-save"></i> Auto-save every 30 seconds</li>
+          </ul>
+        </div>
+        
+        <!-- PWA & Advanced APIs -->
+        <div id="techPwa" class="tech-content">
+          <div class="tech-icon-large"><i class="fas fa-mobile-alt" style="color:#5A0FC8;"></i></div>
+          <h4>PWA & Advanced APIs</h4>
+          <ul>
+            <li><i class="fas fa-mobile-alt"></i> Progressive Web App (PWA)</li>
+            <li><i class="fas fa-cloud-upload-alt"></i> Service Worker (Offline Mode)</li>
+            <li><i class="fas fa-file-alt"></i> Web App Manifest</li>
+            <li><i class="fas fa-fingerprint"></i> WebAuthn (Fingerprint Login)</li>
+            <li><i class="fas fa-camera"></i> MediaDevices (Camera for QR)</li>
+            <li><i class="fas fa-qrcode"></i> html5-qrcode Library</li>
+            <li><i class="fas fa-chart-line"></i> Chart.js (Bar, Radar, Doughnut)</li>
+            <li><i class="fas fa-search-plus"></i> chartjs-plugin-zoom</li>
+            <li><i class="fas fa-bell"></i> Notification API</li>
+            <li><i class="fas fa-mobile"></i> Vibration API (Haptic Feedback)</li>
+            <li><i class="fas fa-copy"></i> Clipboard API (Copy/Paste)</li>
+            <li><i class="fas fa-file"></i> FileReader API (Import/Export)</li>
+            <li><i class="fas fa-volume-up"></i> Speech Synthesis (Audio Guide 16 chapters)</li>
+            <li><i class="fas fa-file-pdf"></i> html2pdf.js (PDF Generation)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+  
   <div id="toastContainer" class="toast-container"></div>
   
   <script src="js/utils.js"></script>
@@ -253,12 +530,43 @@
   <script src="js/app.js"></script>
   
   <script>
-    // Mettre à jour l'avatar
+    function openTechModal() {
+      document.getElementById('techModal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeTechModal() {
+      document.getElementById('techModal').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function showTechTab(tab) {
+      document.querySelectorAll('.tech-tab').forEach(function(btn) {
+        btn.classList.remove('active');
+      });
+      document.querySelector('.tech-tab[data-tech="' + tab + '"]').classList.add('active');
+      
+      document.getElementById('techHtml5').classList.remove('active');
+      document.getElementById('techCss3').classList.remove('active');
+      document.getElementById('techJs').classList.remove('active');
+      document.getElementById('techStorage').classList.remove('active');
+      document.getElementById('techPwa').classList.remove('active');
+      
+      if (tab === 'html5') document.getElementById('techHtml5').classList.add('active');
+      if (tab === 'css3') document.getElementById('techCss3').classList.add('active');
+      if (tab === 'js') document.getElementById('techJs').classList.add('active');
+      if (tab === 'storage') document.getElementById('techStorage').classList.add('active');
+      if (tab === 'pwa') document.getElementById('techPwa').classList.add('active');
+    }
+    
+    document.getElementById('techModal').addEventListener('click', function(e) {
+      if (e.target === this) closeTechModal();
+    });
+    
+    // Mettre à jour l'avatar de l'utilisateur connecté
     var currentUser = getCurrentStudent();
     if (currentUser) {
       var profile = getProfile(currentUser.id);
       var headerAvatar = document.getElementById('headerAvatar');
-      if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+      if (headerAvatar && profile.avatarBase64 && profile.avatarBase64 !== '') {
         headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       }
     }

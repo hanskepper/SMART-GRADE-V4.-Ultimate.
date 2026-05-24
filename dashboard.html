@@ -105,7 +105,6 @@
       {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
     ];
     
-    // 20 CITATIONS INSPIRANTES
     var MQ = [
       {q:"Success is not final, failure is not fatal.",a:"Churchill"},
       {q:"Education is the passport to the future.",a:"Malcolm X"},
@@ -209,7 +208,6 @@
       document.getElementById('greeting').innerHTML = getGreeting() + ', ' + current.name + '!';
       document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + current.class;
       
-      // Citation aléatoire
       var randomIndex = Math.floor(Math.random() * MQ.length);
       var q = MQ[randomIndex];
       document.getElementById('motivationQuote').innerHTML = '"' + q.q + '"';
@@ -241,8 +239,10 @@
       document.getElementById('yearlyAvg').innerHTML = yearly.toFixed(2);
       document.getElementById('overallAvg').innerHTML = yearly.toFixed(2);
       
+      // Compter tous les badges débloqués (1 à 22)
       var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + sid) || '[]');
-      document.getElementById('achievementsCount').innerHTML = ach.filter(function(a) { return a.unlocked; }).length;
+      var unlockedCount = ach.filter(function(a) { return a.unlocked; }).length;
+      document.getElementById('achievementsCount').innerHTML = unlockedCount;
       
       var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + sid) || 12);
       document.getElementById('goalValue').innerHTML = goal.toFixed(2);

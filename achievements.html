@@ -50,15 +50,13 @@
       <div class="progress-section">
         <i class="fas fa-trophy" style="font-size:30px;color:#f39c12;"></i>
         <div class="big-progress" id="progressPercent">0%</div>
-        <div style="font-size:0.7rem;color:var(--text-light);"><span id="unlockedBadges">0</span> / 14 Badges Unlocked</div>
+        <div style="font-size:0.7rem;color:var(--text-light);"><span id="unlockedBadges">0</span> / 22 Badges Unlocked</div>
         <div class="progress-bar" style="height:8px;margin-top:12px;"><div class="progress-fill" id="progressFill" style="width:0%;"></div></div>
         <div style="margin-top:8px;font-size:0.6rem;color:var(--text-light);">Streak: <strong id="streakDays">0</strong> days</div>
       </div>
       
-      <!-- STREAK BADGES -->
       <div class="glass-card"><h3><i class="fas fa-fire"></i> Streak Badges</h3><div id="streakList"></div></div>
       
-      <!-- ACHIEVEMENT BADGES -->
       <div class="glass-card"><h3><i class="fas fa-medal"></i> Achievement Badges</h3><div id="achievementsList"></div></div>
       
     </main>
@@ -71,22 +69,21 @@
   <script src="js/app.js"></script>
   
   <script>
-    var cu=null;
-    var bc={1:'#3498db',2:'#f1c40f',3:'#2ecc71',4:'#9b59b6',5:'#e74c3c',6:'#1abc9c',7:'#e67e22',8:'#00bcd4',9:'#27ae60',10:'#8e44ad',11:'#f39c12',12:'#2980b9',13:'#c0392b',14:'#16a085'};
-    var bi={1:'fa-pen',2:'fa-star',3:'fa-arrow-up',4:'fa-book-open',5:'fa-fire',6:'fa-graduation-cap',7:'fa-rocket',8:'fa-bolt',9:'fa-check-double',10:'fa-calendar-check',11:'fa-crown',12:'fa-chart-bar',13:'fa-trophy',14:'fa-medal'};
+    var cu = null;
     
-    // Variables pour le chargement infini des streaks
+    // Récupérer les couleurs et icônes depuis database.js
+    var bc = window.BADGE_COLORS || {};
+    var bi = window.BADGE_ICONS || {};
+    
     var currentCycleDisplay = 1;
     var allStreakBadges = [];
     var isLoading = false;
     
-    // Générer tous les streaks badges (cycles infinis)
     function generateAllStreakBadges(streakDays) {
       var badges = [];
       var cycle = 1;
       var baseDays = 0;
-      var maxCycles = 20; // Générer 20 cycles (assez pour 600+ jours)
-      
+      var maxCycles = 20;
       while (cycle <= maxCycles) {
         var cycleName = '';
         if (cycle === 1) cycleName = '';
@@ -97,14 +94,12 @@
         else if (cycle === 6) cycleName = 'Master ';
         else if (cycle === 7) cycleName = 'Grand Master ';
         else cycleName = 'Ultra ' + cycle + ' ';
-        
         var milestones = [
           { days: baseDays + 3, name: cycleName + 'Beginner', icon: 'fa-seedling', order: 1 },
           { days: baseDays + 7, name: cycleName + 'Regular', icon: 'fa-leaf', order: 2 },
           { days: baseDays + 15, name: cycleName + 'Dedicated', icon: 'fa-tree', order: 3 },
           { days: baseDays + 30, name: cycleName + 'Legendary', icon: 'fa-mountain', order: 4 }
         ];
-        
         for (var i = 0; i < milestones.length; i++) {
           badges.push({
             days: milestones[i].days,
@@ -115,46 +110,33 @@
             fullName: milestones[i].name + ' Streak'
           });
         }
-        
         baseDays += 30;
         cycle++;
       }
-      
       return badges;
     }
     
-    // Afficher les streaks (4 par cycle)
     function displayStreakBadges(loadMore) {
       var streakDays = parseInt(document.getElementById('streakDays').innerHTML) || 0;
       var container = document.getElementById('streakList');
-      
       if (!loadMore) {
         currentCycleDisplay = 1;
         allStreakBadges = generateAllStreakBadges(streakDays);
       }
-      
-      // Calculer combien de cycles afficher (chaque cycle = 4 badges)
       var cyclesToShow = currentCycleDisplay;
-      var badgesToShow = allStreakBadges.filter(function(b) {
-        return b.cycle <= cyclesToShow;
-      });
-      
-      // Vérifier si tous les badges du cycle sont débloqués pour charger le suivant
+      var badgesToShow = allStreakBadges.filter(function(b) { return b.cycle <= cyclesToShow; });
       var currentCycleBadges = allStreakBadges.filter(function(b) { return b.cycle === currentCycleDisplay; });
       var allUnlockedInCycle = currentCycleBadges.every(function(b) { return streakDays >= b.days; });
-      
       var html = '';
       for (var i = 0; i < badgesToShow.length; i++) {
         var sb = badgesToShow[i];
         var isUnlocked = streakDays >= sb.days;
-        
         var statusHtml = '';
         if (isUnlocked) {
           statusHtml = '<span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Unlocked</span>';
         } else {
           statusHtml = '<span style="color:#95a5a6;">' + streakDays + '/' + sb.days + ' days</span>';
         }
-        
         html += '<div class="streak-card' + (isUnlocked ? '' : ' locked') + '">' +
           '<div class="streak-icon" style="color:' + (isUnlocked ? '#f39c12' : '#95a5a6') + ';"><i class="fas ' + sb.icon + '"></i></div>' +
           '<div class="streak-info">' +
@@ -164,14 +146,9 @@
           '<div class="streak-status ' + (isUnlocked ? 'unlocked' : 'locked') + '">' + statusHtml + '</div>' +
         '</div>';
       }
-      
       container.innerHTML = html;
-      
-      // Ajouter bouton "Load More" si nécessaire
       var existingBtn = document.querySelector('.load-more-btn');
       if (existingBtn) existingBtn.remove();
-      
-      // Vérifier si on peut charger plus (si le cycle actuel est complètement débloqué)
       if (allUnlockedInCycle && currentCycleDisplay < 20) {
         var loadMoreBtn = document.createElement('div');
         loadMoreBtn.className = 'load-more-btn';
@@ -193,49 +170,93 @@
       }
     }
     
-    function loadAchievements(){
-      cu=requireAuth();if(!cu)return;
+    function loadAchievements() {
+      cu = requireAuth();
+      if (!cu) return;
+      
+      if (typeof initAchievementsWithNewBadges === 'function') {
+        initAchievementsWithNewBadges(cu.id);
+      }
+      
       updateStreakOnVisit(cu.id);
-      var grades=getStudentGrades(cu.id);
-      var term1=calculateStudentTermAverage(cu.id,1),term2=calculateStudentTermAverage(cu.id,2),term3=calculateStudentTermAverage(cu.id,3);
-      var activeSubs=getActiveSubjectsWithCoefficients(cu.id,getCurrentTerm());
+      var grades = getStudentGrades(cu.id);
+      var term1 = calculateStudentTermAverage(cu.id, 1);
+      var term2 = calculateStudentTermAverage(cu.id, 2);
+      var term3 = calculateStudentTermAverage(cu.id, 3);
+      var activeSubs = getActiveSubjectsWithCoefficients(cu.id, getCurrentTerm());
       
-      var hasPerfect=grades.some(function(g){return g.value===20;});
-      var hasExcellent=grades.some(function(g){return g.value>=19.5;});
-      var allTerms=(term1>0)&&(term2>0)&&(term3>0);
-      var improvement=Math.max(term2-term1,term3-term1);
-      var allSubjHaveGrades=activeSubs.every(function(s){return grades.some(function(g){return g.subjectId===s.id;});});
-      var hasMastery=activeSubs.some(function(s){var sg=grades.filter(function(g){return g.subjectId===s.id;});return sg.length>0&&(sg.reduce(function(a,b){return a+b.value;},0)/sg.length)>=15;});
+      var hasPerfect = grades.some(function(g) { return g.value === 20; });
+      var hasExcellent = grades.some(function(g) { return g.value >= 19.5; });
+      var allTerms = (term1 > 0) && (term2 > 0) && (term3 > 0);
+      var improvement = Math.max(term2 - term1, term3 - term1);
+      var allSubjHaveGrades = activeSubs.every(function(s) {
+        return grades.some(function(g) { return g.subjectId === s.id; });
+      });
+      var hasMastery = activeSubs.some(function(s) {
+        var sg = grades.filter(function(g) { return g.subjectId === s.id; });
+        return sg.length > 0 && (sg.reduce(function(a, b) { return a + b.value; }, 0) / sg.length) >= 15;
+      });
       
-      var saved=JSON.parse(localStorage.getItem('smartgrade_achievements_'+cu.id)||'[]');
-      if(saved.length===0){saved=ACHIEVEMENTS.map(function(a){return{id:a.id,name:a.name,desc:a.desc,unlocked:false,unlockDate:null,notified:false};});}
+      var saved = JSON.parse(localStorage.getItem('smartgrade_achievements_' + cu.id) || '[]');
+      if (saved.length === 0) {
+        saved = ACHIEVEMENTS.map(function(a) {
+          return { id: a.id, name: a.name, desc: a.desc, unlocked: false, unlockDate: null, notified: false };
+        });
+      }
       
-      saved=saved.map(function(a){
-        var un=false;
-        switch(a.id){case 1:un=grades.length>0;break;case 2:un=hasPerfect;break;case 3:un=calculateYearlyAverage(cu.id)>=12&&grades.length>0;break;case 4:un=grades.length>=10;break;case 5:un=grades.length>=30;break;case 6:un=saved.filter(function(x){return x.unlocked;}).length>=8;break;case 7:un=improvement>=1;break;case 8:un=allTerms;break;case 9:un=allSubjHaveGrades&&activeSubs.length>0;break;case 10:un=false;break;case 11:un=hasMastery;break;case 12:un=grades.length>=25;break;case 13:un=saved.filter(function(x){return x.unlocked&&x.id!==13;}).length>=13;break;case 14:un=hasExcellent;break;}
-        if(un&&!a.unlocked){a.unlocked=true;a.unlockDate=new Date().toLocaleDateString();a.notified=false;}
+      saved = saved.map(function(a) {
+        var un = false;
+        switch (a.id) {
+          case 1: un = grades.length > 0; break;
+          case 2: un = hasPerfect; break;
+          case 3: un = calculateYearlyAverage(cu.id) >= 12 && grades.length > 0; break;
+          case 4: un = grades.length >= 10; break;
+          case 5: un = grades.length >= 30; break;
+          case 6: un = saved.filter(function(x) { return x.unlocked; }).length >= 8; break;
+          case 7: un = improvement >= 1; break;
+          case 8: un = allTerms; break;
+          case 9: un = allSubjHaveGrades && activeSubs.length > 0; break;
+          case 10: un = false; break;
+          case 11: un = hasMastery; break;
+          case 12: un = grades.length >= 25; break;
+          case 13: un = saved.filter(function(x) { return x.unlocked && x.id !== 13; }).length >= 13; break;
+          case 14: un = hasExcellent; break;
+          default: break;
+        }
+        if (un && !a.unlocked) {
+          a.unlocked = true;
+          a.unlockDate = new Date().toLocaleDateString();
+          a.notified = false;
+        }
         return a;
       });
       
-      localStorage.setItem('smartgrade_achievements_'+cu.id,JSON.stringify(saved));
+      localStorage.setItem('smartgrade_achievements_' + cu.id, JSON.stringify(saved));
       
-      var unlocked=saved.filter(function(a){return a.unlocked;}).length;
-      var pct=Math.round((unlocked/14)*100);
-      document.getElementById('progressPercent').innerHTML=pct+'%';
-      document.getElementById('unlockedBadges').innerHTML=unlocked;
-      document.getElementById('progressFill').style.width=pct+'%';
+      var unlocked = saved.filter(function(a) { return a.unlocked; }).length;
+      var pct = Math.round((unlocked / ACHIEVEMENTS.length) * 100);
+      document.getElementById('progressPercent').innerHTML = pct + '%';
+      document.getElementById('unlockedBadges').innerHTML = unlocked;
+      document.getElementById('progressFill').style.width = pct + '%';
       
-      document.getElementById('achievementsList').innerHTML=saved.map(function(a){
-        return'<div class="ach-card-new '+(a.unlocked?'unlocked':'locked')+'"><div class="ach-icon-circle" style="background:'+(a.unlocked?bc[a.id]:'#bdc3c7')+';"><i class="fas '+bi[a.id]+'"></i></div><div class="ach-info"><div class="ach-name">'+a.name+'</div><div class="ach-desc">'+a.desc+'</div><div class="ach-status">'+(a.unlocked?'<span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Unlocked: '+a.unlockDate+'</span>':'<span style="color:#95a5a6;"><i class="fas fa-lock"></i> Locked</span>')+'</div></div></div>';
+      document.getElementById('achievementsList').innerHTML = saved.map(function(a) {
+        var color = bc[a.id] || '#3498db';
+        var icon = bi[a.id] || 'fa-medal';
+        return '<div class="ach-card-new ' + (a.unlocked ? 'unlocked' : 'locked') + '">' +
+          '<div class="ach-icon-circle" style="background:' + (a.unlocked ? color : '#bdc3c7') + ';">' +
+          '<i class="fas ' + icon + '"></i></div>' +
+          '<div class="ach-info">' +
+            '<div class="ach-name">' + a.name + '</div>' +
+            '<div class="ach-desc">' + a.desc + '</div>' +
+            '<div class="ach-status">' + (a.unlocked ? '<span style="color:#2ecc71;"><i class="fas fa-check-circle"></i> Unlocked: ' + a.unlockDate + '</span>' : '<span style="color:#95a5a6;"><i class="fas fa-lock"></i> Locked</span>') +
+          '</div></div></div>';
       }).join('');
       
-      var streak=getStudentStreak(cu.id);
+      var streak = getStudentStreak(cu.id);
       var streakDays = streak.days;
-      document.getElementById('streakDays').innerHTML=streakDays;
+      document.getElementById('streakDays').innerHTML = streakDays;
       
-      // Afficher les streaks (4 par cycle)
       displayStreakBadges(false);
-      
       initHeaderProfile();
     }
     

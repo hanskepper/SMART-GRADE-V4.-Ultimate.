@@ -1,6 +1,5 @@
 // ============================================
 // SMART GRADE v4.0 - AUTHENTIFICATION SYSTEM
-// Version: 4.0 Ultimate
 // ============================================
 
 function authenticateWithPin(studentId, pin) {
@@ -9,12 +8,14 @@ function authenticateWithPin(studentId, pin) {
   if (s.pin !== pin) return { success: false, message: 'Incorrect PIN' };
   setCurrentStudent(s);
   updateStreakOnVisit(s.id);
+  
+  // ⭐ NOTIFICATION DE CONNEXION RÉUSSIE
+  if (typeof notifyLoginSuccess === 'function') {
+    notifyLoginSuccess(s.name);
+  }
+  
   return { success: true, student: s };
 }
-
-// ============================================
-// CHANGER LE PIN - FONCTION PRINCIPALE
-// ============================================
 
 function updateUserPin(studentId, oldPin, newPin) {
   console.log('updateUserPin called with:', studentId, oldPin, newPin);
@@ -46,6 +47,11 @@ function updateUserPin(studentId, oldPin, newPin) {
   if (current && current.id === studentId) {
     current.pin = newPin;
     setCurrentStudent(current);
+  }
+  
+  // ⭐ NOTIFICATION
+  if (typeof notifyPinChanged === 'function') {
+    notifyPinChanged();
   }
   
   console.log('PIN changed successfully for user:', student.name);
@@ -106,6 +112,12 @@ function registerFingerprint(studentId, studentName, callback) {
         students[index].fingerprintHash = 'enabled';
         saveAllStudents(students);
       }
+      
+      // ⭐ NOTIFICATION
+      if (typeof notifyFingerprintEnabled === 'function') {
+        notifyFingerprintEnabled();
+      }
+      
       callback({ success: true, message: 'Fingerprint enabled successfully' });
     })
     .catch(function(err) {
@@ -145,6 +157,12 @@ function loginWithFingerprint(callback) {
       var student = students[0];
       setCurrentStudent(student);
       updateStreakOnVisit(student.id);
+      
+      // ⭐ NOTIFICATION
+      if (typeof notifyLoginSuccess === 'function') {
+        notifyLoginSuccess(student.name);
+      }
+      
       callback({ success: true, student: student });
     })
     .catch(function(err) {
@@ -159,7 +177,83 @@ function removeFingerprint(studentId) {
     students[index].hasFingerprint = false;
     students[index].fingerprintHash = null;
     saveAllStudents(students);
+    
+    // ⭐ NOTIFICATION
+    if (typeof notifyFingerprintRemoved === 'function') {
+      notifyFingerprintRemoved();
+    }
+    
     return true;
   }
   return false;
 }
+
+// ============================================
+// NOTIFICATIONS SPÉCIFIQUES À L'AUTHENTIFICATION
+// ============================================
+
+function notifyLoginSuccess(userName) {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'Login Successful', 'Welcome back, ' + userName + '!');
+  } else {
+    showToast('Welcome back, ' + userName + '!');
+  }
+}
+
+function notifyPinChanged() {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'PIN Changed', 'Your security PIN has been updated successfully');
+  } else {
+    showToast('PIN changed successfully');
+  }
+}
+
+function notifyFingerprintEnabled() {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'Fingerprint Enabled', 'You can now login using your fingerprint');
+  } else {
+    showToast('Fingerprint enabled');
+  }
+}
+
+function notifyFingerprintRemoved() {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'Fingerprint Removed', 'Fingerprint login has been disabled');
+  } else {
+    showToast('Fingerprint removed');
+  }
+}
+
+function notifyAccountCreated(userId, userName) {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'Account Created', 'Welcome ' + userName + '! Your account has been created');
+  } else {
+    showToast('Account created successfully!');
+  }
+}
+
+function notifyLoginFailed(reason) {
+  if (typeof addNotification === 'function') {
+    addNotification('account', 'Login Failed', reason || 'Invalid credentials');
+  }
+}
+
+// ============================================
+// EXPORT DES FONCTIONS (pour compatibilité)
+// ============================================
+window.authenticateWithPin = authenticateWithPin;
+window.updateUserPin = updateUserPin;
+window.logout = logout;
+window.requireAuth = requireAuth;
+window.isBiometricAvailable = isBiometricAvailable;
+window.registerFingerprint = registerFingerprint;
+window.loginWithFingerprint = loginWithFingerprint;
+window.removeFingerprint = removeFingerprint;
+window.notifyLoginSuccess = notifyLoginSuccess;
+window.notifyPinChanged = notifyPinChanged;
+window.notifyFingerprintEnabled = notifyFingerprintEnabled;
+window.notifyFingerprintRemoved = notifyFingerprintRemoved;
+window.notifyAccountCreated = notifyAccountCreated;
+window.notifyLoginFailed = notifyLoginFailed;
+
+console.log('Auth.js loaded with notifications');

@@ -94,11 +94,6 @@
       color:#e74c3c;
       border:1px solid rgba(231,76,60,0.3);
     }
-    .flashcard-controls button.danger:disabled{
-      opacity:0.5;
-      cursor:not-allowed;
-      transform:none;
-    }
     .form-group-flash{
       margin-bottom:12px;
     }
@@ -119,56 +114,49 @@
       font-size:0.85rem;
       box-sizing:border-box;
     }
-    .form-group-flash input:focus{
-      outline:none;
-      border-color:var(--primary);
+    .card-item{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:8px;
+      background:rgba(0,0,0,0.02);
+      border-radius:10px;
+      margin-bottom:6px;
     }
-    .card-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px;
-      background: rgba(0,0,0,0.02);
-      border-radius: 10px;
-      margin-bottom: 6px;
+    .card-item.default-card{
+      background:rgba(15,59,72,0.08);
+      border-left:3px solid var(--primary);
     }
-    .card-item.default-card {
-      background: rgba(15,59,72,0.08);
-      border-left: 3px solid var(--primary);
+    .card-question{
+      flex:1;
+      font-size:0.7rem;
     }
-    .card-question {
-      flex: 1;
-      font-size: 0.7rem;
+    .card-question strong{
+      color:var(--primary);
     }
-    .card-question strong {
-      color: var(--primary);
+    .card-question small{
+      color:var(--text-light);
     }
-    .card-question small {
-      color: var(--text-light);
+    .default-badge{
+      background:var(--primary);
+      color:white;
+      font-size:0.55rem;
+      padding:2px 8px;
+      border-radius:20px;
+      margin-left:8px;
     }
-    .default-badge {
-      background: var(--primary);
-      color: white;
-      font-size: 0.55rem;
-      padding: 2px 8px;
-      border-radius: 20px;
-      margin-left: 8px;
+    .delete-card-btn{
+      background:none;
+      border:none;
+      color:#e74c3c;
+      cursor:pointer;
+      padding:8px;
+      border-radius:8px;
+      transition:all 0.2s;
     }
-    .delete-card-btn {
-      background: none;
-      border: none;
-      color: #e74c3c;
-      cursor: pointer;
-      padding: 8px;
-      border-radius: 8px;
-      transition: all 0.2s;
-    }
-    .delete-card-btn:hover {
-      background: rgba(231,76,60,0.1);
-    }
-    .delete-card-btn:disabled {
-      opacity: 0.3;
-      cursor: not-allowed;
+    .delete-card-btn:disabled{
+      opacity:0.3;
+      cursor:not-allowed;
     }
   </style>
 </head>
@@ -179,28 +167,18 @@
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-clone"></i><span>FLASHCARDS</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <a href="profile.html" style="display:flex;align-items:center;text-decoration:none;">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
-            <i class="fas fa-graduation-cap"></i>
-          </div>
-        </a>
+        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
-    
     <div class="sheet-overlay" id="sheetOverlay"></div>
     <div class="bottom-sheet" id="bottomSheet">
       <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
       <div class="bottom-sheet-content">
         <div class="theme-grid-rect" id="themeGrid"></div>
-        <div class="font-row-sheet">
-          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
-          <div class="font-sheet" data-font="medium">A</div>
-          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
-        </div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
       </div>
     </div>
-    
     <div class="sidebar-menu" id="sidebarMenu">
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
@@ -213,7 +191,6 @@
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
-    
     <main class="main-content">
       
       <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
@@ -275,7 +252,6 @@
     var fcFlipped = false;
     var allSaved = [];
     
-    // ALL 14 SUBJECTS (complete list)
     var ALL_SUBJECTS = [
       { id: 1, name: "COMPUTER SCIENCES", code: "CS", icon: "fa-laptop-code" },
       { id: 2, name: "MATHEMATICS", code: "MATH", icon: "fa-square-root-variable" },
@@ -293,7 +269,6 @@
       { id: 14, name: "FOOD AND NUTRITION", code: "FDN", icon: "fa-apple-whole" }
     ];
     
-    // DEFAULT CARDS FOR ALL 14 SUBJECTS
     var DEFAULT_CARDS = {
       1: [{ q: "What is an algorithm?", a: "A step-by-step procedure to solve a problem" }, { q: "What does CPU stand for?", a: "Central Processing Unit" }, { q: "What is binary code?", a: "Number system using only 0 and 1" }],
       2: [{ q: "What is the Pythagorean theorem?", a: "a² + b² = c²" }, { q: "What is Pi (π)?", a: "3.14159..." }, { q: "What is the area of a circle?", a: "π × r²" }],
@@ -366,7 +341,6 @@
     
     function updateCard() {
       var deleteBtn = document.getElementById('deleteCardBtn');
-      
       if (fcCards.length === 0) {
         document.getElementById('fcFront').innerHTML = '<p style="opacity:0.5;">No cards for this subject</p>';
         document.getElementById('fcBack').innerHTML = '<p style="opacity:0.5;">Add cards below</p>';
@@ -375,22 +349,15 @@
         if (deleteBtn) deleteBtn.disabled = true;
         return;
       }
-      
       document.getElementById('fcFront').innerHTML = '<p style="font-weight:600;">' + fcCards[fcIndex].question + '</p>';
       document.getElementById('fcBack').innerHTML = '<p>' + fcCards[fcIndex].answer + '</p>';
       document.getElementById('fcCounter').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
       document.getElementById('totalCardsCount').textContent = fcCards.length;
       document.getElementById('flashcard').classList.remove('flipped');
       fcFlipped = false;
-      
       if (deleteBtn) {
-        if (fcCards[fcIndex].isOriginal === true) {
-          deleteBtn.disabled = true;
-          deleteBtn.title = "Original cards cannot be deleted";
-        } else {
-          deleteBtn.disabled = false;
-          deleteBtn.title = "Delete this card";
-        }
+        if (fcCards[fcIndex].isOriginal === true) { deleteBtn.disabled = true; deleteBtn.title = "Original cards cannot be deleted"; }
+        else { deleteBtn.disabled = false; deleteBtn.title = "Delete this card"; }
       }
     }
     
@@ -405,25 +372,21 @@
       if (!fcSubj) { showToast('Please select a subject first'); return; }
       
       var existingUserCards = getFlashcards(cu.id);
-      var newCard = { 
-        id: Date.now(), subjectId: fcSubj, question: q, answer: a,
-        isOriginal: false, createdAt: new Date().toISOString()
-      };
+      var newCard = { id: Date.now(), subjectId: fcSubj, question: q, answer: a, isOriginal: false, createdAt: new Date().toISOString() };
       existingUserCards.push(newCard);
       saveFlashcards(cu.id, existingUserCards);
       
-      // Vérifier les badges #58 et #59
-      if (cu && cu.id && typeof checkAndUnlockAllNewBadges === 'function') {
-        checkAndUnlockAllNewBadges(cu.id);
+      var subjectName = ALL_SUBJECTS.find(function(s) { return s.id === fcSubj; });
+      
+      // ⭐ NOTIFICATION
+      if (typeof notifyFlashcardAdded === 'function') {
+        notifyFlashcardAdded(subjectName ? subjectName.name : 'Subject', existingUserCards.length);
       }
       
+      if (cu && cu.id && typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(cu.id); }
+      
       selectSubject(fcSubj);
-      for (var i = 0; i < fcCards.length; i++) {
-        if (fcCards[i].id === newCard.id) {
-          fcIndex = i;
-          break;
-        }
-      }
+      for (var i = 0; i < fcCards.length; i++) { if (fcCards[i].id === newCard.id) { fcIndex = i; break; } }
       updateCard();
       renderAllCardsList();
       document.getElementById('newQuestion').value = '';
@@ -435,10 +398,7 @@
     function deleteCurrentCard() {
       if (fcCards.length === 0) { showToast('No cards to delete'); return; }
       var currentCard = fcCards[fcIndex];
-      if (currentCard.isOriginal === true) {
-        showToast('Original cards cannot be deleted');
-        return;
-      }
+      if (currentCard.isOriginal === true) { showToast('Original cards cannot be deleted'); return; }
       if (!confirm('Delete this card? "' + currentCard.question + '"')) return;
       var userCards = getFlashcards(cu.id);
       userCards = userCards.filter(function(c) { return c.id !== currentCard.id; });
@@ -453,17 +413,9 @@
     
     function deleteCardById(id) {
       var cardToDelete = null;
-      for (var i = 0; i < fcCards.length; i++) {
-        if (fcCards[i].id === id) {
-          cardToDelete = fcCards[i];
-          break;
-        }
-      }
+      for (var i = 0; i < fcCards.length; i++) { if (fcCards[i].id === id) { cardToDelete = fcCards[i]; break; } }
       if (!cardToDelete) return;
-      if (cardToDelete.isOriginal === true) {
-        showToast('Original cards cannot be deleted');
-        return;
-      }
+      if (cardToDelete.isOriginal === true) { showToast('Original cards cannot be deleted'); return; }
       if (!confirm('Delete this card? "' + cardToDelete.question + '"')) return;
       var userCards = getFlashcards(cu.id);
       userCards = userCards.filter(function(c) { return c.id !== id; });
@@ -482,16 +434,12 @@
         container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No cards for this subject yet.<br>Add your first card above!</p>';
         return;
       }
-      
       container.innerHTML = fcCards.map(function(c, i) {
         var isDefault = (c.isOriginal === true);
         var defaultBadge = isDefault ? '<span class="default-badge"><i class="fas fa-lock"></i> Original</span>' : '';
         var deleteButton = '';
-        if (!isDefault) {
-          deleteButton = '<button class="delete-card-btn" onclick="deleteCardById(' + c.id + ')" title="Delete card"><i class="fas fa-trash"></i></button>';
-        } else {
-          deleteButton = '<button class="delete-card-btn" disabled style="opacity:0.3;cursor:not-allowed;" title="Original cards cannot be deleted"><i class="fas fa-lock"></i></button>';
-        }
+        if (!isDefault) { deleteButton = '<button class="delete-card-btn" onclick="deleteCardById(' + c.id + ')" title="Delete card"><i class="fas fa-trash"></i></button>'; }
+        else { deleteButton = '<button class="delete-card-btn" disabled style="opacity:0.3;cursor:not-allowed;" title="Original cards cannot be deleted"><i class="fas fa-lock"></i></button>'; }
         return '<div class="card-item ' + (isDefault ? 'default-card' : '') + '">' +
           '<div class="card-question">' +
             '<strong>Q:</strong> ' + c.question + '<br>' +

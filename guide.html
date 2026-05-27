@@ -14,22 +14,9 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    @keyframes pulseGlow{
-      0%{box-shadow:0 0 0 0 rgba(255,255,255,0.4);transform:scale(1)}
-      50%{box-shadow:0 0 0 20px rgba(255,255,255,0);transform:scale(1.05)}
-      100%{box-shadow:0 0 0 0 rgba(255,255,255,0);transform:scale(1)}
-    }
     @keyframes fadeInUp{
       from{opacity:0;transform:translateY(20px)}
       to{opacity:1;transform:translateY(0)}
-    }
-    @keyframes stripeMove{
-      0%{background-position:0 0}
-      100%{background-position:40px 0}
-    }
-    @keyframes pulseMic{
-      0%,100%{transform:scale(1);opacity:0.7}
-      50%{transform:scale(1.2);opacity:1}
     }
     
     .guide-hero{
@@ -39,19 +26,9 @@
       position:relative;
       overflow:hidden;
       margin-bottom:20px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:white;
     }
-    .guide-hero::before{
-      content:'';
-      position:absolute;
-      top:-50%;
-      left:-50%;
-      width:200%;
-      height:200%;
-      background:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
-      animation:stripeMove 3s linear infinite;
-      z-index:0;
-    }
-    .guide-hero>*{position:relative;z-index:1;}
     
     .hero-icon-circle{
       width:100px;
@@ -62,7 +39,6 @@
       align-items:center;
       justify-content:center;
       margin:0 auto 20px;
-      animation:pulseGlow 2s infinite;
     }
     .hero-icon-circle i{font-size:40px;color:white;}
     
@@ -103,7 +79,6 @@
     .tutorial-info{flex:1;}
     .tutorial-title{font-weight:700;font-size:0.9rem;margin-bottom:4px;}
     .tutorial-desc{font-size:0.65rem;color:var(--text-light);}
-    .tutorial-steps{font-size:0.55rem;color:var(--primary);margin-top:4px;}
     .tutorial-play{
       width:40px;
       height:40px;
@@ -166,10 +141,6 @@
       justify-content:center;
       transition:all 0.2s;
     }
-    .video-modal-close:active{
-      transform:scale(0.9);
-      background:rgba(255,255,255,0.2);
-    }
     .video-screen{
       background:#0a0a15;
       min-height:400px;
@@ -196,7 +167,6 @@
       align-items:center;
       justify-content:center;
       margin:0 auto 15px;
-      animation:pulseMic 1.5s infinite;
     }
     .video-icon-anim i{font-size:38px;color:white;}
     .video-step-title{
@@ -264,7 +234,6 @@
       justify-content:center;
       transition:all 0.2s;
     }
-    .video-controls button:active{transform:scale(0.9);}
     .video-controls .play-btn{
       background:var(--primary);
       width:50px;
@@ -318,6 +287,7 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
+    <!-- HEADER PUBLIC -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-question-circle"></i><span>GUIDE</span></div>
@@ -351,7 +321,8 @@
     
     <main class="main-content">
       
-      <div class="guide-hero" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+      <!-- HERO SECTION -->
+      <div class="guide-hero">
         <div class="hero-icon-circle"><i class="fas fa-headphones"></i></div>
         <h2 style="color:white;margin-bottom:8px;">Interactive Audio Guide</h2>
         <p style="opacity:0.8;font-size:0.85rem;">Listen to each chapter with synchronized text</p>
@@ -360,12 +331,14 @@
         </div>
       </div>
       
+      <!-- TUTORIAL CHAPTERS -->
       <div class="glass-card">
         <h3><i class="fas fa-list-ol"></i> Tutorial Chapters</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">Click any chapter to listen</p>
         <div id="stepsList"></div>
       </div>
       
+      <!-- QUICK TIPS -->
       <div class="glass-card">
         <h3><i class="fas fa-lightbulb"></i> Quick Tips</h3>
         <div class="quick-tips-grid">
@@ -383,6 +356,7 @@
     </main>
   </div>
   
+  <!-- MODAL AUDIO -->
   <div class="video-modal" id="videoModal">
     <div class="video-modal-content">
       <div class="video-modal-header">
@@ -418,6 +392,10 @@
   <script src="js/app.js"></script>
   
   <script>
+    // ============================================
+    // 16 CHAPITRES
+    // ============================================
+    
     var TUTORIALS = [
       { id: 1, icon: 'fa-user-plus', title: '1. Create an Account', desc: 'Step by step guide to register', tip: 'Write down your PIN somewhere safe.',
         text: "Welcome to SMART GRADE, the ultimate grade management system for students. Let me guide you through creating your account. From the Home page, tap the menu button in the top left corner, then select Register. First, enter your full name exactly as it appears on your school records. Next, select your class. You can choose between B1 and B2. Then, enter your unique student number. Now, create a secure 4-digit PIN. This is like your password. You will also see an option to enable fingerprint login. Confirm your PIN by typing it again. Click the Create Account button. Congratulations! Your account is now created." },
@@ -453,10 +431,26 @@
         text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic/Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology/Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
     ];
     
+    // ============================================
+    // TTS OPTIMISÉ
+    // ============================================
+    
     var currentIndex = 0;
     var isPlaying = false;
     var progressInterval = null;
     var currentUtterance = null;
+    var ttsSupported = true;
+    
+    function checkTTSSupport() {
+      if (!('speechSynthesis' in window)) {
+        ttsSupported = false;
+        showToast('Audio guide not supported on this device');
+        return false;
+      }
+      return true;
+    }
+    
+    checkTTSSupport();
     
     function splitIntoSentences(text) {
       return text.split(/(?<=[.!?])\s+/);
@@ -471,46 +465,33 @@
       }
     }
     
-    function updateActiveLineByCharPosition(charIndex, totalChars, sentences) {
-      if (!sentences || sentences.length === 0) return;
-      var charCount = 0;
-      for (var i = 0; i < sentences.length; i++) {
-        charCount += sentences[i].length;
-        if (charIndex < charCount) {
-          updateActiveLine(i);
-          return;
-        }
-      }
-    }
-    
     function stopPlayback() {
-      if (currentUtterance) {
-        try { speechSynthesis.cancel(); } catch(e) {}
-        currentUtterance = null;
-      }
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
-      }
+      if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
+      try { speechSynthesis.cancel(); } catch(e) {}
       isPlaying = false;
+      currentUtterance = null;
       var playBtn = document.getElementById('playPauseBtn');
       if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
     function speakCurrentChapter() {
-      var t = TUTORIALS[currentIndex];
-      if (!t) return;
+      if (!ttsSupported) { showToast('Audio not available on this device'); return; }
       
       stopPlayback();
+      
+      var t = TUTORIALS[currentIndex];
+      if (!t) return;
       
       var text = t.text;
       var sentences = splitIntoSentences(text);
       var totalChars = text.length;
+      var startTime = null;
+      var lastCharIndex = 0;
       
       currentUtterance = new SpeechSynthesisUtterance(text);
       currentUtterance.lang = 'en-US';
-      currentUtterance.rate = 0.85;
+      currentUtterance.rate = 0.9;
       currentUtterance.pitch = 1.0;
       
       var voices = speechSynthesis.getVoices();
@@ -522,17 +503,24 @@
       }
       
       currentUtterance.onstart = function() {
-        var startTime = Date.now();
+        startTime = Date.now();
+        isPlaying = true;
         progressInterval = setInterval(function() {
-          if (!isPlaying) return;
+          if (!isPlaying || !startTime) return;
           var elapsed = (Date.now() - startTime) / 1000;
-          var estimatedDuration = totalChars / 12;
+          var estimatedDuration = totalChars / 15;
           var progress = Math.min(100, (elapsed / estimatedDuration) * 100);
           document.getElementById('videoProgressFill').style.width = progress + '%';
-          var charIndex = Math.floor((elapsed / estimatedDuration) * totalChars);
-          updateActiveLineByCharPosition(charIndex, totalChars, sentences);
-        }, 100);
-        isPlaying = true;
+          var charIndex = Math.min(totalChars - 1, Math.floor((elapsed / estimatedDuration) * totalChars));
+          if (charIndex !== lastCharIndex) {
+            lastCharIndex = charIndex;
+            var charCount = 0;
+            for (var i = 0; i < sentences.length; i++) {
+              charCount += sentences[i].length;
+              if (charIndex < charCount) { updateActiveLine(i); break; }
+            }
+          }
+        }, 50);
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
         document.getElementById('audioStatus').textContent = 'Playing...';
       };
@@ -544,6 +532,7 @@
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('videoProgressFill').style.width = '100%';
         document.getElementById('audioStatus').textContent = 'Completed';
+        setTimeout(function() { if (!isPlaying) document.getElementById('videoProgressFill').style.width = '0%'; }, 2000);
       };
       
       currentUtterance.onerror = function() {
@@ -551,19 +540,16 @@
         isPlaying = false;
         currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('audioStatus').textContent = 'Error';
-        showToast('Voice error, please retry');
+        document.getElementById('audioStatus').textContent = 'Error - Try again';
+        showToast('Audio error, please try again');
       };
       
       speechSynthesis.speak(currentUtterance);
     }
     
     function togglePlayPause() {
-      if (isPlaying) {
-        stopPlayback();
-      } else {
-        speakCurrentChapter();
-      }
+      if (isPlaying) { stopPlayback(); }
+      else { speakCurrentChapter(); }
     }
     
     function openModal(index) {
@@ -613,9 +599,7 @@
       var sentences = splitIntoSentences(t.text);
       var lyricsHTML = '';
       for (var i = 0; i < sentences.length; i++) {
-        if (sentences[i].length > 0) {
-          lyricsHTML += '<div class="lyrics-line">' + sentences[i] + '</div>';
-        }
+        if (sentences[i].length > 0) { lyricsHTML += '<div class="lyrics-line">' + sentences[i] + '</div>'; }
       }
       document.getElementById('lyricsBox').innerHTML = lyricsHTML;
     }

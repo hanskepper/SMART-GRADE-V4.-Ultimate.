@@ -15,255 +15,86 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <meta name="theme-color" content="#0f3b48">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #e8edf2; font-family: 'Inter', sans-serif; }
-    
-    .export-card {
-      background: var(--card-bg);
-      border-radius: 18px;
-      padding: 18px;
-      margin-bottom: 10px;
-      border: 1px solid var(--border);
-      cursor: pointer;
-      transition: all 0.25s ease;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .export-card:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,0,0,0.1); border-color: var(--primary); }
-    .export-icon-circle { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; }
-    .ec-json { background: rgba(52,152,219,0.12); color: #3498db; }
-    .ec-csv { background: rgba(46,204,113,0.12); color: #27ae60; }
-    .ec-html { background: rgba(155,89,182,0.12); color: #9b59b6; }
-    .ec-pdf { background: rgba(231,76,60,0.12); color: #e74c3c; }
-    .export-info { flex: 1; }
-    .export-info strong { font-size: 0.8rem; display: block; }
-    .export-info small { font-size: 0.6rem; color: var(--text-light); }
-    
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0,0,0,0.7);
-      z-index: 400;
-      display: none;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-overlay.active { display: flex; }
-    .modal-box {
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 20px;
-      width: 85%;
-      max-width: 360px;
-      text-align: center;
-      animation: modalIn 0.3s ease;
-    }
-    @keyframes modalIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-    .term-opt {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      padding: 14px 16px;
-      border-radius: 14px;
-      cursor: pointer;
-      text-align: left;
-      border: 2px solid var(--border);
-      margin-bottom: 8px;
-    }
-    .term-opt:hover { border-color: var(--primary); }
-    .term-opt.selected { border-color: var(--primary); background: rgba(15,59,72,0.05); }
-    .term-opt .to-icon { width: 38px; height: 38px; border-radius: 12px; background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; }
-    .term-opt .to-info { flex: 1; }
-    .term-opt .to-title { font-weight: 600; font-size: 0.8rem; }
-    .term-opt .to-desc { font-size: 0.55rem; color: var(--text-light); }
-    .term-opt .to-check { color: var(--primary); font-size: 1rem; display: none; }
-    .term-opt.selected .to-check { display: block; }
-    
-    .action-buttons {
-      display: flex;
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .action-buttons button {
-      flex: 1;
-      padding: 12px;
-      border-radius: 30px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .action-buttons button:active { transform: scale(0.97); }
-    .btn-view { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border: none; }
-    .btn-download { background: rgba(0,0,0,0.05); color: var(--text); border: 1px solid var(--border); }
-    .btn-pdf-download { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; border: none; width: 100%; }
-    .cancel-btn { width: 100%; padding: 12px; border-radius: 30px; border: 1px solid var(--border); background: transparent; color: var(--text); cursor: pointer; font-size: 0.75rem; margin-top: 8px; }
-    
-    .pdf-loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: rgba(0,0,0,0.85); color: white; padding: 24px 36px; border-radius: 16px; z-index: 999; display: none; text-align: center; font-size: 0.9rem; z-index: 1000; }
-    
-    /* Styles unifiés pour tous les bulletins */
-    .full-page {
-      width: 210mm;
-      min-height: 297mm;
-      margin: 0;
-      padding: 8mm 10mm;
-      background: linear-gradient(135deg, var(--primary-color, #0f3b48) 0%, var(--secondary-color, #00ffff) 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-sizing: border-box;
-      position: relative;
-      overflow: hidden;
-    }
-    .deco-dots {
-      position: absolute;
-      top: 20px;
-      left: 20px;
-      right: 20px;
-      bottom: 20px;
-      background-image: radial-gradient(circle at 10px 10px, rgba(255,255,255,0.1) 1px, transparent 1px);
-      background-size: 20px 20px;
-      pointer-events: none;
-      z-index: 0;
-    }
-    .deco-circle-1 {
-      position: absolute;
-      top: -50px;
-      right: -50px;
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .deco-circle-2 {
-      position: absolute;
-      bottom: -50px;
-      left: -50px;
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.05);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .deco-diagonal {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 60px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .bulletin-page {
-      width: 100%;
-      max-width: 190mm;
-      min-height: 270mm;
-      background: white;
-      border-radius: 16px;
-      padding: 7mm 9mm;
-      font-family: 'Inter', 'Segoe UI', sans-serif;
-      color: #1a2a3a;
-      position: relative;
-      z-index: 2;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    .bulletin-header { text-align: center; margin-bottom: 5mm; }
-    .bulletin-header h1 { font-size: 14pt; font-weight: 800; color: var(--primary-color, #0f3b48); margin: 0; font-family: 'Cinzel', serif; }
-    .bulletin-header .school-name { font-size: 8pt; font-weight: 700; color: var(--primary-color, #0f3b48); }
-    .bulletin-header .class-info { font-size: 6.5pt; color: #5a7a8a; margin-bottom: 3mm; }
-    .bulletin-student {
-      background: #f0f6fa;
-      padding: 3mm 5mm;
-      border-radius: 8px;
-      margin-bottom: 6mm;
-      display: flex;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      border: 1px solid #c8dce8;
-    }
-    .student-info-item { font-size: 7.5pt; }
-    .student-info-item strong { color: var(--primary-color, #0f3b48); }
-    .bulletin-table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-bottom: 6mm; }
-    .bulletin-table th { background: var(--primary-color, #0f3b48); color: white; padding: 5px 4px; text-align: center; border: 1px solid var(--secondary-color, #00ffff); }
-    .bulletin-table td { padding: 5px 4px; text-align: center; border: 1px solid #c8d8e4; }
-    .bulletin-table td.subject-name { text-align: left; font-weight: 600; }
-    .bulletin-table td.subject-name.not-selected { color: #aaa; font-style: italic; background: #f9f9f9; }
-    .bulletin-table .not-selected-cell { color: #bbb; background: #f9f9f9; }
-    .bulletin-table .total-row td { background: #e8f0f5; font-weight: 800; border-top: 2px solid var(--primary-color, #0f3b48); }
-    .grade-letter { font-weight: 800; display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 6.5pt; }
-    .grade-Aplus { background: #2ecc71; color: white; }
-    .grade-A { background: #27ae60; color: white; }
-    .grade-Bplus { background: #3498db; color: white; }
-    .grade-B { background: #2980b9; color: white; }
-    .grade-C { background: #f39c12; color: white; }
-    .grade-D { background: #e67e22; color: white; }
-    .grade-F { background: #e74c3c; color: white; }
-    .bulletin-result {
-      background: linear-gradient(135deg, var(--primary-color, #0f3b48), var(--secondary-color, #00ffff));
-      color: white;
-      padding: 4mm;
-      border-radius: 12px;
-      text-align: center;
-      margin-bottom: 6mm;
-    }
-    .result-average { font-size: 22pt; font-weight: 800; }
-    .bulletin-signatures {
-      display: flex;
-      justify-content: space-between;
-      gap: 8mm;
-      margin-top: 5mm;
-      margin-bottom: 4mm;
-    }
-    .signature-item { flex: 1; text-align: center; font-size: 7pt; }
-    .signature-line { border-top: 1px solid var(--primary-color, #0f3b48); margin-top: 8px; padding-top: 6px; }
-    .bulletin-quote { text-align: center; font-size: 5.5pt; color: #8aaec0; font-style: italic; margin: 3mm 0; }
-    .bulletin-footer { text-align: center; font-size: 5pt; color: #8aaec0; border-top: 1px solid #d4e0e8; padding-top: 2mm; }
+    .export-card{display:flex;align-items:center;gap:14px;background:var(--card-bg);border-radius:20px;padding:18px;margin-bottom:12px;border:1px solid var(--border);cursor:pointer;transition:all 0.2s ease;}
+    .export-card:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(0,0,0,0.1);border-color:var(--primary);}
+    .export-icon-circle{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
+    .ec-json{background:rgba(52,152,219,0.12);color:#3498db;}
+    .ec-csv{background:rgba(46,204,113,0.12);color:#27ae60;}
+    .ec-html{background:rgba(155,89,182,0.12);color:#9b59b6;}
+    .ec-pdf{background:rgba(231,76,60,0.12);color:#e74c3c;}
+    .export-info strong{font-size:0.8rem;display:block;}
+    .export-info small{font-size:0.6rem;color:var(--text-light);}
+    .modal-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:400;display:none;align-items:center;justify-content:center;}
+    .modal-overlay.active{display:flex;}
+    .modal-box{background:var(--card-bg);border-radius:24px;padding:20px;width:85%;max-width:360px;text-align:center;animation:modalIn 0.3s ease;}
+    @keyframes modalIn{from{transform:scale(0.8);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .term-opt{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:14px;cursor:pointer;border:2px solid var(--border);margin-bottom:8px;}
+    .term-opt:hover{border-color:var(--primary);}
+    .term-opt.selected{border-color:var(--primary);background:rgba(15,59,72,0.05);}
+    .term-opt .to-icon{width:38px;height:38px;border-radius:12px;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;}
+    .term-opt .to-info{flex:1;text-align:left;}
+    .term-opt .to-title{font-weight:600;font-size:0.8rem;}
+    .term-opt .to-desc{font-size:0.55rem;color:var(--text-light);}
+    .action-buttons{display:flex;gap:10px;margin-top:16px;}
+    .action-buttons button{flex:1;padding:12px;border-radius:30px;font-size:0.75rem;font-weight:600;cursor:pointer;}
+    .btn-view{background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;border:none;}
+    .btn-download{background:rgba(0,0,0,0.05);color:var(--text);border:1px solid var(--border);}
+    .btn-pdf-download{background:linear-gradient(135deg,#e74c3c,#c0392b);color:white;border:none;width:100%;}
+    .cancel-btn{width:100%;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:0.75rem;margin-top:8px;}
+    .pdf-loading{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(0,0,0,0.85);color:white;padding:24px 36px;border-radius:16px;z-index:999;display:none;text-align:center;}
+    @media(max-width:550px){.action-buttons{flex-direction:column;}}
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-file-export"></i><span>EXPORT</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
-    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-file-export"></i><span>EXPORT</span></div>
+      <div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div>
+    </div>
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
     <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="export.html" class="nav-item active"><i class="fas fa-file-export"></i> Export</a><a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
     <div class="overlay" id="overlay"></div>
     <main class="main-content">
       <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;"><i class="fas fa-file-export" style="font-size:40px;opacity:0.5;"></i><h2 style="color:white;margin:6px 0;">Export Center</h2><p style="opacity:0.8;font-size:0.65rem;">Download your data</p></div>
       
-      <div class="export-card" onclick="exportJSON()"><div class="export-icon-circle ec-json"><i class="fas fa-file-code"></i></div><div class="export-info"><strong>JSON Backup</strong><small>Complete data backup</small></div><i class="fas fa-chevron-right" style="color:var(--text-light);"></i></div>
-      <div class="export-card" onclick="exportCSV()"><div class="export-icon-circle ec-csv"><i class="fas fa-file-csv"></i></div><div class="export-info"><strong>CSV Spreadsheet</strong><small>Excel format</small></div><i class="fas fa-chevron-right" style="color:var(--text-light);"></i></div>
-      <div class="export-card" onclick="chooseTerm('html')"><div class="export-icon-circle ec-html"><i class="fas fa-globe"></i></div><div class="export-info"><strong>HTML Bulletin</strong><small>View or Download</small></div><i class="fas fa-chevron-right" style="color:var(--text-light);"></i></div>
-      <div class="export-card" onclick="chooseTerm('pdf')"><div class="export-icon-circle ec-pdf"><i class="fas fa-file-pdf"></i></div><div class="export-info"><strong>PDF Bulletin (A4)</strong><small>Download PDF file</small></div><i class="fas fa-chevron-right" style="color:var(--text-light);"></i></div>
+      <!-- EXPORT JSON COMPLET (toutes les données) -->
+      <div class="export-card" onclick="exportCompleteJSON()">
+        <div class="export-icon-circle ec-json"><i class="fas fa-database"></i></div>
+        <div class="export-info"><strong>Complete JSON Backup</strong><small>Grades, badges, history, notifications, backups</small></div>
+        <i class="fas fa-chevron-right" style="color:var(--text-light);"></i>
+      </div>
+      
+      <div class="export-card" onclick="exportCSV()">
+        <div class="export-icon-circle ec-csv"><i class="fas fa-file-csv"></i></div>
+        <div class="export-info"><strong>CSV Spreadsheet</strong><small>Excel format</small></div>
+        <i class="fas fa-chevron-right" style="color:var(--text-light);"></i>
+      </div>
+      
+      <div class="export-card" onclick="chooseTerm('html')">
+        <div class="export-icon-circle ec-html"><i class="fas fa-globe"></i></div>
+        <div class="export-info"><strong>HTML Bulletin</strong><small>View or Download</small></div>
+        <i class="fas fa-chevron-right" style="color:var(--text-light);"></i>
+      </div>
+      
+      <div class="export-card" onclick="chooseTerm('pdf')">
+        <div class="export-icon-circle ec-pdf"><i class="fas fa-file-pdf"></i></div>
+        <div class="export-info"><strong>PDF Bulletin (A4)</strong><small>Download PDF file</small></div>
+        <i class="fas fa-chevron-right" style="color:var(--text-light);"></i>
+      </div>
+      
     </main>
   </div>
   
-  <!-- MODAL POUR CHOISIR LA PÉRIODE -->
   <div class="modal-overlay" id="termOverlay"><div class="modal-box"><h3><i class="fas fa-calendar-alt"></i> Choose Period</h3><p>Select period</p>
     <div class="term-opt selected" data-term="yearly" onclick="selectTerm(this)"><div class="to-icon"><i class="fas fa-chart-line"></i></div><div class="to-info"><div class="to-title">Yearly</div><div class="to-desc">All sequences</div></div><div class="to-check"><i class="fas fa-check-circle"></i></div></div>
     <div class="term-opt" data-term="1" onclick="selectTerm(this)"><div class="to-icon"><i class="fas fa-1"></i></div><div class="to-info"><div class="to-title">Term 1</div><div class="to-desc">Seq 1+2</div></div><div class="to-check"><i class="fas fa-check-circle"></i></div></div>
     <div class="term-opt" data-term="2" onclick="selectTerm(this)"><div class="to-icon"><i class="fas fa-2"></i></div><div class="to-info"><div class="to-title">Term 2</div><div class="to-desc">Seq 3+4</div></div><div class="to-check"><i class="fas fa-check-circle"></i></div></div>
     <div class="term-opt" data-term="3" onclick="selectTerm(this)"><div class="to-icon"><i class="fas fa-3"></i></div><div class="to-info"><div class="to-title">Term 3</div><div class="to-desc">Seq 5+6</div></div><div class="to-check"><i class="fas fa-check-circle"></i></div></div>
-    
-    <!-- Boutons HTML (View + Download) -->
-    <div class="action-buttons" id="htmlActionButtons" style="display:none;">
-      <button class="btn-view" onclick="viewHTMLBulletin()"><i class="fas fa-eye"></i> View</button>
-      <button class="btn-download" onclick="downloadHTMLBulletin()"><i class="fas fa-download"></i> Download HTML</button>
-    </div>
-    
-    <!-- Bouton PDF (UN SEUL BOUTON) -->
-    <div class="action-buttons" id="pdfActionButtons" style="display:none;">
-      <button class="btn-pdf-download" onclick="downloadRealPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button>
-    </div>
-    
+    <div class="action-buttons" id="htmlActionButtons" style="display:none;"><button class="btn-view" onclick="viewHTMLBulletin()"><i class="fas fa-eye"></i> View</button><button class="btn-download" onclick="downloadHTMLBulletin()"><i class="fas fa-download"></i> Download HTML</button></div>
+    <div class="action-buttons" id="pdfActionButtons" style="display:none;"><button class="btn-pdf-download" onclick="downloadRealPDF()"><i class="fas fa-file-pdf"></i> Download PDF</button></div>
     <button class="cancel-btn" onclick="closeTermModal()">Cancel</button>
   </div></div>
   
@@ -280,398 +111,107 @@
     
     function loadExport() { cu = requireAuth(); if (!cu) return; initHeaderProfile(); }
     
-    function chooseTerm(m) { 
-      selectedMode = m; 
-      document.getElementById('termOverlay').classList.add('active'); 
-      document.querySelectorAll('.term-opt').forEach(function(o) { o.classList.remove('selected'); }); 
-      document.querySelector('.term-opt[data-term="yearly"]').classList.add('selected'); 
-      selectedTerm = 'yearly';
-      
-      // Afficher les bons boutons selon le mode
-      if (m === 'pdf') {
-        document.getElementById('pdfActionButtons').style.display = 'flex';
-        document.getElementById('htmlActionButtons').style.display = 'none';
-      } else {
-        document.getElementById('pdfActionButtons').style.display = 'none';
-        document.getElementById('htmlActionButtons').style.display = 'flex';
-      }
+    // EXPORT COMPLET - TOUTES LES DONNÉES (grades, historique, notifications, backups, etc.)
+    function exportCompleteJSON() {
+      var user = getCurrentStudent();
+      if (!user) { showToast('Please login first'); return; }
+      var data = exportCompleteUserData(user.id);
+      if (!data) { showToast('Failed to export data'); return; }
+      var blob = new Blob([data], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'SMART_GRADE_Complete_Backup_' + user.name.replace(/\s/g, '_') + '_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('Complete backup exported (' + Math.round(data.length/1024) + ' KB)');
     }
-    
-    function selectTerm(el) { 
-      document.querySelectorAll('.term-opt').forEach(function(o) { o.classList.remove('selected'); }); 
-      el.classList.add('selected'); 
-      selectedTerm = el.dataset.term; 
-    }
-    
-    function closeTermModal() { document.getElementById('termOverlay').classList.remove('active'); }
-    
-    function viewHTMLBulletin() { 
-      closeTermModal(); 
-      var b = new Blob([buildBulletin()], { type: 'text/html' }); 
-      window.open(URL.createObjectURL(b), '_blank'); 
-      showToast('Bulletin opened!'); 
-    }
-    
-    function downloadHTMLBulletin() { 
-      closeTermModal();
-      var b = new Blob([buildBulletin()], { type: 'text/html' }); 
-      var url = URL.createObjectURL(b); 
-      var a = document.createElement('a'); 
-      a.href = url; 
-      a.download = fn('html'); 
-      a.click(); 
-      URL.revokeObjectURL(url); 
-      showToast('HTML downloaded!'); 
-    }
-    
-    function downloadRealPDF() {
-      closeTermModal();
-      document.getElementById('pdfLoading').style.display = 'block';
-      
-      // Créer un élément temporaire pour le PDF
-      var container = document.createElement('div');
-      container.innerHTML = buildBulletin();
-      container.style.position = 'absolute';
-      container.style.top = '-9999px';
-      container.style.left = '-9999px';
-      container.style.width = '210mm';
-      document.body.appendChild(container);
-      
-      var opt = {
-        margin: [0, 0, 0, 0],
-        filename: fn('pdf'),
-        image: { type: 'jpeg', quality: 0.98 },
-        html2canvas: { scale: 2, useCORS: true, logging: false },
-        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-      };
-      
-      html2pdf().set(opt).from(container).save().then(function() {
-        document.body.removeChild(container);
-        document.getElementById('pdfLoading').style.display = 'none';
-        showToast('PDF downloaded successfully!');
-      }).catch(function(err) {
-        document.body.removeChild(container);
-        document.getElementById('pdfLoading').style.display = 'none';
-        showToast('PDF error: ' + err.message);
-      });
-    }
-    
-    function ts() { var d = new Date(); return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + ('0' + d.getHours()).slice(-2) + ('0' + d.getMinutes()).slice(-2) + ('0' + d.getSeconds()).slice(-2); }
-    function fn(ext) { var t = selectedTerm === 'yearly' ? 'Yearly' : 'Term' + selectedTerm; return 'SMART-GRADE-Bulletin-' + t + '-' + cu.name.replace(/\s+/g, '-') + '-' + ts() + '.' + ext; }
-    
-    function exportJSON() { downloadJSON(exportAllData(cu.id), 'SMART-GRADE-Backup-' + ts() + '.json'); showToast('JSON exported!'); }
     
     function exportCSV() { 
       var grades = getStudentGrades(cu.id); 
       grades.sort(function(a, b) { return a.subjectId - b.subjectId || a.sequenceId - b.sequenceId; }); 
       var csv = 'Subject,Code,Sequence,Value,Date,Term\n'; 
-      grades.forEach(function(x) { var s = DEFAULT_SUBJECTS.find(function(s) { return s.id === x.subjectId; }); csv += '"' + (s ? s.name : '?') + '","' + (s ? s.code : '?') + '",' + x.sequenceId + ',' + x.value + ',' + x.date + ',' + Math.ceil(x.sequenceId / 2) + '\n'; }); 
-      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' }); var url = URL.createObjectURL(blob); var a = document.createElement('a'); a.href = url; a.download = 'SMART-GRADE-Grades-' + ts() + '.csv'; a.click(); URL.revokeObjectURL(url); showToast('CSV exported!'); 
+      var subjects = [{id:1,name:"COMPUTER SCIENCES",code:"CS"},{id:2,name:"MATHEMATICS",code:"MATH"},{id:3,name:"CHEMISTRY",code:"CHM"},{id:4,name:"HUMAN BIOLOGY",code:"HBIO"},{id:5,name:"GEOLOGY",code:"GEL"},{id:6,name:"PHYSICS",code:"PHY"},{id:7,name:"ADDITIONAL MATHEMATICS",code:"AMATH"},{id:8,name:"BIOLOGY",code:"BIO"},{id:9,name:"ECONOMICS",code:"ECO"},{id:10,name:"ENGLISH LANGUAGE",code:"ENG"},{id:11,name:"GEOGRAPHY",code:"GEO"},{id:12,name:"CITIZENSHIP",code:"CIV"},{id:13,name:"FRENCH",code:"FR"},{id:14,name:"FOOD AND NUTRITION",code:"FDN"}];
+      grades.forEach(function(x) { var s = subjects.find(function(s) { return s.id === x.subjectId; }); csv += '"' + (s ? s.name : '?') + '","' + (s ? s.code : '?') + '",' + x.sequenceId + ',' + x.value + ',' + x.date + ',' + Math.ceil(x.sequenceId / 2) + '\n'; }); 
+      var blob = new Blob(['\uFEFF' + csv], { type: 'text/csv' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'SMART-GRADE-Grades-' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.csv';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('CSV exported!'); 
     }
     
-    function getCurrentThemeColors() {
-      var themeName = localStorage.getItem('smartgrade_theme') || 'default';
-      var themes = { default: { primary: '#0f3b48', secondary: '#00ffff' }, crimson: { primary: '#c0392b', secondary: '#ff4757' }, forest: { primary: '#1e8449', secondary: '#2ecc71' }, ocean: { primary: '#006994', secondary: '#00b4d8' }, royal: { primary: '#6c3483', secondary: '#a569bd' }, sunset: { primary: '#d35400', secondary: '#f39c12' }, rose: { primary: '#c44569', secondary: '#fd79a8' }, turquoise: { primary: '#00897b', secondary: '#1de9b6' }, amber: { primary: '#b7950b', secondary: '#f1c40f' }, graphite: { primary: '#455a64', secondary: '#90a4ae' }, lavender: { primary: '#7b1fa2', secondary: '#ce93d8' }, cherry: { primary: '#b71c1c', secondary: '#ef5350' }, midnight: { primary: '#1a237e', secondary: '#5c6bc0' }, mint: { primary: '#00b894', secondary: '#55efc4' }, coral: { primary: '#e74c3c', secondary: '#ff6b6b' }, indigo: { primary: '#283593', secondary: '#7986cb' }, chocolate: { primary: '#5d4037', secondary: '#a1887f' }, electric: { primary: '#6a1b9a', secondary: '#e040fb' }, steel: { primary: '#37474f', secondary: '#78909c' }, lime: { primary: '#558b2f', secondary: '#aed581' } };
-      return themes[themeName] || themes.default;
-    }
+    function chooseTerm(m) { selectedMode = m; document.getElementById('termOverlay').classList.add('active'); document.querySelectorAll('.term-opt').forEach(function(o) { o.classList.remove('selected'); }); document.querySelector('.term-opt[data-term="yearly"]').classList.add('selected'); selectedTerm = 'yearly'; if (m === 'pdf') { document.getElementById('pdfActionButtons').style.display = 'flex'; document.getElementById('htmlActionButtons').style.display = 'none'; } else { document.getElementById('pdfActionButtons').style.display = 'none'; document.getElementById('htmlActionButtons').style.display = 'flex'; } }
+    function selectTerm(el) { document.querySelectorAll('.term-opt').forEach(function(o) { o.classList.remove('selected'); }); el.classList.add('selected'); selectedTerm = el.dataset.term; }
+    function closeTermModal() { document.getElementById('termOverlay').classList.remove('active'); }
+    function viewHTMLBulletin() { closeTermModal(); var b = new Blob([buildBulletin()], { type: 'text/html' }); window.open(URL.createObjectURL(b), '_blank'); showToast('Bulletin opened!'); }
+    function downloadHTMLBulletin() { closeTermModal(); var b = new Blob([buildBulletin()], { type: 'text/html' }); var url = URL.createObjectURL(b); var a = document.createElement('a'); a.href = url; a.download = 'SMART-GRADE-Bulletin-' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.html'; a.click(); URL.revokeObjectURL(url); showToast('HTML downloaded!'); }
+    function downloadRealPDF() { closeTermModal(); document.getElementById('pdfLoading').style.display = 'block'; var container = document.createElement('div'); container.innerHTML = buildBulletin(); container.style.position = 'absolute'; container.style.top = '-9999px'; container.style.left = '-9999px'; container.style.width = '210mm'; document.body.appendChild(container); html2pdf().set({ margin: [0,0,0,0], filename: 'SMART-GRADE-Bulletin.pdf', image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' } }).from(container).save().then(function() { document.body.removeChild(container); document.getElementById('pdfLoading').style.display = 'none'; showToast('PDF downloaded!'); }).catch(function() { document.body.removeChild(container); document.getElementById('pdfLoading').style.display = 'none'; showToast('PDF error'); }); }
     
+    function getCurrentThemeColors() { var themeName = localStorage.getItem('smartgrade_theme') || 'default'; var themes = { default: { primary: '#0f3b48', secondary: '#00ffff' }, crimson: { primary: '#c0392b', secondary: '#ff4757' }, forest: { primary: '#1e8449', secondary: '#2ecc71' }, ocean: { primary: '#006994', secondary: '#00b4d8' }, royal: { primary: '#6c3483', secondary: '#a569bd' }, sunset: { primary: '#d35400', secondary: '#f39c12' }, rose: { primary: '#c44569', secondary: '#fd79a8' }, turquoise: { primary: '#00897b', secondary: '#1de9b6' }, amber: { primary: '#b7950b', secondary: '#f1c40f' }, graphite: { primary: '#455a64', secondary: '#90a4ae' }, lavender: { primary: '#7b1fa2', secondary: '#ce93d8' }, cherry: { primary: '#b71c1c', secondary: '#ef5350' }, midnight: { primary: '#1a237e', secondary: '#5c6bc0' }, mint: { primary: '#00b894', secondary: '#55efc4' }, coral: { primary: '#e74c3c', secondary: '#ff6b6b' }, indigo: { primary: '#283593', secondary: '#7986cb' }, chocolate: { primary: '#5d4037', secondary: '#a1887f' }, electric: { primary: '#6a1b9a', secondary: '#e040fb' }, steel: { primary: '#37474f', secondary: '#78909c' }, lime: { primary: '#558b2f', secondary: '#aed581' } }; return themes[themeName] || themes.default; }
     function getGradeLetter(avg) { if (avg >= 18) return 'A+'; if (avg >= 16) return 'A'; if (avg >= 14) return 'B+'; if (avg >= 12) return 'B'; if (avg >= 10) return 'C'; if (avg >= 8) return 'D'; return 'F'; }
     function getGradeClass(letter) { var classes = { 'A+': 'Aplus', 'A': 'A', 'B+': 'Bplus', 'B': 'B', 'C': 'C', 'D': 'D', 'F': 'F' }; return classes[letter] || 'F'; }
     
-    function calculateSubjectTermAverageDirect(subjectId, termNum, grades) {
-      var seq1 = (termNum - 1) * 2 + 1;
-      var seq2 = seq1 + 1;
-      var n1 = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
-      var n2 = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
-      var a1 = 0, a2 = 0;
-      if (n1.length > 0) { var sum = 0; for (var i = 0; i < n1.length; i++) sum += n1[i].value; a1 = sum / n1.length; }
-      if (n2.length > 0) { var sum = 0; for (var i = 0; i < n2.length; i++) sum += n2[i].value; a2 = sum / n2.length; }
-      return (a1 + a2) / 2;
-    }
-    
     function buildBulletin() {
       var grades = getStudentGrades(cu.id);
-      var coeffs = getSubjectCoefficients(cu.id);
-      var subs = DEFAULT_SUBJECTS;
-      
-      var isYearly = (selectedTerm === 'yearly');
-      var termNum = isYearly ? 0 : parseInt(selectedTerm);
-      var displayTitle = isYearly ? 'YEARLY REPORT' : 'TERM ' + termNum + ' REPORT';
-      
-      var rows = '';
-      var totalWeighted = 0;
-      var totalCoeff = 0;
-      
-      for (var i = 0; i < subs.length; i++) {
-        var s = subs[i];
-        var coef = coeffs[s.id] || 5;
-        
+      var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + cu.id) || '{}');
+      var subjects = [{id:1,name:"COMPUTER SCIENCES"},{id:2,name:"MATHEMATICS"},{id:3,name:"CHEMISTRY"},{id:4,name:"HUMAN BIOLOGY"},{id:5,name:"GEOLOGY"},{id:6,name:"PHYSICS"},{id:7,name:"ADDITIONAL MATHEMATICS"},{id:8,name:"BIOLOGY"},{id:9,name:"ECONOMICS"},{id:10,name:"ENGLISH LANGUAGE"},{id:11,name:"GEOGRAPHY"},{id:12,name:"CITIZENSHIP"},{id:13,name:"FRENCH"},{id:14,name:"FOOD AND NUTRITION"}];
+      var isYearly = (selectedTerm === 'yearly'); var termNum = isYearly ? 0 : parseInt(selectedTerm); var displayTitle = isYearly ? 'YEARLY REPORT' : 'TERM ' + termNum + ' REPORT';
+      var rows = '', totalWeighted = 0, totalCoeff = 0;
+      for (var i = 0; i < subjects.length; i++) {
+        var s = subjects[i]; var coef = coeffs[s.id] || 5;
         if (isYearly) {
-          var t1 = calculateSubjectTermAverageDirect(s.id, 1, grades);
-          var t2 = calculateSubjectTermAverageDirect(s.id, 2, grades);
-          var t3 = calculateSubjectTermAverageDirect(s.id, 3, grades);
-          var yearly = (t1 + t2 + t3) / 3;
-          
-          var hasAnyGrade = (t1 > 0 || t2 > 0 || t3 > 0);
-          var rowClass = hasAnyGrade ? '' : 'not-selected';
-          var cellClass = hasAnyGrade ? '' : 'not-selected-cell';
-          var yearlyFormatted = yearly > 0 ? yearly.toFixed(2) : '—';
-          
-          rows += '<tr>';
-          rows += '<td class="subject-name ' + rowClass + '">' + s.name + '</td>';
-          rows += '<td class="' + cellClass + '">' + coef + '</td>';
-          rows += '<td class="' + cellClass + '">' + (t1 > 0 ? t1.toFixed(2) : '—') + '</td>';
-          rows += '<td class="' + cellClass + '">' + (t2 > 0 ? t2.toFixed(2) : '—') + '</td>';
-          rows += '<td class="' + cellClass + '">' + (t3 > 0 ? t3.toFixed(2) : '—') + '</td>';
-          rows += '<td class="' + cellClass + '"><strong>' + yearlyFormatted + '</strong></td>';
-          
-          if (hasAnyGrade && yearly > 0) {
-            var letter = getGradeLetter(yearly);
-            var gradeClass = getGradeClass(letter);
-            rows += '<td class="' + cellClass + '"><span class="grade-letter grade-' + gradeClass + '">' + letter + '</span></td>';
-            totalWeighted += yearly * coef;
-            totalCoeff += coef;
-          } else {
-            rows += '<td class="' + cellClass + '"><span style="color:#ccc;">—</span></td>';
-          }
-          rows += '</tr>';
+          var term1 = 0, term2 = 0, term3 = 0;
+          var seq1 = 1, seq2 = 2; var g1 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; }); var g2 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; }); if (g1.length) term1 += g1.reduce(function(a,b) { return a + b.value; }, 0) / g1.length; if (g2.length) term1 += g2.reduce(function(a,b) { return a + b.value; }, 0) / g2.length; term1 = term1 / 2;
+          seq1 = 3; seq2 = 4; g1 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; }); g2 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; }); if (g1.length) term2 += g1.reduce(function(a,b) { return a + b.value; }, 0) / g1.length; if (g2.length) term2 += g2.reduce(function(a,b) { return a + b.value; }, 0) / g2.length; term2 = term2 / 2;
+          seq1 = 5; seq2 = 6; g1 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; }); g2 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; }); if (g1.length) term3 += g1.reduce(function(a,b) { return a + b.value; }, 0) / g1.length; if (g2.length) term3 += g2.reduce(function(a,b) { return a + b.value; }, 0) / g2.length; term3 = term3 / 2;
+          var yearly = (term1 + term2 + term3) / 3;
+          var hasAnyGrade = (term1 > 0 || term2 > 0 || term3 > 0);
+          rows += '<tr><td class="subject-name">' + s.name + '</td><td>' + coef + '</td><td>' + term1.toFixed(2) + '</td><td>' + term2.toFixed(2) + '</td><td>' + term3.toFixed(2) + '</td><td><strong>' + yearly.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + getGradeClass(getGradeLetter(yearly)) + '">' + getGradeLetter(yearly) + '</span></td></tr>';
+          if (hasAnyGrade && yearly > 0) { totalWeighted += yearly * coef; totalCoeff += coef; }
         } else {
-          var termAvg = calculateSubjectTermAverageDirect(s.id, termNum, grades);
-          var hasGrade = (termAvg > 0);
-          var isSelected = (getStudentSelectedSubjects(cu.id, termNum).indexOf(s.id) !== -1);
-          var isActive = (isSelected || hasGrade);
-          var rowClass = isActive ? '' : 'not-selected';
-          var cellClass = isActive ? '' : 'not-selected-cell';
-          var termAvgFormatted = hasGrade ? termAvg.toFixed(2) : '—';
-          
-          rows += '<tr>';
-          rows += '<td class="subject-name ' + rowClass + '">' + s.name + '</td>';
-          rows += '<td class="' + cellClass + '">' + coef + '</td>';
-          rows += '<td class="' + cellClass + '"><strong>' + termAvgFormatted + '</strong></td>';
-          
-          if (isActive && hasGrade) {
-            var letter = getGradeLetter(termAvg);
-            var gradeClass = getGradeClass(letter);
-            rows += '<td class="' + cellClass + '"><span class="grade-letter grade-' + gradeClass + '">' + letter + '</span></td>';
-            totalWeighted += termAvg * coef;
-            totalCoeff += coef;
-          } else {
-            rows += '<td class="' + cellClass + '"><span style="color:#ccc;">—</span></td>';
-          }
-          rows += '</tr>';
+          var seq1 = (termNum - 1) * 2 + 1, seq2 = seq1 + 1;
+          var g1 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; }); var g2 = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; });
+          var avg1 = g1.length ? g1.reduce(function(a,b) { return a + b.value; }, 0) / g1.length : 0; var avg2 = g2.length ? g2.reduce(function(a,b) { return a + b.value; }, 0) / g2.length : 0;
+          var termAvg = (avg1 + avg2) / 2;
+          rows += '<tr><td class="subject-name">' + s.name + '</td><td>' + coef + '</td><td><strong>' + termAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + getGradeClass(getGradeLetter(termAvg)) + '">' + getGradeLetter(termAvg) + '</span></td></tr>';
+          if (termAvg > 0) { totalWeighted += termAvg * coef; totalCoeff += coef; }
         }
       }
-      
-      var overallAvg = isYearly ? calculateYearlyAverage(cu.id) : calculateStudentTermAverage(cu.id, termNum);
-      overallAvg = Math.round(overallAvg * 100) / 100;
+      var overallAvg = totalCoeff > 0 ? totalWeighted / totalCoeff : 0;
       var overallLetter = getGradeLetter(overallAvg);
       var overallClass = getGradeClass(overallLetter);
-      
       var mention = overallAvg >= 16 ? 'Excellent Work!' : (overallAvg >= 14 ? 'Very Good!' : (overallAvg >= 12 ? 'Good Effort!' : (overallAvg >= 10 ? 'Keep Working!' : 'Needs Improvement')));
-      
-      var headers = '';
-      if (isYearly) {
-        headers = '<tr><th>SUBJECT</th><th>COEF</th><th>TERM 1</th><th>TERM 2</th><th>TERM 3</th><th>YEARLY</th><th>GRADE</th></tr>';
-      } else {
-        headers = '<tr><th>SUBJECT</th><th>COEF</th><th>AVERAGE</th><th>GRADE</th></tr>';
-      }
-      
+      var headers = isYearly ? '<tr><th>SUBJECT</th><th>COEF</th><th>TERM 1</th><th>TERM 2</th><th>TERM 3</th><th>YEARLY</th><th>GRADE</th></tr>' : '<tr><th>SUBJECT</th><th>COEF</th><th>AVERAGE</th><th>GRADE</th></tr>';
       var totalLabel = isYearly ? 'YEARLY AVERAGE' : 'TERM ' + termNum + ' AVERAGE';
-      var totalRow = '';
-      if (isYearly) {
-        totalRow = '<tr class="total-row"><td colspan="5"><strong>' + totalLabel + '</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>';
-      } else {
-        totalRow = '<tr class="total-row"><td colspan="2"><strong>' + totalLabel + '</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>';
-      }
-      
-      var schoolYear = '2025-2026';
+      var totalRow = isYearly ? '<tr class="total-row"><td colspan="5"><strong>' + totalLabel + '</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>' : '<tr class="total-row"><td colspan="2"><strong>' + totalLabel + '</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>';
       var themeColors = getCurrentThemeColors();
-      var primaryColor = themeColors.primary;
-      var secondaryColor = themeColors.secondary;
-      
       return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + displayTitle + ' - ' + cu.name + '</title><link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@400;700&display=swap" rel="stylesheet"><style>' +
-        ':root { --primary-color: ' + primaryColor + '; --secondary-color: ' + secondaryColor + '; }' +
+        ':root { --primary-color: ' + themeColors.primary + '; --secondary-color: ' + themeColors.secondary + '; }' +
         '*{margin:0;padding:0;box-sizing:border-box}@page{size:A4 portrait;margin:0}' +
         '.full-page{width:210mm;min-height:297mm;margin:0;padding:8mm 10mm;background:linear-gradient(135deg,var(--primary-color) 0%,var(--secondary-color) 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}' +
-        '.deco-dots{position:absolute;top:20px;left:20px;right:20px;bottom:20px;background-image:radial-gradient(circle at 10px 10px,rgba(255,255,255,0.1) 1px,transparent 1px);background-size:20px 20px;pointer-events:none;z-index:0}' +
-        '.deco-circle-1{position:absolute;top:-50px;right:-50px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;z-index:0}' +
-        '.deco-circle-2{position:absolute;bottom:-50px;left:-50px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.05);pointer-events:none;z-index:0}' +
-        '.deco-diagonal{position:absolute;top:0;left:0;right:0;bottom:0;background-image:repeating-linear-gradient(45deg,transparent,transparent 30px,rgba(255,255,255,0.03) 30px,rgba(255,255,255,0.03) 60px);pointer-events:none;z-index:0}' +
         '.bulletin-page{width:100%;max-width:190mm;min-height:270mm;background:white;border-radius:16px;padding:7mm 9mm;font-family:"Inter","Segoe UI",sans-serif;color:#1a2a3a;position:relative;z-index:2;box-shadow:0 20px 40px rgba(0,0,0,0.2)}' +
-        '.bulletin-header{text-align:center;margin-bottom:5mm}.bulletin-header h1{font-size:14pt;font-weight:800;color:var(--primary-color);font-family:"Cinzel",serif}.bulletin-header .school-name{font-size:8pt;font-weight:700;color:var(--primary-color)}.bulletin-header .class-info{font-size:6.5pt;color:#5a7a8a;margin-bottom:3mm}' +
+        '.bulletin-header{text-align:center;margin-bottom:5mm}.bulletin-header h1{font-size:14pt;font-weight:800;color:var(--primary-color);font-family:"Cinzel",serif}.bulletin-header .school-name{font-size:8pt;font-weight:700;color:var(--primary-color)}' +
         '.bulletin-student{background:#f0f6fa;padding:3mm 5mm;border-radius:8px;margin-bottom:6mm;display:flex;justify-content:space-between;flex-wrap:wrap;border:1px solid #c8dce8}.student-info-item{font-size:7.5pt}.student-info-item strong{color:var(--primary-color)}' +
         '.bulletin-table{width:100%;border-collapse:collapse;font-size:7pt;margin-bottom:6mm}.bulletin-table th{background:var(--primary-color);color:white;padding:5px 4px;text-align:center;border:1px solid var(--secondary-color)}.bulletin-table td{padding:5px 4px;text-align:center;border:1px solid #c8d8e4}' +
-        '.bulletin-table td.subject-name{text-align:left;font-weight:600}.bulletin-table td.subject-name.not-selected{color:#aaa;font-style:italic;background:#f9f9f9}' +
-        '.bulletin-table .not-selected-cell{color:#bbb;background:#f9f9f9}.grade-letter{font-weight:800;display:inline-block;padding:2px 8px;border-radius:20px;font-size:6.5pt}' +
-        '.grade-Aplus{background:#2ecc71;color:white}.grade-A{background:#27ae60;color:white}.grade-Bplus{background:#3498db;color:white}.grade-B{background:#2980b9;color:white}.grade-C{background:#f39c12;color:white}.grade-D{background:#e67e22;color:white}.grade-F{background:#e74c3c;color:white}' +
+        '.grade-letter{font-weight:800;display:inline-block;padding:2px 8px;border-radius:20px;font-size:6.5pt}.grade-Aplus{background:#2ecc71;color:white}.grade-A{background:#27ae60;color:white}.grade-Bplus{background:#3498db;color:white}.grade-B{background:#2980b9;color:white}.grade-C{background:#f39c12;color:white}.grade-D{background:#e67e22;color:white}.grade-F{background:#e74c3c;color:white}' +
         '.bulletin-result{background:linear-gradient(135deg,var(--primary-color),var(--secondary-color));color:white;padding:4mm;border-radius:12px;text-align:center;margin-bottom:6mm}.result-average{font-size:22pt;font-weight:800}' +
         '.bulletin-signatures{display:flex;justify-content:space-between;gap:8mm;margin-top:5mm;margin-bottom:4mm}.signature-item{flex:1;text-align:center;font-size:7pt}.signature-line{border-top:1px solid var(--primary-color);margin-top:8px;padding-top:6px}' +
         '.bulletin-quote{text-align:center;font-size:5.5pt;color:#8aaec0;font-style:italic;margin:3mm 0}.bulletin-footer{text-align:center;font-size:5pt;color:#8aaec0;border-top:1px solid #d4e0e8;padding-top:2mm}' +
-        '</style></head><body><div class="full-page"><div class="deco-dots"></div><div class="deco-circle-1"></div><div class="deco-circle-2"></div><div class="deco-diagonal"></div><div class="bulletin-page">' +
-        '<div class="bulletin-header"><h1>REPORT CARD</h1><div class="school-name">GBHS FOUMBAN</div><div class="class-info">Form 4B Science · Academic Year ' + schoolYear + ' · ' + displayTitle + '</div></div>' +
+        '</style></head><body><div class="full-page"><div class="bulletin-page"><div class="bulletin-header"><h1>REPORT CARD</h1><div class="school-name">GBHS FOUMBAN</div><div class="class-info">Form 4B Science · ' + displayTitle + '</div></div>' +
         '<div class="bulletin-student"><div class="student-info-item"><strong>Student:</strong> ' + cu.name + '</div><div class="student-info-item"><strong>Class:</strong> ' + cu.class + '</div><div class="student-info-item"><strong>Number:</strong> #' + cu.number + '</div><div class="student-info-item"><strong>Date:</strong> ' + new Date().toLocaleDateString() + '</div></div>' +
         '<table class="bulletin-table"><thead>' + headers + '</thead><tbody>' + rows + totalRow + '</tbody></table>' +
         '<div class="bulletin-result"><div class="result-average">' + overallAvg.toFixed(2) + ' / 20</div><div>' + mention + '</div></div>' +
         '<div class="bulletin-signatures"><div class="signature-item"><div class="signature-line">Parent / Guardian</div></div><div class="signature-item"><div class="signature-line">Class Teacher</div></div><div class="signature-item"><div class="signature-line">Principal</div></div></div>' +
         '<div class="bulletin-quote">"Success is the sum of small efforts, repeated day in and day out."</div>' +
-        '<div class="bulletin-footer">SMART GRADE v4.0 · Generated on ' + new Date().toLocaleDateString() + '</div>' +
-        '</div></div></body></html>';
+        '<div class="bulletin-footer">SMART GRADE v4.0 · Generated on ' + new Date().toLocaleDateString() + '</div></div></div></body></html>';
     }
     
     document.getElementById('termOverlay').addEventListener('click', function(e) { if (e.target === this) closeTermModal(); });
+    
     loadExport(); initMobileMenu(); initThemeSelector();
   </script>
-  <!-- CSV Import Section -->
-<div class="glass-card text-center" style="margin-top:16px;">
-  <h3><i class="fas fa-file-import"></i> CSV Import</h3>
-  <p style="font-size:0.65rem;margin-bottom:12px;">Import grades from Excel or CSV file</p>
-  <button class="btn btn-primary" onclick="showCSVImportModal()" style="background:linear-gradient(135deg,#27ae60,#1e8449);">
-    <i class="fas fa-upload"></i> Import CSV
-  </button>
-</div>
-
-<div id="csvImportModal" class="modal">
-  <div class="modal-content" style="max-width:380px;">
-    <i class="fas fa-file-csv" style="font-size:40px;color:var(--primary);"></i>
-    <h3>Import CSV File</h3>
-    <p style="font-size:0.7rem;color:var(--text-light);">Format: Subject,Sequence,Value</p>
-    <p style="font-size:0.6rem;color:var(--text-light);margin-bottom:12px;">Example: MATH,1,14.5</p>
-    <input type="file" id="csvFileInput" accept=".csv" style="width:100%;padding:10px;margin-bottom:16px;border:1px solid var(--border);border-radius:12px;background:var(--card-bg);color:var(--text);">
-    <button class="btn btn-secondary" onclick="downloadCSVTemplate()" style="margin-bottom:16px;width:100%;"><i class="fas fa-download"></i> Download Template</button>
-    <div class="modal-buttons">
-      <button class="btn-cancel" onclick="closeCSVModal()">Cancel</button>
-      <button class="btn-confirm" onclick="processCSVImport()">Import</button>
-    </div>
-  </div>
-</div>
-
-<script>
-function showCSVImportModal() {
-  var modal = document.getElementById('csvImportModal');
-  if (modal) modal.classList.add('active');
-}
-
-function closeCSVModal() {
-  var modal = document.getElementById('csvImportModal');
-  if (modal) modal.classList.remove('active');
-  var input = document.getElementById('csvFileInput');
-  if (input) input.value = '';
-}
-
-function downloadCSVTemplate() {
-  var headers = 'Subject,Sequence,Value\n';
-  var examples = '';
-  for (var i = 0; i < DEFAULT_SUBJECTS.length; i++) {
-    var s = DEFAULT_SUBJECTS[i];
-    examples += s.code + ',1,14.5\n';
-    examples += s.code + ',2,15.0\n';
-  }
-  var blob = new Blob([headers + examples], { type: 'text/csv' });
-  var url = URL.createObjectURL(blob);
-  var a = document.createElement('a');
-  a.href = url;
-  a.download = 'smartgrade_template.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-  showToast('Template downloaded');
-}
-
-function processCSVImport() {
-  var file = document.getElementById('csvFileInput').files[0];
-  if (!file) {
-    showToast('Please select a CSV file');
-    return;
-  }
-  
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var content = e.target.result;
-    var lines = content.split('\n');
-    var currentUser = getCurrentStudent();
-    if (!currentUser) return;
-    
-    var grades = getStudentGrades(currentUser.id);
-    var imported = 0;
-    var errors = [];
-    
-    for (var i = 0; i < lines.length; i++) {
-      var line = lines[i].trim();
-      if (line === '') continue;
-      if (line.toLowerCase().includes('subject')) continue;
-      
-      var parts = line.split(',');
-      if (parts.length < 3) {
-        errors.push('Line ' + (i+1) + ': Invalid format');
-        continue;
-      }
-      
-      var subjectCode = parts[0].trim().toUpperCase();
-      var sequence = parseInt(parts[1]);
-      var value = parseFloat(parts[2]);
-      
-      if (isNaN(sequence) || sequence < 1 || sequence > 6) {
-        errors.push('Line ' + (i+1) + ': Invalid sequence (1-6)');
-        continue;
-      }
-      
-      if (isNaN(value) || value < 0 || value > 20) {
-        errors.push('Line ' + (i+1) + ': Invalid grade (0-20)');
-        continue;
-      }
-      
-      var subject = null;
-      for (var j = 0; j < DEFAULT_SUBJECTS.length; j++) {
-        if (DEFAULT_SUBJECTS[j].code === subjectCode || DEFAULT_SUBJECTS[j].name.toUpperCase() === subjectCode) {
-          subject = DEFAULT_SUBJECTS[j];
-          break;
-        }
-      }
-      
-      if (!subject) {
-        errors.push('Line ' + (i+1) + ': Unknown subject: ' + subjectCode);
-        continue;
-      }
-      
-      var existingIndex = -1;
-      for (var k = 0; k < grades.length; k++) {
-        if (grades[k].subjectId === subject.id && grades[k].sequenceId === sequence) {
-          existingIndex = k;
-          break;
-        }
-      }
-      
-      var roundedValue = Math.round(value * 100) / 100;
-      
-      if (existingIndex !== -1) {
-        grades[existingIndex].value = roundedValue;
-      } else {
-        grades.push({
-          id: Date.now() + imported,
-          subjectId: subject.id,
-          sequenceId: sequence,
-          value: roundedValue,
-          date: new Date().toISOString().split('T')[0]
-        });
-      }
-      imported++;
-    }
-    
-    if (imported > 0) {
-      saveStudentGrades(currentUser.id, grades);
-      showToast('Imported ' + imported + ' grades successfully');
-      if (errors.length > 0) {
-        console.log('Import errors:', errors);
-        showToast(errors.length + ' warnings (see console)');
-      }
-      closeCSVModal();
-      setTimeout(function() { location.reload(); }, 1500);
-    } else {
-      showToast('No valid grades found in file');
-    }
-  };
-  
-  reader.readAsText(file);
-}
-</script>
 </body>
 </html>

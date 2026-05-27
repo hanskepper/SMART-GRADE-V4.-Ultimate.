@@ -12,160 +12,161 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
   <meta name="theme-color" content="#0f3b48">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
-    .student-list-item{
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      padding:14px 16px;
-      background:var(--card-bg);
-      border-radius:16px;
-      margin-bottom:8px;
-      border:1px solid var(--border);
-      transition:all 0.2s ease;
+    .hero-card {
+      text-align: center;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
     }
-    .student-list-item:hover{
-      transform:translateX(4px);
-      border-color:var(--primary);
-      box-shadow:0 4px 16px rgba(0,0,0,0.06);
+    .hero-card i.hero-icon {
+      font-size: 55px;
+      color: var(--primary);
+      margin-bottom: 8px;
     }
-    .student-info{
-      display:flex;
-      align-items:center;
-      gap:12px;
+    .hero-card h1 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
-    .student-avatar-circle{
-      width:42px;height:42px;
-      border-radius:50%;
-      background:linear-gradient(135deg,var(--primary),var(--secondary));
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      color:white;
-      font-size:1rem;
-      flex-shrink:0;
-      overflow:hidden;
+    .hero-card .school-info {
+      font-size: 0.75rem;
+      font-weight: 500;
     }
-    .student-avatar-circle img{
-      width:100%;
-      height:100%;
-      object-fit:cover;
-    }
-    .student-details .student-name{
-      font-weight:700;
-      font-size:0.85rem;
-    }
-    .student-details .student-class{
-      font-size:0.6rem;
-      color:var(--text-light);
+    .hero-card .year-info {
+      font-size: 0.65rem;
+      color: var(--text-light);
     }
     
-    .delete-btn{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      padding:8px 14px;
-      border-radius:25px;
-      border:2px solid rgba(231,76,60,0.3);
-      background:rgba(231,76,60,0.05);
-      color:#e74c3c;
-      cursor:pointer;
-      font-size:0.65rem;
-      font-weight:600;
-      transition:all 0.25s ease;
-      white-space:nowrap;
+    .stats-banner {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 20px;
     }
-    .delete-btn:hover{
-      background:#e74c3c;
-      color:white;
-      border-color:#e74c3c;
-      transform:scale(1.05);
-      box-shadow:0 4px 16px rgba(231,76,60,0.3);
+    .stat-badge {
+      text-align: center;
+      padding: 14px 8px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
     }
-    .delete-btn:active{transform:scale(0.95);}
-    .delete-btn i{font-size:0.7rem;}
+    .stat-badge .num {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-badge .lbl {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      margin-top: 4px;
+      letter-spacing: 1px;
+    }
     
-    .delete-modal{
-      position:fixed;
-      top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.7);
-      z-index:400;
-      display:none;
-      align-items:center;
-      justify-content:center;
-      backdrop-filter:blur(4px);
+    .student-list-container { margin-top: 8px; }
+    .student-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 14px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 8px;
+      transition: all 0.2s ease;
     }
-    .delete-modal.active{display:flex;}
-    .delete-modal-content{
-      background:var(--card-bg);
-      border-radius:24px;
-      padding:24px;
-      width:85%;
-      max-width:340px;
-      text-align:center;
-      animation:modalPopIn 0.3s ease;
+    .student-item:hover {
+      transform: translateX(4px);
+      border-color: var(--primary);
+      background: rgba(0,0,0,0.02);
     }
-    @keyframes modalPopIn{0%{transform:scale(0.8);opacity:0}100%{transform:scale(1);opacity:1}}
-    .delete-modal-content .warning-icon{font-size:50px;color:#e74c3c;margin-bottom:12px;}
-    .delete-modal-content h3{margin-bottom:8px;font-size:1rem;}
-    .delete-modal-content p{font-size:0.7rem;color:var(--text-light);margin-bottom:16px;}
-    .delete-modal-content input{
-      width:100%;padding:12px;border-radius:12px;
-      border:2px solid var(--border);text-align:center;
-      font-size:1.2rem;letter-spacing:4px;font-weight:700;
-      background:var(--card-bg);color:var(--text);
-      margin-bottom:16px;box-sizing:border-box;
+    .student-info { display: flex; align-items: center; gap: 12px; }
+    .student-avatar {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      overflow: hidden;
+      color: white;
+      font-size: 1.2rem;
     }
-    .delete-modal-content input:focus{outline:none;border-color:#e74c3c;}
-    .modal-buttons{display:flex;gap:10px;}
-    .modal-buttons button{flex:1;padding:12px;border-radius:30px;border:none;cursor:pointer;font-weight:600;font-size:0.75rem;transition:all 0.2s;}
-    .btn-cancel-modal{background:rgba(0,0,0,0.05);color:var(--text);border:1px solid var(--border);}
-    .btn-cancel-modal:hover{background:rgba(0,0,0,0.1);}
-    .btn-confirm-delete{background:#e74c3c;color:white;}
-    .btn-confirm-delete:hover{background:#c0392b;box-shadow:0 4px 16px rgba(231,76,60,0.3);}
+    .student-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .student-details { flex: 1; }
+    .student-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 2px; }
+    .student-class { font-size: 0.6rem; color: var(--text-light); }
+    .delete-btn {
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.3);
+      color: #e74c3c;
+      padding: 6px 14px;
+      border-radius: 25px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+    .delete-btn:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
     
-    .empty-state{text-align:center;padding:30px;}
-    .empty-state i{font-size:50px;opacity:0.15;margin-bottom:12px;display:block;}
-    .empty-state p{color:var(--text-light);font-size:0.8rem;margin-bottom:16px;}
+    .show-more-btn {
+      text-align: center;
+      padding: 12px;
+      margin-top: 12px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 40px;
+      cursor: pointer;
+      font-size: 0.7rem;
+      color: var(--primary);
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      font-weight: 500;
+    }
+    .show-more-btn:hover { background: rgba(0,0,0,0.06); }
     
-    .hero-card{text-align:center;}
-    .hero-card i.hero-icon{font-size:60px;color:var(--primary);margin-bottom:8px;}
-    .hero-card h1{
-      font-size:1.8rem;font-weight:800;
-      background:linear-gradient(135deg,var(--primary),var(--secondary));
-      -webkit-background-clip:text;background-clip:text;color:transparent;
-    }
-    .hero-card .school-info{font-weight:500;font-size:0.8rem;}
-    .hero-card .year-info{font-size:0.65rem;color:var(--text-light);}
+    .empty-state { text-align: center; padding: 40px 20px; }
+    .empty-state i { font-size: 50px; opacity: 0.2; margin-bottom: 12px; display: block; }
+    .empty-state p { color: var(--text-light); font-size: 0.8rem; }
     
-    .stats-banner{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:8px;
-      margin:16px 0;
+    .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .btn {
+      padding: 14px 20px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      width: 100%;
+      transition: all 0.2s ease;
     }
-    .stats-banner .stat-badge{
-      text-align:center;
-      padding:12px 8px;
-      background:var(--card-bg);
-      border-radius:12px;
-      border:1px solid var(--border);
-      font-size:0.6rem;
-    }
-    .stats-banner .stat-badge .num{font-size:1.2rem;font-weight:800;color:var(--primary);}
-    .stats-banner .stat-badge .lbl{color:var(--text-light);text-transform:uppercase;margin-top:2px;}
+    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+    .btn-primary:active { transform: scale(0.96); }
+    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text); border: 1px solid var(--border); }
     
-    @keyframes slideUp {
-      from { transform: translateY(100px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+    .section-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--primary);
     }
-    .update-notification {
-      animation: slideUp 0.4s ease;
-    }
+    
+    @media (min-width: 768px) { .btn-group { flex-direction: row; } }
   </style>
 </head>
 <body>
@@ -182,11 +183,7 @@
       <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
       <div class="bottom-sheet-content">
         <div class="theme-grid-rect" id="themeGrid"></div>
-        <div class="font-row-sheet">
-          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
-          <div class="font-sheet" data-font="medium">A</div>
-          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
-        </div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
       </div>
     </div>
     
@@ -204,7 +201,7 @@
     
     <main class="main-content">
       
-      <div class="glass-card animated-border hero-card">
+      <div class="glass-card hero-card">
         <i class="fas fa-chalkboard-user hero-icon"></i>
         <h1>SMART GRADE</h1>
         <p class="school-info">SIN GBHS FOUMBAN Form 4B Science</p>
@@ -218,8 +215,8 @@
       </div>
       
       <div class="glass-card">
-        <h3><i class="fas fa-users"></i> Registered Students</h3>
-        <div id="studentsList" class="mt-1"></div>
+        <div class="section-title"><i class="fas fa-users"></i> Select Account</div>
+        <div class="student-list-container" id="studentsList"></div>
       </div>
       
       <div class="btn-group">
@@ -230,114 +227,109 @@
     </main>
   </div>
   
-  <div class="delete-modal" id="deleteModal">
-    <div class="delete-modal-content">
-      <div class="warning-icon"><i class="fas fa-exclamation-triangle"></i></div>
+  <!-- DELETE MODAL -->
+  <div id="deleteModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:400;align-items:center;justify-content:center;">
+    <div style="background:var(--card-bg);border-radius:24px;padding:24px;width:85%;max-width:340px;text-align:center;">
+      <i class="fas fa-exclamation-triangle" style="font-size:50px;color:#e74c3c;margin-bottom:12px;"></i>
       <h3>Delete Account</h3>
-      <p>Enter the PIN to confirm deletion</p>
-      <input type="text" id="deletePin" maxlength="4" placeholder="****" inputmode="numeric" autocomplete="off">
-      <div class="modal-buttons">
-        <button class="btn-cancel-modal" onclick="closeDeleteModal()">Cancel</button>
-        <button class="btn-confirm-delete" onclick="confirmDelete()">Delete</button>
+      <p style="font-size:0.7rem;color:var(--text-light);margin-bottom:16px;">Enter PIN to confirm</p>
+      <input type="text" id="deletePin" maxlength="4" placeholder="****" style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--border);text-align:center;font-size:1.2rem;background:var(--card-bg);color:var(--text);margin-bottom:16px;">
+      <div style="display:flex;gap:10px;">
+        <button class="btn-cancel-modal" style="flex:1;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;cursor:pointer;">Cancel</button>
+        <button class="btn-confirm-delete" style="flex:1;padding:12px;border-radius:30px;background:#e74c3c;color:white;border:none;cursor:pointer;">Delete</button>
       </div>
     </div>
   </div>
   
   <div id="toastContainer" class="toast-container"></div>
-  
   <div class="install-prompt" id="installPrompt">
     <i class="fas fa-mobile-alt"></i>
-    <div class="install-prompt-text">
-      <h4>Install SMART GRADE</h4>
-      <p>Add to home screen for easy access</p>
-    </div>
-    <button onclick="InstallHandler.install()">Install</button>
+    <div class="install-prompt-text"><h4>Install SMART GRADE</h4><p>Add to home screen</p></div>
+    <button onclick="installApp()">Install</button>
   </div>
   
   <script src="js/utils.js"></script>
   <script src="js/database.js"></script>
   <script src="js/install-handler.js"></script>
   <script src="js/app.js"></script>
-  <script src="js/config.js"></script>
-  <script src="js/storage.js"></script>
   
   <script>
-    // ============================================
-    // PERMISSIONS NOTIFICATIONS
-    // ============================================
-    setTimeout(function() {
-      if ('Notification' in window && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
-        Notification.requestPermission().then(function(permission) {
-          if (permission === 'granted') {
-            console.log('Notifications activees');
-          }
-        });
-      }
-    }, 3000);
+    var currentDeleteId = null;
+    var showAllAccounts = false;
     
-    // ============================================
-    // GESTION DES ETUDIANTS
-    // ============================================
-    var pd=null;
-    
-    function getStudentAvatar(avatarBase64) {
-      if (avatarBase64 && avatarBase64 !== '') {
-        return '<img src="' + avatarBase64 + '">';
-      }
+    function getStudentAvatarHtml(avatarBase64) {
+      if (avatarBase64 && avatarBase64 !== '') return '<img src="' + avatarBase64 + '">';
       return '<i class="fas fa-user-graduate"></i>';
     }
     
-    function renderStudents(){
-      var s=getAllStudents();
-      var c=document.getElementById('studentsList');
-      document.getElementById('totalStudents').innerHTML=s.length;
+    function getRecentAccounts() { return JSON.parse(localStorage.getItem('smartgrade_recent_accounts') || '[]'); }
+    
+    function renderStudents() {
+      var allStudents = getAllStudents();
+      var recentIds = getRecentAccounts();
+      document.getElementById('totalStudents').innerHTML = allStudents.length;
       
-      if(s.length===0){
-        c.innerHTML='<div class="empty-state"><i class="fas fa-users-slash"></i><p>No accounts yet</p><a href="register.html" class="btn btn-primary" style="display:inline-flex;width:auto;padding:10px 20px;font-size:0.75rem;"><i class="fas fa-user-plus"></i> Create Account</a></div>';
+      var sortedStudents = [];
+      recentIds.forEach(function(id) { var student = allStudents.find(function(s) { return s.id === id; }); if (student) sortedStudents.push(student); });
+      allStudents.forEach(function(student) { if (recentIds.indexOf(student.id) === -1) sortedStudents.push(student); });
+      var displayStudents = showAllAccounts ? sortedStudents : sortedStudents.slice(0, 3);
+      
+      if (displayStudents.length === 0) {
+        document.getElementById('studentsList').innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No accounts yet</p><a href="register.html" class="btn btn-primary" style="display:inline-flex;width:auto;padding:10px 20px;font-size:0.75rem;"><i class="fas fa-user-plus"></i> Create Account</a></div>';
         return;
       }
       
-      c.innerHTML=s.map(function(x){
-        var profile = getProfile(x.id);
-        var avatarHtml = getStudentAvatar(profile.avatarBase64);
-        return'<div class="student-list-item">'+
-          '<div class="student-info">'+
-            '<div class="student-avatar-circle">'+avatarHtml+'</div>'+
-            '<div class="student-details">'+
-              '<div class="student-name">'+x.name+'</div>'+
-              '<div class="student-class">'+x.class+' - #'+x.number+'</div>'+
-            '</div>'+
-          '</div>'+
-          '<button class="delete-btn" onclick="showDeleteModal('+x.id+')">'+
-            '<i class="fas fa-trash-alt"></i> Delete'+
-          '</button>'+
-        '</div>';
-      }).join('');
+      var html = '';
+      displayStudents.forEach(function(student) {
+        var profile = getProfile(student.id);
+        var avatarHtml = getStudentAvatarHtml(profile.avatarBase64);
+        html += '<div class="student-item"><div class="student-info"><div class="student-avatar">' + avatarHtml + '</div><div class="student-details"><div class="student-name">' + escapeHtml(student.name) + '</div><div class="student-class">' + student.class + ' #' + student.number + '</div></div></div><button class="delete-btn" onclick="showDeleteModal(' + student.id + ')"><i class="fas fa-trash-alt"></i> Delete</button></div>';
+      });
+      
+      if (!showAllAccounts && sortedStudents.length > 3) {
+        html += '<div class="show-more-btn" onclick="toggleShowAll()"><i class="fas fa-chevron-down"></i> Show all (' + sortedStudents.length + ' accounts)</div>';
+      } else if (showAllAccounts && sortedStudents.length > 3) {
+        html += '<div class="show-more-btn" onclick="toggleShowAll()"><i class="fas fa-chevron-up"></i> Show less</div>';
+      }
+      document.getElementById('studentsList').innerHTML = html;
     }
     
-    function showDeleteModal(id){pd=id;document.getElementById('deleteModal').classList.add('active');document.getElementById('deletePin').value='';document.getElementById('deletePin').focus();}
-    function closeDeleteModal(){document.getElementById('deleteModal').classList.remove('active');pd=null;}
+    function toggleShowAll() { showAllAccounts = !showAllAccounts; renderStudents(); }
     
-    function confirmDelete(){
-      var p=document.getElementById('deletePin').value;
-      var s=getStudentById(pd);
-      if(!s){showToast('Account not found');closeDeleteModal();return;}
-      if(s.pin!==p){showToast('Wrong PIN');closeDeleteModal();return;}
-      deleteStudent(pd);
+    function showDeleteModal(id) { currentDeleteId = id; var modal = document.getElementById('deleteModal'); modal.style.display = 'flex'; document.getElementById('deletePin').value = ''; document.getElementById('deletePin').focus(); }
+    function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; currentDeleteId = null; }
+    
+    function confirmDelete() {
+      var pin = document.getElementById('deletePin').value;
+      var student = getStudentById(currentDeleteId);
+      if (!student) { showToast('Account not found'); closeDeleteModal(); return; }
+      if (student.pin !== pin) { showToast('Wrong PIN'); closeDeleteModal(); return; }
+      var recent = getRecentAccounts();
+      recent = recent.filter(function(id) { return id !== currentDeleteId; });
+      localStorage.setItem('smartgrade_recent_accounts', JSON.stringify(recent));
+      deleteStudent(currentDeleteId);
       renderStudents();
-      showToast(s.name+' deleted');
+      showToast(student.name + ' deleted');
       closeDeleteModal();
     }
     
-    document.getElementById('deleteModal').addEventListener('click',function(e){if(e.target===this)closeDeleteModal();});
+    function escapeHtml(text) { if (!text) return ''; return text.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    
+    document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
+    document.querySelector('.btn-cancel-modal').onclick = closeDeleteModal;
+    document.querySelector('.btn-confirm-delete').onclick = confirmDelete;
+    document.getElementById('deletePin').addEventListener('keypress', function(e) { if (e.key === 'Enter') confirmDelete(); });
+    
+    window.showDeleteModal = showDeleteModal;
+    window.closeDeleteModal = closeDeleteModal;
+    window.confirmDelete = confirmDelete;
+    window.toggleShowAll = toggleShowAll;
     
     renderStudents();
     initMobileMenu();
     initThemeSelector();
     
-    document.querySelectorAll('a[href="guide.html"], a[href="about.html"]').forEach(function(link){
-      link.addEventListener('click',function(){localStorage.setItem('smartgrade_last_page','index.html');});
-    });
+    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
   </script>
 </body>
 </html>

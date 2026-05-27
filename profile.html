@@ -16,8 +16,8 @@
   <style>
     .avatar-container {
       position: relative;
-      width: 120px;
-      height: 120px;
+      width: 140px;
+      height: 140px;
       margin: 0 auto 16px;
     }
     .avatar-preview-large {
@@ -32,26 +32,17 @@
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: transform 0.2s;
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .avatar-preview-large:hover {
-      transform: scale(1.02);
-    }
-    .avatar-preview-large img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-    .avatar-preview-large i {
-      font-size: 48px;
-      color: white;
-    }
+    .avatar-preview-large:hover { transform: scale(1.02); box-shadow: 0 12px 30px rgba(0,0,0,0.2); }
+    .avatar-preview-large img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+    .avatar-preview-large i { font-size: 55px; color: white; }
     .btn-add-avatar {
       position: absolute;
       bottom: 0;
       right: 0;
-      width: 36px;
-      height: 36px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       border: 3px solid white;
@@ -62,19 +53,10 @@
       transition: all 0.2s ease;
       box-shadow: 0 2px 8px rgba(0,0,0,0.2);
     }
-    .btn-add-avatar:active {
-      transform: scale(0.92);
-    }
-    .btn-add-avatar i {
-      font-size: 16px;
-      color: white;
-    }
-    .upload-hint {
-      text-align: center;
-      font-size: 0.65rem;
-      color: var(--text-light);
-      margin-top: 8px;
-    }
+    .btn-add-avatar:hover { transform: scale(1.05); }
+    .btn-add-avatar:active { transform: scale(0.95); }
+    .btn-add-avatar i { font-size: 18px; color: white; }
+    .upload-hint { text-align: center; font-size: 0.65rem; color: var(--text-light); margin-top: 8px; }
     .btn-remove-avatar {
       background: rgba(231,76,60,0.15);
       border: 1px solid rgba(231,76,60,0.3);
@@ -86,61 +68,40 @@
       transition: all 0.2s;
       margin-top: 12px;
     }
-    .btn-remove-avatar:active {
-      transform: scale(0.95);
-    }
-    
+    .btn-remove-avatar:hover { background: rgba(231,76,60,0.25); }
     .avatar-zoom-modal {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.92);
-      z-index: 1000;
+      background: rgba(0,0,0,0.95);
+      z-index: 10000;
       display: none;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
     }
-    .avatar-zoom-modal.active {
-      display: flex;
-    }
-    .avatar-zoom-modal img {
-      max-width: 90%;
-      max-height: 90%;
-      object-fit: contain;
-      border-radius: 20px;
-      box-shadow: 0 0 40px rgba(255,255,255,0.15);
-      animation: zoomIn 0.3s ease;
-    }
-    @keyframes zoomIn {
-      from { transform: scale(0.5); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
+    .avatar-zoom-modal.active { display: flex; }
+    .avatar-zoom-modal img { max-width: 90%; max-height: 90%; object-fit: contain; border-radius: 20px; box-shadow: 0 0 50px rgba(255,255,255,0.2); animation: zoomIn 0.3s ease; }
+    @keyframes zoomIn { from { transform: scale(0.5); opacity: 0; } to { transform: scale(1); opacity: 1; } }
     .avatar-zoom-modal .close-zoom {
       position: absolute;
       top: 20px;
       right: 20px;
-      width: 44px;
-      height: 44px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.2);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 28px;
+      font-size: 30px;
       color: white;
       transition: all 0.2s;
     }
-    .avatar-zoom-modal .close-zoom:hover {
-      background: rgba(255,255,255,0.3);
-      transform: scale(1.1);
-    }
-    
-    /* Badges en grille ordonnée */
     .badges-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -158,48 +119,15 @@
       border: 1px solid var(--border);
       transition: all 0.2s;
     }
-    .badge-item:hover {
-      transform: translateX(4px);
-      border-color: var(--primary);
-    }
-    .badge-item i {
-      width: 24px;
-      color: #f39c12;
-      font-size: 0.9rem;
-    }
-    .badge-item .badge-name {
-      flex: 1;
-      font-weight: 500;
-    }
-    .badge-item .badge-date {
-      font-size: 0.55rem;
-      color: var(--text-light);
-    }
-    .badge-item.locked {
-      opacity: 0.5;
-      filter: grayscale(0.3);
-    }
-    .badge-item.locked i {
-      color: #95a5a6;
-    }
-    .badges-section h3 {
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .badges-section .badge-count {
-      background: var(--primary);
-      color: white;
-      padding: 2px 10px;
-      border-radius: 20px;
-      font-size: 0.7rem;
-    }
-    @media (max-width: 550px) {
-      .badges-grid {
-        grid-template-columns: 1fr;
-      }
-    }
+    .badge-item:hover { transform: translateX(4px); border-color: var(--primary); }
+    .badge-item i { width: 24px; color: #f39c12; font-size: 0.9rem; }
+    .badge-item .badge-name { flex: 1; font-weight: 500; }
+    .badge-item .badge-date { font-size: 0.55rem; color: var(--text-light); }
+    .badge-item.locked { opacity: 0.5; filter: grayscale(0.3); }
+    .badge-item.locked i { color: #95a5a6; }
+    .badges-section h3 { margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+    .badges-section .badge-count { background: var(--primary); color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.7rem; }
+    @media (max-width: 600px) { .badges-grid { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
@@ -209,24 +137,20 @@
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-user"></i><span>PROFILE</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
-          <i class="fas fa-user-graduate"></i>
-        </div>
+        <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
+    
     <div class="sheet-overlay" id="sheetOverlay"></div>
     <div class="bottom-sheet" id="bottomSheet">
       <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
       <div class="bottom-sheet-content">
         <div class="theme-grid-rect" id="themeGrid"></div>
-        <div class="font-row-sheet">
-          <div class="font-sheet" data-font="small">A<sup>-</sup></div>
-          <div class="font-sheet" data-font="medium">A</div>
-          <div class="font-sheet" data-font="large">A<sup>+</sup></div>
-        </div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
       </div>
     </div>
+    
     <div class="sidebar-menu" id="sidebarMenu">
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
@@ -237,30 +161,18 @@
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
+    
     <main class="main-content">
-      
       <div class="glass-card text-center">
         <div class="avatar-container">
-          <div class="avatar-preview-large" id="avatarPreview">
-            <div class="avatar-placeholder">
-              <i class="fas fa-user-graduate"></i>
-            </div>
-          </div>
-          <div class="btn-add-avatar" onclick="triggerFileUpload()">
-            <i class="fas fa-plus"></i>
-          </div>
+          <div class="avatar-preview-large" id="avatarPreview"><div class="avatar-placeholder"><i class="fas fa-user-graduate"></i></div></div>
+          <div class="btn-add-avatar" onclick="triggerFileUpload()"><i class="fas fa-camera"></i></div>
         </div>
-        <div class="upload-hint">
-          <i class="fas fa-info-circle"></i> Tap the + button to add a photo | Tap photo to zoom
-        </div>
+        <div class="upload-hint"><i class="fas fa-info-circle"></i> Tap <i class="fas fa-camera"></i> to add photo | Tap photo to zoom</div>
         <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/jpg,image/gif,image/webp" style="display:none;" onchange="handleImageUpload(event)">
-        
         <h2 id="profileName" style="word-break:break-word; margin-top:12px;">--</h2>
         <p style="color:var(--text-light);font-size:0.75rem;" id="profileInfo"></p>
-        
-        <button class="btn-remove-avatar" onclick="removeAvatar()" style="display:none;" id="removeAvatarBtn">
-          <i class="fas fa-trash"></i> Remove Photo
-        </button>
+        <button class="btn-remove-avatar" onclick="removeAvatar()" style="display:none;" id="removeAvatarBtn"><i class="fas fa-trash"></i> Remove Photo</button>
       </div>
       
       <div class="glass-card">
@@ -294,214 +206,195 @@
     var cu = null;
     var currentAvatarBase64 = '';
     
-    // Ordre des badges (identique à achievements.html)
     var BADGES_ORDER = [
-      { id: 1, name: 'First Grade', icon: 'fa-pen' },
-      { id: 2, name: 'Perfect Score', icon: 'fa-star' },
-      { id: 3, name: 'High Average', icon: 'fa-arrow-up' },
-      { id: 4, name: 'Bookworm', icon: 'fa-book-open' },
-      { id: 5, name: 'Dedication', icon: 'fa-fire' },
-      { id: 6, name: 'Scholar', icon: 'fa-graduation-cap' },
-      { id: 7, name: 'Rising Star', icon: 'fa-rocket' },
-      { id: 8, name: 'Unstoppable', icon: 'fa-bolt' },
-      { id: 9, name: 'Subject Completion', icon: 'fa-check-double' },
-      { id: 10, name: 'Active Semester', icon: 'fa-calendar-check' },
-      { id: 11, name: 'Discipline Mastery', icon: 'fa-crown' },
-      { id: 12, name: 'Study Progress', icon: 'fa-chart-bar' },
-      { id: 13, name: 'Full Achievement', icon: 'fa-trophy' },
-      { id: 14, name: 'Excellent Result', icon: 'fa-medal' }
+      { id: 1, name: 'First Grade', icon: 'fa-pen' }, { id: 2, name: 'Perfect Score', icon: 'fa-star' },
+      { id: 3, name: 'High Average', icon: 'fa-arrow-up' }, { id: 4, name: 'Bookworm', icon: 'fa-book-open' },
+      { id: 5, name: 'Dedication', icon: 'fa-fire' }, { id: 6, name: 'Scholar', icon: 'fa-graduation-cap' },
+      { id: 7, name: 'Rising Star', icon: 'fa-rocket' }, { id: 8, name: 'Unstoppable', icon: 'fa-bolt' },
+      { id: 9, name: 'Subject Completion', icon: 'fa-check-double' }, { id: 10, name: 'Active Semester', icon: 'fa-calendar-check' },
+      { id: 11, name: 'Discipline Mastery', icon: 'fa-crown' }, { id: 12, name: 'Study Progress', icon: 'fa-chart-bar' },
+      { id: 13, name: 'Full Achievement', icon: 'fa-trophy' }, { id: 14, name: 'Excellent Result', icon: 'fa-medal' },
+      { id: 25, name: 'Comeback King', icon: 'fa-arrow-trend-up' }, { id: 34, name: 'Theme Collector', icon: 'fa-palette' },
+      { id: 36, name: 'Photo Uploader', icon: 'fa-camera' }, { id: 38, name: 'Welcome Aboard', icon: 'fa-door-open' },
+      { id: 50, name: 'Font Collector', icon: 'fa-font' }, { id: 57, name: 'Timetable Viewer', icon: 'fa-calendar-alt' },
+      { id: 58, name: 'Flashcard Beginner', icon: 'fa-clone' }, { id: 59, name: 'Flashcard Master', icon: 'fa-layer-group' }
     ];
+    
+    // ============================================
+    // FORMATER LA DATE CORRECTEMENT (jour mois année)
+    // ============================================
+    function formatMemberSince(dateString) {
+      if (!dateString) return 'Recently';
+      try {
+        var date = new Date(dateString);
+        if (isNaN(date.getTime())) return 'Recently';
+        
+        var days = date.getDate();
+        var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        var month = months[date.getMonth()];
+        var year = date.getFullYear();
+        
+        // Ajouter le suffixe du jour (st, nd, rd, th)
+        var suffix = 'th';
+        if (days === 1 || days === 21 || days === 31) suffix = 'st';
+        else if (days === 2 || days === 22) suffix = 'nd';
+        else if (days === 3 || days === 23) suffix = 'rd';
+        
+        return days + suffix + ' ' + month + ' ' + year;
+      } catch(e) { 
+        return 'Recently';
+      }
+    }
     
     function resizeImage(file, maxWidth, maxHeight, callback) {
       var reader = new FileReader();
       reader.onload = function(e) {
         var img = new Image();
         img.onload = function() {
-          var width = img.width;
-          var height = img.height;
-          
+          var width = img.width, height = img.height;
           if (width > height) {
-            if (width > maxWidth) {
-              height = Math.round(height * (maxWidth / width));
-              width = maxWidth;
-            }
+            if (width > maxWidth) { height = Math.round(height * (maxWidth / width)); width = maxWidth; }
           } else {
-            if (height > maxHeight) {
-              width = Math.round(width * (maxHeight / height));
-              height = maxHeight;
-            }
+            if (height > maxHeight) { width = Math.round(width * (maxHeight / height)); height = maxHeight; }
           }
-          
           var canvas = document.createElement('canvas');
-          canvas.width = width;
-          canvas.height = height;
+          canvas.width = width; canvas.height = height;
           var ctx = canvas.getContext('2d');
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(img, 0, 0, width, height);
-          
-          var base64 = canvas.toDataURL('image/jpeg', 0.8);
-          callback(base64);
+          var outputFormat = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
+          var quality = outputFormat === 'image/jpeg' ? 0.95 : 1;
+          callback(canvas.toDataURL(outputFormat, quality));
         };
         img.src = e.target.result;
       };
       reader.readAsDataURL(file);
     }
     
-    function triggerFileUpload() {
-      document.getElementById('avatarFileInput').click();
-    }
+    function triggerFileUpload() { document.getElementById('avatarFileInput').click(); }
     
     function handleImageUpload(event) {
       var file = event.target.files[0];
       if (!file) return;
-      
-      if (!file.type.match('image.*')) {
-        showToast('Please select an image file');
-        return;
-      }
-      
-      if (file.size > 5 * 1024 * 1024) {
-        showToast('Image too large (max 5MB)');
-        return;
-      }
-      
+      if (!file.type.match('image.*')) { showToast('Please select an image file'); return; }
+      if (file.size > 5 * 1024 * 1024) { showToast('Image too large (max 5MB)'); return; }
       showToast('Processing image...');
-      
-      resizeImage(file, 300, 300, function(base64) {
+      resizeImage(file, 500, 500, function(base64) {
         currentAvatarBase64 = base64;
-        
-        var previewDiv = document.getElementById('avatarPreview');
-        previewDiv.innerHTML = '<img src="' + base64 + '" alt="Avatar">';
-        
+        document.getElementById('avatarPreview').innerHTML = '<img src="' + base64 + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">';
         document.getElementById('removeAvatarBtn').style.display = 'inline-block';
-        
         saveProfileData();
-        
         showToast('Photo added successfully!');
         initAvatarClick();
       });
-      
       event.target.value = '';
     }
     
     function removeAvatar() {
-      if (confirm('Remove your profile photo?')) {
-        currentAvatarBase64 = '';
-        
-        var previewDiv = document.getElementById('avatarPreview');
-        previewDiv.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user-graduate"></i></div>';
-        
-        document.getElementById('removeAvatarBtn').style.display = 'none';
-        
-        saveProfileData();
-        
-        showToast('Photo removed');
-        initAvatarClick();
-      }
+      showSmartConfirm({
+        title: 'Remove Photo', message: 'Are you sure you want to remove your profile photo?',
+        icon: 'fa-trash-alt', iconColor: '#e74c3c', confirmText: 'Remove', confirmColor: '#e74c3c',
+        onConfirm: function() {
+          currentAvatarBase64 = '';
+          document.getElementById('avatarPreview').innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user-graduate"></i></div>';
+          document.getElementById('removeAvatarBtn').style.display = 'none';
+          saveProfileData();
+          showToast('Photo removed');
+          initAvatarClick();
+        }
+      });
     }
     
     function openAvatarZoom() {
-      var previewDiv = document.getElementById('avatarPreview');
-      var img = previewDiv.querySelector('img');
-      
-      if (img && img.src && img.src !== '') {
-        var zoomImg = document.getElementById('zoomAvatarImg');
-        zoomImg.src = img.src;
-        document.getElementById('avatarZoomModal').classList.add('active');
-      } else {
-        showToast('No photo to zoom');
-      }
+      var img = document.getElementById('avatarPreview').querySelector('img');
+      if (img && img.src) { document.getElementById('zoomAvatarImg').src = img.src; document.getElementById('avatarZoomModal').classList.add('active'); }
+      else { showToast('No photo to zoom'); }
     }
-    
-    function closeAvatarZoom() {
-      document.getElementById('avatarZoomModal').classList.remove('active');
-    }
-    
+    function closeAvatarZoom() { document.getElementById('avatarZoomModal').classList.remove('active'); }
     function initAvatarClick() {
       var avatarPreview = document.getElementById('avatarPreview');
-      if (avatarPreview) {
-        avatarPreview.style.cursor = 'pointer';
-        avatarPreview.onclick = function(e) {
-          e.stopPropagation();
-          openAvatarZoom();
-        };
-      }
+      if (avatarPreview) { avatarPreview.style.cursor = 'pointer'; avatarPreview.onclick = function(e) { e.stopPropagation(); openAvatarZoom(); }; }
     }
     
     function loadProfile() {
-      cu = requireAuth();
-      if (!cu) return;
+      cu = null;
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (stored) cu = JSON.parse(stored);
+      } catch(e) {}
+      if (!cu || !cu.id) { window.location.href = 'login.html'; return; }
       
       var profile = getProfile(cu.id);
-      
       document.getElementById('profileName').textContent = cu.name;
-      document.getElementById('profileInfo').innerHTML = '<strong>' + cu.class + ' - #' + cu.number + '</strong><br>Member since ' + formatDate(cu.createdAt);
+      
+      // AFFICHER LA DATE CORRECTEMENT AVEC LE JOUR
+      var memberDate = formatMemberSince(cu.createdAt);
+      document.getElementById('profileInfo').innerHTML = '<strong>' + cu.class + ' - #' + cu.number + '</strong><br>Member since ' + memberDate;
       
       document.getElementById('profileBio').value = profile.bio || '';
       
-      if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+      if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
         currentAvatarBase64 = profile.avatarBase64;
-        var previewDiv = document.getElementById('avatarPreview');
-        previewDiv.innerHTML = '<img src="' + currentAvatarBase64 + '" alt="Avatar">';
+        document.getElementById('avatarPreview').innerHTML = '<img src="' + currentAvatarBase64 + '" alt="Avatar" style="width:100%;height:100%;object-fit:cover;">';
         document.getElementById('removeAvatarBtn').style.display = 'inline-block';
       } else {
         currentAvatarBase64 = '';
-        var previewDiv = document.getElementById('avatarPreview');
-        previewDiv.innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user-graduate"></i></div>';
+        document.getElementById('avatarPreview').innerHTML = '<div class="avatar-placeholder"><i class="fas fa-user-graduate"></i></div>';
         document.getElementById('removeAvatarBtn').style.display = 'none';
       }
       
       initAvatarClick();
       initHeaderProfile();
       
-      // Afficher les badges dans l'ordre
       var achievements = getStudentAchievements(cu.id);
       var unlockedMap = {};
-      for (var i = 0; i < achievements.length; i++) {
-        unlockedMap[achievements[i].id] = achievements[i];
-      }
-      
+      for (var i = 0; i < achievements.length; i++) unlockedMap[achievements[i].id] = achievements[i];
       var unlockedCount = 0;
       var badgesHtml = '';
-      
       for (var i = 0; i < BADGES_ORDER.length; i++) {
         var badge = BADGES_ORDER[i];
         var achievement = unlockedMap[badge.id];
         var isUnlocked = achievement && achievement.unlocked;
         var unlockDate = achievement ? achievement.unlockDate : null;
-        
         if (isUnlocked) unlockedCount++;
-        
         badgesHtml += '<div class="badge-item ' + (isUnlocked ? '' : 'locked') + '">' +
           '<i class="fas ' + badge.icon + '"></i>' +
           '<span class="badge-name">' + badge.name + '</span>' +
           (isUnlocked ? '<span class="badge-date"><i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + (unlockDate || 'Unlocked') + '</span>' : '<span class="badge-date"><i class="fas fa-lock" style="color:#95a5a6;"></i> Locked</span>') +
         '</div>';
       }
-      
       document.getElementById('profileBadges').innerHTML = badgesHtml;
-      document.getElementById('badgeCount').innerHTML = unlockedCount + ' / 14';
+      document.getElementById('badgeCount').innerHTML = unlockedCount + ' / ' + BADGES_ORDER.length;
+      if (cu && cu.id && typeof checkWelcomeBadge === 'function') checkWelcomeBadge(cu.id);
     }
     
     function saveProfileData() {
       var profile = getProfile(cu.id);
+      var oldAvatar = profile.avatarBase64;
+      var oldBio = profile.bio;
       profile.avatarBase64 = currentAvatarBase64;
       profile.bio = document.getElementById('profileBio').value;
       saveProfile(cu.id, profile);
-      
       initHeaderProfile();
+      if (typeof playActionFeedback === 'function') playActionFeedback();
       
-      playActionFeedback();
+      if (currentAvatarBase64 && !oldAvatar && typeof notifyProfileUpdate === 'function') notifyProfileUpdate('photo added');
+      if (profile.bio !== oldBio && profile.bio && typeof notifyProfileUpdate === 'function') notifyProfileUpdate('bio updated');
       
       var statusMsg = document.getElementById('saveStatus');
-      statusMsg.style.display = 'block';
-      setTimeout(function() { statusMsg.style.display = 'none'; }, 2000);
-      
+      if (statusMsg) {
+        statusMsg.style.display = 'block';
+        setTimeout(function() { if (statusMsg) statusMsg.style.display = 'none'; }, 2000);
+      }
       showToast('Profile saved!');
+      if (cu && cu.id && typeof checkPhotoBadge === 'function') checkPhotoBadge(cu.id);
     }
     
     loadProfile();
-    initMobileMenu();
-    initThemeSelector();
+    if (typeof initMobileMenu === 'function') initMobileMenu();
+    if (typeof initThemeSelector === 'function') initThemeSelector();
+    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
   </script>
 </body>
 </html>

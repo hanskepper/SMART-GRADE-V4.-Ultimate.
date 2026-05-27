@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SMART GRADE - History</title>
+  <title>SMART GRADE - Activity History</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
@@ -14,65 +14,332 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .timeline-item{display:flex;align-items:flex-start;gap:12px;padding:12px;background:var(--card-bg);border-radius:14px;margin-bottom:8px;border:1px solid var(--border);}
-    .timeline-dot{width:10px;height:10px;border-radius:50%;background:var(--primary);margin-top:4px;flex-shrink:0;}
-    .timeline-content{flex:1;}
-    .timeline-action{font-size:0.75rem;font-weight:500;}
-    .timeline-date{font-size:0.6rem;color:var(--text-light);}
-    .filter-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;}
-    .filter-chip{padding:8px 14px;border-radius:20px;font-size:0.6rem;cursor:pointer;background:rgba(0,0,0,0.03);border:1px solid var(--border);transition:all 0.2s;}
-    .filter-chip.active{background:var(--primary);color:white;border-color:var(--primary);}
-    .date-header{font-weight:700;font-size:0.65rem;color:var(--primary);padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px;}
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .stat-card-history {
+      flex: 1;
+      text-align: center;
+      padding: 16px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      min-width: 100px;
+    }
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .filter-chip {
+      padding: 8px 16px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      background: rgba(0,0,0,0.03);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .filter-chip.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+    }
+    .filter-chip i { margin-right: 6px; }
+    .timeline {
+      position: relative;
+      padding-left: 30px;
+    }
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 10px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: var(--border);
+    }
+    .timeline-item {
+      position: relative;
+      margin-bottom: 20px;
+      padding: 16px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .timeline-item:hover {
+      transform: translateX(5px);
+      border-color: var(--primary);
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -26px;
+      top: 20px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--primary);
+      border: 2px solid var(--card-bg);
+    }
+    .timeline-date {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .timeline-title {
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .timeline-desc {
+      font-size: 0.7rem;
+      color: var(--text-light);
+    }
+    .action-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 10px;
+      border-radius: 20px;
+      font-size: 0.55rem;
+      font-weight: 600;
+    }
+    .action-login { background: rgba(52,152,219,0.15); color: #3498db; }
+    .action-grade { background: rgba(46,204,113,0.15); color: #27ae60; }
+    .action-delete { background: rgba(231,76,60,0.15); color: #e74c3c; }
+    .action-edit { background: rgba(243,156,18,0.15); color: #f39c12; }
+    .action-export { background: rgba(155,89,182,0.15); color: #9b59b6; }
+    .action-backup { background: rgba(52,152,219,0.15); color: #3498db; }
+    .action-settings { background: rgba(26,188,156,0.15); color: #1abc9c; }
+    .empty-state {
+      text-align: center;
+      padding: 50px 20px;
+    }
+    .empty-state i { font-size: 50px; opacity: 0.2; margin-bottom: 16px; }
+    .clear-btn {
+      background: rgba(231,76,60,0.1);
+      border: 1px solid rgba(231,76,60,0.3);
+      color: #e74c3c;
+      padding: 8px 20px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .clear-btn:hover { background: rgba(231,76,60,0.2); }
+    @media (max-width: 550px) {
+      .stats-row { flex-wrap: wrap; }
+      .timeline { padding-left: 20px; }
+      .timeline-dot { left: -16px; }
+    }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-history"></i><span>HISTORY</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
-    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
-    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="history.html" class="nav-item active"><i class="fas fa-history"></i> History</a><a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-history"></i><span>ACTIVITY</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="history.html" class="nav-item active"><i class="fas fa-history"></i> Activity</a>
+        <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
     <div class="overlay" id="overlay"></div>
+    
     <main class="main-content">
       
-      <div class="filter-row">
-        <div class="filter-chip active" onclick="setFilter('all',this)">All</div>
-        <div class="filter-chip" onclick="setFilter('grade',this)">Grades</div>
-        <div class="filter-chip" onclick="setFilter('subject',this)">Subjects</div>
-        <div class="filter-chip" onclick="setFilter('sync',this)">Sync</div>
-        <div class="filter-chip" onclick="setFilter('badge',this)">Badges</div>
+      <div class="glass-card text-center" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+        <i class="fas fa-history" style="font-size:40px;opacity:0.5;"></i>
+        <h2 style="color:white;margin:8px 0;">Activity History</h2>
+        <p style="opacity:0.8;font-size:0.7rem;">Track all your actions and changes</p>
       </div>
       
-      <div id="historyTimeline"></div>
+      <div class="stats-row">
+        <div class="stat-card-history"><div class="stat-number" id="totalCount">0</div><div class="stat-label">Total Actions</div></div>
+        <div class="stat-card-history"><div class="stat-number" id="gradeCount">0</div><div class="stat-label">Grade Actions</div></div>
+        <div class="stat-card-history"><div class="stat-number" id="loginCount">0</div><div class="stat-label">Logins</div></div>
+        <div class="stat-card-history"><div class="stat-number" id="exportCount">0</div><div class="stat-label">Exports</div></div>
+      </div>
+      
+      <div class="glass-card">
+        <div class="filter-group">
+          <div class="filter-chip active" data-filter="all" onclick="setHistoryFilter('all')"><i class="fas fa-list"></i> All</div>
+          <div class="filter-chip" data-filter="login" onclick="setHistoryFilter('login')"><i class="fas fa-sign-in-alt"></i> Login</div>
+          <div class="filter-chip" data-filter="grade" onclick="setHistoryFilter('grade')"><i class="fas fa-pen"></i> Grades</div>
+          <div class="filter-chip" data-filter="delete" onclick="setHistoryFilter('delete')"><i class="fas fa-trash"></i> Delete</div>
+          <div class="filter-chip" data-filter="edit" onclick="setHistoryFilter('edit')"><i class="fas fa-edit"></i> Edit</div>
+          <div class="filter-chip" data-filter="export" onclick="setHistoryFilter('export')"><i class="fas fa-download"></i> Export</div>
+          <div class="filter-chip" data-filter="backup" onclick="setHistoryFilter('backup')"><i class="fas fa-database"></i> Backup</div>
+          <div class="filter-chip" data-filter="settings" onclick="setHistoryFilter('settings')"><i class="fas fa-sliders-h"></i> Settings</div>
+        </div>
+        
+        <div style="text-align: right; margin-bottom: 16px;">
+          <button class="clear-btn" onclick="clearHistory()"><i class="fas fa-trash-alt"></i> Clear History</button>
+        </div>
+        
+        <div id="historyTimeline" class="timeline">
+          <div class="empty-state"><i class="fas fa-history"></i><p>No activity recorded yet</p><p style="font-size:0.6rem;">Your actions will appear here</p></div>
+        </div>
+      </div>
       
     </main>
   </div>
-  <script src="js/utils.js"></script><script src="js/database.js"></script><script src="js/auth.js"></script><script src="js/app.js"></script>
+  
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/confirm-dialog.js"></script>
+  <script src="js/app.js"></script>
+  
   <script>
-    var cu=null,cf='all';
+    var currentUser = null;
+    var currentHistoryFilter = 'all';
+    var allHistory = [];
     
-    function loadHistory(){cu=requireAuth();if(!cu)return;
-      var h=JSON.parse(localStorage.getItem('smartgrade_history_'+cu.id)||'[]');
-      if(cf!=='all')h=h.filter(function(x){var t=x.action.toLowerCase();if(cf==='grade')return t.indexOf('grade')!==-1;if(cf==='subject')return t.indexOf('subject')!==-1||t.indexOf('term')!==-1;if(cf==='sync')return t.indexOf('sync')!==-1;if(cf==='badge')return t.indexOf('badge')!==-1||t.indexOf('achievement')!==-1;return true;});
-      
-      if(h.length===0){document.getElementById('historyTimeline').innerHTML='<div class="text-center p-1"><i class="fas fa-history" style="font-size:40px;opacity:0.2;"></i><p style="color:var(--text-light);">No history found</p></div>';return;}
-      
-      var dates={};
-      h.forEach(function(x){var d=x.date.split('T')[0];if(!dates[d])dates[d]=[];dates[d].push(x);});
-      
-      var html='';
-      Object.keys(dates).sort().reverse().forEach(function(d){
-        html+='<div class="date-header"><i class="fas fa-calendar"></i> '+d+'</div>';
-        dates[d].forEach(function(x){
-          html+='<div class="timeline-item"><div class="timeline-dot"></div><div class="timeline-content"><div class="timeline-action">'+x.action+'</div><div class="timeline-date"><i class="fas fa-clock"></i> '+formatDate(x.date)+'</div></div></div>';
-        });
-      });
-      document.getElementById('historyTimeline').innerHTML=html;
-      initHeaderProfile();
+    function getHistoryKey() { return 'smartgrade_audit_history_' + (currentUser ? currentUser.id : 'global'); }
+    
+    function addHistoryAction(actionType, title, description, icon) {
+      if (!currentUser) return;
+      var history = JSON.parse(localStorage.getItem(getHistoryKey()) || '[]');
+      history.unshift({ id: Date.now(), type: actionType, title: title, description: description, icon: icon || getIconForType(actionType), date: new Date().toISOString(), timestamp: Date.now() });
+      if (history.length > 200) history = history.slice(0, 200);
+      localStorage.setItem(getHistoryKey(), JSON.stringify(history));
+      if (document.getElementById('historyTimeline')) loadHistory();
     }
     
-    function setFilter(f,btn){cf=f;document.querySelectorAll('.filter-chip').forEach(function(x){x.classList.remove('active');});btn.classList.add('active');loadHistory();}
+    function getIconForType(type) {
+      var icons = { login: 'fa-sign-in-alt', logout: 'fa-sign-out-alt', grade: 'fa-pen', delete: 'fa-trash', edit: 'fa-edit', export: 'fa-download', import: 'fa-upload', backup: 'fa-database', settings: 'fa-sliders-h', pin: 'fa-key', fingerprint: 'fa-fingerprint', theme: 'fa-palette', font: 'fa-font', profile: 'fa-user', flashcard: 'fa-clone', goal: 'fa-bullseye' };
+      return icons[type] || 'fa-history';
+    }
     
-    loadHistory();initMobileMenu();initThemeSelector();
+    function getBadgeClass(type) {
+      var classes = { login: 'action-login', logout: 'action-login', grade: 'action-grade', delete: 'action-delete', edit: 'action-edit', export: 'action-export', import: 'action-export', backup: 'action-backup', settings: 'action-settings', pin: 'action-settings', fingerprint: 'action-settings', theme: 'action-settings', font: 'action-settings', profile: 'action-settings', flashcard: 'action-grade', goal: 'action-grade' };
+      return classes[type] || 'action-login';
+    }
+    
+    function loadHistory() {
+      if (!currentUser) return;
+      allHistory = JSON.parse(localStorage.getItem(getHistoryKey()) || '[]');
+      var filtered = allHistory;
+      if (currentHistoryFilter !== 'all') filtered = allHistory.filter(function(item) { return item.type === currentHistoryFilter; });
+      updateStats();
+      var container = document.getElementById('historyTimeline');
+      if (filtered.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>No activity recorded</p><p style="font-size:0.6rem;">Your actions will appear here</p></div>'; return; }
+      var html = '';
+      filtered.forEach(function(item) {
+        var date = new Date(item.date);
+        var formattedDate = formatHistoryDate(date);
+        var badgeClass = getBadgeClass(item.type);
+        html += '<div class="timeline-item"><div class="timeline-dot" style="background: var(--primary);"></div><div class="timeline-date"><i class="fas fa-calendar-alt"></i> ' + formattedDate + '</div><div class="timeline-title"><span class="action-badge ' + badgeClass + '"><i class="fas ' + item.icon + '"></i> ' + item.type.toUpperCase() + '</span> ' + item.title + '</div><div class="timeline-desc">' + item.description + '</div></div>';
+      });
+      container.innerHTML = html;
+    }
+    
+    function formatHistoryDate(date) {
+      var now = new Date();
+      var diff = Math.floor((now - date) / 1000);
+      if (diff < 60) return 'Just now';
+      if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
+      if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
+      if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
+      return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
+    }
+    
+    function updateStats() {
+      var total = allHistory.length;
+      var gradeCount = allHistory.filter(function(i) { return i.type === 'grade'; }).length;
+      var loginCount = allHistory.filter(function(i) { return i.type === 'login'; }).length;
+      var exportCount = allHistory.filter(function(i) { return i.type === 'export' || i.type === 'import'; }).length;
+      document.getElementById('totalCount').innerHTML = total;
+      document.getElementById('gradeCount').innerHTML = gradeCount;
+      document.getElementById('loginCount').innerHTML = loginCount;
+      document.getElementById('exportCount').innerHTML = exportCount;
+    }
+    
+    function setHistoryFilter(filter) {
+      currentHistoryFilter = filter;
+      document.querySelectorAll('.filter-chip').forEach(function(chip) { chip.classList.remove('active'); if (chip.dataset.filter === filter) chip.classList.add('active'); });
+      loadHistory();
+    }
+    
+    function clearHistory() {
+      showSmartConfirm({
+        title: 'Clear History', message: 'Are you sure you want to clear all activity history?', detail: 'This action cannot be undone.',
+        icon: 'fa-trash-alt', iconColor: '#e74c3c', confirmText: 'Clear', confirmColor: '#e74c3c',
+        onConfirm: function() { localStorage.setItem(getHistoryKey(), '[]'); loadHistory(); showToast('History cleared'); }
+      });
+    }
+    
+    function initHistory() {
+      try { var stored = localStorage.getItem('smartgrade_current'); if (stored) currentUser = JSON.parse(stored); } catch(e) {}
+      if (!currentUser || !currentUser.id) { window.location.href = 'login.html'; return; }
+      loadHistory();
+      updateHeaderProfile();
+    }
+    
+    function updateHeaderProfile() {
+      try {
+        var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + currentUser.id) || '{}');
+        var headerAvatar = document.getElementById('headerAvatar');
+        if (profile.avatarBase64) headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+      } catch(e) {}
+    }
+    
+    window.addHistoryAction = addHistoryAction;
+    window.setHistoryFilter = setHistoryFilter;
+    window.clearHistory = clearHistory;
+    
+    initHistory();
+    if (typeof initMobileMenu === 'function') initMobileMenu();
+    if (typeof initThemeSelector === 'function') initThemeSelector();
+    
+    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
   </script>
 </body>
 </html>

@@ -1,0 +1,109 @@
+# ============================================
+# SMART GRADE - GITIGNORE
+# ============================================
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE files
+.vscode/
+.idea/
+*.sublime-*
+*.sublime-project
+*.sublime-workspace
+*.code-workspace
+
+# Environment files (sensitive data)
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Backup files
+*.backup
+*.bak
+*.tmp
+*.temp
+*.old
+
+# Application specific backups
+smartgrade_backup_*.json
+smartgrade_export_*.json
+smartgrade_transfer_*.json
+user_data_*.json
+
+# Build files
+*.apk
+*.ipa
+*.aab
+*.zip
+*.tar.gz
+*.7z
+
+# Node modules (if any)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+
+# Build directories
+dist/
+build/
+out/
+release/
+bin/
+obj/
+
+# Testing
+coverage/
+.nyc_output/
+jest-coverage/
+test-results/
+
+# Secret files
+*.pem
+*.key
+*.crt
+*.cer
+*.p12
+*.pfx
+.secrets/
+secrets.json
+
+# Development
+*.dev.js
+*.dev.css
+test.html
+temp.html
+debug.html
+
+# Documentation (generated)
+docs/api/
+docs/generated/
+
+# PWA (generated)
+sw.js.old
+manifest.json.bak
+
+# Mobile
+.ionic/
+.capacitor/

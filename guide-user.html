@@ -352,6 +352,9 @@
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="guide-user.html" class="nav-item active"><i class="fas fa-question-circle"></i> Guide</a>
         <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
+        <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
+        <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -428,7 +431,7 @@
   
   <script>
     // ============================================
-    // 16 CHAPITRES
+    // 16 CHAPITRES AVEC TEXTE OPTIMISÉ
     // ============================================
     
     var TUTORIALS = [
@@ -463,11 +466,11 @@
       { id: 15, icon: 'fa-file-export', title: '15. Export and Backup', desc: 'Save your data', tip: 'Make a backup each term',
         text: "Go to the Export page. JSON Backup exports all your data. CSV exports your grades for Excel. HTML Bulletin generates a report card in your browser. PDF Bulletin creates a PDF file you can download. To import a backup, go to Settings and click Import Backup File." },
       { id: 16, icon: 'fa-calendar-alt', title: '16. Timetable', desc: 'Weekly class schedule', tip: 'Use it to plan your study sessions',
-        text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic/Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology/Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
+        text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic and Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology and Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
     ];
     
     // ============================================
-    // TTS OPTIMISE - VERSION FINALE
+    // TTS OPTIMISÉ AVEC SYNCHRONISATION RÉELLE
     // ============================================
     
     var currentIndex = 0;
@@ -475,6 +478,7 @@
     var progressInterval = null;
     var currentUtterance = null;
     var ttsSupported = true;
+    var voicesLoaded = false;
     
     // Vérifier TTS
     function checkTTSSupport() {
@@ -483,81 +487,113 @@
         showToast('Audio guide not supported on this device');
         return false;
       }
+      
+      if (speechSynthesis.getVoices().length === 0) {
+        speechSynthesis.addEventListener('voiceschanged', function() {
+          voicesLoaded = true;
+        });
+      } else {
+        voicesLoaded = true;
+      }
+      
       return true;
     }
     
     checkTTSSupport();
+    
+    // Arrêter la lecture en cours
+    function stopPlayback() {
+      if (progressInterval) {
+        clearInterval(progressInterval);
+        progressInterval = null;
+      }
+      try { 
+        speechSynthesis.cancel(); 
+      } catch(e) {}
+      isPlaying = false;
+      currentUtterance = null;
+      
+      var playBtn = document.getElementById('playPauseBtn');
+      if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      document.getElementById('audioStatus').textContent = 'Ready';
+    }
     
     // Découpage en phrases
     function splitIntoSentences(text) {
       return text.split(/(?<=[.!?])\s+/);
     }
     
-    // Mise à jour ligne active
+    // Mettre à jour la ligne active
     function updateActiveLine(index) {
       var lines = document.querySelectorAll('.lyrics-line');
-      for (var i = 0; i < lines.length; i++) lines[i].classList.remove('active');
+      for (var i = 0; i < lines.length; i++) {
+        lines[i].classList.remove('active');
+      }
       if (lines[index]) {
         lines[index].classList.add('active');
         lines[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
     }
     
-    function updateActiveLineByCharPosition(charIndex, totalChars, sentences) {
-      if (!sentences || sentences.length === 0) return;
-      var charCount = 0;
-      for (var i = 0; i < sentences.length; i++) {
-        charCount += sentences[i].length;
-        if (charIndex < charCount) {
-          updateActiveLine(i);
-          return;
-        }
-      }
-    }
-    
-    // Lecture du chapitre
+    // Lecture du chapitre avec synchronisation précise
     function speakCurrentChapter() {
       if (!ttsSupported) {
-        showToast('Audio not available');
+        showToast('Audio not available on this device');
         return;
       }
+      
+      stopPlayback();
       
       var t = TUTORIALS[currentIndex];
       if (!t) return;
       
-      // Arrêter en cours
-      if (progressInterval) clearInterval(progressInterval);
-      try { speechSynthesis.cancel(); } catch(e) {}
-      
       var text = t.text;
       var sentences = splitIntoSentences(text);
       var totalChars = text.length;
+      var startTime = null;
+      var lastCharIndex = 0;
       
       currentUtterance = new SpeechSynthesisUtterance(text);
       currentUtterance.lang = 'en-US';
       currentUtterance.rate = 0.9;
       currentUtterance.pitch = 1.0;
       
-      var voices = speechSynthesis.getVoices();
-      for (var i = 0; i < voices.length; i++) {
-        if (voices[i].lang === 'en-US') {
-          currentUtterance.voice = voices[i];
-          break;
+      if (voicesLoaded || speechSynthesis.getVoices().length > 0) {
+        var voices = speechSynthesis.getVoices();
+        for (var i = 0; i < voices.length; i++) {
+          if (voices[i].lang === 'en-US' && voices[i].name.indexOf('Google') !== -1) {
+            currentUtterance.voice = voices[i];
+            break;
+          }
         }
       }
       
       currentUtterance.onstart = function() {
-        var startTime = Date.now();
+        startTime = Date.now();
         isPlaying = true;
+        
         progressInterval = setInterval(function() {
-          if (!isPlaying) return;
+          if (!isPlaying || !startTime) return;
+          
           var elapsed = (Date.now() - startTime) / 1000;
-          var estimatedDuration = totalChars / 12;
+          var estimatedDuration = totalChars / 15;
           var progress = Math.min(100, (elapsed / estimatedDuration) * 100);
           document.getElementById('videoProgressFill').style.width = progress + '%';
-          var charIndex = Math.floor((elapsed / estimatedDuration) * totalChars);
-          updateActiveLineByCharPosition(charIndex, totalChars, sentences);
-        }, 100);
+          
+          var charIndex = Math.min(totalChars - 1, Math.floor((elapsed / estimatedDuration) * totalChars));
+          if (charIndex !== lastCharIndex) {
+            lastCharIndex = charIndex;
+            var charCount = 0;
+            for (var i = 0; i < sentences.length; i++) {
+              charCount += sentences[i].length;
+              if (charIndex < charCount) {
+                updateActiveLine(i);
+                break;
+              }
+            }
+          }
+        }, 50);
+        
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
         document.getElementById('audioStatus').textContent = 'Playing...';
       };
@@ -565,16 +601,26 @@
       currentUtterance.onend = function() {
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
+        currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('videoProgressFill').style.width = '100%';
         document.getElementById('audioStatus').textContent = 'Completed';
+        
+        setTimeout(function() {
+          if (!isPlaying) {
+            document.getElementById('videoProgressFill').style.width = '0%';
+          }
+        }, 2000);
       };
       
-      currentUtterance.onerror = function() {
+      currentUtterance.onerror = function(event) {
+        console.error('Speech error:', event);
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
+        currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('audioStatus').textContent = 'Error';
+        document.getElementById('audioStatus').textContent = 'Error - Try again';
+        showToast('Audio error, please try again');
       };
       
       speechSynthesis.speak(currentUtterance);
@@ -583,9 +629,10 @@
     // Pause / Lecture
     function togglePlayPause() {
       if (isPlaying) {
-        try { speechSynthesis.cancel(); } catch(e) {}
+        speechSynthesis.cancel();
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
+        currentUtterance = null;
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('audioStatus').textContent = 'Paused';
       } else {
@@ -599,18 +646,14 @@
       updateModalContent();
       document.getElementById('videoModal').classList.add('active');
       document.body.style.overflow = 'hidden';
-      if (progressInterval) clearInterval(progressInterval);
-      try { speechSynthesis.cancel(); } catch(e) {}
-      isPlaying = false;
+      stopPlayback();
       document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
       document.getElementById('videoProgressFill').style.width = '0%';
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
     function prevChapter() {
-      if (progressInterval) clearInterval(progressInterval);
-      try { speechSynthesis.cancel(); } catch(e) {}
-      isPlaying = false;
+      stopPlayback();
       currentIndex--;
       if (currentIndex < 0) currentIndex = TUTORIALS.length - 1;
       updateModalContent();
@@ -620,9 +663,7 @@
     }
     
     function nextChapter() {
-      if (progressInterval) clearInterval(progressInterval);
-      try { speechSynthesis.cancel(); } catch(e) {}
-      isPlaying = false;
+      stopPlayback();
       currentIndex++;
       if (currentIndex >= TUTORIALS.length) currentIndex = 0;
       updateModalContent();
@@ -632,9 +673,7 @@
     }
     
     function closeModal() {
-      if (progressInterval) clearInterval(progressInterval);
-      try { speechSynthesis.cancel(); } catch(e) {}
-      isPlaying = false;
+      stopPlayback();
       document.getElementById('videoModal').classList.remove('active');
       document.body.style.overflow = '';
     }
@@ -673,14 +712,7 @@
       }).join('');
     }
     
-    // Initialisation
-    renderSteps();
-    initMobileMenu();
-    initThemeSelector();
-    initParticles();
-    if (typeof initFontFamily === 'function') initFontFamily();
-    
-    // Avatar
+    // Charger l'avatar
     var currentUser = getCurrentStudent();
     if (currentUser) {
       var profile = getProfile(currentUser.id);
@@ -689,6 +721,13 @@
         headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       }
     }
+    
+    // Initialisation
+    renderSteps();
+    initMobileMenu();
+    initThemeSelector();
+    initParticles();
+    if (typeof initFontFamily === 'function') initFontFamily();
   </script>
 </body>
 </html>

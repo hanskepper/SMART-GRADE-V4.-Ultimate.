@@ -1,0 +1,628 @@
+================================================================================
+                              SMART GRADE v4.0 "Ultimate"
+                        COMPLETE APPLICATION CONFIGURATION
+================================================================================
+
+[PROJECT OVERVIEW]
+================================================================================
+project_name = "SMART GRADE"
+version = "4.0"
+codename = "Ultimate"
+type = "Grade Management System"
+description = "Complete academic grade management system for GBHS Foumban"
+release_date = "2025-05-20"
+status = "Production Ready"
+license = "MIT"
+repository = "https://github.com/hanskepper/SMART-GRADE-V4.-Ultimate."
+demo_url = "https://hanskepper.github.io/SMART-GRADE-V4.-Ultimate./"
+
+[DEVELOPMENT TEAM]
+================================================================================
+developer = "HANS KEEPER"
+role = "Full Stack Web Developer"
+email = "hanskepper52@gmail.com"
+phone = "+237 698 640 885"
+country = "Cameroon"
+github = "https://github.com/hanskepper"
+portfolio = "https://hanskepper.github.io"
+
+[ACKNOWLEDGMENTS]
+================================================================================
+thanks_to = "My Classmates"
+class = "Form 4B Science"
+school = "SIN GBHS FOUMBAN"
+academic_year = "2025-2026"
+open_source_community = "Chart.js, QRCode.js, html5-qrcode, Font Awesome"
+special_thanks = "All beta testers from Form 4B Science"
+
+[SCHOOL INFORMATION]
+================================================================================
+school_name = "SIN GBHS FOUMBAN"
+school_type = "Government Bilingual High School"
+class_name = "Form 4B Science"
+class_section = "Science"
+stream = "Bilingual"
+academic_year = "2025-2026"
+city = "Foumban"
+region = "West"
+country = "Cameroon"
+principal = "Mr. Principal"
+vice_principal = "Mrs. Vice Principal"
+
+[APPLICATION FEATURES]
+================================================================================
+total_features = 35
+features_list = [
+  "14 Subjects with customizable coefficients",
+  "6 Sequences / 3 Terms per year",
+  "Smart rounding & compensation system",
+  "Advanced statistics & predictions",
+  "23 Achievement badges (19 + 4 streak)",
+  "20 Color Themes",
+  "12 Font Families",
+  "Night mode (auto 20h-6h)",
+  "Biometric login (fingerprint)",
+  "PWA - 100% offline ready",
+  "Smart grade calculator",
+  "Flashcards for each subject",
+  "Personal goals & targets",
+  "Data transfer between devices (QR Code)",
+  "Profile photos from gallery",
+  "Export/Import JSON backup",
+  "Activity history log",
+  "Customizable subjects per term",
+  "Yearly report with letter grades",
+  "Interactive charts (line, bar, doughnut, radar)",
+  "Zoomable progress chart",
+  "Auto-backup every hour",
+  "Cloud sync support (JSONBin.io)",
+  "7 error pages (400,401,403,404,500,502,503)",
+  "Smart notifications system",
+  "Command palette (Ctrl+K / Cmd+K)",
+  "Shortcuts system",
+  "Timetable viewer",
+  "Study streak tracking",
+  "Compensation system for subject changes",
+  "Cross-tab data synchronization",
+  "Install as PWA on any device",
+  "Auto-update via GitHub API",
+  "Auto-save every 30 seconds",
+  "Dark/Light mode toggle"
+]
+
+[TECHNICAL SPECIFICATIONS]
+================================================================================
+frontend = "HTML5, CSS3, JavaScript ES6+"
+css_framework = "Custom Glassmorphism Design"
+charts = "Chart.js v4.4.0"
+qr_code = "QRCode.js v1.0.0"
+qr_scanner = "html5-qrcode v2.3.8"
+pdf_generation = "html2pdf.js v0.10.1"
+fonts = "Google Fonts (12 families)"
+icons = "Font Awesome 6.5.1"
+storage = "localStorage API"
+pwa = "Service Worker + Manifest"
+authentication = "PIN (4 digits) + WebAuthn (fingerprint)"
+data_transfer = "6-digit codes + QR codes"
+backup = "Local JSON + Cloud (JSONBin.io)"
+auto_update = "GitHub API commit hash check"
+offline_mode = "Full PWA offline support"
+
+[GRADING SYSTEM]
+================================================================================
+min_grade = 0
+max_grade = 20
+passing_grade = 10
+excellent_grade = 16
+rounding_decimals = 2
+grading_scale_type = "0-20 (Cameroon System)"
+
+[GRADE LETTERS]
+================================================================================
+A+_min = 18
+A+_color = "#2ecc71"
+A_min = 16
+A_color = "#2ecc71"
+B+_min = 14
+B+_color = "#3498db"
+B_min = 12
+B_color = "#3498db"
+C_min = 10
+C_color = "#f39c12"
+D_min = 8
+D_color = "#e67e22"
+F_min = 0
+F_color = "#e74c3c"
+
+[GRADE STATUS]
+================================================================================
+excellent_min = 16
+excellent_text = "Excellent"
+very_good_min = 14
+very_good_text = "Very Good"
+good_min = 12
+good_text = "Good"
+average_min = 10
+average_text = "Average"
+below_average_min = 8
+below_average_text = "Below Average"
+needs_improvement_min = 0
+needs_improvement_text = "Needs Work"
+
+[TERMS AND SEQUENCES]
+================================================================================
+total_terms = 3
+total_sequences = 6
+
+[TERM 1]
+name = "Term 1"
+sequences = [1, 2]
+months = "September - December"
+icon = "fa-1"
+
+[TERM 2]
+name = "Term 2"
+sequences = [3, 4]
+months = "January - March"
+icon = "fa-2"
+
+[TERM 3]
+name = "Term 3"
+sequences = [5, 6]
+months = "April - June"
+icon = "fa-3"
+
+[SUBJECTS - COMPLETE LIST]
+================================================================================
+total_subjects = 14
+min_subjects_per_term = 10
+max_subjects_per_term = 14
+default_coefficient = 5
+min_coefficient = 1
+max_coefficient = 10
+
+[SUBJECT 1]
+id = 1
+name = "COMPUTER SCIENCES"
+code = "CS"
+icon = "fa-laptop-code"
+coefficient = 5
+
+[SUBJECT 2]
+id = 2
+name = "MATHEMATICS"
+code = "MATH"
+icon = "fa-square-root-variable"
+coefficient = 5
+
+[SUBJECT 3]
+id = 3
+name = "CHEMISTRY"
+code = "CHM"
+icon = "fa-flask"
+coefficient = 5
+
+[SUBJECT 4]
+id = 4
+name = "HUMAN BIOLOGY"
+code = "HBIO"
+icon = "fa-dna"
+coefficient = 5
+
+[SUBJECT 5]
+id = 5
+name = "GEOLOGY"
+code = "GEL"
+icon = "fa-mountain"
+coefficient = 5
+
+[SUBJECT 6]
+id = 6
+name = "PHYSICS"
+code = "PHY"
+icon = "fa-atom"
+coefficient = 5
+
+[SUBJECT 7]
+id = 7
+name = "ADDITIONAL MATHEMATICS"
+code = "AMATH"
+icon = "fa-calculator"
+coefficient = 5
+
+[SUBJECT 8]
+id = 8
+name = "BIOLOGY"
+code = "BIO"
+icon = "fa-leaf"
+coefficient = 5
+
+[SUBJECT 9]
+id = 9
+name = "ECONOMICS"
+code = "ECO"
+icon = "fa-chart-line"
+coefficient = 5
+
+[SUBJECT 10]
+id = 10
+name = "ENGLISH LANGUAGE"
+code = "ENG"
+icon = "fa-language"
+coefficient = 5
+
+[SUBJECT 11]
+id = 11
+name = "GEOGRAPHY"
+code = "GEO"
+icon = "fa-earth-africa"
+coefficient = 5
+
+[SUBJECT 12]
+id = 12
+name = "CITIZENSHIP"
+code = "CIV"
+icon = "fa-landmark"
+coefficient = 5
+
+[SUBJECT 13]
+id = 13
+name = "FRENCH"
+code = "FR"
+icon = "fa-flag"
+coefficient = 5
+
+[SUBJECT 14]
+id = 14
+name = "FOOD AND NUTRITION"
+code = "FDN"
+icon = "fa-apple-whole"
+coefficient = 5
+
+[ACHIEVEMENTS - 23 BADGES]
+================================================================================
+total_badges = 23
+streak_badges = 4
+achievement_badges = 19
+
+[STREAK BADGES]
+================================================================================
+streak_3_days = "Beginner Streak"
+streak_3_desc = "Use the app for 3 days"
+streak_3_icon = "fa-seedling"
+streak_7_days = "Regular Streak"
+streak_7_desc = "Use the app for 7 days"
+streak_7_icon = "fa-leaf"
+streak_15_days = "Dedicated Streak"
+streak_15_desc = "Use the app for 15 days"
+streak_15_icon = "fa-tree"
+streak_30_days = "Legendary Streak"
+streak_30_desc = "Use the app for 30 days"
+streak_30_icon = "fa-crown"
+
+[ACHIEVEMENT BADGES]
+================================================================================
+badge_1 = "First Grade"
+badge_1_desc = "Add your very first grade"
+badge_1_icon = "fa-pen"
+badge_2 = "Perfect Score"
+badge_2_desc = "Get 20/20 in any subject"
+badge_2_icon = "fa-star"
+badge_3 = "High Average"
+badge_3_desc = "Overall average 12/20 and above"
+badge_3_icon = "fa-arrow-up"
+badge_4 = "Bookworm"
+badge_4_desc = "Record 10+ grades"
+badge_4_icon = "fa-book-open"
+badge_5 = "Dedication"
+badge_5_desc = "Record 30+ grades"
+badge_5_icon = "fa-fire"
+badge_6 = "Scholar"
+badge_6_desc = "Unlock 8 achievements"
+badge_6_icon = "fa-graduation-cap"
+badge_7 = "Rising Star"
+badge_7_desc = "Improve by 1+ point in a term"
+badge_7_icon = "fa-rocket"
+badge_8 = "Unstoppable"
+badge_8_desc = "All 3 terms have grades entered"
+badge_8_icon = "fa-bolt"
+badge_9 = "Subject Completion"
+badge_9_desc = "Add grades in all subjects of a term"
+badge_9_icon = "fa-check-double"
+badge_10 = "Active Semester"
+badge_10_desc = "Complete a full term (all sequences)"
+badge_10_icon = "fa-calendar-check"
+badge_11 = "Discipline Mastery"
+badge_11_desc = "Average above 15 in one subject"
+badge_11_icon = "fa-crown"
+badge_12 = "Study Progress"
+badge_12_desc = "Record 25+ grades"
+badge_12_icon = "fa-chart-bar"
+badge_13 = "Full Achievement"
+badge_13_desc = "Unlock ALL badges"
+badge_13_icon = "fa-trophy"
+badge_14 = "Excellent Result"
+badge_14_desc = "Get 20/20 in a subject"
+badge_14_icon = "fa-medal"
+badge_25 = "Comeback King"
+badge_25_desc = "Go from <10 to >14 in a subject"
+badge_25_icon = "fa-arrow-trend-up"
+badge_34 = "Theme Collector"
+badge_34_desc = "Try 10 different themes"
+badge_34_icon = "fa-palette"
+badge_36 = "Photo Uploader"
+badge_36_desc = "Add a profile photo"
+badge_36_icon = "fa-camera"
+badge_38 = "Welcome Aboard"
+badge_38_desc = "First login after installation"
+badge_38_icon = "fa-door-open"
+badge_50 = "Font Collector"
+badge_50_desc = "Try 6 different fonts"
+badge_50_icon = "fa-font"
+badge_57 = "Timetable Viewer"
+badge_57_desc = "View timetable 10 times"
+badge_57_icon = "fa-calendar-alt"
+badge_58 = "Flashcard Beginner"
+badge_58_desc = "Create 5 custom flashcards"
+badge_58_icon = "fa-clone"
+badge_59 = "Flashcard Master"
+badge_59_desc = "Create 10 custom flashcards"
+badge_59_icon = "fa-layer-group"
+
+[THEMES - 20 COLORS]
+================================================================================
+total_themes = 20
+default_theme = "default"
+theme_1 = "default"
+theme_1_color = "#0f3b48"
+theme_1_label = "Deep Teal"
+theme_2 = "crimson"
+theme_2_color = "#c0392b"
+theme_2_label = "Crimson"
+theme_3 = "forest"
+theme_3_color = "#1e8449"
+theme_3_label = "Forest"
+theme_4 = "ocean"
+theme_4_color = "#006994"
+theme_4_label = "Ocean"
+theme_5 = "royal"
+theme_5_color = "#6c3483"
+theme_5_label = "Royal"
+theme_6 = "sunset"
+theme_6_color = "#d35400"
+theme_6_label = "Sunset"
+theme_7 = "rose"
+theme_7_color = "#c44569"
+theme_7_label = "Rose"
+theme_8 = "turquoise"
+theme_8_color = "#00897b"
+theme_8_label = "Turquoise"
+theme_9 = "amber"
+theme_9_color = "#b7950b"
+theme_9_label = "Amber"
+theme_10 = "graphite"
+theme_10_color = "#455a64"
+theme_10_label = "Graphite"
+theme_11 = "lavender"
+theme_11_color = "#7b1fa2"
+theme_11_label = "Lavender"
+theme_12 = "cherry"
+theme_12_color = "#b71c1c"
+theme_12_label = "Cherry"
+theme_13 = "midnight"
+theme_13_color = "#1a237e"
+theme_13_label = "Midnight"
+theme_14 = "mint"
+theme_14_color = "#00b894"
+theme_14_label = "Mint"
+theme_15 = "coral"
+theme_15_color = "#e74c3c"
+theme_15_label = "Coral"
+theme_16 = "indigo"
+theme_16_color = "#283593"
+theme_16_label = "Indigo"
+theme_17 = "chocolate"
+theme_17_color = "#5d4037"
+theme_17_label = "Chocolate"
+theme_18 = "electric"
+theme_18_color = "#6a1b9a"
+theme_18_label = "Electric"
+theme_19 = "steel"
+theme_19_color = "#37474f"
+theme_19_label = "Steel"
+theme_20 = "lime"
+theme_20_color = "#558b2f"
+theme_20_label = "Lime"
+
+[FONTS - 12 FAMILIES]
+================================================================================
+total_fonts = 12
+default_font = "inter"
+font_1 = "inter"
+font_1_name = "Inter"
+font_1_google = "Inter"
+font_2 = "roboto"
+font_2_name = "Roboto"
+font_2_google = "Roboto"
+font_3 = "cinzel"
+font_3_name = "Cinzel"
+font_3_google = "Cinzel"
+font_4 = "quicksand"
+font_4_name = "Quicksand"
+font_4_google = "Quicksand"
+font_5 = "courier-prime"
+font_5_name = "Courier Prime"
+font_5_google = "Courier+Prime"
+font_6 = "fredoka"
+font_6_name = "Fredoka"
+font_6_google = "Fredoka"
+font_7 = "pacifico"
+font_7_name = "Pacifico"
+font_7_google = "Pacifico"
+font_8 = "bangers"
+font_8_name = "Bangers"
+font_8_google = "Bangers"
+font_9 = "lobster"
+font_9_name = "Lobster"
+font_9_google = "Lobster"
+font_10 = "permanent-marker"
+font_10_name = "Permanent Marker"
+font_10_google = "Permanent+Marker"
+font_11 = "comfortaa"
+font_11_name = "Comfortaa"
+font_11_google = "Comfortaa"
+font_12 = "righteous"
+font_12_name = "Righteous"
+font_12_google = "Righteous"
+
+[SYSTEM LIMITS]
+================================================================================
+max_backups = 50
+max_grades_per_subject = 100
+max_flashcards_per_subject = 100
+max_history_items = 200
+max_favorites = 6
+max_notifications_stored = 200
+max_storage_mb = 5
+max_avatar_size_mb = 5
+avatar_resize_px = 500
+pin_attempts_before_lock = 5
+lock_duration_minutes = 15
+session_timeout_minutes = 30
+
+[TIMING CONFIGURATIONS]
+================================================================================
+transfer_code_expiry_minutes = 10
+auto_save_interval_seconds = 30
+auto_backup_interval_hours = 1
+auto_update_check_minutes = 10
+auto_cleanup_days = 90
+notification_duration_seconds = 5
+toast_duration_seconds = 3
+
+[SECURITY]
+================================================================================
+pin_length = 4
+pin_allowed_characters = "0123456789"
+fingerprint_supported = true
+fingerprint_fallback = "PIN"
+session_storage_key = "smartgrade_current"
+login_attempts_record = "smartgrade_login_attempts"
+require_pin_for_backup_restore = true
+
+[PWA CONFIGURATION]
+================================================================================
+cache_name = "smartgrade-v4"
+cache_version = "20250520"
+offline_fallback = "index.html"
+display_mode = "standalone"
+orientation = "portrait"
+theme_color = "#0f3b48"
+background_color = "#0a1a2a"
+start_url = "./splash.html"
+scope = "./"
+
+[API ENDPOINTS]
+================================================================================
+github_api = "https://api.github.com/repos/hanskepper/SMART-GRADE-V4.-Ultimate./commits?per_page=1"
+jsonbin_api = "https://api.jsonbin.io/v3/b"
+jsonbin_master_key = "$2a$10$gXi1FvyxfLFtIvUrOeYDEufAP0JhFpgz9lmicqKBBxyXgTHZTcAeK"
+
+[FILE STRUCTURE]
+================================================================================
+pages = 35
+js_files = 12
+css_files = 5
+html_files = 35
+total_lines_of_code = "15000+"
+total_features = 35
+total_badges = 23
+total_themes = 20
+total_fonts = 12
+
+[PAGES LIST]
+================================================================================
+public_pages = ["index.html", "splash.html", "login.html", "register.html", "guide.html", "about.html", "terms.html", "license.html"]
+private_pages = ["dashboard.html", "profile.html", "settings.html", "add-grade.html", "subjects.html", "subject-detail.html", "statistics.html", "achievements.html", "history.html", "transfer.html", "export.html", "backup.html", "flashcards.html", "goals.html", "timetable.html", "term1.html", "term2.html", "term3.html", "yearly.html", "notifications.html", "shortcuts.html", "welcome.html", "support.html", "guide-user.html", "about-user.html"]
+developer_pages = ["dev-calculator.html", "dev-database.html", "dev-stats.html", "dev-logs.html", "dev-backup.html"]
+error_pages = ["400.html", "401.html", "403.html", "404.html", "500.html", "502.html", "503.html"]
+
+[DEVELOPER ACCESS]
+================================================================================
+developer_name = "HANS KEPPER"
+developer_class = "B2"
+developer_number = 9
+dev_pages = ["dev-calculator.html", "dev-database.html", "dev-stats.html", "dev-logs.html", "dev-backup.html"]
+access_restricted = true
+
+[STORAGE KEYS]
+================================================================================
+students_key = "smartgrade_students"
+current_user_key = "smartgrade_current"
+grades_prefix = "smartgrade_grades_"
+subjects_prefix = "smartgrade_selected_"
+coeffs_prefix = "smartgrade_coeffs_"
+achievements_prefix = "smartgrade_achievements_"
+streak_prefix = "smartgrade_streak_"
+profile_prefix = "smartgrade_profile_"
+history_prefix = "smartgrade_history_"
+notifications_prefix = "smartgrade_notifications_"
+backup_prefix = "smartgrade_backup_list_"
+flashcards_prefix = "smartgrade_flashcards_"
+goals_prefix = "smartgrade_goals_detail_"
+compensations_prefix = "smartgrade_compensations_"
+transfer_data_key = "smartgrade_transfer_data"
+theme_key = "smartgrade_theme"
+font_key = "smartgrade_font"
+manual_theme_key = "smartgrade_manual_theme"
+font_family_key = "smartgrade_font_family"
+
+[EXPORT FORMATS]
+================================================================================
+json_enabled = true
+csv_enabled = true
+html_enabled = true
+pdf_enabled = true
+
+[IMPORT FORMATS]
+================================================================================
+json_enabled = true
+backup_restore_enabled = true
+transfer_codes_enabled = true
+qr_codes_enabled = true
+
+[NOTIFICATION TYPES]
+================================================================================
+types = ["grade", "badge", "streak", "goal", "profile", "backup", "import", "export", "subjects", "transfer", "account", "flashcard", "timetable", "system"]
+
+[DEBUG & LOGGING]
+================================================================================
+log_level = "info"
+console_logging = true
+error_tracking = true
+user_activity_logging = true
+max_log_entries = 1000
+
+[VERSION HISTORY]
+================================================================================
+v1_0_release = "2024-09-01"
+v1_0_features = "Basic grade management, 14 subjects, 3 terms"
+v2_0_release = "2024-12-15"
+v2_0_features = "PWA, Offline mode, Achievements, Streaks"
+v3_0_release = "2025-02-20"
+v3_0_features = "Compensation system, Advanced charts, QR transfer"
+v4_0_release = "2025-05-20"
+v4_0_features = "20 themes, 12 fonts, Profile photos, Flashcards, Goals, Auto-update, Cloud backup, 23 badges"
+
+[FINAL NOTES]
+================================================================================
+status = "Production Ready"
+last_update = "2025-05-20"
+maintainer = "HANS KEEPER"
+support_email = "hanskepper52@gmail.com"
+support_phone = "+237 698 640 885"
+documentation = "https://github.com/hanskepper/SMART-GRADE-V4.-Ultimate./wiki"
+
+================================================================================
+                    END OF CONFIGURATION - SMART GRADE v4.0
+================================================================================

@@ -3,131 +3,145 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <title>SMART GRADE</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    /* ============================================ */
+    /* SPLASH SCREEN - MÊME STYLE QUE L'APPLICATION */
+    /* ============================================ */
+    
+    /* Cacher le header et le sidebar pour le splash */
+    .mobile-header,
+    .sidebar-menu,
+    .sheet-overlay,
+    .bottom-sheet {
+      display: none !important;
     }
     
-    body {
-      width: 100%;
-      height: 100vh;
-      overflow: hidden;
-      font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Inter', sans-serif;
+    .app-container {
+      background: transparent !important;
     }
     
-    .splash {
-      width: 100%;
-      height: 100%;
+    /* Container du splash */
+    .splash-container {
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      min-height: 100vh;
+      height: 100%;
+      width: 100%;
+      padding: 20px;
       position: relative;
-      transition: background 0.5s ease;
+      z-index: 1;
     }
     
-    .logo-wrapper {
+    /* Carte glassmorphism - identique aux autres pages */
+    .splash-card {
+      max-width: 420px;
+      width: 100%;
       text-align: center;
-      padding: 30px;
-      border-radius: 40px;
-      background: rgba(255,255,255,0.05);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      animation: fadeInUp 0.8s ease-out;
+      animation: fadeInUp 0.6s ease;
     }
     
-    .logo {
-      width: 120px;
-      height: 120px;
+    /* Logo animé */
+    .splash-logo {
+      width: 100px;
+      height: 100px;
+      margin: 0 auto 16px;
       display: block;
-      margin: 0 auto;
-      animation: logoPulse 2s ease-in-out infinite;
+      animation: splashPulse 2s ease-in-out infinite;
+      filter: drop-shadow(0 4px 15px rgba(0,255,255,0.2));
     }
     
-    .title {
-      margin-top: 20px;
-      font-size: 28px;
+    @keyframes splashPulse {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
+    }
+    
+    /* Titre avec dégradé */
+    .splash-title {
+      font-size: 1.8rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #ffffff, #00ffff);
+      background: linear-gradient(135deg, #ffffff, var(--secondary), var(--primary));
+      background-size: 200% auto;
       -webkit-background-clip: text;
       background-clip: text;
       color: transparent;
-      letter-spacing: 1px;
-      animation: titleGlow 2s ease-in-out infinite;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
     }
     
-    .subtitle {
-      margin-top: 8px;
-      font-size: 12px;
-      color: rgba(255,255,255,0.8);
-      letter-spacing: 2px;
+    /* Sous-titre */
+    .splash-subtitle {
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-light);
+      letter-spacing: 3px;
       text-transform: uppercase;
+      margin-bottom: 24px;
     }
     
-    .version {
-      margin-top: 40px;
-      font-size: 11px;
-      color: rgba(255,255,255,0.5);
-      letter-spacing: 1px;
+    /* Informations école - badges */
+    .splash-info {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 32px;
     }
     
-    .progress-container {
-      position: absolute;
-      bottom: 50px;
-      left: 10%;
-      width: 80%;
+    .splash-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--text-light);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 8px 16px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
     }
     
-    .progress-bar {
+    .splash-info-item i {
+      color: var(--secondary);
+      font-size: 0.7rem;
+    }
+    
+    /* Barre de progression */
+    .splash-progress {
+      margin-top: 8px;
+    }
+    
+    .splash-progress-bar {
       width: 100%;
-      height: 3px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 3px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 4px;
       overflow: hidden;
     }
     
-    .progress-fill {
+    .splash-progress-fill {
       width: 0%;
       height: 100%;
-      background: linear-gradient(90deg, #00ffff, #ffffff);
-      border-radius: 3px;
-      animation: progressAnim 10s linear forwards;
-    }
-    
-    .progress-text {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 10px;
-      color: rgba(255,255,255,0.5);
-      font-family: monospace;
-    }
-    
-    .particle {
-      position: absolute;
-      width: 4px;
-      height: 4px;
-      background: rgba(255,255,255,0.5);
-      border-radius: 50%;
-      pointer-events: none;
-      animation: particleFall linear infinite;
-    }
-    
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    @keyframes logoPulse {
-      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); }
-      50% { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(255,255,255,0.6)); }
-    }
-    
-    @keyframes titleGlow {
-      0%, 100% { text-shadow: 0 0 5px rgba(0,255,255,0.3); }
-      50% { text-shadow: 0 0 15px rgba(0,255,255,0.6); }
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 4px;
+      animation: progressAnim 6s ease-out forwards;
     }
     
     @keyframes progressAnim {
@@ -135,137 +149,211 @@
       100% { width: 100%; }
     }
     
-    @keyframes particleFall {
-      0% { transform: translateY(-20px) rotate(0deg); opacity: 0; }
-      20% { opacity: 0.6; }
-      80% { opacity: 0.3; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    .splash-progress-text {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      margin-top: 10px;
+      font-family: 'Courier Prime', monospace;
+    }
+    
+    /* Points animés */
+    .splash-dots {
+      display: inline-flex;
+      gap: 3px;
+      margin-left: 4px;
+    }
+    
+    .splash-dots span {
+      width: 4px;
+      height: 4px;
+      background: var(--secondary);
+      border-radius: 50%;
+      display: inline-block;
+      animation: dotPulse 1.4s infinite ease-in-out both;
+    }
+    
+    .splash-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .splash-dots span:nth-child(2) { animation-delay: -0.16s; }
+    
+    @keyframes dotPulse {
+      0%, 80%, 100% {
+        transform: scale(0.5);
+        opacity: 0.3;
+      }
+      40% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+    
+    /* Version badge */
+    .splash-version {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      font-size: 0.55rem;
+      color: var(--text-light);
+      background: var(--card-bg);
+      padding: 5px 14px;
+      border-radius: 30px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      z-index: 2;
+    }
+    
+    /* Animation fadeInUp */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Responsive */
+    @media (max-width: 550px) {
+      .splash-logo {
+        width: 75px;
+        height: 75px;
+      }
+      .splash-title {
+        font-size: 1.5rem;
+      }
+      .splash-info-item {
+        padding: 6px 12px;
+        font-size: 0.6rem;
+      }
+      .splash-version {
+        bottom: 15px;
+        right: 15px;
+        font-size: 0.5rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="splash" id="splash">
-    <div class="logo-wrapper">
-      <img src="icon.svg" class="logo" alt="SMART GRADE">
-      <div class="title">SMART GRADE</div>
-      <div class="subtitle">Grade Management System</div>
-    </div>
-    <div class="version">Version 4.0 Ultimate</div>
-    
-    <div class="progress-container">
-      <div class="progress-bar">
-        <div class="progress-fill"></div>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    <div class="splash-container">
+      <div class="glass-card splash-card">
+        <!-- Logo -->
+        <img src="icon.svg" alt="SMART GRADE" class="splash-logo">
+        
+        <!-- Titre -->
+        <div class="splash-title">SMART GRADE</div>
+        <div class="splash-subtitle">GRADE MANAGEMENT SYSTEM</div>
+        
+        <!-- Informations -->
+        <div class="splash-info">
+          <div class="splash-info-item">
+            <i class="fas fa-school"></i>
+            <span>GBHS FOUMBAN</span>
+          </div>
+          <div class="splash-info-item">
+            <i class="fas fa-users"></i>
+            <span>Form 4B Science</span>
+          </div>
+          <div class="splash-info-item">
+            <i class="fas fa-calendar-alt"></i>
+            <span>2025-2026</span>
+          </div>
+        </div>
+        
+        <!-- Progression -->
+        <div class="splash-progress">
+          <div class="splash-progress-bar">
+            <div class="splash-progress-fill"></div>
+          </div>
+          <div class="splash-progress-text" id="progressText">
+            Initializing system<span class="splash-dots"><span></span><span></span><span></span></span>
+          </div>
+        </div>
       </div>
-      <div class="progress-text" id="progressPercent">Loading 0%</div>
+    </div>
+    
+    <!-- Version -->
+    <div class="splash-version">
+      <i class="fas fa-code-branch"></i> v4.0 Ultimate
     </div>
   </div>
-  
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  <!-- À ajouter dans le <head> -->
+ <script src="js/auto-updater.js"></script>
+
   <script>
     // ============================================
-    // THEMES COMPLETS (20 couleurs)
+    // THÈME ALÉATOIRE PARMI LES 20
     // ============================================
+    var THEMES_LIST = [
+      'default', 'crimson', 'forest', 'ocean', 'royal',
+      'sunset', 'rose', 'turquoise', 'amber', 'graphite',
+      'lavender', 'cherry', 'midnight', 'mint', 'coral',
+      'indigo', 'chocolate', 'electric', 'steel', 'lime'
+    ];
+
+    var lastTheme = localStorage.getItem('smartgrade_splash_theme');
+    var availableThemes = THEMES_LIST.filter(function(t) { return t !== lastTheme; });
+    var randomIndex = Math.floor(Math.random() * availableThemes.length);
+    var selectedTheme = availableThemes[randomIndex];
     
-    var THEMES = {
-      default: { primary: '#0f3b48', secondary: '#00ffff', bgStart: '#0a1a2a', bgEnd: '#0f3b48' },
-      crimson: { primary: '#c0392b', secondary: '#ff4757', bgStart: '#1a0a0a', bgEnd: '#c0392b' },
-      forest: { primary: '#1e8449', secondary: '#2ecc71', bgStart: '#0a1a0a', bgEnd: '#1e8449' },
-      ocean: { primary: '#006994', secondary: '#00b4d8', bgStart: '#0a121a', bgEnd: '#006994' },
-      royal: { primary: '#6c3483', secondary: '#a569bd', bgStart: '#1a0a1a', bgEnd: '#6c3483' },
-      sunset: { primary: '#d35400', secondary: '#f39c12', bgStart: '#1a0f0a', bgEnd: '#d35400' },
-      rose: { primary: '#c44569', secondary: '#fd79a8', bgStart: '#1a0a15', bgEnd: '#c44569' },
-      turquoise: { primary: '#00897b', secondary: '#1de9b6', bgStart: '#0a1a1a', bgEnd: '#00897b' },
-      amber: { primary: '#b7950b', secondary: '#f1c40f', bgStart: '#1a1a0a', bgEnd: '#b7950b' },
-      graphite: { primary: '#455a64', secondary: '#90a4ae', bgStart: '#121212', bgEnd: '#455a64' },
-      lavender: { primary: '#7b1fa2', secondary: '#ce93d8', bgStart: '#1a0a1f', bgEnd: '#7b1fa2' },
-      cherry: { primary: '#b71c1c', secondary: '#ef5350', bgStart: '#1a0a0a', bgEnd: '#b71c1c' },
-      midnight: { primary: '#1a237e', secondary: '#5c6bc0', bgStart: '#0a0a1a', bgEnd: '#1a237e' },
-      mint: { primary: '#00b894', secondary: '#55efc4', bgStart: '#0a1a0a', bgEnd: '#00b894' },
-      coral: { primary: '#e74c3c', secondary: '#ff6b6b', bgStart: '#1a0f0a', bgEnd: '#e74c3c' },
-      indigo: { primary: '#283593', secondary: '#7986cb', bgStart: '#0a0a1a', bgEnd: '#283593' },
-      chocolate: { primary: '#5d4037', secondary: '#a1887f', bgStart: '#1a0f0a', bgEnd: '#5d4037' },
-      electric: { primary: '#6a1b9a', secondary: '#e040fb', bgStart: '#1a0a1f', bgEnd: '#6a1b9a' },
-      steel: { primary: '#37474f', secondary: '#78909c', bgStart: '#121517', bgEnd: '#37474f' },
-      lime: { primary: '#558b2f', secondary: '#aed581', bgStart: '#1a1a0a', bgEnd: '#558b2f' }
-    };
+    document.body.classList.add('theme-' + selectedTheme);
+    localStorage.setItem('smartgrade_splash_theme', selectedTheme);
+
+    // ============================================
+    // TEXTE PROGRESSIF
+    // ============================================
+    var progressMessages = [
+      'Initializing system',
+      'Loading modules',
+      'Preparing workspace',
+      'Almost ready',
+      'Welcome to SMART GRADE'
+    ];
     
-    // Liste des noms de thèmes
-    var themeNames = ['default', 'crimson', 'forest', 'ocean', 'royal', 'sunset', 'rose', 'turquoise', 'amber', 'graphite', 'lavender', 'cherry', 'midnight', 'mint', 'coral', 'indigo', 'chocolate', 'electric', 'steel', 'lime'];
+    var msgIndex = 0;
+    var progressText = document.getElementById('progressText');
     
-    // Choisir un thème aléatoire
-    var randomThemeName = themeNames[Math.floor(Math.random() * themeNames.length)];
-    var theme = THEMES[randomThemeName];
-    
-    // Appliquer le fond dégradé
-    var splashDiv = document.getElementById('splash');
-    splashDiv.style.background = 'linear-gradient(135deg, ' + theme.bgStart + ' 0%, ' + theme.primary + ' 50%, ' + theme.bgEnd + ' 100%)';
-    
-    // Adapter la couleur de la barre de progression
-    var style = document.createElement('style');
-    style.textContent = `
-      .progress-fill {
-        background: linear-gradient(90deg, ${theme.secondary}, ${theme.primary}) !important;
+    var msgInterval = setInterval(function() {
+      if (msgIndex < progressMessages.length) {
+        progressText.innerHTML = progressMessages[msgIndex] + '<span class="splash-dots"><span></span><span></span><span></span></span>';
+        msgIndex++;
+      } else {
+        clearInterval(msgInterval);
       }
-      .title {
-        background: linear-gradient(135deg, #ffffff, ${theme.secondary}) !important;
-        -webkit-background-clip: text !important;
-        background-clip: text !important;
-      }
-      .particle {
-        background: ${theme.secondary} !important;
-        box-shadow: 0 0 4px ${theme.secondary} !important;
-      }
-    `;
-    document.head.appendChild(style);
-    
-    // Sauvegarder le thème pour l'application (optionnel)
-    localStorage.setItem('smartgrade_splash_theme', randomThemeName);
-    
-    // Création des particules
-    function createParticles() {
-      for (var i = 0; i < 30; i++) {
-        var particle = document.createElement('div');
-        particle.className = 'particle';
-        var size = Math.random() * 4 + 2;
-        var left = Math.random() * 100;
-        var delay = Math.random() * 10;
-        var duration = Math.random() * 5 + 3;
-        particle.style.width = size + 'px';
-        particle.style.height = size + 'px';
-        particle.style.left = left + '%';
-        particle.style.animationDelay = delay + 's';
-        particle.style.animationDuration = duration + 's';
-        particle.style.opacity = Math.random() * 0.5 + 0.2;
-        document.body.appendChild(particle);
-      }
+    }, 1300);
+
+    // ============================================
+    // REDIRECTION VERS INDEX
+    // ============================================
+    setTimeout(function() {
+      document.body.style.transition = 'opacity 0.6s ease';
+      document.body.style.opacity = '0';
+      setTimeout(function() {
+        window.location.href = 'index.html';
+      }, 600);
+    }, 7500);
+
+    // ============================================
+    // INITIALISATION DES PARTICULES
+    // ============================================
+    if (typeof initParticles === 'function') {
+      initParticles();
     }
     
-    // Mise à jour du pourcentage
-    var startTime = Date.now();
-    var duration = 10000;
-    var percentEl = document.getElementById('progressPercent');
-    
-    var interval = setInterval(function() {
-      var elapsed = Date.now() - startTime;
-      var percent = Math.min(100, Math.floor((elapsed / duration) * 100));
-      percentEl.textContent = 'Loading ' + percent + '%';
-      if (elapsed >= duration) clearInterval(interval);
-    }, 100);
-    
-    createParticles();
-    
-    // Redirection après 10 secondes
-    setTimeout(function() {
-      var splash = document.getElementById('splash');
-      if (splash) {
-        splash.style.opacity = '0';
-        splash.style.transition = 'opacity 0.5s ease';
-        setTimeout(function() {
-          window.location.href = 'index.html';
-        }, 500);
-      } else {
-        window.location.href = 'index.html';
-      }
-    }, 10000);
+    // Cacher le toast container
+    var toastContainer = document.getElementById('toastContainer');
+    if (toastContainer) {
+      toastContainer.style.display = 'none';
+    }
   </script>
 </body>
 </html>

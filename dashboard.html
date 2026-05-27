@@ -14,71 +14,460 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <meta name="theme-color" content="#0f3b48">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
-    .cmd-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);z-index:500;display:none;align-items:center;justify-content:center;}
-    .cmd-overlay.show{display:flex;}
-    .cmd-box{background:var(--card-bg);border-radius:20px;padding:20px;width:90%;max-width:400px;text-align:center;}
-    .cmd-box input{width:100%;padding:12px;border-radius:12px;border:2px solid var(--primary);text-align:center;margin:10px 0;background:var(--card-bg);color:var(--text);}
-    .cmd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:10px;}
-    .cmd-chip{background:rgba(0,0,0,0.03);padding:8px;border-radius:10px;text-align:center;cursor:pointer;font-size:0.65rem;border:1px solid var(--border);}
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      text-align: center;
+      padding: 16px 8px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
+    }
+    .stat-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+    }
+    .stat-value {
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-light);
+      margin-top: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .term-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .term-card {
+      text-align: center;
+      padding: 14px 8px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .term-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .term-title {
+      font-size: 0.65rem;
+      color: var(--text-light);
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .term-value {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .subject-card {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 14px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      border-left: 3px solid transparent;
+      transition: all 0.2s;
+    }
+    .subject-card:hover {
+      transform: translateX(5px);
+      border-color: var(--primary);
+    }
+    .subject-info { flex: 1; }
+    .subject-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .subject-avg {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    .btn {
+      padding: 12px 20px;
+      border-radius: 40px;
+      border: none;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      width: 100%;
+      transition: all 0.2s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+    }
+    .btn-secondary {
+      background: rgba(0,0,0,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .goal-card {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+    }
+    .goal-value {
+      font-size: 2rem;
+      font-weight: 800;
+      color: var(--primary);
+      text-align: center;
+    }
+    .goal-slider {
+      width: 100%;
+      margin: 15px 0;
+      height: 6px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: var(--border);
+      border-radius: 3px;
+      outline: none;
+    }
+    .goal-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 24px;
+      height: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 50%;
+      cursor: pointer;
+      border: 3px solid white;
+    }
+    .goal-status {
+      text-align: center;
+      font-size: 0.8rem;
+      margin-top: 10px;
+      padding: 8px;
+      border-radius: 12px;
+    }
+    .goal-status.achieved {
+      background: rgba(46,204,113,0.15);
+      color: #27ae60;
+    }
+    .goal-status.not-achieved {
+      background: rgba(231,76,60,0.15);
+      color: #e74c3c;
+    }
+    .scatter-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 16px;
+      margin-top: 10px;
+      border: 1px solid var(--border);
+    }
+    .zoom-controls {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 10px;
+    }
+    .zoom-controls button {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--card-bg);
+      color: var(--text);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .zoom-controls button:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .history-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+    .history-time {
+      color: var(--text-light);
+      font-size: 0.65rem;
+      margin-left: auto;
+    }
+    .motivation-card {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .motivation-quote {
+      font-size: 1rem;
+      font-style: italic;
+      margin-bottom: 8px;
+    }
+    .motivation-author {
+      font-size: 0.7rem;
+      opacity: 0.8;
+    }
+    .flex-between {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .glass-card {
+      margin-bottom: 20px;
+    }
+    .cmd-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      z-index: 500;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .cmd-overlay.show { display: flex; }
+    .cmd-box {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+    }
+    .cmd-box input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: 2px solid var(--primary);
+      text-align: center;
+      margin: 10px 0;
+      background: var(--card-bg);
+      color: var(--text);
+    }
+    .cmd-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .cmd-chip {
+      background: rgba(0,0,0,0.03);
+      padding: 8px;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 0.65rem;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .cmd-chip:hover {
+      border-color: var(--primary);
+    }
+    @media (min-width: 768px) {
+      .btn-group { flex-direction: row; }
+    }
+    @media (max-width: 500px) {
+      .stats-grid, .term-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 1.4rem; }
+    }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-chalkboard-user"></i><span>DASHBOARD</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
     
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-chalkboard-user"></i><span>DASHBOARD</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html" style="display:flex;align-items:center;text-decoration:none;"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
-    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
-    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav">
-      <a href="dashboard.html" class="nav-item active"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
-      <a href="subjects.html" class="nav-item"><i class="fas fa-layer-group"></i> Subjects</a>
-      <a href="add-grade.html" class="nav-item"><i class="fas fa-pen-fancy"></i> Add Grade</a>
-      <a href="timetable.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Timetable</a>
-      <a href="flashcards.html" class="nav-item"><i class="fas fa-clone"></i> Flashcards</a>
-      <a href="goals.html" class="nav-item"><i class="fas fa-bullseye"></i> Goals</a>
-      <a href="term1.html" class="nav-item"><i class="fas fa-1"></i> Term 1</a><a href="term2.html" class="nav-item"><i class="fas fa-2"></i> Term 2</a><a href="term3.html" class="nav-item"><i class="fas fa-3"></i> Term 3</a>
-      <a href="yearly.html" class="nav-item"><i class="fas fa-chart-line"></i> Yearly</a>
-      <a href="statistics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Statistics</a>
-      <a href="achievements.html" class="nav-item"><i class="fas fa-medal"></i> Achievements</a>
-      <a href="history.html" class="nav-item"><i class="fas fa-history"></i> History</a>
-      <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
-      <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
-      <a href="shortcuts.html" class="nav-item"><i class="fas fa-bolt"></i> Shortcuts</a>
-      <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
-      <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
-      <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
-      <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
-      <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
-      <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
-    </nav></div>
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item active"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="subjects.html" class="nav-item"><i class="fas fa-layer-group"></i> Subjects</a>
+        <a href="add-grade.html" class="nav-item"><i class="fas fa-pen-fancy"></i> Add Grade</a>
+        <a href="timetable.html" class="nav-item"><i class="fas fa-calendar-alt"></i> Timetable</a>
+        <a href="flashcards.html" class="nav-item"><i class="fas fa-clone"></i> Flashcards</a>
+        <a href="goals.html" class="nav-item"><i class="fas fa-bullseye"></i> Goals</a>
+        <a href="term1.html" class="nav-item"><i class="fas fa-1"></i> Term 1</a>
+        <a href="term2.html" class="nav-item"><i class="fas fa-2"></i> Term 2</a>
+        <a href="term3.html" class="nav-item"><i class="fas fa-3"></i> Term 3</a>
+        <a href="yearly.html" class="nav-item"><i class="fas fa-chart-line"></i> Yearly</a>
+        <a href="statistics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Statistics</a>
+        <a href="achievements.html" class="nav-item"><i class="fas fa-medal"></i> Achievements</a>
+        <a href="history.html" class="nav-item"><i class="fas fa-history"></i> History</a>
+        <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
+        <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
+        <a href="backup.html" class="nav-item"><i class="fas fa-database"></i> Backup</a>
+        <a href="shortcuts.html" class="nav-item"><i class="fas fa-bolt"></i> Shortcuts</a>
+        <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+        <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
+        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
+        <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
+        
+        <!-- SECTION DÉVELOPPEUR - UNIQUEMENT POUR HANS KEPPER (pas d'espace vide) -->
+        <div id="devSidebarContainer" style="display:none;">
+          <div style="height:1px; background:var(--border); margin:12px 0;"></div>
+          <div style="font-size:0.7rem; font-weight:700; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
+            <i class="fas fa-code"></i> Developer Tools
+          </div>
+          <a href="dev-calculator.html" class="nav-item" id="devCalculatorLink"><i class="fas fa-calculator"></i> Calculator</a>
+          <a href="dev-database.html" class="nav-item" id="devDatabaseLink"><i class="fas fa-database"></i> Database</a>
+          <a href="dev-stats.html" class="nav-item" id="devStatsLink"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
+          <a href="dev-logs.html" class="nav-item" id="devLogsLink"><i class="fas fa-history"></i> System Logs</a>
+          <a href="dev-backup.html" class="nav-item" id="devBackupLink"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+        </div>
+        
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
     <div class="overlay" id="overlay"></div>
     
     <main class="main-content">
-      
-      <div class="motivation-card"><div class="motivation-quote" id="motivationQuote">Loading...</div><div class="motivation-author" id="motivationAuthor"></div></div>
-      <div class="glass-card text-center"><h2 id="greeting"></h2><p id="userInfo" style="color:var(--text-light);"></p></div>
-      <div class="danger-alert" id="dangerAlert" style="display:none;"><i class="fas fa-exclamation-triangle"></i><div class="danger-alert-text" id="dangerText"></div></div>
-      
-      <div class="stats-grid"><div class="stat-card"><div class="stat-value" id="overallAvg">0.00</div><div class="stat-label">OVERALL</div></div><div class="stat-card"><div class="stat-value" id="totalGrades">0</div><div class="stat-label">GRADES</div></div><div class="stat-card"><div class="stat-value" id="selectedCount">0</div><div class="stat-label">SUBJECTS</div></div><div class="stat-card"><div class="stat-value" id="achievementsCount">0</div><div class="stat-label">BADGES</div></div></div>
-      
-      <div class="goal-card"><h3 class="text-center"><i class="fas fa-bullseye"></i> Your Goal</h3><div class="goal-value" id="goalValue">12.00</div><input type="range" class="goal-slider" id="goalSlider" min="10" max="20" step="0.5" value="12" oninput="updateGoal(this.value)"><div class="goal-status" id="goalStatus"></div></div>
-      
-      <div class="glass-card"><h3><i class="fas fa-calendar-alt"></i> Term Averages</h3><div class="term-grid"><div class="term-card" onclick="location='term1.html'"><div class="term-title">TERM 1</div><div class="term-value" id="term1Avg">0.00</div></div><div class="term-card" onclick="location='term2.html'"><div class="term-title">TERM 2</div><div class="term-value" id="term2Avg">0.00</div></div><div class="term-card" onclick="location='term3.html'"><div class="term-title">TERM 3</div><div class="term-value" id="term3Avg">0.00</div></div><div class="term-card" onclick="location='yearly.html'"><div class="term-title">YEARLY</div><div class="term-value" id="yearlyAvg">0.00</div></div></div>
-        
-        <div class="scatter-container"><div class="zoom-controls"><button onclick="zoomOut()"><i class="fas fa-search-minus"></i></button><span class="zoom-level" id="chartZoomLevel">100%</span><button onclick="zoomIn()"><i class="fas fa-search-plus"></i></button><button onclick="resetZoom()"><i class="fas fa-expand"></i></button></div><div class="scatter-canvas-wrapper" id="chartWrapper" style="height:250px;"><canvas id="progressChart" height="250"></canvas></div></div>
+      <div class="motivation-card">
+        <div class="motivation-quote" id="motivationQuote">Loading...</div>
+        <div class="motivation-author" id="motivationAuthor"></div>
       </div>
       
-      <div class="glass-card"><div class="flex-between"><h3><i class="fas fa-layer-group"></i> Top Subjects (Yearly)</h3><a href="subjects.html" style="color:var(--primary);">VIEW ALL</a></div><div id="subjectsPreview"></div></div>
+      <div class="glass-card text-center">
+        <h2 id="greeting"></h2>
+        <p id="userInfo" style="color:var(--text-light);"></p>
+      </div>
       
-      <div class="glass-card"><h3><i class="fas fa-history"></i> Recent Activity</h3><div id="historyList"></div></div>
-      <div class="btn-group"><a href="add-grade.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Grade</a><a href="statistics.html" class="btn btn-secondary"><i class="fas fa-chart-pie"></i> Statistics</a></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-value" id="overallAvg">0.00</div><div class="stat-label">OVERALL</div></div>
+        <div class="stat-card"><div class="stat-value" id="totalGrades">0</div><div class="stat-label">GRADES</div></div>
+        <div class="stat-card"><div class="stat-value" id="selectedCount">0</div><div class="stat-label">SUBJECTS</div></div>
+        <div class="stat-card"><div class="stat-value" id="achievementsCount">0</div><div class="stat-label">BADGES</div></div>
+      </div>
+      
+      <div class="goal-card">
+        <h3 class="text-center"><i class="fas fa-bullseye"></i> Your Goal</h3>
+        <div class="goal-value" id="goalValue">12.00</div>
+        <input type="range" class="goal-slider" id="goalSlider" min="10" max="20" step="0.5" value="12" oninput="updateGoal(this.value)">
+        <div class="goal-status" id="goalStatus"></div>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-calendar-alt"></i> Term Averages</h3>
+        <div class="term-grid">
+          <div class="term-card" onclick="location='term1.html'"><div class="term-title">TERM 1</div><div class="term-value" id="term1Avg">0.00</div></div>
+          <div class="term-card" onclick="location='term2.html'"><div class="term-title">TERM 2</div><div class="term-value" id="term2Avg">0.00</div></div>
+          <div class="term-card" onclick="location='term3.html'"><div class="term-title">TERM 3</div><div class="term-value" id="term3Avg">0.00</div></div>
+          <div class="term-card" onclick="location='yearly.html'"><div class="term-title">YEARLY</div><div class="term-value" id="yearlyAvg">0.00</div></div>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-chart-line"></i> Progress Chart</h3>
+        <div class="scatter-container">
+          <div class="zoom-controls">
+            <button onclick="zoomOut()"><i class="fas fa-search-minus"></i></button>
+            <span class="zoom-level" id="chartZoomLevel">100%</span>
+            <button onclick="zoomIn()"><i class="fas fa-search-plus"></i></button>
+            <button onclick="resetZoom()"><i class="fas fa-expand"></i></button>
+          </div>
+          <div class="scatter-canvas-wrapper" id="chartWrapper" style="height:250px;">
+            <canvas id="progressChart" height="250"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass-card">
+        <div class="flex-between">
+          <h3><i class="fas fa-layer-group"></i> Top Subjects (Yearly)</h3>
+          <a href="subjects.html" style="color:var(--primary);">VIEW ALL</a>
+        </div>
+        <div id="subjectsPreview"></div>
+      </div>
+      
+      <div class="glass-card">
+        <h3><i class="fas fa-history"></i> Recent Activity</h3>
+        <div id="historyList"></div>
+      </div>
+      
+      <div class="btn-group">
+        <a href="add-grade.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Grade</a>
+        <a href="statistics.html" class="btn btn-secondary"><i class="fas fa-chart-pie"></i> Statistics</a>
+      </div>
     </main>
   </div>
 
-  <div class="cmd-overlay" id="cmdOverlay"><div class="cmd-box"><h3><i class="fas fa-terminal"></i> Commands</h3><input type="text" id="cmdInput" placeholder="Type command..."><div class="cmd-grid"><div class="cmd-chip" onclick="runCmd('export')"><i class="fas fa-download"></i><br>Export</div><div class="cmd-chip" onclick="runCmd('transfer')"><i class="fas fa-exchange-alt"></i><br>Transfer</div><div class="cmd-chip" onclick="runCmd('theme')"><i class="fas fa-palette"></i><br>Theme</div><div class="cmd-chip" onclick="runCmd('refresh')"><i class="fas fa-sync-alt"></i><br>Refresh</div><div class="cmd-chip" onclick="runCmd('reset')"><i class="fas fa-trash"></i><br>Reset</div><div class="cmd-chip" onclick="runCmd('help')"><i class="fas fa-question"></i><br>Help</div><div class="cmd-chip" onclick="runCmd('about')"><i class="fas fa-info"></i><br>About</div><div class="cmd-chip" onclick="runCmd('stats')"><i class="fas fa-chart-bar"></i><br>Stats</div><div class="cmd-chip" onclick="runCmd('random')"><i class="fas fa-random"></i><br>Random</div></div><div id="cmdResult" style="background:rgba(0,0,0,0.03);padding:12px;border-radius:12px;margin-top:10px;font-size:0.8rem;display:none;"></div><button class="btn btn-secondary mt-1" onclick="closeCmd()"><i class="fas fa-times"></i> Close</button></div></div>
+  <div class="cmd-overlay" id="cmdOverlay">
+    <div class="cmd-box">
+      <h3><i class="fas fa-terminal"></i> Commands</h3>
+      <input type="text" id="cmdInput" placeholder="Type command...">
+      <div class="cmd-grid">
+        <div class="cmd-chip" onclick="runCmd('export')"><i class="fas fa-download"></i><br>Export</div>
+        <div class="cmd-chip" onclick="runCmd('transfer')"><i class="fas fa-exchange-alt"></i><br>Transfer</div>
+        <div class="cmd-chip" onclick="runCmd('theme')"><i class="fas fa-palette"></i><br>Theme</div>
+        <div class="cmd-chip" onclick="runCmd('refresh')"><i class="fas fa-sync-alt"></i><br>Refresh</div>
+        <div class="cmd-chip" onclick="runCmd('reset')"><i class="fas fa-trash"></i><br>Reset</div>
+        <div class="cmd-chip" onclick="runCmd('help')"><i class="fas fa-question"></i><br>Help</div>
+        <div class="cmd-chip" onclick="runCmd('about')"><i class="fas fa-info"></i><br>About</div>
+        <div class="cmd-chip" onclick="runCmd('stats')"><i class="fas fa-chart-bar"></i><br>Stats</div>
+        <div class="cmd-chip" onclick="runCmd('random')"><i class="fas fa-random"></i><br>Random</div>
+      </div>
+      <div id="cmdResult" style="background:rgba(0,0,0,0.03);padding:12px;border-radius:12px;margin-top:10px;font-size:0.8rem;display:none;"></div>
+      <button class="btn btn-secondary mt-1" onclick="closeCmd()"><i class="fas fa-times"></i> Close</button>
+    </div>
+  </div>
+  
   <div id="toastContainer" class="toast-container"></div>
   
+  <script src="js/security.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/database.js"></script>
   <script src="js/auth.js"></script>
@@ -128,24 +517,28 @@
       {q:"You are stronger than you think.",a:"A.A. Milne"}
     ];
     
+    // ============================================
+    // AFFICHER LIENS DÉVELOPPEUR (UNIQUEMENT POUR HANS KEPPER)
+    // ============================================
+    function showDeveloperLinks() {
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (stored) {
+          var user = JSON.parse(stored);
+          if (user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9) {
+            var container = document.getElementById('devSidebarContainer');
+            if (container) container.style.display = 'block';
+          }
+        }
+      } catch(e) {}
+    }
+    
     function getChartColors() {
       var isDark = document.body.classList.contains('night-mode');
       if (isDark) {
-        return {
-          gridColor: 'rgba(255, 255, 255, 0.15)',
-          textColor: '#e0e0e0',
-          lineColor: '#00ffff',
-          fillColor: 'rgba(0, 255, 255, 0.1)',
-          pointColor: '#00ffff'
-        };
+        return { gridColor: 'rgba(255,255,255,0.15)', textColor: '#e0e0e0', lineColor: '#00ffff', fillColor: 'rgba(0,255,255,0.1)', pointColor: '#00ffff' };
       } else {
-        return {
-          gridColor: 'rgba(0, 0, 0, 0.1)',
-          textColor: '#1a2a3a',
-          lineColor: '#0f3b48',
-          fillColor: 'rgba(15, 59, 72, 0.1)',
-          pointColor: '#0f3b48'
-        };
+        return { gridColor: 'rgba(0,0,0,0.1)', textColor: '#1a2a3a', lineColor: '#0f3b48', fillColor: 'rgba(15,59,72,0.1)', pointColor: '#0f3b48' };
       }
     }
     
@@ -202,11 +595,11 @@
     
     function loadDashboard() {
       var current = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-      if (!current) { location = 'login.html'; return; }
+      if (!current) { redirectToError(401, 'Please login first'); return; }
       var sid = current.id;
       
-      document.getElementById('greeting').innerHTML = getGreeting() + ', ' + current.name + '!';
-      document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + current.class;
+      document.getElementById('greeting').innerHTML = getGreeting() + ', ' + (current.name || 'Student') + '!';
+      document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + (current.class || 'B2');
       
       var randomIndex = Math.floor(Math.random() * MQ.length);
       var q = MQ[randomIndex];
@@ -217,7 +610,15 @@
       var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + getCurrentTerm()) || '[1,2,3,4,5,6,7,8,9,10,11,12,13,14]');
       var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
       var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + sid) || '{}');
-      document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + (profile.avatar || 'fa-user-graduate') + '"></i>';
+      
+      var headerAvatar = document.getElementById('headerAvatar');
+      if (headerAvatar) {
+        if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+          headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+          headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+        }
+      }
       
       var subs = [];
       for (var i = 0; i < allSubs.length; i++) {
@@ -230,7 +631,9 @@
       document.getElementById('selectedCount').innerHTML = subs.length;
       document.getElementById('totalGrades').innerHTML = grades.length;
       
-      var t1 = calcTermAvg(sid, 1), t2 = calcTermAvg(sid, 2), t3 = calcTermAvg(sid, 3);
+      var t1 = calcTermAvg(sid, 1);
+      var t2 = calcTermAvg(sid, 2);
+      var t3 = calcTermAvg(sid, 3);
       var yearly = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
       
       document.getElementById('term1Avg').innerHTML = t1.toFixed(2);
@@ -239,23 +642,26 @@
       document.getElementById('yearlyAvg').innerHTML = yearly.toFixed(2);
       document.getElementById('overallAvg').innerHTML = yearly.toFixed(2);
       
-      // Compter tous les badges débloqués (1 à 22)
       var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + sid) || '[]');
-      var unlockedCount = ach.filter(function(a) { return a.unlocked; }).length;
-      document.getElementById('achievementsCount').innerHTML = unlockedCount;
+      document.getElementById('achievementsCount').innerHTML = ach.filter(function(a) { return a.unlocked; }).length;
       
       var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + sid) || 12);
       document.getElementById('goalValue').innerHTML = goal.toFixed(2);
       document.getElementById('goalSlider').value = goal;
       var gs = document.getElementById('goalStatus');
-      if (yearly >= goal) { gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; gs.className = 'goal-status achieved'; } 
-      else { gs.innerHTML = 'Need +' + (goal - yearly).toFixed(2) + ' to reach goal'; gs.className = 'goal-status not-achieved'; }
+      if (yearly >= goal) { 
+        gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
+        gs.className = 'goal-status achieved'; 
+      } else { 
+        gs.innerHTML = 'Need +' + (goal - yearly).toFixed(2) + ' to reach goal'; 
+        gs.className = 'goal-status not-achieved'; 
+      }
       
       var subPrev = [];
       for (var i = 0; i < subs.length; i++) {
         var s = subs[i];
         var allSG = grades.filter(function(g) { return g.subjectId === s.id; });
-        var yearlySubjectAvg = allSG.length ? roundToTwo(allSG.reduce(function(a, b) { return a + b.value; }, 0) / allSG.length) : 0;
+        var yearlySubjectAvg = allSG.length ? roundToTwo(allSG.reduce(function(a, b) { return a + b; }, 0) / allSG.length) : 0;
         subPrev.push({ id: s.id, name: s.name, icon: s.icon, avg: yearlySubjectAvg });
       }
       subPrev.sort(function(a, b) { return b.avg - a.avg; });
@@ -268,81 +674,87 @@
       loadHistory();
       checkStreakMilestone(sid);
       checkAndNotifyAchievements(sid);
+      if (typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(sid); }
+      
+      showDeveloperLinks();
     }
     
-    function buildChart(t1, t2, t3, goal) {
-      if (pc) pc.destroy();
-      var ctx = document.getElementById('progressChart');
-      if (!ctx) return;
-      var colors = getChartColors();
-      pc = new Chart(ctx.getContext('2d'), {
-        type: 'line',
-        data: {
-          labels: ['Term 1', 'Term 2', 'Term 3'],
+    function buildChart(t1, t2, t3, goal) { 
+      if (pc) pc.destroy(); 
+      var ctx = document.getElementById('progressChart'); 
+      if (!ctx) return; 
+      var colors = getChartColors(); 
+      pc = new Chart(ctx.getContext('2d'), { 
+        type: 'line', 
+        data: { 
+          labels: ['Term 1', 'Term 2', 'Term 3'], 
           datasets: [
             { label: 'Average', data: [t1, t2, t3], borderColor: colors.lineColor, backgroundColor: colors.fillColor, borderWidth: 3, pointRadius: 6, tension: 0.3, fill: true, pointBackgroundColor: colors.pointColor },
             { label: 'Goal', data: [goal, goal, goal], borderColor: '#e74c3c', borderWidth: 2, borderDash: [8, 4], pointRadius: 0, fill: false }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          scales: {
-            y: { min: 0, max: 20, ticks: { stepSize: 2, color: colors.textColor }, grid: { color: colors.gridColor } },
-            x: { ticks: { color: colors.textColor }, grid: { color: colors.gridColor } }
-          },
-          plugins: { legend: { labels: { color: colors.textColor } } }
-        }
-      });
+          ] 
+        }, 
+        options: { 
+          responsive: true, 
+          maintainAspectRatio: false, 
+          scales: { 
+            y: { min: 0, max: 20, ticks: { stepSize: 2, color: colors.textColor }, grid: { color: colors.gridColor } }, 
+            x: { ticks: { color: colors.textColor }, grid: { color: colors.gridColor } } 
+          }, 
+          plugins: { legend: { labels: { color: colors.textColor } } } 
+        } 
+      }); 
     }
     
-    function updateGoal(v) {
-      var g = parseFloat(v);
-      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-      if (c) localStorage.setItem('smartgrade_goal_' + c.id, g);
-      document.getElementById('goalValue').innerHTML = g.toFixed(2);
-      var t1 = calcTermAvg(c.id, 1), t2 = calcTermAvg(c.id, 2), t3 = calcTermAvg(c.id, 3);
-      var y = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
-      var gs = document.getElementById('goalStatus');
-      if (y >= g) { gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; gs.className = 'goal-status achieved'; } 
-      else { gs.innerHTML = 'Need +' + (g - y).toFixed(2) + ' to reach goal'; gs.className = 'goal-status not-achieved'; }
-      buildChart(t1, t2, t3, g);
+    function updateGoal(v) { 
+      var g = parseFloat(v); 
+      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); 
+      if (c) localStorage.setItem('smartgrade_goal_' + c.id, g); 
+      document.getElementById('goalValue').innerHTML = g.toFixed(2); 
+      var t1 = calcTermAvg(c.id, 1), t2 = calcTermAvg(c.id, 2), t3 = calcTermAvg(c.id, 3); 
+      var y = Math.round(((t1 + t2 + t3) / 3) * 100) / 100; 
+      var gs = document.getElementById('goalStatus'); 
+      if (y >= g) { 
+        gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
+        gs.className = 'goal-status achieved'; 
+      } else { 
+        gs.innerHTML = 'Need +' + (g - y).toFixed(2) + ' to reach goal'; 
+        gs.className = 'goal-status not-achieved'; 
+      } 
+      buildChart(t1, t2, t3, g); 
     }
     
     function zoomIn() { cz = Math.min(cz + 0.25, 3); applyZoom(); }
     function zoomOut() { cz = Math.max(cz - 0.25, 0.5); applyZoom(); }
     function resetZoom() { cz = 1; applyZoom(); }
-    function applyZoom() {
-      var c = document.getElementById('progressChart'), w = document.getElementById('chartWrapper'), l = document.getElementById('chartZoomLevel');
-      if (c && w) { c.style.transform = 'scale(' + cz + ')'; c.style.transformOrigin = 'top left'; w.style.height = (250 * cz) + 'px'; }
-      if (l) l.textContent = Math.round(cz * 100) + '%';
+    function applyZoom() { 
+      var c = document.getElementById('progressChart'), w = document.getElementById('chartWrapper'), l = document.getElementById('chartZoomLevel'); 
+      if (c && w) { c.style.transform = 'scale(' + cz + ')'; c.style.transformOrigin = 'top left'; w.style.height = (250 * cz) + 'px'; } 
+      if (l) l.textContent = Math.round(cz * 100) + '%'; 
     }
     
-    function loadHistory() {
-      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-      if (!c) return;
-      var h = JSON.parse(localStorage.getItem('smartgrade_history_' + c.id) || '[]');
-      h = h.slice(0, 10);
-      var el = document.getElementById('historyList');
-      el.innerHTML = h.length === 0 ? '<p class="text-center" style="color:var(--text-light);">No activity yet</p>' : h.map(function(x) {
-        return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + x.action + '<span class="history-time">' + formatDate(x.date) + '</span></div>';
-      }).join('');
+    function loadHistory() { 
+      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); 
+      if (!c) return; 
+      var h = JSON.parse(localStorage.getItem('smartgrade_history_' + c.id) || '[]'); 
+      h = h.slice(0, 10); 
+      var el = document.getElementById('historyList'); 
+      el.innerHTML = h.length === 0 ? '<p class="text-center" style="color:var(--text-light);">No activity yet</p>' : h.map(function(x) { 
+        return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + (x.action || 'Activity') + '<span class="history-time">' + formatDate(x.date) + '</span></div>'; 
+      }).join(''); 
     }
     
     function openCmd() { document.getElementById('cmdOverlay').classList.add('show'); document.getElementById('cmdInput').value = ''; document.getElementById('cmdResult').style.display = 'none'; setTimeout(function() { document.getElementById('cmdInput').focus(); }, 300); }
     function closeCmd() { document.getElementById('cmdOverlay').classList.remove('show'); }
-    function runCmd(cmd) { var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); var r = executeCommand(cmd, c ? c.id : 1); var el = document.getElementById('cmdResult'); el.style.display = 'block'; el.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + r; document.getElementById('cmdInput').value = cmd; setTimeout(function() { el.style.display = 'none'; }, 3000); }
+    function runCmd(cmd) { var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); var r = executeCommand(cmd, c ? c.id : 1); var el = document.getElementById('cmdResult'); el.style.display = 'block'; el.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + (r || 'Command executed'); document.getElementById('cmdInput').value = cmd; setTimeout(function() { el.style.display = 'none'; }, 3000); }
+    
     document.getElementById('cmdInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') runCmd(this.value); });
     
-    var themeObserver = new MutationObserver(function() {
-      if (pc) refreshChartColors();
-    });
+    var themeObserver = new MutationObserver(function() { if (pc) refreshChartColors(); });
     themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     
     loadDashboard();
     initMobileMenu();
     initThemeSelector();
-    initHeaderProfile();
   </script>
 </body>
 </html>

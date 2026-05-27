@@ -97,9 +97,6 @@
       justify-content: center;
       gap: 6px;
     }
-    .term-tab-btn i {
-      font-size: 0.75rem;
-    }
     .term-tab-btn.active {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
@@ -119,9 +116,6 @@
         width: 55px;
         padding: 6px;
         font-size: 0.7rem;
-      }
-      .grade-table th, .grade-table td {
-        padding: 8px 4px;
       }
     }
   </style>
@@ -212,13 +206,7 @@
       var seq1 = (currentTerm - 1) * 2 + 1;
       var seq2 = seq1 + 1;
       
-      var headerHtml = '<tr>' +
-        '<th style="text-align:left;">SUBJECT</th>' +
-        '<th>COEFF</th>' +
-        '<th>S' + seq1 + '</th>' +
-        '<th>S' + seq2 + '</th>' +
-        '<th>AVERAGE</th>' +
-        '</tr>';
+      var headerHtml = '<tr><th style="text-align:left;">SUBJECT</th><th>COEFF</th><th>S' + seq1 + '</th><th>S' + seq2 + '</th><th>AVERAGE</th></tr>';
       document.getElementById('tableHeader').innerHTML = headerHtml;
       
       var bodyHtml = '';
@@ -281,6 +269,8 @@
       var grades = getStudentGrades(currentUser.id);
       var inputs = document.querySelectorAll('.grade-input');
       var changed = false;
+      var savedCount = 0;
+      var newGrades = [];
       
       inputs.forEach(function(input) {
         var subjectId = parseInt(input.dataset.subj);
@@ -288,15 +278,17 @@
         var value = parseFloat(input.value);
         
         if (!isNaN(value) && value >= 0 && value <= 20) {
+          var roundedValue = Math.round(value * 100) / 100;
           var existingIndex = grades.findIndex(function(g) {
             return g.subjectId === subjectId && g.sequenceId === sequenceId;
           });
           
-          var roundedValue = Math.round(value * 100) / 100;
-          
           if (existingIndex !== -1) {
-            grades[existingIndex].value = roundedValue;
-            grades[existingIndex].date = new Date().toISOString().split('T')[0];
+            if (grades[existingIndex].value !== roundedValue) {
+              grades[existingIndex].value = roundedValue;
+              changed = true;
+              savedCount++;
+            }
           } else {
             var newId = grades.length > 0 ? Math.max.apply(null, grades.map(function(g) { return g.id; })) + 1 : 1;
             grades.push({
@@ -306,8 +298,9 @@
               value: roundedValue,
               date: new Date().toISOString().split('T')[0]
             });
+            changed = true;
+            savedCount++;
           }
-          changed = true;
         }
       });
       
@@ -316,6 +309,12 @@
         addHistory(currentUser.id, 'Grades updated for Term ' + currentTerm);
         playActionFeedback();
         showToast('Grades saved successfully!');
+        
+        // ⭐ NOTIFICATION
+        if (typeof notifyGradesSaved === 'function') {
+          notifyGradesSaved(savedCount);
+        }
+        
         loadAddGrade();
       } else {
         showToast('No valid grades to save');

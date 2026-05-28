@@ -1,34 +1,7 @@
 // ============================================
 // SMART GRADE v4.0 - UTILS.JS
-// VERSION FINALE ULTIME
+// VERSION FINALE CORRIGÉE
 // ============================================
-
-// ============================================
-// 0. DÉSACTIVATION ERROR HANDLER PENDANT CHANGEMENTS DE THÈME
-// ============================================
-
-window._changingTheme = false;
-window._themeChangeTimer = null;
-
-document.addEventListener('click', function(e) {
-  var themeSelectors = ['.theme-rect', '.theme-btn-header', '#darkLightBtn', '.font-selector-item', '.font-sheet', '[data-theme]', '.slider', '.toggle-switch'];
-  for (var i = 0; i < themeSelectors.length; i++) {
-    if (e.target.closest(themeSelectors[i])) {
-      window._changingTheme = true;
-      if (window._themeChangeTimer) clearTimeout(window._themeChangeTimer);
-      window._themeChangeTimer = setTimeout(function() { window._changingTheme = false; }, 1000);
-      break;
-    }
-  }
-}, true);
-
-var IGNORE_PATTERNS = [
-  'ResizeObserver', 'requestAnimationFrame', 'IntersectionObserver',
-  'theme', 'classList', 'style', 'themes.css', 'night-mode.css',
-  'var(--primary)', 'var(--secondary)', 'background', 'gradient',
-  'linear-gradient', 'transform', 'transition', 'animation',
-  'getComputedStyle', 'matchMedia', 'addEventListener'
-];
 
 // ============================================
 // 1. FONCTIONS UTILITAIRES DE BASE
@@ -37,19 +10,6 @@ var IGNORE_PATTERNS = [
 function roundToTwo(num) {
   if (isNaN(num) || !isFinite(num)) return 0;
   return Math.round((num + Number.EPSILON) * 100) / 100;
-}
-
-function roundTo(num, d) {
-  if (isNaN(num) || !isFinite(num)) return 0;
-  var f = Math.pow(10, d);
-  return Math.round((num + Number.EPSILON) * f) / f;
-}
-
-function calculateAverage(v) {
-  if (!v || v.length === 0) return 0;
-  var vv = v.filter(function(x) { return !isNaN(x) && isFinite(x); });
-  if (vv.length === 0) return 0;
-  return roundToTwo(vv.reduce(function(a, b) { return a + b; }, 0) / vv.length);
 }
 
 function getGradeLetter(a) {
@@ -75,10 +35,6 @@ function getCurrentTerm() {
   if (m >= 9 && m <= 12) return 1;
   if (m >= 1 && m <= 3) return 2;
   return 3;
-}
-
-function isValidGrade(v) {
-  return !isNaN(v) && isFinite(v) && v >= 0 && v <= 20;
 }
 
 function formatNumber(num, d) {
@@ -110,21 +66,13 @@ function getStatusText(a) {
   return 'Needs Work';
 }
 
-function getStatusColor(a) {
-  if (a >= 14) return '#2ecc71';
-  if (a >= 12) return '#3498db';
-  if (a >= 10) return '#f39c12';
-  if (a >= 8) return '#e67e22';
-  return '#e74c3c';
-}
-
 function getSequencesForTerm(t) {
   var s = (t - 1) * 2 + 1;
   return [s, s + 1];
 }
 
 // ============================================
-// 2. TOAST NOTIFICATION (EN BAS)
+// 2. TOAST NOTIFICATIONS
 // ============================================
 
 function showToast(message, type) {
@@ -207,107 +155,49 @@ function addNotification(type, title, body) {
   showToast(title + ': ' + body);
 }
 
-function notifyGradeAdded(subject, grade, seq) { addNotification('grade', 'Grade Added', subject + ': ' + grade + '/20'); }
-function notifyGradesSaved(count) { addNotification('grade', 'Grades Saved', count + ' grades saved'); }
-function notifyBadgeUnlocked(name, desc) { addNotification('badge', 'Badge: ' + name, desc); }
-function notifyBackupCreated(type, size, time) { addNotification('backup', type + ' Backup', 'Saved at ' + time); }
-function notifyBackupRestored(date) { addNotification('backup', 'Backup Restored', 'From ' + date); }
-function notifyImportExport(type, success) { addNotification(type, type.toUpperCase(), success ? 'Success' : 'Failed'); }
-function notifySubjectsUpdated(term, count) { addNotification('subjects', 'Subjects Updated', 'Term ' + term + ': ' + count + ' subjects'); }
-function notifyTransferCodeGenerated(code) { addNotification('transfer', 'Transfer Code', code); }
-function notifyTransferImported(from) { addNotification('transfer', 'Data Imported', 'From ' + from); }
-function notifyPinChanged() { addNotification('account', 'PIN Changed', 'Security PIN updated'); }
-function notifyFingerprintEnabled() { addNotification('account', 'Fingerprint Enabled', 'Biometric login active'); }
-function notifyAccountCreated(name) { addNotification('account', 'Account Created', 'Welcome ' + name); }
-function notifyFlashcardAdded(subject, count) { addNotification('flashcard', 'Flashcard Added', subject); }
-function notifyTimetableView(count) {
-  if (count === 5) addNotification('timetable', 'Timetable Viewer', 'Viewed 5 times');
-  if (count === 10) addNotification('timetable', 'Timetable Expert', 'Viewed 10 times!');
-}
-function notifyLoginSuccess(name) { addNotification('account', 'Login Successful', 'Welcome back ' + name); }
-function notifyProfileUpdate(action) { addNotification('profile', 'Profile Updated', action); }
-
 // ============================================
-// 5. REMPLACEMENT DES NOTIFICATIONS SYSTÈME
+// 5. CONFIRMATION DIALOG
 // ============================================
 
-function showSmartConfirm(options) {
-  var modal = document.createElement('div');
-  modal.className = 'smart-modal-overlay';
-  modal.style.cssText = `
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(8px);
-    z-index: 100000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    animation: fadeIn 0.2s ease;
-  `;
+function showConfirmDialog(options) {
+  var existingModal = document.querySelector('.custom-confirm-modal');
+  if (existingModal) existingModal.remove();
   
-  var iconHtml = '';
-  if (options.icon) {
-    iconHtml = `<i class="fas ${options.icon}" style="font-size: 48px; color: ${options.iconColor || '#e74c3c'}; margin-bottom: 16px;"></i>`;
-  }
+  var modal = document.createElement('div');
+  modal.className = 'custom-confirm-modal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000;display:flex;align-items:center;justify-content:center;';
   
   var detailHtml = '';
   if (options.detail) {
-    detailHtml = `<p style="font-size: 0.7rem; color: #e74c3c; margin-bottom: 16px;">${options.detail}</p>`;
+    detailHtml = '<p style="font-size:0.7rem;font-weight:600;color:#e74c3c;margin-bottom:16px;">' + options.detail + '</p>';
+  }
+  
+  var iconHtml = '';
+  if (options.icon) {
+    iconHtml = '<i class="fas ' + options.icon + '" style="font-size:48px;color:' + (options.iconColor || '#e74c3c') + ';margin-bottom:16px;"></i>';
   }
   
   modal.innerHTML = `
-    <div class="smart-modal" style="
-      background: var(--card-bg);
-      border-radius: 24px;
-      padding: 24px;
-      max-width: 340px;
-      width: 85%;
-      text-align: center;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-      animation: slideUp 0.3s ease;
-    ">
+    <div style="background:var(--card-bg);border-radius:24px;padding:24px;max-width:320px;width:85%;text-align:center;animation:fadeInUp 0.3s ease;">
       ${iconHtml}
-      <h3 style="margin-bottom: 12px; font-size: 1.1rem;">${options.title || 'Confirmation'}</h3>
-      <p style="font-size: 0.85rem; color: var(--text-light); margin-bottom: 16px;">${options.message || 'Are you sure?'}</p>
+      <h3 style="margin-bottom:8px;">${options.title}</h3>
+      <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:8px;">${options.message}</p>
       ${detailHtml}
-      <div style="display: flex; gap: 12px;">
-        <button class="smart-modal-cancel" style="
-          flex: 1;
-          padding: 12px;
-          border-radius: 40px;
-          border: 1px solid var(--border);
-          background: transparent;
-          color: var(--text);
-          font-weight: 600;
-          cursor: pointer;
-        ">${options.cancelText || 'Cancel'}</button>
-        <button class="smart-modal-confirm" style="
-          flex: 1;
-          padding: 12px;
-          border-radius: 40px;
-          border: none;
-          background: ${options.confirmColor ? options.confirmColor : 'linear-gradient(135deg, var(--primary), var(--secondary))'};
-          color: white;
-          font-weight: 600;
-          cursor: pointer;
-        ">${options.confirmText || 'Confirm'}</button>
+      <div style="display:flex;gap:12px;">
+        <button class="confirm-cancel-btn" style="flex:1;padding:12px;border-radius:40px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;">${options.cancelText || 'Cancel'}</button>
+        <button class="confirm-ok-btn" style="flex:1;padding:12px;border-radius:40px;background:${options.confirmColor || '#e74c3c'};color:white;border:none;cursor:pointer;">${options.confirmText || 'Confirm'}</button>
       </div>
     </div>
   `;
   
   document.body.appendChild(modal);
   
-  modal.querySelector('.smart-modal-cancel').onclick = function() {
+  modal.querySelector('.confirm-cancel-btn').onclick = function() {
     modal.remove();
     if (options.onCancel) options.onCancel();
   };
   
-  modal.querySelector('.smart-modal-confirm').onclick = function() {
+  modal.querySelector('.confirm-ok-btn').onclick = function() {
     modal.remove();
     if (options.onConfirm) options.onConfirm();
   };
@@ -320,144 +210,8 @@ function showSmartConfirm(options) {
   };
 }
 
-window.confirm = function(message, title, onConfirm, onCancel) {
-  showSmartConfirm({
-    title: title || 'Confirmation',
-    message: message,
-    confirmText: 'OK',
-    cancelText: 'Cancel',
-    onConfirm: onConfirm,
-    onCancel: onCancel
-  });
-  return true;
-};
-
-window.alert = function(message, title) {
-  showSmartConfirm({
-    title: title || 'Information',
-    message: message,
-    confirmText: 'OK',
-    cancelText: null
-  });
-};
-
-var styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  @keyframes slideUp {
-    from { transform: translateY(30px); opacity: 0; }
-    to { transform: translateY(0); opacity: 1; }
-  }
-`;
-document.head.appendChild(styleSheet);
-
 // ============================================
-// 6. EXPORT COMPLET - TOUTES LES DONNÉES
-// ============================================
-
-function exportCompleteUserData(studentId) {
-  if (!studentId) {
-    var current = getCurrentStudent();
-    if (!current) return null;
-    studentId = current.id;
-  }
-  
-  try {
-    var students = getAllStudents();
-    var student = students.find(function(s) { return s.id === studentId; });
-    
-    var completeData = {
-      version: '4.0',
-      exportDate: new Date().toISOString(),
-      exportType: 'complete',
-      
-      student: student,
-      grades: JSON.parse(localStorage.getItem('smartgrade_grades_' + studentId) || '[]'),
-      subjects: {
-        term1: JSON.parse(localStorage.getItem('smartgrade_selected_' + studentId + '_term1') || '[]'),
-        term2: JSON.parse(localStorage.getItem('smartgrade_selected_' + studentId + '_term2') || '[]'),
-        term3: JSON.parse(localStorage.getItem('smartgrade_selected_' + studentId + '_term3') || '[]')
-      },
-      coeffs: JSON.parse(localStorage.getItem('smartgrade_coeffs_' + studentId) || '{}'),
-      achievements: JSON.parse(localStorage.getItem('smartgrade_achievements_' + studentId) || '[]'),
-      goal: parseFloat(localStorage.getItem('smartgrade_goal_' + studentId) || 12),
-      streak: JSON.parse(localStorage.getItem('smartgrade_streak_' + studentId) || '{"days":0,"lastLogin":null}'),
-      profile: JSON.parse(localStorage.getItem('smartgrade_profile_' + studentId) || '{}'),
-      flashcards: JSON.parse(localStorage.getItem('smartgrade_flashcards_' + studentId) || '[]'),
-      history: JSON.parse(localStorage.getItem('smartgrade_history_' + studentId) || '[]'),
-      notifications: JSON.parse(localStorage.getItem('smartgrade_notifications_' + studentId) || '[]'),
-      backups: JSON.parse(localStorage.getItem('smartgrade_backup_list_' + studentId) || '[]'),
-      compensations: JSON.parse(localStorage.getItem('smartgrade_compensations_' + studentId) || '{}'),
-      goalsDetail: JSON.parse(localStorage.getItem('smartgrade_goals_detail_' + studentId) || '{}'),
-      lastLogin: localStorage.getItem('smartgrade_login_time') || null
-    };
-    
-    console.log('[Export] Complete data exported for', student ? student.name : studentId);
-    return JSON.stringify(completeData, null, 2);
-    
-  } catch(e) {
-    console.error('[Export] Error:', e);
-    return null;
-  }
-}
-
-function importCompleteUserData(studentId, jsonData) {
-  if (!studentId) {
-    var current = getCurrentStudent();
-    if (!current) return { success: false, message: 'No user logged in' };
-    studentId = current.id;
-  }
-  
-  try {
-    var data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
-    
-    if (!data.version) {
-      return { success: false, message: 'Invalid backup file format' };
-    }
-    
-    // Restaurer TOUTES les données
-    if (data.grades) localStorage.setItem('smartgrade_grades_' + studentId, JSON.stringify(data.grades));
-    if (data.subjects) {
-      if (data.subjects.term1) localStorage.setItem('smartgrade_selected_' + studentId + '_term1', JSON.stringify(data.subjects.term1));
-      if (data.subjects.term2) localStorage.setItem('smartgrade_selected_' + studentId + '_term2', JSON.stringify(data.subjects.term2));
-      if (data.subjects.term3) localStorage.setItem('smartgrade_selected_' + studentId + '_term3', JSON.stringify(data.subjects.term3));
-    }
-    if (data.coeffs) localStorage.setItem('smartgrade_coeffs_' + studentId, JSON.stringify(data.coeffs));
-    if (data.achievements) localStorage.setItem('smartgrade_achievements_' + studentId, JSON.stringify(data.achievements));
-    if (data.goal !== undefined) localStorage.setItem('smartgrade_goal_' + studentId, data.goal);
-    if (data.streak) localStorage.setItem('smartgrade_streak_' + studentId, JSON.stringify(data.streak));
-    if (data.profile) localStorage.setItem('smartgrade_profile_' + studentId, JSON.stringify(data.profile));
-    if (data.flashcards) localStorage.setItem('smartgrade_flashcards_' + studentId, JSON.stringify(data.flashcards));
-    if (data.history) localStorage.setItem('smartgrade_history_' + studentId, JSON.stringify(data.history));
-    if (data.notifications) localStorage.setItem('smartgrade_notifications_' + studentId, JSON.stringify(data.notifications));
-    if (data.backups) localStorage.setItem('smartgrade_backup_list_' + studentId, JSON.stringify(data.backups));
-    if (data.compensations) localStorage.setItem('smartgrade_compensations_' + studentId, JSON.stringify(data.compensations));
-    if (data.goalsDetail) localStorage.setItem('smartgrade_goals_detail_' + studentId, JSON.stringify(data.goalsDetail));
-    
-    // Ajouter un log d'import
-    var history = JSON.parse(localStorage.getItem('smartgrade_history_' + studentId) || '[]');
-    history.unshift({ action: 'Complete data imported', date: new Date().toISOString() });
-    if (history.length > 50) history = history.slice(0, 50);
-    localStorage.setItem('smartgrade_history_' + studentId, JSON.stringify(history));
-    
-    console.log('[Import] Complete import for user ID:', studentId);
-    return { success: true, message: 'Data imported successfully' };
-    
-  } catch(e) {
-    console.error('[Import] Error:', e);
-    return { success: false, message: 'Invalid data: ' + e.message };
-  }
-}
-
-// Exporter les fonctions globalement
-window.exportCompleteUserData = exportCompleteUserData;
-window.importCompleteUserData = importCompleteUserData;
-
-// ============================================
-// 7. GESTION DES ERREURS (401, 403, 404, 503 UNIQUEMENT)
+// 6. GESTION DES ERREURS
 // ============================================
 
 window.redirectToError = function(code, customMessage) {
@@ -468,164 +222,11 @@ window.redirectToError = function(code, customMessage) {
   else if (code === 503) errorPage = '503.html';
   else errorPage = '404.html';
   
-  try {
-    localStorage.setItem('smartgrade_last_error', JSON.stringify({
-      code: code, message: customMessage || '', url: window.location.href, timestamp: new Date().toISOString()
-    }));
-  } catch(e) {}
-  
   window.location.href = errorPage;
 };
 
-(function() {
-  
-  var currentPage = window.location.pathname.split('/').pop();
-  var ERROR_PAGES = ['401.html', '403.html', '404.html', '503.html'];
-  
-  if (ERROR_PAGES.indexOf(currentPage) !== -1) {
-    console.log('[Error] Already on error page:', currentPage);
-    return;
-  }
-  
-  if (currentPage === 'splash.html') {
-    console.log('[Error] Splash page - skipping error handler');
-    return;
-  }
-  
-  // ============================================
-  // 403 - PAGE DÉVELOPPEUR (accès interdit si pas HANS KEPPER, B2, #9)
-  // ============================================
-  var DEV_PAGES = [
-    'dev-calculator.html', 'dev-database.html', 'dev-stats.html', 'dev-logs.html', 'dev-backup.html'
-  ];
-  
-  if (DEV_PAGES.indexOf(currentPage) !== -1) {
-    try {
-      var stored = localStorage.getItem('smartgrade_current');
-      var user = stored ? JSON.parse(stored) : null;
-      if (!user || !(user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9)) {
-        console.log('[Error] 403 - Developer access denied to', currentPage);
-        window.location.href = '403.html';
-        return;
-      }
-    } catch(e) {
-      window.location.href = '403.html';
-      return;
-    }
-  }
-  
-  // ============================================
-  // 401 - PAGE PRIVÉE SANS LOGIN
-  // ============================================
-  var PRIVATE_PAGES = [
-    'dashboard.html', 'add-grade.html', 'subjects.html', 'subject-detail.html',
-    'settings.html', 'profile.html', 'statistics.html', 'achievements.html',
-    'history.html', 'transfer.html', 'export.html', 'flashcards.html',
-    'goals.html', 'timetable.html', 'term1.html', 'term2.html', 'term3.html',
-    'yearly.html', 'notifications.html', 'shortcuts.html', 'welcome.html', 
-    'backup.html', 'backup-manager.html', 'guide-user.html', 'about-user.html',
-    'support.html', 'terms.html', 'license.html'
-  ];
-  
-  if (PRIVATE_PAGES.indexOf(currentPage) !== -1) {
-    try {
-      var stored = localStorage.getItem('smartgrade_current');
-      var user = stored ? JSON.parse(stored) : null;
-      if (!user || !user.id) {
-        console.log('[Error] 401 - Unauthorized access to', currentPage);
-        window.location.href = '401.html';
-        return;
-      }
-    } catch(e) {
-      window.location.href = '401.html';
-      return;
-    }
-  }
-  
-  // ============================================
-  // 404 - PAGE INEXISTANTE
-  // ============================================
-  var VALID_PAGES = [
-    'index.html', 'splash.html', 'dashboard.html', 'login.html', 'register.html',
-    'add-grade.html', 'subjects.html', 'subject-detail.html', 'settings.html',
-    'profile.html', 'statistics.html', 'achievements.html', 'history.html',
-    'transfer.html', 'export.html', 'flashcards.html', 'goals.html', 'timetable.html',
-    'term1.html', 'term2.html', 'term3.html', 'yearly.html', 'guide.html',
-    'guide-user.html', 'about.html', 'about-user.html', 'notifications.html',
-    'shortcuts.html', 'welcome.html', 'backup.html', 'backup-manager.html',
-    'support.html', 'test.html', '401.html', '403.html', '404.html', '503.html',
-    'terms.html', 'license.html',
-    'dev-calculator.html', 'dev-database.html', 'dev-stats.html', 'dev-logs.html', 'dev-backup.html'
-  ];
-  
-  if (currentPage && currentPage.includes('.') && !currentPage.includes('.css') && 
-      !currentPage.includes('.js') && !currentPage.includes('.svg') && 
-      !currentPage.includes('.json') && !currentPage.includes('.png') && 
-      !currentPage.includes('.jpg') && !currentPage.includes('.ico')) {
-    if (VALID_PAGES.indexOf(currentPage) === -1 && !currentPage.includes('?') && !currentPage.includes('#')) {
-      console.log('[Error] 404 - Page not found:', currentPage);
-      window.location.href = '404.html';
-      return;
-    }
-  }
-  
-  // ============================================
-  // 503 - HORS LIGNE
-  // ============================================
-  if (typeof navigator !== 'undefined' && !navigator.onLine) {
-    if (currentPage !== 'login.html' && currentPage !== 'register.html' && 
-        currentPage !== 'index.html' && currentPage !== 'splash.html') {
-      console.log('[Error] 503 - Offline');
-      window.location.href = '503.html';
-    }
-  }
-  
-  window.addEventListener('offline', function() {
-    var page = window.location.pathname.split('/').pop();
-    if (page !== 'login.html' && page !== 'register.html' && 
-        page !== 'index.html' && page !== 'splash.html' && 
-        ERROR_PAGES.indexOf(page) === -1) {
-      window.location.href = '503.html';
-    }
-  });
-  
-  // 400 - Paramètres URL invalides (seulement pour pages spécifiques)
-  function checkUrlParams() {
-    var urlParams = new URLSearchParams(window.location.search);
-    var id = urlParams.get('id');
-    if (id !== null && isNaN(parseInt(id))) {
-      window.location.href = '404.html';
-      return;
-    }
-    var term = urlParams.get('term');
-    if (term !== null && (term < 1 || term > 3)) {
-      window.location.href = '404.html';
-      return;
-    }
-  }
-  checkUrlParams();
-  
-  // 500 - Erreurs JavaScript (ignore thèmes)
-  window.addEventListener('error', function(event) {
-    if (window._changingTheme) return false;
-    var message = event.message || '';
-    var filename = event.filename || '';
-    for (var i = 0; i < IGNORE_PATTERNS.length; i++) {
-      if (message.indexOf(IGNORE_PATTERNS[i]) !== -1 || filename.indexOf(IGNORE_PATTERNS[i]) !== -1) {
-        console.log('[Error] Ignored theme/style error');
-        return false;
-      }
-    }
-    console.error('[Error] JavaScript error:', message);
-    return false;
-  });
-  
-  console.log('[Utils] Error handling: 401, 403, 404, 503 only');
-  
-})();
-
 // ============================================
-// 8. GESTION DES POLICES
+// 7. GESTION DES POLICES
 // ============================================
 
 function initFontFamily() {
@@ -653,22 +254,47 @@ function applyGlobalFont() {
   document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
 }
 
-var fontObserver = new MutationObserver(function() { applyGlobalFont(); });
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', function() {
-    fontObserver.observe(document.body, { childList: true, subtree: true });
-    initFontFamily();
-  });
-} else {
-  fontObserver.observe(document.body, { childList: true, subtree: true });
-  initFontFamily();
+// ============================================
+// 8. MODE NUIT
+// ============================================
+
+var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
+
+function checkNightMode() {
+  if (manualThemeFlag === 'dark') {
+    document.body.classList.add('night-mode');
+    return;
+  }
+  if (manualThemeFlag === 'light') {
+    document.body.classList.remove('night-mode');
+    return;
+  }
+  
+  var hours = new Date().getHours();
+  var isNight = (hours >= 20 || hours < 6);
+  
+  if (isNight) {
+    document.body.classList.add('night-mode');
+  } else {
+    document.body.classList.remove('night-mode');
+  }
 }
 
-window.initFontFamily = initFontFamily;
-window.applyGlobalFont = applyGlobalFont;
+function toggleDarkLightMode() {
+  if (manualThemeFlag === 'dark') {
+    manualThemeFlag = 'light';
+    document.body.classList.remove('night-mode');
+    showToast('Light mode activated');
+  } else {
+    manualThemeFlag = 'dark';
+    document.body.classList.add('night-mode');
+    showToast('Dark mode activated');
+  }
+  localStorage.setItem('smartgrade_manual_theme', manualThemeFlag);
+}
 
 // ============================================
-// 9. INITIALISATION DU THÈME
+// 9. GESTION DES THÈMES
 // ============================================
 
 var THEMES = [
@@ -694,73 +320,54 @@ var THEMES = [
   { name: 'lime', color: '#558b2f', label: 'Lime' }
 ];
 
+function getSavedTheme() {
+  return localStorage.getItem('smartgrade_theme') || 'default';
+}
+
+function saveTheme(theme) {
+  localStorage.setItem('smartgrade_theme', theme);
+}
+
 function initThemeSelector() {
   var c = document.getElementById('themeGrid');
   if (!c) return;
   
   var bottomSheetContent = document.querySelector('.bottom-sheet-content');
   
-  if (bottomSheetContent && !document.getElementById('fontSelectorSection')) {
-    var fontSection = document.createElement('div');
-    fontSection.id = 'fontSelectorSection';
-    fontSection.style.cssText = 'margin: 16px 0 8px; padding-top: 8px; border-top: 1px solid var(--border);';
+  if (bottomSheetContent && !document.getElementById('darkLightBtn')) {
+    var modeBtn = document.createElement('div');
+    modeBtn.style.cssText = 'margin-bottom: 16px; padding: 0 4px;';
+    modeBtn.innerHTML = `
+      <button id="darkLightBtn" style="width:100%; padding:12px; border-radius:30px; background:linear-gradient(135deg, var(--primary), var(--secondary)); color:white; border:none; font-weight:600; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:8px;">
+        <i class="fas fa-moon"></i>
+        <span>Switch to Dark Mode</span>
+      </button>
+    `;
+    bottomSheetContent.insertBefore(modeBtn, bottomSheetContent.firstChild);
     
-    var fontTitle = document.createElement('div');
-    fontTitle.style.cssText = 'display: flex; align-items: center; gap: 8px; margin-bottom: 12px;';
-    fontTitle.innerHTML = '<i class="fas fa-font" style="color: var(--primary);"></i><span style="font-weight: 600; font-size: 0.75rem;">Font Family</span>';
-    fontSection.appendChild(fontTitle);
-    
-    var fontGrid = document.createElement('div');
-    fontGrid.id = 'fontSelectorGrid';
-    fontGrid.style.cssText = 'display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px;';
-    fontSection.appendChild(fontGrid);
-    
-    var fontRowSheet = document.querySelector('.font-row-sheet');
-    if (fontRowSheet) bottomSheetContent.insertBefore(fontSection, fontRowSheet);
-    else bottomSheetContent.appendChild(fontSection);
+    document.getElementById('darkLightBtn').onclick = function(e) {
+      e.stopPropagation();
+      toggleDarkLightMode();
+      var btn = document.getElementById('darkLightBtn');
+      var icon = btn.querySelector('i');
+      var span = btn.querySelector('span');
+      if (manualThemeFlag === 'dark') {
+        icon.className = 'fas fa-sun';
+        span.textContent = 'Switch to Light Mode';
+      } else if (manualThemeFlag === 'light') {
+        icon.className = 'fas fa-moon';
+        span.textContent = 'Switch to Dark Mode';
+      } else {
+        var hours = new Date().getHours();
+        var isNight = (hours >= 20 || hours < 6);
+        icon.className = isNight ? 'fas fa-sun' : 'fas fa-moon';
+        span.textContent = isNight ? 'Switch to Light Mode' : 'Switch to Dark Mode';
+      }
+      setTimeout(function() { closeBottomSheet(); }, 300);
+    };
   }
   
-  var fontGrid = document.getElementById('fontSelectorGrid');
-  if (fontGrid) {
-    var currentFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-    
-    var fonts = [
-      { id: 'inter', name: 'Inter', style: 'Inter' }, { id: 'roboto', name: 'Roboto', style: 'Roboto' },
-      { id: 'cinzel', name: 'Cinzel', style: 'Cinzel' }, { id: 'quicksand', name: 'Quicksand', style: 'Quicksand' },
-      { id: 'courier-prime', name: 'Courier Prime', style: 'Courier Prime' }, { id: 'fredoka', name: 'Fredoka', style: 'Fredoka' },
-      { id: 'pacifico', name: 'Pacifico', style: 'Pacifico' }, { id: 'bangers', name: 'Bangers', style: 'Bangers' },
-      { id: 'lobster', name: 'Lobster', style: 'Lobster' }, { id: 'permanent-marker', name: 'Permanent Marker', style: 'Permanent Marker' },
-      { id: 'comfortaa', name: 'Comfortaa', style: 'Comfortaa' }, { id: 'righteous', name: 'Righteous', style: 'Righteous' }
-    ];
-    
-    fontGrid.innerHTML = fonts.map(function(f) {
-      var isActive = (currentFont === f.id);
-      return '<div class="font-selector-item ' + (isActive ? 'active' : '') + '" data-font="' + f.id + '" style="padding: 10px 6px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; font-family: \'' + f.style + '\', sans-serif; background: ' + (isActive ? 'linear-gradient(135deg, var(--primary), var(--secondary))' : 'rgba(0,0,0,0.03)') + '; color: ' + (isActive ? 'white' : 'var(--text)') + '; border: 1px solid var(--border); font-size: 0.7rem; font-weight: 500;">' + f.name + '</div>';
-    }).join('');
-    
-    document.querySelectorAll('.font-selector-item').forEach(function(item) {
-      item.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var fontId = this.dataset.font;
-        localStorage.setItem('smartgrade_font_family', fontId);
-        initFontFamily();
-        
-        document.querySelectorAll('.font-selector-item').forEach(function(el) {
-          el.classList.remove('active');
-          el.style.background = 'rgba(0,0,0,0.03)';
-          el.style.color = 'var(--text)';
-        });
-        this.classList.add('active');
-        this.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
-        this.style.color = 'white';
-        
-        showToast('Font: ' + this.textContent);
-        closeBottomSheet();
-      });
-    });
-  }
-  
-  var st = localStorage.getItem('smartgrade_theme') || 'default';
+  var st = getSavedTheme();
   c.innerHTML = THEMES.map(function(t) {
     return '<div class="theme-rect ' + (st === t.name ? 'active' : '') + '" data-theme="' + t.name + '" style="background:' + t.color + ';" title="' + t.label + '">' + t.label + '</div>';
   }).join('');
@@ -771,9 +378,10 @@ function initThemeSelector() {
       var t = this.dataset.theme;
       document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
       document.body.classList.add('theme-' + t);
-      localStorage.setItem('smartgrade_theme', t);
+      saveTheme(t);
       document.querySelectorAll('.theme-rect').forEach(function(x) { x.classList.remove('active'); });
       this.classList.add('active');
+      checkNightMode();
       showToast('Theme: ' + t);
       closeBottomSheet();
     });
@@ -814,7 +422,12 @@ function initThemeSelector() {
     if (cs) cs.onclick = closeFn;
     so.onclick = closeFn;
     
-    bs.addEventListener('click', function(e) { if (e.target === bs) closeFn(); });
+    bs.addEventListener('click', function(e) {
+      if (e.target === bs) {
+        closeFn();
+      }
+    });
+    
     window.closeBottomSheet = closeFn;
   }
 }
@@ -826,6 +439,10 @@ function closeBottomSheet() {
   if (so) so.classList.remove('active');
 }
 
+// ============================================
+// 10. MENU MOBILE
+// ============================================
+
 function initMobileMenu() {
   var mb = document.getElementById('menuBtn'), cb = document.getElementById('closeSidebar'), sb = document.getElementById('sidebarMenu'), ov = document.getElementById('overlay');
   if (mb && sb && ov) {
@@ -836,23 +453,51 @@ function initMobileMenu() {
   }
 }
 
+// ============================================
+// 11. HEADER AVATAR
+// ============================================
+
 function initHeaderProfile() {
   var ha = document.getElementById('headerAvatar');
   if (!ha) return;
+  
+  var currentPath = window.location.pathname;
+  var publicPages = ['index.html', 'login.html', 'register.html', 'about.html', 'guide.html', '404.html'];
+  
+  var isPublic = false;
+  for (var i = 0; i < publicPages.length; i++) {
+    if (currentPath.indexOf(publicPages[i]) !== -1) {
+      isPublic = true;
+      break;
+    }
+  }
+  
+  if (isPublic) {
+    ha.innerHTML = '<i class="fas fa-info-circle"></i>';
+    return;
+  }
+  
   try {
     var cu = getCurrentStudent();
-    if (!cu) { ha.innerHTML = '<i class="fas fa-user-graduate"></i>'; return; }
+    if (!cu) {
+      ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      return;
+    }
+    
     var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + cu.id) || '{}');
-    if (profile.avatarBase64 && profile.avatarBase64.length > 100) {
+    
+    if (profile.avatarBase64 && profile.avatarBase64 !== '') {
       ha.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     } else {
       ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
     }
-  } catch(e) { ha.innerHTML = '<i class="fas fa-user-graduate"></i>'; }
+  } catch(err) {
+    ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  }
 }
 
 // ============================================
-// 10. FONCTIONS DE SÉCURITÉ ET BASE DE DONNÉES
+// 12. FONCTIONS BASE DE DONNÉES (LOCALSTORAGE)
 // ============================================
 
 function getCurrentStudent() {
@@ -872,7 +517,7 @@ function getAllStudents() {
 function getStudentById(id) {
   var students = getAllStudents();
   for (var i = 0; i < students.length; i++) {
-    if (students[i].id === id) return students[i];
+    if (students[i].id == id) return students[i];
   }
   return null;
 }
@@ -902,24 +547,16 @@ function getStudentStreak(id) {
 function getStudentSelectedSubjects(id, term) {
   try {
     var d = localStorage.getItem('smartgrade_selected_' + id + '_term' + term);
-    return d ? JSON.parse(d) : [1,2,3,4,5,6,7,8,9,10,11,12,13,14];
-  } catch(e) { return [1,2,3,4,5,6,7,8,9,10,11,12,13,14]; }
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
 }
 
 function getSubjectCoefficients(id) {
   try {
     var d = localStorage.getItem('smartgrade_coeffs_' + id);
-    if (!d) {
-      var c = {};
-      for (var i = 1; i <= 14; i++) c[i] = 5;
-      return c;
-    }
+    if (!d) return {};
     return JSON.parse(d);
-  } catch(e) { 
-    var c = {};
-    for (var i = 1; i <= 14; i++) c[i] = 5;
-    return c;
-  }
+  } catch(e) { return {}; }
 }
 
 function getSubjectCoefficient(studentId, subjectId) {
@@ -935,15 +572,8 @@ function getProfile(studentId) {
   } catch(e) { return { avatarBase64: '', bio: '', favorites: [] }; }
 }
 
-function getFlashcards(studentId) {
-  try {
-    var d = localStorage.getItem('smartgrade_flashcards_' + studentId);
-    return d ? JSON.parse(d) : [];
-  } catch(e) { return []; }
-}
-
 // ============================================
-// 11. CALCULS DE MOYENNES
+// 13. CALCULS DE MOYENNES (CORRIGÉS)
 // ============================================
 
 function calculateStudentTermAverage(studentId, term) {
@@ -951,40 +581,72 @@ function calculateStudentTermAverage(studentId, term) {
   var coeffs = getSubjectCoefficients(studentId);
   var selected = getStudentSelectedSubjects(studentId, term);
   
-  var allSubjects = [
-    {id:1,name:"COMPUTER SCIENCES"},{id:2,name:"MATHEMATICS"},{id:3,name:"CHEMISTRY"},
-    {id:4,name:"HUMAN BIOLOGY"},{id:5,name:"GEOLOGY"},{id:6,name:"PHYSICS"},
-    {id:7,name:"ADDITIONAL MATHEMATICS"},{id:8,name:"BIOLOGY"},{id:9,name:"ECONOMICS"},
-    {id:10,name:"ENGLISH LANGUAGE"},{id:11,name:"GEOGRAPHY"},{id:12,name:"CITIZENSHIP"},
-    {id:13,name:"FRENCH"},{id:14,name:"FOOD AND NUTRITION"}
-  ];
+  // Si aucune matière sélectionnée, retourner 0
+  if (!selected || selected.length === 0) return 0;
   
-  var subs = allSubjects.filter(function(s) { return selected.indexOf(s.id) !== -1; });
-  var totalWeighted = 0, totalCoeff = 0;
-  var seq1 = (term - 1) * 2 + 1, seq2 = seq1 + 1;
+  var totalWeighted = 0;
+  var totalCoeff = 0;
+  var seq1 = (term - 1) * 2 + 1;
+  var seq2 = seq1 + 1;
   
-  for (var i = 0; i < subs.length; i++) {
-    var s = subs[i];
-    var coeff = coeffs[s.id] || 5;
-    var seq1Grades = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; });
-    var seq2Grades = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; });
-    var avg1 = seq1Grades.length ? seq1Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq1Grades.length : 0;
-    var avg2 = seq2Grades.length ? seq2Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq2Grades.length : 0;
-    var subjAvg = (avg1 + avg2) / 2;
-    if (subjAvg > 0) {
-      totalWeighted += subjAvg * coeff;
-      totalCoeff += coeff;
+  // Pour CHAQUE matière sélectionnée
+  for (var i = 0; i < selected.length; i++) {
+    var subjectId = selected[i];
+    var coeff = coeffs[subjectId] || 5;
+    
+    // Récupérer les notes
+    var seq1Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
+    var seq2Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
+    
+    // Moyenne séquence 1 (0 si pas de notes)
+    var avg1 = 0;
+    if (seq1Grades.length > 0) {
+      var sum1 = 0;
+      for (var j = 0; j < seq1Grades.length; j++) sum1 += seq1Grades[j].value;
+      avg1 = sum1 / seq1Grades.length;
     }
+    
+    // Moyenne séquence 2 (0 si pas de notes)
+    var avg2 = 0;
+    if (seq2Grades.length > 0) {
+      var sum2 = 0;
+      for (var j = 0; j < seq2Grades.length; j++) sum2 += seq2Grades[j].value;
+      avg2 = sum2 / seq2Grades.length;
+    }
+    
+    // Moyenne de la matière
+    var subjectAvg = (avg1 + avg2) / 2;
+    
+    // TOUJOURS ajouter (même si = 0)
+    totalWeighted += subjectAvg * coeff;
+    totalCoeff += coeff;
   }
+  
   return totalCoeff > 0 ? roundToTwo(totalWeighted / totalCoeff) : 0;
 }
 
 function calculateSubjectTermAverage(subjectId, term, grades) {
-  var seq1 = (term - 1) * 2 + 1, seq2 = seq1 + 1;
+  var seq1 = (term - 1) * 2 + 1;
+  var seq2 = seq1 + 1;
+  
   var seq1Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
   var seq2Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
-  var avg1 = seq1Grades.length ? seq1Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq1Grades.length : 0;
-  var avg2 = seq2Grades.length ? seq2Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq2Grades.length : 0;
+  
+  var avg1 = 0;
+  var avg2 = 0;
+  
+  if (seq1Grades.length > 0) {
+    var sum1 = 0;
+    for (var j = 0; j < seq1Grades.length; j++) sum1 += seq1Grades[j].value;
+    avg1 = sum1 / seq1Grades.length;
+  }
+  
+  if (seq2Grades.length > 0) {
+    var sum2 = 0;
+    for (var j = 0; j < seq2Grades.length; j++) sum2 += seq2Grades[j].value;
+    avg2 = sum2 / seq2Grades.length;
+  }
+  
   return roundToTwo((avg1 + avg2) / 2);
 }
 
@@ -996,9 +658,138 @@ function calculateYearlyAverage(id) {
 }
 
 // ============================================
-// 12. EXPORT DES FONCTIONS GLOBALES
+// 14. EXPORT/IMPORT COMPLET
 // ============================================
 
+function exportCompleteUserData(studentId) {
+  if (!studentId) {
+    var current = getCurrentStudent();
+    if (!current) return null;
+    studentId = current.id;
+  }
+  
+  try {
+    var students = getAllStudents();
+    var student = null;
+    for (var i = 0; i < students.length; i++) {
+      if (students[i].id == studentId) {
+        student = students[i];
+        break;
+      }
+    }
+    
+    var completeData = {
+      version: '4.0',
+      exportDate: new Date().toISOString(),
+      exportType: 'complete',
+      student: student,
+      grades: getStudentGrades(studentId),
+      subjects: {
+        term1: getStudentSelectedSubjects(studentId, 1),
+        term2: getStudentSelectedSubjects(studentId, 2),
+        term3: getStudentSelectedSubjects(studentId, 3)
+      },
+      coeffs: getSubjectCoefficients(studentId),
+      achievements: getStudentAchievements(studentId),
+      goal: parseFloat(localStorage.getItem('smartgrade_goal_' + studentId) || 12),
+      streak: getStudentStreak(studentId),
+      profile: getProfile(studentId),
+      history: JSON.parse(localStorage.getItem('smartgrade_history_' + studentId) || '[]'),
+      notifications: JSON.parse(localStorage.getItem('smartgrade_notifications_' + studentId) || '[]')
+    };
+    
+    return JSON.stringify(completeData, null, 2);
+  } catch(e) {
+    console.error('Export error:', e);
+    return null;
+  }
+}
+
+function importCompleteUserData(studentId, jsonData) {
+  if (!studentId) {
+    var current = getCurrentStudent();
+    if (!current) return { success: false, message: 'No user logged in' };
+    studentId = current.id;
+  }
+  
+  try {
+    var data = typeof jsonData === 'string' ? JSON.parse(jsonData) : jsonData;
+    
+    if (!data.version) {
+      return { success: false, message: 'Invalid backup file format' };
+    }
+    
+    // Restaurer les données
+    if (data.grades) localStorage.setItem('smartgrade_grades_' + studentId, JSON.stringify(data.grades));
+    if (data.subjects) {
+      if (data.subjects.term1) localStorage.setItem('smartgrade_selected_' + studentId + '_term1', JSON.stringify(data.subjects.term1));
+      if (data.subjects.term2) localStorage.setItem('smartgrade_selected_' + studentId + '_term2', JSON.stringify(data.subjects.term2));
+      if (data.subjects.term3) localStorage.setItem('smartgrade_selected_' + studentId + '_term3', JSON.stringify(data.subjects.term3));
+    }
+    if (data.coeffs) localStorage.setItem('smartgrade_coeffs_' + studentId, JSON.stringify(data.coeffs));
+    if (data.achievements) localStorage.setItem('smartgrade_achievements_' + studentId, JSON.stringify(data.achievements));
+    if (data.goal !== undefined) localStorage.setItem('smartgrade_goal_' + studentId, data.goal);
+    if (data.streak) localStorage.setItem('smartgrade_streak_' + studentId, JSON.stringify(data.streak));
+    if (data.profile) localStorage.setItem('smartgrade_profile_' + studentId, JSON.stringify(data.profile));
+    if (data.history) localStorage.setItem('smartgrade_history_' + studentId, JSON.stringify(data.history));
+    if (data.notifications) localStorage.setItem('smartgrade_notifications_' + studentId, JSON.stringify(data.notifications));
+    
+    return { success: true, message: 'Data imported successfully' };
+  } catch(e) {
+    return { success: false, message: 'Invalid data: ' + e.message };
+  }
+}
+
+// ============================================
+// 15. INITIALISATION GLOBALE
+// ============================================
+
+(function initApp() {
+  var savedTheme = getSavedTheme();
+  if (savedTheme) document.body.classList.add('theme-' + savedTheme);
+  
+  var savedFontSize = localStorage.getItem('smartgrade_font') || 'medium';
+  if (savedFontSize) document.body.classList.add('font-' + savedFontSize);
+  
+  initFontFamily();
+  checkNightMode();
+  initParticles();
+  initThemeSelector();
+  initMobileMenu();
+  initHeaderProfile();
+  
+  setInterval(function() {
+    if (manualThemeFlag !== 'dark' && manualThemeFlag !== 'light') {
+      checkNightMode();
+    }
+  }, 60000);
+  
+  window.addEventListener('focus', function() { checkNightMode(); });
+  window.addEventListener('pageshow', function() { initHeaderProfile(); initFontFamily(); checkNightMode(); });
+  document.addEventListener('DOMContentLoaded', function() { initHeaderProfile(); initFontFamily(); checkNightMode(); });
+})();
+
+// ============================================
+// 16. EXPORTER LES FONCTIONS GLOBALES
+// ============================================
+
+window.roundToTwo = roundToTwo;
+window.getGradeLetter = getGradeLetter;
+window.getCurrentTerm = getCurrentTerm;
+window.formatNumber = formatNumber;
+window.getGreeting = getGreeting;
+window.formatDate = formatDate;
+window.getStatusText = getStatusText;
+window.getSequencesForTerm = getSequencesForTerm;
+window.showToast = showToast;
+window.initParticles = initParticles;
+window.initThemeSelector = initThemeSelector;
+window.initMobileMenu = initMobileMenu;
+window.initHeaderProfile = initHeaderProfile;
+window.initFontFamily = initFontFamily;
+window.applyGlobalFont = applyGlobalFont;
+window.closeBottomSheet = closeBottomSheet;
+window.showConfirmDialog = showConfirmDialog;
 window.getCurrentStudent = getCurrentStudent;
 window.getAllStudents = getAllStudents;
 window.getStudentById = getStudentById;
@@ -1009,28 +800,98 @@ window.getStudentSelectedSubjects = getStudentSelectedSubjects;
 window.getSubjectCoefficients = getSubjectCoefficients;
 window.getSubjectCoefficient = getSubjectCoefficient;
 window.getProfile = getProfile;
-window.getFlashcards = getFlashcards;
 window.calculateStudentTermAverage = calculateStudentTermAverage;
 window.calculateSubjectTermAverage = calculateSubjectTermAverage;
 window.calculateYearlyAverage = calculateYearlyAverage;
-window.roundToTwo = roundToTwo;
-window.getGradeLetter = getGradeLetter;
-window.formatDate = formatDate;
-window.showToast = showToast;
-window.initParticles = initParticles;
-window.initThemeSelector = initThemeSelector;
-window.initMobileMenu = initMobileMenu;
-window.initHeaderProfile = initHeaderProfile;
-window.closeBottomSheet = closeBottomSheet;
+window.exportCompleteUserData = exportCompleteUserData;
+window.importCompleteUserData = importCompleteUserData;
 
 // ============================================
-// 13. DEMANDER PERMISSION NOTIFICATIONS
+// 17. FONCTIONS POUR LES PAGES DÉVELOPPEUR
 // ============================================
 
-setTimeout(function() {
-  if ('Notification' in window && Notification.permission === 'default') {
-    Notification.requestPermission();
-  }
-}, 5000);
+// Fonction pour obtenir les matières sélectionnées (alias)
+function getStudentSelectedSubjectsForTerm(studentId, term) {
+  return getStudentSelectedSubjects(studentId, term);
+}
 
-console.log('[Utils.js] Version finale - Prêt');
+// Fonction pour obtenir les coefficients (alias)
+function getSubjectCoefficientsForStudent(studentId) {
+  return getSubjectCoefficients(studentId);
+}
+
+// Fonction pour obtenir les flashcards (alias)
+function getStudentFlashcards(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_flashcards_' + studentId);
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+// Fonction pour obtenir l'historique (alias)
+function getStudentHistory(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_history_' + studentId);
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+// Fonction pour obtenir les notifications (alias)
+function getStudentNotifications(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_notifications_' + studentId);
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+// Fonction pour obtenir les backups (alias)
+function getStudentBackups(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_backup_list_' + studentId);
+    return d ? JSON.parse(d) : [];
+  } catch(e) { return []; }
+}
+
+// Fonction pour obtenir les objectifs détaillés (alias)
+function getStudentGoalsDetail(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_goals_detail_' + studentId);
+    return d ? JSON.parse(d) : {};
+  } catch(e) { return {}; }
+}
+
+// Fonction pour obtenir les compensations (alias)
+function getStudentCompensations(studentId) {
+  try {
+    var d = localStorage.getItem('smartgrade_compensations_' + studentId);
+    return d ? JSON.parse(d) : {};
+  } catch(e) { return {}; }
+}
+
+// Exporter les fonctions développeur
+window.getStudentSelectedSubjectsForTerm = getStudentSelectedSubjectsForTerm;
+window.getSubjectCoefficientsForStudent = getSubjectCoefficientsForStudent;
+window.getStudentFlashcards = getStudentFlashcards;
+window.getStudentHistory = getStudentHistory;
+window.getStudentNotifications = getStudentNotifications;
+window.getStudentBackups = getStudentBackups;
+window.getStudentGoalsDetail = getStudentGoalsDetail;
+window.getStudentCompensations = getStudentCompensations;
+
+// Fonction de debug pour vérifier l'accès développeur
+window.checkDevAccess = function() {
+  try {
+    var stored = localStorage.getItem('smartgrade_current');
+    if (stored) {
+      var user = JSON.parse(stored);
+      if (user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9) {
+        console.log('[Dev] Access granted for', user.name);
+        return true;
+      }
+    }
+  } catch(e) {}
+  console.log('[Dev] Access denied');
+  return false;
+};
+
+console.log('Utils.js chargé - Version corrigée');

@@ -198,7 +198,7 @@
       justify-content: center;
     }
     
-    /* Menu développeur moderne */
+    /* Menu développeur */
     .dev-sidebar {
       margin-top: 16px;
       padding-top: 16px;
@@ -297,7 +297,6 @@
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
         <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         
-        <!-- SECTION DÉVELOPPEUR -->
         <div class="dev-sidebar" id="devSidebar" style="display:none;">
           <div class="dev-sidebar-title"><i class="fas fa-code"></i> Developer Tools</div>
           <div class="dev-nav-links">
@@ -306,6 +305,8 @@
             <a href="dev-stats.html" class="dev-nav-link" id="devStatsLink"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
             <a href="dev-logs.html" class="dev-nav-link" id="devLogsLink"><i class="fas fa-history"></i> System Logs</a>
             <a href="dev-backup.html" class="dev-nav-link" id="devBackupLink"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+            <a href="dev-config.html" class="nav-item" id="devConfigLink"><i class="fas fa-cog"></i> System Config</a>
+            
           </div>
         </div>
         
@@ -444,10 +445,10 @@
         var stored = localStorage.getItem('smartgrade_current');
         if (stored) {
           var user = JSON.parse(stored);
-          if (!(user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9)) {
-            window.location.href = 'dashboard.html';
-          } else {
+          if (user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9) {
             document.getElementById('devSidebar').style.display = 'block';
+          } else {
+            window.location.href = 'dashboard.html';
           }
         } else {
           window.location.href = 'login.html';
@@ -456,6 +457,53 @@
         window.location.href = 'login.html';
       }
     }
+    
+    // ============================================
+    // CALCULER LA MOYENNE D'UN TRIMESTRE - CORRIGÉE
+    // ============================================
+    function calculateStudentTermAverageCorrect(studentId, term) {
+      var grades = getStudentGrades(studentId);
+      var coeffs = getSubjectCoefficients(studentId);
+      var selected = getStudentSelectedSubjects(studentId, term);
+      
+      if (!selected || selected.length === 0) return 0;
+      
+      var totalWeighted = 0;
+      var totalCoeff = 0;
+      var seq1 = (term - 1) * 2 + 1;
+      var seq2 = seq1 + 1;
+      
+      for (var i = 0; i < selected.length; i++) {
+        var subjectId = selected[i];
+        var coeff = coeffs[subjectId] || 5;
+        
+        var seq1Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
+        var seq2Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
+        
+        var avg1 = 0;
+        if (seq1Grades.length > 0) {
+          var sum1 = 0;
+          for (var j = 0; j < seq1Grades.length; j++) sum1 += seq1Grades[j].value;
+          avg1 = sum1 / seq1Grades.length;
+        }
+        
+        var avg2 = 0;
+        if (seq2Grades.length > 0) {
+          var sum2 = 0;
+          for (var j = 0; j < seq2Grades.length; j++) sum2 += seq2Grades[j].value;
+          avg2 = sum2 / seq2Grades.length;
+        }
+        
+        var subjectAvg = (avg1 + avg2) / 2;
+        totalWeighted += subjectAvg * coeff;
+        totalCoeff += coeff;
+      }
+      
+      return totalCoeff > 0 ? roundToTwo(totalWeighted / totalCoeff) : 0;
+    }
+    
+    // Surcharger la fonction globale
+    window.calculateStudentTermAverage = calculateStudentTermAverageCorrect;
     
     function populateStudentSelects() {
       var students = getAllStudents();
@@ -502,40 +550,6 @@
       return val ? parseInt(val) : null;
     }
     
-    function calculateStudentTermAverage(studentId, term) {
-      var grades = getStudentGrades(studentId);
-      var coeffs = getSubjectCoefficients(studentId);
-      var selected = getStudentSelectedSubjects(studentId, term);
-      
-      var subs = DEFAULT_SUBJECTS.filter(function(s) { return selected.indexOf(s.id) !== -1; });
-      var totalWeighted = 0, totalCoeff = 0;
-      var seq1 = (term - 1) * 2 + 1, seq2 = seq1 + 1;
-      
-      for (var i = 0; i < subs.length; i++) {
-        var s = subs[i];
-        var coeff = coeffs[s.id] || 5;
-        var seq1Grades = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq1; });
-        var seq2Grades = grades.filter(function(g) { return g.subjectId === s.id && g.sequenceId === seq2; });
-        var avg1 = seq1Grades.length ? seq1Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq1Grades.length : 0;
-        var avg2 = seq2Grades.length ? seq2Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq2Grades.length : 0;
-        var subjAvg = (avg1 + avg2) / 2;
-        if (subjAvg > 0) {
-          totalWeighted += subjAvg * coeff;
-          totalCoeff += coeff;
-        }
-      }
-      return totalCoeff > 0 ? (totalWeighted / totalCoeff) : 0;
-    }
-    
-    function calculateSubjectTermAverage(subjectId, term, grades) {
-      var seq1 = (term - 1) * 2 + 1, seq2 = seq1 + 1;
-      var seq1Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
-      var seq2Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
-      var avg1 = seq1Grades.length ? seq1Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq1Grades.length : 0;
-      var avg2 = seq2Grades.length ? seq2Grades.reduce(function(a,b) { return a + b.value; }, 0) / seq2Grades.length : 0;
-      return (avg1 + avg2) / 2;
-    }
-    
     function getGradeLetter(a) {
       if (a >= 18) return 'A+';
       if (a >= 16) return 'A';
@@ -556,9 +570,9 @@
         return; 
       }
       
-      var t1 = calculateStudentTermAverage(studentId, 1);
-      var t2 = calculateStudentTermAverage(studentId, 2);
-      var t3 = calculateStudentTermAverage(studentId, 3);
+      var t1 = calculateStudentTermAverageCorrect(studentId, 1);
+      var t2 = calculateStudentTermAverageCorrect(studentId, 2);
+      var t3 = calculateStudentTermAverageCorrect(studentId, 3);
       var yearly = (t1 + t2 + t3) / 3;
       var letter = getGradeLetter(yearly);
       
@@ -573,6 +587,7 @@
       var student = students.find(function(s) { return s.id === studentId; });
       var resultDiv = document.getElementById('subjectResult');
       var subject = DEFAULT_SUBJECTS.find(function(s) { return s.id === subjectId; });
+      
       if (!student || !subject) { 
         resultDiv.innerHTML = '<div class="result-box error"><i class="fas fa-exclamation-triangle"></i> Please select a student and subject</div>'; 
         return; 
@@ -647,9 +662,9 @@
         return; 
       }
       
-      var t1 = calculateStudentTermAverage(studentId, 1);
-      var t2 = calculateStudentTermAverage(studentId, 2);
-      var t3 = calculateStudentTermAverage(studentId, 3);
+      var t1 = calculateStudentTermAverageCorrect(studentId, 1);
+      var t2 = calculateStudentTermAverageCorrect(studentId, 2);
+      var t3 = calculateStudentTermAverageCorrect(studentId, 3);
       var currentYearly = (t1 + t2 + t3) / 3;
       var currentTotal = t1 + t2 + t3;
       var needed = (desiredAvg * 3 - currentTotal) / remainingCoeff;
@@ -702,6 +717,12 @@
     initMobileMenu();
     initThemeSelector();
     applyDevFont();
+    
+    window.switchTab = switchTab;
+    window.calculateStudentAverages = calculateStudentAverages;
+    window.calculateSubjectAnalysis = calculateSubjectAnalysis;
+    window.calculateNeededGrade = calculateNeededGrade;
+    window.calculateRequiredGrade = calculateRequiredGrade;
     
     var fontObserver = new MutationObserver(function() { applyDevFont(); });
     fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });

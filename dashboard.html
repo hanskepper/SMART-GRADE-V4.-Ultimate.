@@ -15,6 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <meta name="theme-color" content="#0f3b48">
   <style>
+    /* Styles supplémentaires pour le dashboard */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -80,19 +81,22 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px;
-      background: rgba(0,0,0,0.03);
+      padding: 14px 16px;
+      background: var(--card-bg);
       border-radius: 14px;
       margin-bottom: 8px;
       cursor: pointer;
-      border-left: 3px solid transparent;
-      transition: all 0.2s;
+      border: 1px solid var(--border);
+      transition: all 0.2s ease;
     }
     .subject-card:hover {
       transform: translateX(5px);
       border-color: var(--primary);
+      background: rgba(15,59,72,0.05);
     }
-    .subject-info { flex: 1; }
+    .subject-info {
+      flex: 1;
+    }
     .subject-name {
       font-weight: 600;
       font-size: 0.85rem;
@@ -103,7 +107,6 @@
     .subject-avg {
       font-weight: 800;
       font-size: 1.1rem;
-      color: var(--primary);
     }
     .btn-group {
       display: flex;
@@ -126,7 +129,9 @@
       width: 100%;
       transition: all 0.2s;
     }
-    .btn:active { transform: scale(0.97); }
+    .btn:active {
+      transform: scale(0.97);
+    }
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
@@ -260,7 +265,9 @@
       align-items: center;
       justify-content: center;
     }
-    .cmd-overlay.show { display: flex; }
+    .cmd-overlay.show {
+      display: flex;
+    }
     .cmd-box {
       background: var(--card-bg);
       border-radius: 20px;
@@ -299,11 +306,18 @@
       border-color: var(--primary);
     }
     @media (min-width: 768px) {
-      .btn-group { flex-direction: row; }
+      .btn-group {
+        flex-direction: row;
+      }
     }
-    @media (max-width: 500px) {
-      .stats-grid, .term-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-      .stat-value { font-size: 1.4rem; }
+    @media (max-width: 550px) {
+      .stats-grid, .term-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .stat-value {
+        font-size: 1.4rem;
+      }
     }
   </style>
 </head>
@@ -354,20 +368,19 @@
         <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
         <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
         <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
-        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
+        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms</a>
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
-        
-        <!-- SECTION DÉVELOPPEUR - UNIQUEMENT POUR HANS KEPPER (pas d'espace vide) -->
-        <div id="devSidebarContainer" style="display:none;">
-          <div style="height:1px; background:var(--border); margin:12px 0;"></div>
+        <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <div id="devSidebarContainer" style="display:none; margin-top:16px; padding-top:16px; border-top:2px solid var(--primary);">
           <div style="font-size:0.7rem; font-weight:700; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
             <i class="fas fa-code"></i> Developer Tools
           </div>
-          <a href="dev-calculator.html" class="nav-item" id="devCalculatorLink"><i class="fas fa-calculator"></i> Calculator</a>
-          <a href="dev-database.html" class="nav-item" id="devDatabaseLink"><i class="fas fa-database"></i> Database</a>
-          <a href="dev-stats.html" class="nav-item" id="devStatsLink"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
-          <a href="dev-logs.html" class="nav-item" id="devLogsLink"><i class="fas fa-history"></i> System Logs</a>
-          <a href="dev-backup.html" class="nav-item" id="devBackupLink"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+          <a href="dev-calculator.html" class="nav-item"><i class="fas fa-calculator"></i> Calculator</a>
+          <a href="dev-database.html" class="nav-item"><i class="fas fa-database"></i> Database</a>
+          <a href="dev-stats.html" class="nav-item"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
+          <a href="dev-logs.html" class="nav-item"><i class="fas fa-history"></i> System Logs</a>
+          <a href="dev-backup.html" class="nav-item"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+          <a href="dev-config.html" class="nav-item" id="devConfigLink"><i class="fas fa-cog"></i> System Config</a>
         </div>
         
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -477,6 +490,7 @@
   <script>
     var pc = null;
     var cz = 1;
+    
     var allSubs = [
       {id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},
       {id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},
@@ -517,9 +531,6 @@
       {q:"You are stronger than you think.",a:"A.A. Milne"}
     ];
     
-    // ============================================
-    // AFFICHER LIENS DÉVELOPPEUR (UNIQUEMENT POUR HANS KEPPER)
-    // ============================================
     function showDeveloperLinks() {
       try {
         var stored = localStorage.getItem('smartgrade_current');
@@ -533,64 +544,38 @@
       } catch(e) {}
     }
     
-    function getChartColors() {
-      var isDark = document.body.classList.contains('night-mode');
-      if (isDark) {
-        return { gridColor: 'rgba(255,255,255,0.15)', textColor: '#e0e0e0', lineColor: '#00ffff', fillColor: 'rgba(0,255,255,0.1)', pointColor: '#00ffff' };
-      } else {
-        return { gridColor: 'rgba(0,0,0,0.1)', textColor: '#1a2a3a', lineColor: '#0f3b48', fillColor: 'rgba(15,59,72,0.1)', pointColor: '#0f3b48' };
-      }
-    }
-    
-    function refreshChartColors() {
-      if (pc) {
-        var colors = getChartColors();
-        pc.data.datasets[0].borderColor = colors.lineColor;
-        pc.data.datasets[0].backgroundColor = colors.fillColor;
-        pc.data.datasets[0].pointBackgroundColor = colors.pointColor;
-        if (pc.options && pc.options.scales) {
-          if (pc.options.scales.x) {
-            pc.options.scales.x.ticks.color = colors.textColor;
-            pc.options.scales.x.grid.color = colors.gridColor;
-          }
-          if (pc.options.scales.y) {
-            pc.options.scales.y.ticks.color = colors.textColor;
-            pc.options.scales.y.grid.color = colors.gridColor;
-          }
-        }
-        pc.update();
-      }
-    }
-    
     function calcTermAvg(sid, term) {
       var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
-      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + term) || '[1,2,3,4,5,6,7,8,9,10,11,12,13,14]');
+      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + term) || '[]');
       var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
-      var subs = [];
-      for (var i = 0; i < allSubs.length; i++) {
-        if (selected.indexOf(allSubs[i].id) !== -1) {
-          var s = allSubs[i];
-          s.coefficient = coeffs[s.id] || 5;
-          subs.push(s);
-        }
-      }
-      var tw = 0, tc = 0;
-      for (var i = 0; i < subs.length; i++) {
-        var s = subs[i];
-        var s1 = (term - 1) * 2 + 1;
-        var s2 = s1 + 1;
+      
+      if (!selected || selected.length === 0) return 0;
+      
+      var totalWeighted = 0;
+      var totalCoeff = 0;
+      var seq1 = (term - 1) * 2 + 1;
+      var seq2 = seq1 + 1;
+      
+      for (var i = 0; i < selected.length; i++) {
+        var subjectId = selected[i];
+        var coeff = coeffs[subjectId] || 5;
+        
         var n1 = [], n2 = [];
         for (var k = 0; k < grades.length; k++) {
-          if (grades[k].subjectId === s.id && grades[k].sequenceId === s1) n1.push(grades[k].value);
-          if (grades[k].subjectId === s.id && grades[k].sequenceId === s2) n2.push(grades[k].value);
+          if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq1) n1.push(grades[k].value);
+          if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq2) n2.push(grades[k].value);
         }
+        
         var a1 = 0, a2 = 0;
-        if (n1.length > 0) { var sum = 0; for (var j = 0; j < n1.length; j++) sum += n1[j]; a1 = sum / n1.length; }
-        if (n2.length > 0) { var sum = 0; for (var j = 0; j < n2.length; j++) sum += n2[j]; a2 = sum / n2.length; }
-        tw += ((a1 + a2) / 2) * s.coefficient;
-        tc += s.coefficient;
+        if (n1.length > 0) { var sum1 = 0; for (var j = 0; j < n1.length; j++) sum1 += n1[j]; a1 = sum1 / n1.length; }
+        if (n2.length > 0) { var sum2 = 0; for (var j = 0; j < n2.length; j++) sum2 += n2[j]; a2 = sum2 / n2.length; }
+        
+        var subjectAvg = (a1 + a2) / 2;
+        totalWeighted += subjectAvg * coeff;
+        totalCoeff += coeff;
       }
-      return tc > 0 ? Math.round((tw / tc) * 100) / 100 : 0;
+      
+      return totalCoeff > 0 ? Math.round((totalWeighted / totalCoeff) * 100) / 100 : 0;
     }
     
     function loadDashboard() {
@@ -607,7 +592,7 @@
       document.getElementById('motivationAuthor').innerHTML = '- ' + q.a;
       
       var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
-      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + getCurrentTerm()) || '[1,2,3,4,5,6,7,8,9,10,11,12,13,14]');
+      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + getCurrentTerm()) || '[]');
       var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
       var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + sid) || '{}');
       
@@ -643,7 +628,9 @@
       document.getElementById('overallAvg').innerHTML = yearly.toFixed(2);
       
       var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + sid) || '[]');
-      document.getElementById('achievementsCount').innerHTML = ach.filter(function(a) { return a.unlocked; }).length;
+      var unlockedCount = 0;
+      for (var i = 0; i < ach.length; i++) if (ach[i].unlocked) unlockedCount++;
+      document.getElementById('achievementsCount').innerHTML = unlockedCount;
       
       var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + sid) || 12);
       document.getElementById('goalValue').innerHTML = goal.toFixed(2);
@@ -653,30 +640,73 @@
         gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
         gs.className = 'goal-status achieved'; 
       } else { 
-        gs.innerHTML = 'Need +' + (goal - yearly).toFixed(2) + ' to reach goal'; 
+        var diff = (goal - yearly).toFixed(2);
+        gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
         gs.className = 'goal-status not-achieved'; 
       }
       
+      // Calcul des moyennes annuelles des matières
       var subPrev = [];
       for (var i = 0; i < subs.length; i++) {
         var s = subs[i];
         var allSG = grades.filter(function(g) { return g.subjectId === s.id; });
-        var yearlySubjectAvg = allSG.length ? roundToTwo(allSG.reduce(function(a, b) { return a + b; }, 0) / allSG.length) : 0;
+        var yearlySubjectAvg = 0;
+        if (allSG.length > 0) {
+          var sum = 0;
+          for (var j = 0; j < allSG.length; j++) sum += allSG[j].value;
+          yearlySubjectAvg = roundToTwo(sum / allSG.length);
+        }
         subPrev.push({ id: s.id, name: s.name, icon: s.icon, avg: yearlySubjectAvg });
       }
       subPrev.sort(function(a, b) { return b.avg - a.avg; });
       subPrev = subPrev.slice(0, 5);
+      
       document.getElementById('subjectsPreview').innerHTML = subPrev.map(function(s) {
-        return '<div class="subject-card" onclick="location=\'subject-detail.html?id=' + s.id + '\'" style="' + (s.avg < 10 && s.avg > 0 ? 'border-left:4px solid #e74c3c;' : '') + '"><div class="subject-info"><div class="subject-name"><i class="fas ' + s.icon + '"></i> ' + s.name + '</div></div><div class="subject-avg">' + s.avg.toFixed(2) + '</div></div>';
+        var avgColor = s.avg >= 14 ? '#2ecc71' : (s.avg >= 12 ? '#3498db' : (s.avg >= 10 ? '#f39c12' : '#e74c3c'));
+        return '<div class="subject-card" onclick="location=\'subject-detail.html?id=' + s.id + '\'">' +
+          '<div class="subject-info">' +
+            '<div class="subject-name"><i class="fas ' + s.icon + '" style="color:' + avgColor + ';"></i> ' + s.name + '</div>' +
+          '</div>' +
+          '<div class="subject-avg" style="color:' + avgColor + ';">' + s.avg.toFixed(2) + '</div>' +
+        '</div>';
       }).join('');
       
       buildChart(t1, t2, t3, goal);
-      loadHistory();
+      loadHistory(sid);
       checkStreakMilestone(sid);
       checkAndNotifyAchievements(sid);
       if (typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(sid); }
       
       showDeveloperLinks();
+    }
+    
+    function getChartColors() {
+      var isDark = document.body.classList.contains('night-mode');
+      if (isDark) {
+        return { gridColor: 'rgba(255,255,255,0.15)', textColor: '#e0e0e0', lineColor: '#00ffff', fillColor: 'rgba(0,255,255,0.1)', pointColor: '#00ffff' };
+      } else {
+        return { gridColor: 'rgba(0,0,0,0.1)', textColor: '#1a2a3a', lineColor: '#0f3b48', fillColor: 'rgba(15,59,72,0.1)', pointColor: '#0f3b48' };
+      }
+    }
+    
+    function refreshChartColors() {
+      if (pc) {
+        var colors = getChartColors();
+        pc.data.datasets[0].borderColor = colors.lineColor;
+        pc.data.datasets[0].backgroundColor = colors.fillColor;
+        pc.data.datasets[0].pointBackgroundColor = colors.pointColor;
+        if (pc.options && pc.options.scales) {
+          if (pc.options.scales.x) {
+            pc.options.scales.x.ticks.color = colors.textColor;
+            pc.options.scales.x.grid.color = colors.gridColor;
+          }
+          if (pc.options.scales.y) {
+            pc.options.scales.y.ticks.color = colors.textColor;
+            pc.options.scales.y.grid.color = colors.gridColor;
+          }
+        }
+        pc.update();
+      }
     }
     
     function buildChart(t1, t2, t3, goal) { 
@@ -717,7 +747,8 @@
         gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
         gs.className = 'goal-status achieved'; 
       } else { 
-        gs.innerHTML = 'Need +' + (g - y).toFixed(2) + ' to reach goal'; 
+        var diff = (g - y).toFixed(2);
+        gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
         gs.className = 'goal-status not-achieved'; 
       } 
       buildChart(t1, t2, t3, g); 
@@ -732,15 +763,17 @@
       if (l) l.textContent = Math.round(cz * 100) + '%'; 
     }
     
-    function loadHistory() { 
-      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); 
-      if (!c) return; 
-      var h = JSON.parse(localStorage.getItem('smartgrade_history_' + c.id) || '[]'); 
+    function loadHistory(sid) { 
+      var h = JSON.parse(localStorage.getItem('smartgrade_history_' + sid) || '[]'); 
       h = h.slice(0, 10); 
       var el = document.getElementById('historyList'); 
-      el.innerHTML = h.length === 0 ? '<p class="text-center" style="color:var(--text-light);">No activity yet</p>' : h.map(function(x) { 
-        return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + (x.action || 'Activity') + '<span class="history-time">' + formatDate(x.date) + '</span></div>'; 
-      }).join(''); 
+      if (h.length === 0) {
+        el.innerHTML = '<p class="text-center" style="color:var(--text-light);">No activity yet</p>';
+      } else {
+        el.innerHTML = h.map(function(x) { 
+          return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + (x.action || 'Activity') + '<span class="history-time">' + formatDate(x.date) + '</span></div>'; 
+        }).join('');
+      }
     }
     
     function openCmd() { document.getElementById('cmdOverlay').classList.add('show'); document.getElementById('cmdInput').value = ''; document.getElementById('cmdResult').style.display = 'none'; setTimeout(function() { document.getElementById('cmdInput').focus(); }, 300); }

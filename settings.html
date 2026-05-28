@@ -14,41 +14,144 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .subjects-beautiful-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 500px; overflow-y: auto; padding: 2px; }
-    .subject-beautiful-card { background: var(--card-bg); border: 2px solid var(--border); border-radius: 16px; padding: 12px; cursor: pointer; transition: all 0.25s ease; display: flex; align-items: center; gap: 10px; }
+    .subjects-beautiful-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      max-height: 500px;
+      overflow-y: auto;
+      padding: 2px;
+    }
+    .subject-beautiful-card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
     .subject-beautiful-card:active { transform: scale(0.97); }
     .subject-beautiful-card.selected { border-color: var(--primary); background: rgba(15,59,72,0.04); }
     .subject-beautiful-card.selected .subject-check-circle { background: var(--primary); color: white; border-color: var(--primary); }
     .subject-beautiful-card.selected .subject-check-circle i { display: block; }
-    .subject-icon-circle { width: 42px; height: 42px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; flex-shrink: 0; color: white; }
+    .subject-icon-circle {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      flex-shrink: 0;
+      color: white;
+    }
     .subject-info-flex { flex: 1; min-width: 0; }
     .subject-name-beautiful { font-weight: 600; font-size: 0.75rem; line-height: 1.2; margin-bottom: 4px; }
-    .coeff-row-modern { display: flex; align-items: center; gap: 8px; background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 30px; width: fit-content; }
+    .coeff-row-modern {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,0,0,0.03);
+      padding: 4px 8px;
+      border-radius: 30px;
+      width: fit-content;
+    }
     .coeff-row-modern span { font-size: 0.6rem; color: var(--text-light); font-weight: 500; }
     .coeff-value-modern { font-weight: 800; font-size: 0.85rem; color: var(--primary); min-width: 28px; text-align: center; }
-    .coeff-btn-modern { width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--card-bg); color: var(--text); font-weight: 700; font-size: 0.9rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+    .coeff-btn-modern {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: none;
+      background: var(--card-bg);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
     .coeff-btn-modern.minus { background: rgba(231,76,60,0.12); color: #e74c3c; }
     .coeff-btn-modern.plus { background: rgba(46,204,113,0.12); color: #27ae60; }
-    .subject-check-circle { width: 28px; height: 28px; border-radius: 50%; border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.7rem; }
+    .subject-check-circle {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+    }
     .subject-check-circle i { display: none; }
-    .subjects-counter { text-align: center; padding: 12px; border-radius: 14px; margin-top: 12px; font-weight: 600; font-size: 0.8rem; }
+    .subjects-counter {
+      text-align: center;
+      padding: 12px;
+      border-radius: 14px;
+      margin-top: 12px;
+      font-weight: 600;
+      font-size: 0.8rem;
+    }
     .subjects-counter.valid { background: rgba(46,204,113,0.1); color: #27ae60; border: 1px solid rgba(46,204,113,0.3); }
     .subjects-counter.invalid { background: rgba(231,76,60,0.1); color: #e74c3c; border: 1px solid rgba(231,76,60,0.3); }
-    .term-selector-row { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-    .term-btn-modern { flex: 1; min-width: 100px; padding: 12px 16px; border-radius: 60px; text-align: center; cursor: pointer; font-weight: 600; font-size: 0.75rem; background: rgba(0,0,0,0.03); border: 2px solid var(--border); color: var(--text); transition: all 0.25s ease; }
+    .term-selector-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .term-btn-modern {
+      flex: 1;
+      min-width: 100px;
+      padding: 12px 16px;
+      border-radius: 60px;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.75rem;
+      background: rgba(0,0,0,0.03);
+      border: 2px solid var(--border);
+      color: var(--text);
+      transition: all 0.25s ease;
+    }
     .term-btn-modern.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
     .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .danger-zone { border: 1px solid rgba(220,53,69,0.3); background: rgba(220,53,69,0.04); border-radius: 20px; padding: 16px; }
-    .toggle-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 10px; }
-    .toggle-switch { position: relative; display: inline-block; width: 52px; height: 26px; }
-    .toggle-switch input { opacity: 0; width: 0; height: 0; }
-    .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: 0.3s; border-radius: 34px; }
-    .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: 0.3s; border-radius: 50%; }
-    input:checked + .toggle-slider { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
-    input:checked + .toggle-slider:before { transform: translateX(26px); }
-    .status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 20px; font-size: 0.65rem; font-weight: 600; margin-top: 10px; }
-    .status-enabled { background: rgba(46,204,113,0.15); color: #27ae60; }
-    .status-disabled { background: rgba(231,76,60,0.15); color: #e74c3c; }
+    .update-result-area { margin-top: 16px; display: none; }
+    .update-result-message { padding: 12px; border-radius: 12px; font-size: 0.7rem; }
+    .update-progress {
+      margin-top: 12px;
+      display: none;
+    }
+    .update-progress-bar {
+      height: 6px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .update-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      transition: width 0.3s;
+    }
+    .version-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      margin-left: 8px;
+    }
     .sc-1 { background: linear-gradient(135deg,#3498db,#2980b9); }
     .sc-2 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
     .sc-3 { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
@@ -63,62 +166,124 @@
     .sc-12 { background: linear-gradient(135deg,#8e44ad,#7d3c98); }
     .sc-13 { background: linear-gradient(135deg,#2980b9,#1a5276); }
     .sc-14 { background: linear-gradient(135deg,#f39c12,#d68910); }
-    .update-result-area { margin-top: 16px; display: none; }
-    .update-result-message { padding: 12px; border-radius: 12px; font-size: 0.7rem; }
-    @media (max-width: 550px) { .subjects-beautiful-grid { grid-template-columns: 1fr; } .term-btn-modern { min-width: 80px; padding: 10px 12px; font-size: 0.7rem; } }
+    @media (max-width: 550px) {
+      .subjects-beautiful-grid { grid-template-columns: 1fr; }
+      .term-btn-modern { min-width: 80px; padding: 10px 12px; font-size: 0.7rem; }
+    }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
+    
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-sliders-h"></i><span>SETTINGS</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <a href="profile.html">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
+    
     <div class="sheet-overlay" id="sheetOverlay"></div>
-    <div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
-    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a><a href="settings.html" class="nav-item active"><i class="fas fa-sliders-h"></i> Settings</a><a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="settings.html" class="nav-item active"><i class="fas fa-sliders-h"></i> Settings</a>
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
     <div class="overlay" id="overlay"></div>
+    
     <main class="main-content">
       
-      <!-- UPDATE CHECK SECTION -->
+      <!-- ============================================ -->
+      <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
+      <!-- ============================================ -->
       <div class="glass-card" id="updateCheckSection">
-        <h3><i class="fab fa-github"></i> Check for Updates</h3>
-        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;"><i class="fas fa-info-circle"></i> Check if a new version of SMART GRADE is available on GitHub.</p>
+        <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
+        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
+          <i class="fas fa-info-circle"></i> Check if a new version of SMART GRADE is available on GitHub.
+        </p>
         <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
-          <button id="checkUpdateBtn" class="btn btn-primary" style="flex:1;"><i class="fas fa-sync-alt"></i> Check for Updates</button>
-          <div id="updateVersionInfo" style="font-size:0.6rem; color:var(--text-light);">Current version: <strong id="currentAppVersion">--</strong></div>
+          <button id="checkUpdateBtn" class="btn btn-primary" style="flex:1;">
+            <i class="fas fa-sync-alt"></i> Check for Updates
+          </button>
+          <div id="updateVersionInfo" style="font-size:0.6rem; color:var(--text-light);">
+            Current: <strong id="currentAppVersion">--</strong>
+          </div>
         </div>
-        <div id="updateResultArea" class="update-result-area"><div id="updateResultMessage" class="update-result-message"></div></div>
+        
+        <div id="updateResultArea" class="update-result-area">
+          <div id="updateResultMessage" class="update-result-message"></div>
+          <div id="updateProgress" class="update-progress">
+            <div style="font-size:0.6rem; margin-bottom:4px;"><i class="fas fa-download"></i> <span id="updateProgressText">Downloading...</span></div>
+            <div class="update-progress-bar"><div class="update-progress-fill" id="updateProgressFill"></div></div>
+          </div>
+        </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- SUBJECTS BY TERM -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
-        <div class="term-selector-row" id="termSelector"><div class="term-btn-modern" data-term="1"><i class="fas fa-1"></i> Term 1</div><div class="term-btn-modern" data-term="2"><i class="fas fa-2"></i> Term 2</div><div class="term-btn-modern" data-term="3"><i class="fas fa-3"></i> Term 3</div></div>
+        <div class="term-selector-row" id="termSelector">
+          <div class="term-btn-modern" data-term="1"><i class="fas fa-1"></i> Term 1</div>
+          <div class="term-btn-modern" data-term="2"><i class="fas fa-2"></i> Term 2</div>
+          <div class="term-btn-modern" data-term="3"><i class="fas fa-3"></i> Term 3</div>
+        </div>
         <div class="subjects-beautiful-grid" id="settingsSubjectsList"></div>
         <div class="subjects-counter valid" id="settingsCounter"><span id="counterText">0 subjects</span></div>
         <div id="compAlert" style="display:none;padding:12px;border-radius:12px;margin-top:8px;"></div>
-        <div style="display:flex;gap:8px;margin-top:12px;"><button class="btn btn-primary" onclick="saveSubjects()" style="flex:1;"><i class="fas fa-save"></i> Save Subjects</button><button class="btn btn-secondary" id="compBtn" onclick="showCompensation()" style="display:none;flex:1;"><i class="fas fa-balance-scale"></i> Compensate</button></div>
+        <div style="display:flex;gap:8px;margin-top:12px;">
+          <button class="btn btn-primary" onclick="saveSubjects()" style="flex:1;"><i class="fas fa-save"></i> Save Subjects</button>
+          <button class="btn btn-secondary" id="compBtn" onclick="showCompensation()" style="display:none;flex:1;"><i class="fas fa-balance-scale"></i> Compensate</button>
+        </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- PROFILE INFO -->
-      <div class="glass-card"><h3><i class="fas fa-user"></i> Profile Info</h3><div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div><div class="info-row"><div class="info-label">Number</div><div class="info-value" id="profileNumber">--</div></div><div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div></div>
+      <!-- ============================================ -->
+      <div class="glass-card">
+        <h3><i class="fas fa-user"></i> Profile Info</h3>
+        <div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div>
+        <div class="info-row"><div class="info-label">Number</div><div class="info-value" id="profileNumber">--</div></div>
+        <div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div>
+      </div>
       
+      <!-- ============================================ -->
       <!-- CHANGE PIN -->
-      <div class="glass-card"><h3><i class="fas fa-key"></i> Change PIN</h3><button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button></div>
+      <!-- ============================================ -->
+      <div class="glass-card">
+        <h3><i class="fas fa-key"></i> Change PIN</h3>
+        <button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button>
+      </div>
       
+      <!-- ============================================ -->
       <!-- FINGERPRINT -->
-      <div class="glass-card"><h3><i class="fas fa-fingerprint"></i> Fingerprint</h3><div id="fingerprintSection"></div></div>
+      <!-- ============================================ -->
+      <div class="glass-card">
+        <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
+        <div id="fingerprintSection"></div>
+      </div>
       
-      <!-- AUTO BACKUP -->
-      <div class="glass-card"><h3><i class="fas fa-clock"></i> Automatic Backup</h3><div class="toggle-container"><span class="toggle-label"><i class="fas fa-bell"></i> Enable Auto-Backup</span><label class="toggle-switch"><input type="checkbox" id="autoBackupToggle"><span class="toggle-slider"></span></label></div><p style="font-size:0.6rem;color:var(--text-light);"><i class="fas fa-info-circle"></i> When enabled, your data is automatically backed up every hour.</p><div id="autoBackupStatus" class="status-badge status-disabled"><i class="fas fa-pause"></i> Auto-Backup: OFF</div></div>
-      
-      <!-- JSON BACKUP - MODIFIÉ POUR EXPORT COMPLET -->
+      <!-- ============================================ -->
+      <!-- JSON BACKUP (Utilise les nouvelles fonctions) -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-file-code"></i> JSON Backup</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;"><i class="fas fa-info-circle"></i> Export your data as a JSON file or import a previously saved backup.</p>
@@ -129,13 +294,40 @@
         </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- DANGER ZONE -->
-      <div class="danger-zone"><h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3><button class="btn btn-danger" onclick="resetAllGrades()" style="width:100%;margin-bottom:8px;"><i class="fas fa-trash-alt"></i> Reset All Grades</button><button class="btn btn-danger" onclick="deleteAccount()" style="width:100%;"><i class="fas fa-user-slash"></i> Delete Account</button></div>
+      <!-- ============================================ -->
+      <div class="danger-zone">
+        <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
+        <button class="btn btn-danger" onclick="resetAllGrades()" style="width:100%;margin-bottom:8px;"><i class="fas fa-trash-alt"></i> Reset All Grades</button>
+        <button class="btn btn-danger" onclick="deleteAccount()" style="width:100%;"><i class="fas fa-user-slash"></i> Delete Account</button>
+      </div>
+      
     </main>
   </div>
   
-  <div id="pinModal" class="modal"><div class="modal-content"><i class="fas fa-lock" style="font-size:40px;color:var(--primary);"></i><h3>Change PIN</h3><input type="password" id="oldPin" placeholder="Current PIN" maxlength="4" inputmode="numeric"><input type="password" id="newPin" placeholder="New PIN (4 digits)" maxlength="4" inputmode="numeric"><input type="password" id="confirmNewPin" placeholder="Confirm PIN" maxlength="4" inputmode="numeric"><div class="modal-buttons"><button class="btn-cancel" onclick="closePinModal()">Cancel</button><button class="btn-confirm" onclick="changePin()">Save</button></div></div></div>
-  <div id="compModal" class="modal"><div class="modal-content"><i class="fas fa-balance-scale" style="font-size:40px;color:var(--primary);"></i><h3>Confirm Compensation</h3><div id="compConfirmInfo"></div><input type="password" id="compPin" placeholder="Enter PIN" maxlength="4" inputmode="numeric"><div class="modal-buttons"><button class="btn-cancel" onclick="closeCompModal()">Cancel</button><button class="btn-confirm" onclick="confirmCompensation()">Confirm</button></div></div></div>
+  <!-- MODAL PIN -->
+  <div id="pinModal" class="modal">
+    <div class="modal-content">
+      <i class="fas fa-lock" style="font-size:40px;color:var(--primary);"></i>
+      <h3>Change PIN</h3>
+      <input type="password" id="oldPin" placeholder="Current PIN" maxlength="4" inputmode="numeric">
+      <input type="password" id="newPin" placeholder="New PIN (4 digits)" maxlength="4" inputmode="numeric">
+      <input type="password" id="confirmNewPin" placeholder="Confirm PIN" maxlength="4" inputmode="numeric">
+      <div class="modal-buttons"><button class="btn-cancel" onclick="closePinModal()">Cancel</button><button class="btn-confirm" onclick="changePin()">Save</button></div>
+    </div>
+  </div>
+  
+  <!-- MODAL COMPENSATION -->
+  <div id="compModal" class="modal">
+    <div class="modal-content">
+      <i class="fas fa-balance-scale" style="font-size:40px;color:var(--primary);"></i>
+      <h3>Confirm Compensation</h3>
+      <div id="compConfirmInfo"></div>
+      <input type="password" id="compPin" placeholder="Enter PIN" maxlength="4" inputmode="numeric">
+      <div class="modal-buttons"><button class="btn-cancel" onclick="closeCompModal()">Cancel</button><button class="btn-confirm" onclick="confirmCompensation()">Confirm</button></div>
+    </div>
+  </div>
   
   <div id="toastContainer" class="toast-container"></div>
   
@@ -146,93 +338,257 @@
   <script src="js/app.js"></script>
   
   <script>
-    var currentUser = null, currentTerm = 1, subjectToRemove = null, subjectNameToRemove = null, autoBackupInterval = null;
-    var SUBJECT_COLORS = ['sc-1','sc-2','sc-3','sc-4','sc-5','sc-6','sc-7','sc-8','sc-9','sc-10','sc-11','sc-12','sc-13','sc-14'];
-    var DEFAULT_SUBJECTS = [{id:1,name:"COMPUTER SCIENCES",code:"CS",icon:"fa-laptop-code"},{id:2,name:"MATHEMATICS",code:"MATH",icon:"fa-square-root-variable"},{id:3,name:"CHEMISTRY",code:"CHM",icon:"fa-flask"},{id:4,name:"HUMAN BIOLOGY",code:"HBIO",icon:"fa-dna"},{id:5,name:"GEOLOGY",code:"GEL",icon:"fa-mountain"},{id:6,name:"PHYSICS",code:"PHY",icon:"fa-atom"},{id:7,name:"ADDITIONAL MATHEMATICS",code:"AMATH",icon:"fa-calculator"},{id:8,name:"BIOLOGY",code:"BIO",icon:"fa-leaf"},{id:9,name:"ECONOMICS",code:"ECO",icon:"fa-chart-line"},{id:10,name:"ENGLISH LANGUAGE",code:"ENG",icon:"fa-language"},{id:11,name:"GEOGRAPHY",code:"GEO",icon:"fa-earth-africa"},{id:12,name:"CITIZENSHIP",code:"CIV",icon:"fa-landmark"},{id:13,name:"FRENCH",code:"FR",icon:"fa-flag"},{id:14,name:"FOOD AND NUTRITION",code:"FDN",icon:"fa-apple-whole"}];
+    // ============================================
+    // CONFIGURATION GITHUB POUR LES MISES À JOUR
+    // ============================================
     
-    // RECHERCHE MISE À JOUR GITHUB
-    var GITHUB_USER = 'hanskepper', GITHUB_REPO = 'SMART-GRADE-V4.-Ultimate.', GITHUB_API_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/commits?per_page=1';
-    function getLocalVersion() { var local = localStorage.getItem('smartgrade_app_version'); if (!local) { local = '1.0.0'; localStorage.setItem('smartgrade_app_version', local); } return local; }
-    function setLocalVersion(version) { localStorage.setItem('smartgrade_app_version', version); document.getElementById('currentAppVersion').innerHTML = version; }
-    function displayCurrentVersion() { document.getElementById('currentAppVersion').innerHTML = getLocalVersion(); }
+    var GITHUB_USER = 'hanskepper';
+    var GITHUB_REPO = 'SMART-GRADE-V4.-Ultimate.';
+    var GITHUB_API_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/commits?per_page=1';
+    var GITHUB_RELEASES_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest';
+    
+    var pendingUpdate = null;
+    var currentAppVersion = '4.0.3';
+    
+    function getLocalVersion() {
+      var local = localStorage.getItem('smartgrade_app_version');
+      if (!local) {
+        local = currentAppVersion;
+        localStorage.setItem('smartgrade_app_version', local);
+      }
+      return local;
+    }
+    
+    function setLocalVersion(version) {
+      localStorage.setItem('smartgrade_app_version', version);
+      document.getElementById('currentAppVersion').innerHTML = version;
+      document.getElementById('currentVersionTag').innerHTML = 'v' + version;
+    }
+    
+    function displayCurrentVersion() {
+      var version = getLocalVersion();
+      document.getElementById('currentAppVersion').innerHTML = version;
+      document.getElementById('currentVersionTag').innerHTML = 'v' + version;
+    }
+    
     async function checkForRealUpdate() {
-      var btn = document.getElementById('checkUpdateBtn'), resultArea = document.getElementById('updateResultArea'), resultMsg = document.getElementById('updateResultMessage');
+      var btn = document.getElementById('checkUpdateBtn');
+      var resultArea = document.getElementById('updateResultArea');
+      var resultMsg = document.getElementById('updateResultMessage');
+      var progressDiv = document.getElementById('updateProgress');
+      
       if (!btn) return;
-      var originalText = btn.innerHTML; btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking GitHub...'; btn.disabled = true;
-      resultArea.style.display = 'block'; resultMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting to GitHub API...'; resultMsg.style.background = 'rgba(52,152,219,0.1)'; resultMsg.style.color = '#3498db';
+      
+      var originalText = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Checking GitHub...';
+      btn.disabled = true;
+      
+      resultArea.style.display = 'block';
+      progressDiv.style.display = 'none';
+      resultMsg.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Connecting to GitHub API...';
+      resultMsg.style.background = 'rgba(52,152,219,0.1)';
+      resultMsg.style.color = '#3498db';
+      
       try {
-        var response = await fetch(GITHUB_API_URL, { headers: { 'Accept': 'application/vnd.github.v3+json' }, cache: 'no-store' });
-        if (!response.ok) throw new Error('GitHub API error: ' + response.status);
-        var commits = await response.json();
-        if (!commits || commits.length === 0) throw new Error('No commits found');
-        var latestCommit = commits[0], remoteHash = latestCommit.sha.substring(0, 7), remoteDate = new Date(latestCommit.commit.committer.date), remoteMessage = latestCommit.commit.message.split('\n')[0];
-        var localVersion = getLocalVersion();
-        if (remoteHash !== localVersion) {
-          resultMsg.innerHTML = '<div style="display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; justify-content:space-between;"><div><i class="fas fa-download" style="color:#2ecc71;"></i><strong style="color:#2ecc71;">New version available on GitHub!</strong><br><span style="font-size:0.65rem;">Current: ' + localVersion + ' → Latest: ' + remoteHash + '</span><br><span style="font-size:0.6rem; color:var(--text-light);">Date: ' + remoteDate.toLocaleString() + '</span><br><span style="font-size:0.6rem; color:var(--text-light);">Message: ' + remoteMessage.substring(0, 80) + '</span></div><button id="updateFromGitHubBtn" class="btn" style="background:linear-gradient(135deg,#0f3b48,#00b4d8); color:white; padding:8px 20px; width:auto;"><i class="fab fa-github"></i> View on GitHub</button></div>';
-          resultMsg.style.background = 'rgba(46,204,113,0.1)'; resultMsg.style.color = '#27ae60';
-          document.getElementById('updateFromGitHubBtn').onclick = function() { window.open('https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO, '_blank'); };
-          localStorage.setItem('smartgrade_update_available', 'true'); localStorage.setItem('smartgrade_latest_version', remoteHash);
-        } else {
-          resultMsg.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i><strong>You are up to date!</strong><br><span style="font-size:0.65rem;">Version ' + localVersion + ' - Latest version from GitHub</span>';
-          resultMsg.style.background = 'rgba(46,204,113,0.1)'; resultMsg.style.color = '#27ae60';
-          localStorage.removeItem('smartgrade_update_available');
-        }
-      } catch (error) {
-        resultMsg.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i><strong>Cannot check for updates</strong><br><span style="font-size:0.65rem;">' + error.message + '</span><br><span style="font-size:0.55rem;">Check your internet connection or GitHub repository access.</span>';
-        resultMsg.style.background = 'rgba(231,76,60,0.1)'; resultMsg.style.color = '#e74c3c';
-      } finally { btn.innerHTML = originalText; btn.disabled = false; }
-    }
-    
-    // ============================================
-    // JSON BACKUP - EXPORT COMPLET (UTILISE LES BOUTONS EXISTANTS)
-    // ============================================
-    
-    function exportJSONBackup() {
-      var user = getCurrentStudent();
-      if (!user) { showToast('Please login first'); return; }
-      var data = exportCompleteUserData(user.id);
-      if (!data) { showToast('Failed to export data'); return; }
-      var blob = new Blob([data], { type: 'application/json' });
-      var url = URL.createObjectURL(blob);
-      var a = document.createElement('a');
-      a.href = url;
-      a.download = 'SMART_GRADE_Complete_Backup_' + user.name.replace(/\s/g, '_') + '_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      showToast('Complete backup exported (' + Math.round(data.length/1024) + ' KB)');
-    }
-    
-    function handleJSONImport(event) {
-      var file = event.target.files[0];
-      if (!file) return;
-      var user = getCurrentStudent();
-      if (!user) { showToast('Please login first'); return; }
-      var reader = new FileReader();
-      reader.onload = function(ev) {
-        showConfirmDialog({
-          title: 'Import Complete Backup',
-          message: 'This will replace ALL your data (grades, badges, history, notifications, backups).',
-          detail: 'This action cannot be undone.',
-          icon: 'fa-exclamation-triangle', iconColor: '#f39c12',
-          confirmText: 'Import', confirmColor: '#f39c12',
-          onConfirm: function() {
-            var result = importCompleteUserData(user.id, ev.target.result);
-            if (result.success) {
-              showToast('Import successful! Reloading...');
-              setTimeout(function() { location.reload(); }, 1500);
-            } else {
-              showToast(result.message);
-            }
-          }
+        // Essayer d'abord de récupérer la dernière release
+        var releaseResponse = await fetch(GITHUB_RELEASES_URL, {
+          headers: { 'Accept': 'application/vnd.github.v3+json' },
+          cache: 'no-store'
         });
-      };
-      reader.readAsText(file);
-      event.target.value = '';
+        
+        var remoteVersion = null;
+        var remoteDate = null;
+        var remoteMessage = null;
+        var zipUrl = null;
+        
+        if (releaseResponse.ok) {
+          var release = await releaseResponse.json();
+          remoteVersion = release.tag_name.replace('v', '');
+          remoteDate = new Date(release.published_at);
+          remoteMessage = release.body ? release.body.split('\n')[0] : 'New version available';
+          zipUrl = release.zipball_url;
+        } else {
+          // Fallback: récupérer le dernier commit
+          var commitResponse = await fetch(GITHUB_API_URL, {
+            headers: { 'Accept': 'application/vnd.github.v3+json' },
+            cache: 'no-store'
+          });
+          
+          if (!commitResponse.ok) throw new Error('GitHub API error: ' + commitResponse.status);
+          
+          var commits = await commitResponse.json();
+          if (!commits || commits.length === 0) throw new Error('No commits found');
+          
+          var latestCommit = commits[0];
+          remoteVersion = latestCommit.sha.substring(0, 7);
+          remoteDate = new Date(latestCommit.commit.committer.date);
+          remoteMessage = latestCommit.commit.message.split('\n')[0];
+          zipUrl = 'https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO + '/archive/refs/heads/main.zip';
+        }
+        
+        var localVersion = getLocalVersion();
+        
+        pendingUpdate = {
+          version: remoteVersion,
+          date: remoteDate,
+          message: remoteMessage,
+          zipUrl: zipUrl
+        };
+        
+        if (remoteVersion !== localVersion) {
+          resultMsg.innerHTML = `
+            <div style="display:flex; align-items:flex-start; gap:12px; flex-wrap:wrap; justify-content:space-between;">
+              <div>
+                <i class="fas fa-download" style="color:#2ecc71;"></i>
+                <strong style="color:#2ecc71;">New version available!</strong><br>
+                <span style="font-size:0.65rem;">Current: ${localVersion} → Latest: ${remoteVersion}</span><br>
+                <span style="font-size:0.6rem; color:var(--text-light);">Date: ${remoteDate.toLocaleString()}</span><br>
+                <span style="font-size:0.6rem; color:var(--text-light);">Message: ${remoteMessage.substring(0, 80)}</span>
+              </div>
+              <button id="updateNowBtn" class="btn" style="background:linear-gradient(135deg,#27ae60,#1e8449); color:white; padding:8px 20px; width:auto;">
+                <i class="fas fa-download"></i> Update Now
+              </button>
+            </div>
+          `;
+          resultMsg.style.background = 'rgba(46,204,113,0.1)';
+          resultMsg.style.color = '#27ae60';
+          
+          document.getElementById('updateNowBtn').onclick = function() {
+            performUpdate();
+          };
+        } else {
+          resultMsg.innerHTML = `
+            <i class="fas fa-check-circle" style="color:#2ecc71;"></i>
+            <strong>You are up to date!</strong><br>
+            <span style="font-size:0.65rem;">Version ${localVersion} - Latest version from GitHub</span>
+          `;
+          resultMsg.style.background = 'rgba(46,204,113,0.1)';
+          resultMsg.style.color = '#27ae60';
+          pendingUpdate = null;
+        }
+        
+      } catch (error) {
+        resultMsg.innerHTML = `
+          <i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i>
+          <strong>Cannot check for updates</strong><br>
+          <span style="font-size:0.65rem;">${error.message}</span><br>
+          <span style="font-size:0.55rem;">Check your internet connection or GitHub repository access.</span>
+        `;
+        resultMsg.style.background = 'rgba(231,76,60,0.1)';
+        resultMsg.style.color = '#e74c3c';
+      } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }
+    }
+    
+    function performUpdate() {
+      if (!pendingUpdate) return;
+      
+      var resultMsg = document.getElementById('updateResultMessage');
+      var progressDiv = document.getElementById('updateProgress');
+      var progressFill = document.getElementById('updateProgressFill');
+      var progressText = document.getElementById('updateProgressText');
+      
+      showConfirmDialog({
+        title: 'Update SMART GRADE',
+        message: 'A new version is available. Download and install now?',
+        detail: 'Version: ' + pendingUpdate.version + '\nYour data will be saved.',
+        icon: 'fa-download',
+        confirmText: 'Download & Install',
+        onConfirm: function() {
+          resultMsg.style.display = 'none';
+          progressDiv.style.display = 'block';
+          progressFill.style.width = '0%';
+          progressText.innerHTML = 'Preparing update...';
+          
+          // Sauvegarder les données utilisateur
+          try {
+            var stored = localStorage.getItem('smartgrade_current');
+            if (stored) {
+              var userData = JSON.parse(stored);
+              var backupData = {
+                user: userData,
+                grades: localStorage.getItem('smartgrade_grades_' + userData.id),
+                achievements: localStorage.getItem('smartgrade_achievements_' + userData.id),
+                streak: localStorage.getItem('smartgrade_streak_' + userData.id),
+                profile: localStorage.getItem('smartgrade_profile_' + userData.id),
+                flashcards: localStorage.getItem('smartgrade_flashcards_' + userData.id),
+                history: localStorage.getItem('smartgrade_history_' + userData.id),
+                notifications: localStorage.getItem('smartgrade_notifications_' + userData.id),
+                timestamp: Date.now()
+              };
+              localStorage.setItem('smartgrade_update_backup', JSON.stringify(backupData));
+              progressText.innerHTML = 'Data backed up...';
+            }
+          } catch(e) {}
+          
+          progressFill.style.width = '30%';
+          
+          setTimeout(function() {
+            progressFill.style.width = '60%';
+            progressText.innerHTML = 'Preparing installation...';
+            
+            setTimeout(function() {
+              progressFill.style.width = '90%';
+              progressText.innerHTML = 'Almost ready...';
+              
+              setTimeout(function() {
+                progressFill.style.width = '100%';
+                progressText.innerHTML = 'Update ready! Opening GitHub...';
+                
+                // Mettre à jour la version locale
+                setLocalVersion(pendingUpdate.version);
+                
+                // Nettoyer le cache
+                if ('caches' in window) {
+                  caches.keys().then(function(names) {
+                    names.forEach(function(name) {
+                      if (name.includes('smartgrade')) {
+                        caches.delete(name);
+                      }
+                    });
+                  });
+                }
+                
+                setTimeout(function() {
+                  window.open('https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO, '_blank');
+                  showToast('Visit GitHub to download the latest version');
+                }, 1000);
+              }, 1000);
+            }, 1000);
+          }, 1000);
+        }
+      });
     }
     
     // ============================================
     // SETTINGS CORE FUNCTIONS
     // ============================================
+    
+    var currentUser = null;
+    var currentTerm = 1;
+    var subjectToRemove = null;
+    var subjectNameToRemove = null;
+    
+    var SUBJECT_COLORS = ['sc-1','sc-2','sc-3','sc-4','sc-5','sc-6','sc-7','sc-8','sc-9','sc-10','sc-11','sc-12','sc-13','sc-14'];
+    
+    var DEFAULT_SUBJECTS = [
+      {id:1,name:"COMPUTER SCIENCES",code:"CS",icon:"fa-laptop-code"},
+      {id:2,name:"MATHEMATICS",code:"MATH",icon:"fa-square-root-variable"},
+      {id:3,name:"CHEMISTRY",code:"CHM",icon:"fa-flask"},
+      {id:4,name:"HUMAN BIOLOGY",code:"HBIO",icon:"fa-dna"},
+      {id:5,name:"GEOLOGY",code:"GEL",icon:"fa-mountain"},
+      {id:6,name:"PHYSICS",code:"PHY",icon:"fa-atom"},
+      {id:7,name:"ADDITIONAL MATHEMATICS",code:"AMATH",icon:"fa-calculator"},
+      {id:8,name:"BIOLOGY",code:"BIO",icon:"fa-leaf"},
+      {id:9,name:"ECONOMICS",code:"ECO",icon:"fa-chart-line"},
+      {id:10,name:"ENGLISH LANGUAGE",code:"ENG",icon:"fa-language"},
+      {id:11,name:"GEOGRAPHY",code:"GEO",icon:"fa-earth-africa"},
+      {id:12,name:"CITIZENSHIP",code:"CIV",icon:"fa-landmark"},
+      {id:13,name:"FRENCH",code:"FR",icon:"fa-flag"},
+      {id:14,name:"FOOD AND NUTRITION",code:"FDN",icon:"fa-apple-whole"}
+    ];
     
     function loadSettings() {
       currentUser = requireAuth();
@@ -242,9 +598,9 @@
       document.getElementById('profileClass').innerHTML = currentUser.class;
       loadSubjects();
       loadFingerprintSection();
-      loadAutoBackupSetting();
       initHeaderProfile();
       displayCurrentVersion();
+      
       var checkBtn = document.getElementById('checkUpdateBtn');
       if (checkBtn) checkBtn.onclick = checkForRealUpdate;
     }
@@ -310,16 +666,22 @@
     }
     
     function checkCompensation() {
-      var selected = []; document.querySelectorAll('.subject-beautiful-card.selected').forEach(function(card) { selected.push(parseInt(card.dataset.id)); });
-      var t1 = getStudentSelectedSubjects(currentUser.id, 1).length, t2 = getStudentSelectedSubjects(currentUser.id, 2).length, t3 = getStudentSelectedSubjects(currentUser.id, 3).length;
+      var selected = [];
+      document.querySelectorAll('.subject-beautiful-card.selected').forEach(function(card) { selected.push(parseInt(card.dataset.id)); });
+      var t1 = getStudentSelectedSubjects(currentUser.id, 1).length;
+      var t2 = getStudentSelectedSubjects(currentUser.id, 2).length;
+      var t3 = getStudentSelectedSubjects(currentUser.id, 3).length;
       var minCount = Math.min(t1, t2, t3);
-      var compBtn = document.getElementById('compBtn'), compAlert = document.getElementById('compAlert');
+      var compBtn = document.getElementById('compBtn');
+      var compAlert = document.getElementById('compAlert');
       if (selected.length > minCount) { compBtn.style.display = 'flex'; compAlert.style.display = 'block'; compAlert.innerHTML = '<i class="fas fa-exclamation-triangle"></i> ' + selected.length + ' subjects vs ' + minCount + ' in other terms'; }
       else { compBtn.style.display = 'none'; compAlert.style.display = 'none'; }
     }
     
     function showCompensation() {
-      var t1 = getStudentSelectedSubjects(currentUser.id, 1), t2 = getStudentSelectedSubjects(currentUser.id, 2), t3 = getStudentSelectedSubjects(currentUser.id, 3);
+      var t1 = getStudentSelectedSubjects(currentUser.id, 1);
+      var t2 = getStudentSelectedSubjects(currentUser.id, 2);
+      var t3 = getStudentSelectedSubjects(currentUser.id, 3);
       var minCount = Math.min(t1.length, t2.length, t3.length);
       var current = getStudentSelectedSubjects(currentUser.id, currentTerm);
       if (current.length <= minCount) { showToast('No surplus subjects to compensate'); return; }
@@ -340,12 +702,19 @@
     }
     
     function closeCompModal() { document.getElementById('compModal').classList.remove('active'); document.getElementById('compPin').value = ''; }
-    function confirmCompensation() { var pin = document.getElementById('compPin').value; if (pin !== currentUser.pin) { showToast('Wrong PIN'); return; } applyCompensation(currentUser.id, currentTerm, subjectToRemove); playActionFeedback(); showToast('Compensation applied!'); closeCompModal(); loadSubjects(); }
+    
+    function confirmCompensation() {
+      var pin = document.getElementById('compPin').value;
+      if (pin !== currentUser.pin) { showToast('Wrong PIN'); return; }
+      applyCompensation(currentUser.id, currentTerm, subjectToRemove);
+      playActionFeedback(); showToast('Compensation applied!'); closeCompModal(); loadSubjects();
+    }
     
     function loadFingerprintSection() {
       var container = document.getElementById('fingerprintSection');
-      if (currentUser.hasFingerprint) { container.innerHTML = '<div style="background:rgba(46,204,113,0.1);padding:12px;border-radius:12px;margin-bottom:8px;"><i class="fas fa-check-circle"></i> Fingerprint enabled</div><div style="display:flex;gap:8px;"><button class="btn btn-secondary" onclick="registerFingerprint()">Change</button><button class="btn btn-danger" onclick="removeFingerprint()">Remove</button></div>'; }
-      else { container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()" style="width:100%;"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>'; }
+      if (currentUser.hasFingerprint) {
+        container.innerHTML = '<div style="background:rgba(46,204,113,0.1);padding:12px;border-radius:12px;margin-bottom:8px;"><i class="fas fa-check-circle"></i> Fingerprint enabled</div><div style="display:flex;gap:8px;"><button class="btn btn-secondary" onclick="registerFingerprint()">Change</button><button class="btn btn-danger" onclick="removeFingerprint()">Remove</button></div>';
+      } else { container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()" style="width:100%;"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>'; }
     }
     
     function registerFingerprint() { registerFingerprint(currentUser.id, currentUser.name, function(result) { if (result.success) { currentUser = getStudentById(currentUser.id); setCurrentStudent(currentUser); loadFingerprintSection(); showToast(result.message); } else { showToast(result.message); } }); }
@@ -353,8 +722,11 @@
     
     function showPinModal() { document.getElementById('pinModal').classList.add('active'); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmNewPin').value = ''; }
     function closePinModal() { document.getElementById('pinModal').classList.remove('active'); }
+    
     function changePin() {
-      var oldPin = document.getElementById('oldPin').value, newPin = document.getElementById('newPin').value, confirmPin = document.getElementById('confirmNewPin').value;
+      var oldPin = document.getElementById('oldPin').value;
+      var newPin = document.getElementById('newPin').value;
+      var confirmPin = document.getElementById('confirmNewPin').value;
       if (!oldPin || oldPin.length !== 4) { showToast('Enter current PIN'); return; }
       if (!newPin || newPin.length !== 4) { showToast('New PIN must be 4 digits'); return; }
       if (!/^\d+$/.test(newPin)) { showToast('PIN must contain only numbers'); return; }
@@ -397,35 +769,49 @@
       });
     }
     
-    function loadAutoBackupSetting() {
-      var enabled = localStorage.getItem('smartgrade_auto_backup_' + currentUser.id) === 'true';
-      var toggle = document.getElementById('autoBackupToggle');
-      if (toggle) toggle.checked = enabled;
-      updateAutoBackupStatus(enabled);
-      if (enabled) startAutoBackup();
-      else stopAutoBackup();
+    // Utilise les nouvelles fonctions d'export/import de utils.js
+    function exportJSONBackup() {
+      var user = getCurrentStudent();
+      if (!user) { showToast('Please login first'); return; }
+      var data = exportCompleteUserData(user.id);
+      if (!data) { showToast('Failed to export data'); return; }
+      var blob = new Blob([data], {type: 'application/json'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'SMART_GRADE_Backup_' + user.name.replace(/\s/g, '_') + '_' + new Date().toISOString().slice(0,19).replace(/:/g, '-') + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('JSON backup exported (' + Math.round(data.length/1024) + ' KB)');
     }
     
-    function updateAutoBackupStatus(enabled) {
-      var statusDiv = document.getElementById('autoBackupStatus');
-      if (enabled) { statusDiv.className = 'status-badge status-enabled'; statusDiv.innerHTML = '<i class="fas fa-play"></i> Auto-Backup: ON (every hour)'; }
-      else { statusDiv.className = 'status-badge status-disabled'; statusDiv.innerHTML = '<i class="fas fa-pause"></i> Auto-Backup: OFF'; }
+    function handleJSONImport(event) {
+      var file = event.target.files[0];
+      if (!file) return;
+      var user = getCurrentStudent();
+      if (!user) { showToast('Please login first'); return; }
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        showConfirmDialog({
+          title: 'Import JSON Backup',
+          message: 'This will overwrite your current data.',
+          detail: 'This action cannot be undone.',
+          icon: 'fa-exclamation-triangle', iconColor: '#f39c12',
+          confirmText: 'Import', confirmColor: '#f39c12',
+          onConfirm: function() {
+            var result = importCompleteUserData(user.id, ev.target.result);
+            if (result.success) {
+              showToast('Import successful! Reloading...');
+              setTimeout(function() { location.reload(); }, 1500);
+            } else {
+              showToast(result.message);
+            }
+          }
+        });
+      };
+      reader.readAsText(file);
+      event.target.value = '';
     }
-    
-    function startAutoBackup() {
-      if (autoBackupInterval) clearInterval(autoBackupInterval);
-      autoBackupInterval = setInterval(function() {
-        if (!currentUser) return;
-        var backupData = exportAllData(currentUser.id);
-        var backupInfo = { id: Date.now(), code: 'AUTO_' + Date.now().toString().slice(-6), userId: currentUser.id, userName: currentUser.name, data: backupData, createdAt: new Date().toISOString(), size: backupData.length, type: 'auto' };
-        var backups = JSON.parse(localStorage.getItem('smartgrade_backups_' + currentUser.id) || '[]');
-        backups.unshift(backupInfo);
-        if (backups.length > 20) backups = backups.slice(0, 20);
-        localStorage.setItem('smartgrade_backups_' + currentUser.id, JSON.stringify(backups));
-      }, 60 * 60 * 1000);
-    }
-    
-    function stopAutoBackup() { if (autoBackupInterval) { clearInterval(autoBackupInterval); autoBackupInterval = null; } }
     
     document.querySelectorAll('.term-btn-modern').forEach(function(btn, index) {
       btn.addEventListener('click', function() {
@@ -439,13 +825,6 @@
     
     document.getElementById('jsonExportBtn').onclick = exportJSONBackup;
     document.getElementById('jsonImportBtn').onclick = function() { document.getElementById('jsonImportFile').click(); };
-    document.getElementById('autoBackupToggle').addEventListener('change', function(e) {
-      var enabled = e.target.checked;
-      localStorage.setItem('smartgrade_auto_backup_' + currentUser.id, enabled);
-      updateAutoBackupStatus(enabled);
-      if (enabled) { startAutoBackup(); showToast('Auto-Backup enabled'); }
-      else { stopAutoBackup(); showToast('Auto-Backup disabled'); }
-    });
     
     loadSettings();
     initMobileMenu();

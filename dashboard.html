@@ -15,7 +15,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <meta name="theme-color" content="#0f3b48">
   <style>
-    /* Styles supplémentaires pour le dashboard */
+    /* Dashboard specific styles - no hardcoded colors */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -24,7 +24,7 @@
     }
     .stat-card {
       text-align: center;
-      padding: 16px 8px;
+      padding: 16px;
       background: var(--card-bg);
       border-radius: 16px;
       border: 1px solid var(--border);
@@ -54,8 +54,8 @@
     }
     .term-card {
       text-align: center;
-      padding: 14px 8px;
-      background: rgba(0,0,0,0.03);
+      padding: 14px;
+      background: rgba(0,0,0,0.02);
       border-radius: 16px;
       border: 1px solid var(--border);
       cursor: pointer;
@@ -81,8 +81,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 14px 16px;
-      background: var(--card-bg);
+      padding: 12px 14px;
+      background: rgba(0,0,0,0.02);
       border-radius: 14px;
       margin-bottom: 8px;
       cursor: pointer;
@@ -92,10 +92,7 @@
     .subject-card:hover {
       transform: translateX(5px);
       border-color: var(--primary);
-      background: rgba(15,59,72,0.05);
-    }
-    .subject-info {
-      flex: 1;
+      background: rgba(15,59,72,0.03);
     }
     .subject-name {
       font-weight: 600;
@@ -107,6 +104,7 @@
     .subject-avg {
       font-weight: 800;
       font-size: 1.1rem;
+      color: var(--primary);
     }
     .btn-group {
       display: flex;
@@ -128,9 +126,6 @@
       font-size: 0.85rem;
       width: 100%;
       transition: all 0.2s;
-    }
-    .btn:active {
-      transform: scale(0.97);
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -188,33 +183,6 @@
       background: rgba(231,76,60,0.15);
       color: #e74c3c;
     }
-    .scatter-container {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 16px;
-      margin-top: 10px;
-      border: 1px solid var(--border);
-    }
-    .zoom-controls {
-      display: flex;
-      gap: 8px;
-      justify-content: center;
-      margin-top: 10px;
-    }
-    .zoom-controls button {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--text);
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .zoom-controls button:hover {
-      background: var(--primary);
-      color: white;
-    }
     .history-item {
       display: flex;
       align-items: center;
@@ -236,23 +204,13 @@
       margin-bottom: 20px;
       text-align: center;
     }
-    .motivation-quote {
-      font-size: 1rem;
-      font-style: italic;
-      margin-bottom: 8px;
-    }
-    .motivation-author {
-      font-size: 0.7rem;
-      opacity: 0.8;
-    }
     .flex-between {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
-    .glass-card {
-      margin-bottom: 20px;
-    }
+    
+    /* Command Modal */
     .cmd-overlay {
       position: fixed;
       top: 0;
@@ -275,12 +233,13 @@
       width: 90%;
       max-width: 400px;
       text-align: center;
+      border: 1px solid var(--border);
     }
     .cmd-box input {
       width: 100%;
       padding: 12px;
       border-radius: 12px;
-      border: 2px solid var(--primary);
+      border: 2px solid var(--border);
       text-align: center;
       margin: 10px 0;
       background: var(--card-bg);
@@ -289,7 +248,7 @@
     .cmd-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
+      gap: 8px;
       margin-top: 10px;
     }
     .cmd-chip {
@@ -301,10 +260,30 @@
       font-size: 0.65rem;
       border: 1px solid var(--border);
       transition: all 0.2s;
+      color: var(--text);
     }
     .cmd-chip:hover {
       border-color: var(--primary);
     }
+    .cmd-result {
+      background: rgba(0,0,0,0.03);
+      padding: 12px;
+      border-radius: 12px;
+      margin-top: 10px;
+      font-size: 0.75rem;
+      display: none;
+      border: 1px solid var(--border);
+    }
+    .cmd-close {
+      margin-top: 12px;
+      padding: 8px 16px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+    }
+    
     @media (min-width: 768px) {
       .btn-group {
         flex-direction: row;
@@ -361,7 +340,6 @@
         <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
         <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
         <a href="backup.html" class="nav-item"><i class="fas fa-database"></i> Backup</a>
-        <a href="shortcuts.html" class="nav-item"><i class="fas fa-bolt"></i> Shortcuts</a>
         <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
         <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
@@ -380,9 +358,8 @@
           <a href="dev-stats.html" class="nav-item"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
           <a href="dev-logs.html" class="nav-item"><i class="fas fa-history"></i> System Logs</a>
           <a href="dev-backup.html" class="nav-item"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
-          <a href="dev-config.html" class="nav-item" id="devConfigLink"><i class="fas fa-cog"></i> System Config</a>
+          <a href="dev-config.html" class="nav-item"><i class="fas fa-cog"></i> System Config</a>
         </div>
-        
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -424,21 +401,6 @@
       </div>
       
       <div class="glass-card">
-        <h3><i class="fas fa-chart-line"></i> Progress Chart</h3>
-        <div class="scatter-container">
-          <div class="zoom-controls">
-            <button onclick="zoomOut()"><i class="fas fa-search-minus"></i></button>
-            <span class="zoom-level" id="chartZoomLevel">100%</span>
-            <button onclick="zoomIn()"><i class="fas fa-search-plus"></i></button>
-            <button onclick="resetZoom()"><i class="fas fa-expand"></i></button>
-          </div>
-          <div class="scatter-canvas-wrapper" id="chartWrapper" style="height:250px;">
-            <canvas id="progressChart" height="250"></canvas>
-          </div>
-        </div>
-      </div>
-      
-      <div class="glass-card">
         <div class="flex-between">
           <h3><i class="fas fa-layer-group"></i> Top Subjects (Yearly)</h3>
           <a href="subjects.html" style="color:var(--primary);">VIEW ALL</a>
@@ -453,15 +415,17 @@
       
       <div class="btn-group">
         <a href="add-grade.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Grade</a>
+        <a href="#" class="btn btn-secondary" onclick="openCmd()"><i class="fas fa-terminal"></i> Open Command</a>
         <a href="statistics.html" class="btn btn-secondary"><i class="fas fa-chart-pie"></i> Statistics</a>
       </div>
     </main>
   </div>
 
+  <!-- COMMAND MODAL -->
   <div class="cmd-overlay" id="cmdOverlay">
     <div class="cmd-box">
       <h3><i class="fas fa-terminal"></i> Commands</h3>
-      <input type="text" id="cmdInput" placeholder="Type command...">
+      <input type="text" id="cmdInput" placeholder="Type command..." autocomplete="off">
       <div class="cmd-grid">
         <div class="cmd-chip" onclick="runCmd('export')"><i class="fas fa-download"></i><br>Export</div>
         <div class="cmd-chip" onclick="runCmd('transfer')"><i class="fas fa-exchange-alt"></i><br>Transfer</div>
@@ -473,14 +437,13 @@
         <div class="cmd-chip" onclick="runCmd('stats')"><i class="fas fa-chart-bar"></i><br>Stats</div>
         <div class="cmd-chip" onclick="runCmd('random')"><i class="fas fa-random"></i><br>Random</div>
       </div>
-      <div id="cmdResult" style="background:rgba(0,0,0,0.03);padding:12px;border-radius:12px;margin-top:10px;font-size:0.8rem;display:none;"></div>
-      <button class="btn btn-secondary mt-1" onclick="closeCmd()"><i class="fas fa-times"></i> Close</button>
+      <div id="cmdResult" class="cmd-result"></div>
+      <button class="cmd-close" onclick="closeCmd()"><i class="fas fa-times"></i> Close</button>
     </div>
   </div>
   
   <div id="toastContainer" class="toast-container"></div>
   
-  <script src="js/security.js"></script>
   <script src="js/utils.js"></script>
   <script src="js/database.js"></script>
   <script src="js/auth.js"></script>
@@ -489,8 +452,6 @@
   
   <script>
     var pc = null;
-    var cz = 1;
-    
     var allSubs = [
       {id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},
       {id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},
@@ -511,24 +472,14 @@
     var MQ = [
       {q:"Success is not final, failure is not fatal.",a:"Churchill"},
       {q:"Education is the passport to the future.",a:"Malcolm X"},
-      {q:"The future belongs to those who believe in their dreams.",a:"Eleanor Roosevelt"},
-      {q:"It does not matter how slowly you go as long as you do not stop.",a:"Confucius"},
-      {q:"The expert in anything was once a beginner.",a:"Helen Hayes"},
       {q:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
       {q:"Strive for progress, not perfection.",a:"Unknown"},
       {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
       {q:"Fall seven times, stand up eight.",a:"Japanese Proverb"},
-      {q:"The only limit is your mind.",a:"Unknown"},
-      {q:"Start where you are. Use what you have.",a:"Arthur Ashe"},
-      {q:"Little by little, one travels far.",a:"Tolkien"},
       {q:"You don't have to be great to start.",a:"Zig Ziglar"},
       {q:"Make today so awesome that yesterday gets jealous.",a:"Unknown"},
       {q:"Consistency is more important than perfection.",a:"Unknown"},
-      {q:"Every day is a new opportunity.",a:"Unknown"},
-      {q:"The difference between ordinary and extraordinary is that little extra.",a:"Jimmy Johnson"},
-      {q:"Small progress is still progress.",a:"Unknown"},
-      {q:"Never give up on a dream.",a:"Unknown"},
-      {q:"You are stronger than you think.",a:"A.A. Milne"}
+      {q:"Every day is a new opportunity.",a:"Unknown"}
     ];
     
     function showDeveloperLinks() {
@@ -574,13 +525,12 @@
         totalWeighted += subjectAvg * coeff;
         totalCoeff += coeff;
       }
-      
       return totalCoeff > 0 ? Math.round((totalWeighted / totalCoeff) * 100) / 100 : 0;
     }
     
     function loadDashboard() {
       var current = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-      if (!current) { redirectToError(401, 'Please login first'); return; }
+      if (!current) { window.location.href = 'login.html'; return; }
       var sid = current.id;
       
       document.getElementById('greeting').innerHTML = getGreeting() + ', ' + (current.name || 'Student') + '!';
@@ -645,7 +595,7 @@
         gs.className = 'goal-status not-achieved'; 
       }
       
-      // Calcul des moyennes annuelles des matières
+      // Top subjects (use theme color, not hardcoded green)
       var subPrev = [];
       for (var i = 0; i < subs.length; i++) {
         var s = subs[i];
@@ -662,77 +612,21 @@
       subPrev = subPrev.slice(0, 5);
       
       document.getElementById('subjectsPreview').innerHTML = subPrev.map(function(s) {
-        var avgColor = s.avg >= 14 ? '#2ecc71' : (s.avg >= 12 ? '#3498db' : (s.avg >= 10 ? '#f39c12' : '#e74c3c'));
         return '<div class="subject-card" onclick="location=\'subject-detail.html?id=' + s.id + '\'">' +
           '<div class="subject-info">' +
-            '<div class="subject-name"><i class="fas ' + s.icon + '" style="color:' + avgColor + ';"></i> ' + s.name + '</div>' +
+            '<div class="subject-name"><i class="fas ' + s.icon + '" style="color:var(--primary);"></i> ' + s.name + '</div>' +
           '</div>' +
-          '<div class="subject-avg" style="color:' + avgColor + ';">' + s.avg.toFixed(2) + '</div>' +
+          '<div class="subject-avg">' + s.avg.toFixed(2) + '</div>' +
         '</div>';
       }).join('');
       
-      buildChart(t1, t2, t3, goal);
       loadHistory(sid);
       checkStreakMilestone(sid);
       checkAndNotifyAchievements(sid);
       if (typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(sid); }
       
       showDeveloperLinks();
-    }
-    
-    function getChartColors() {
-      var isDark = document.body.classList.contains('night-mode');
-      if (isDark) {
-        return { gridColor: 'rgba(255,255,255,0.15)', textColor: '#e0e0e0', lineColor: '#00ffff', fillColor: 'rgba(0,255,255,0.1)', pointColor: '#00ffff' };
-      } else {
-        return { gridColor: 'rgba(0,0,0,0.1)', textColor: '#1a2a3a', lineColor: '#0f3b48', fillColor: 'rgba(15,59,72,0.1)', pointColor: '#0f3b48' };
-      }
-    }
-    
-    function refreshChartColors() {
-      if (pc) {
-        var colors = getChartColors();
-        pc.data.datasets[0].borderColor = colors.lineColor;
-        pc.data.datasets[0].backgroundColor = colors.fillColor;
-        pc.data.datasets[0].pointBackgroundColor = colors.pointColor;
-        if (pc.options && pc.options.scales) {
-          if (pc.options.scales.x) {
-            pc.options.scales.x.ticks.color = colors.textColor;
-            pc.options.scales.x.grid.color = colors.gridColor;
-          }
-          if (pc.options.scales.y) {
-            pc.options.scales.y.ticks.color = colors.textColor;
-            pc.options.scales.y.grid.color = colors.gridColor;
-          }
-        }
-        pc.update();
-      }
-    }
-    
-    function buildChart(t1, t2, t3, goal) { 
-      if (pc) pc.destroy(); 
-      var ctx = document.getElementById('progressChart'); 
-      if (!ctx) return; 
-      var colors = getChartColors(); 
-      pc = new Chart(ctx.getContext('2d'), { 
-        type: 'line', 
-        data: { 
-          labels: ['Term 1', 'Term 2', 'Term 3'], 
-          datasets: [
-            { label: 'Average', data: [t1, t2, t3], borderColor: colors.lineColor, backgroundColor: colors.fillColor, borderWidth: 3, pointRadius: 6, tension: 0.3, fill: true, pointBackgroundColor: colors.pointColor },
-            { label: 'Goal', data: [goal, goal, goal], borderColor: '#e74c3c', borderWidth: 2, borderDash: [8, 4], pointRadius: 0, fill: false }
-          ] 
-        }, 
-        options: { 
-          responsive: true, 
-          maintainAspectRatio: false, 
-          scales: { 
-            y: { min: 0, max: 20, ticks: { stepSize: 2, color: colors.textColor }, grid: { color: colors.gridColor } }, 
-            x: { ticks: { color: colors.textColor }, grid: { color: colors.gridColor } } 
-          }, 
-          plugins: { legend: { labels: { color: colors.textColor } } } 
-        } 
-      }); 
+      applyGlobalFont();
     }
     
     function updateGoal(v) { 
@@ -751,21 +645,11 @@
         gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
         gs.className = 'goal-status not-achieved'; 
       } 
-      buildChart(t1, t2, t3, g); 
-    }
-    
-    function zoomIn() { cz = Math.min(cz + 0.25, 3); applyZoom(); }
-    function zoomOut() { cz = Math.max(cz - 0.25, 0.5); applyZoom(); }
-    function resetZoom() { cz = 1; applyZoom(); }
-    function applyZoom() { 
-      var c = document.getElementById('progressChart'), w = document.getElementById('chartWrapper'), l = document.getElementById('chartZoomLevel'); 
-      if (c && w) { c.style.transform = 'scale(' + cz + ')'; c.style.transformOrigin = 'top left'; w.style.height = (250 * cz) + 'px'; } 
-      if (l) l.textContent = Math.round(cz * 100) + '%'; 
     }
     
     function loadHistory(sid) { 
       var h = JSON.parse(localStorage.getItem('smartgrade_history_' + sid) || '[]'); 
-      h = h.slice(0, 10); 
+      h = h.slice(0, 5); 
       var el = document.getElementById('historyList'); 
       if (h.length === 0) {
         el.innerHTML = '<p class="text-center" style="color:var(--text-light);">No activity yet</p>';
@@ -776,18 +660,146 @@
       }
     }
     
-    function openCmd() { document.getElementById('cmdOverlay').classList.add('show'); document.getElementById('cmdInput').value = ''; document.getElementById('cmdResult').style.display = 'none'; setTimeout(function() { document.getElementById('cmdInput').focus(); }, 300); }
-    function closeCmd() { document.getElementById('cmdOverlay').classList.remove('show'); }
-    function runCmd(cmd) { var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null'); var r = executeCommand(cmd, c ? c.id : 1); var el = document.getElementById('cmdResult'); el.style.display = 'block'; el.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> ' + (r || 'Command executed'); document.getElementById('cmdInput').value = cmd; setTimeout(function() { el.style.display = 'none'; }, 3000); }
+    // ============================================
+    // COMMAND SYSTEM - FULLY FUNCTIONAL
+    // ============================================
     
-    document.getElementById('cmdInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') runCmd(this.value); });
+    function openCmd() {
+      document.getElementById('cmdOverlay').classList.add('show');
+      document.getElementById('cmdInput').value = '';
+      document.getElementById('cmdResult').style.display = 'none';
+      setTimeout(function() { document.getElementById('cmdInput').focus(); }, 100);
+    }
     
-    var themeObserver = new MutationObserver(function() { if (pc) refreshChartColors(); });
-    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    function closeCmd() {
+      document.getElementById('cmdOverlay').classList.remove('show');
+    }
+    
+    function runCmd(command) {
+      var user = getCurrentStudent();
+      if (!user) return;
+      
+      var result = executeCommand(command, user.id);
+      var resultDiv = document.getElementById('cmdResult');
+      resultDiv.style.display = 'block';
+      resultDiv.innerHTML = '<i class="fas fa-terminal" style="color:var(--primary);"></i> ' + result;
+      document.getElementById('cmdInput').value = command;
+      
+      setTimeout(function() {
+        resultDiv.style.opacity = '0';
+        resultDiv.style.transition = 'opacity 0.3s';
+        setTimeout(function() { resultDiv.style.display = 'none'; resultDiv.style.opacity = '1'; }, 300);
+      }, 3000);
+    }
+    
+    function executeCommand(cmd, userId) {
+      cmd = cmd.toLowerCase().trim();
+      
+      var commands = {
+        export: function(id) {
+          var data = exportCompleteUserData(id);
+          if (!data) return 'Failed to export data';
+          downloadJSON(data, 'SMART_GRADE_Backup_' + new Date().toISOString().split('T')[0] + '.json');
+          return 'Backup exported!';
+        },
+        transfer: function(id) {
+          var code = generateTransferCode(id);
+          copyToClipboard(code);
+          return 'Transfer code: ' + code + ' (copied)';
+        },
+        refresh: function() {
+          location.reload();
+          return 'Refreshing...';
+        },
+        theme: function() {
+          var themes = ['default','crimson','forest','ocean','royal','sunset','rose','turquoise','amber','graphite','lavender','cherry','midnight','mint','coral','indigo','chocolate','electric','steel','lime'];
+          var randomTheme = themes[Math.floor(Math.random() * themes.length)];
+          document.body.classList.remove('theme-default', 'theme-crimson', 'theme-forest', 'theme-ocean', 'theme-royal', 'theme-sunset', 'theme-rose', 'theme-turquoise', 'theme-amber', 'theme-graphite', 'theme-lavender', 'theme-cherry', 'theme-midnight', 'theme-mint', 'theme-coral', 'theme-indigo', 'theme-chocolate', 'theme-electric', 'theme-steel', 'theme-lime');
+          document.body.classList.add('theme-' + randomTheme);
+          localStorage.setItem('smartgrade_theme', randomTheme);
+          return 'Theme changed to: ' + randomTheme;
+        },
+        reset: function(id) {
+          if (confirm('Delete ALL grades? This cannot be undone.')) {
+            saveStudentGrades(id, []);
+            return 'All grades deleted';
+          }
+          return 'Cancelled';
+        },
+        help: function() {
+          return 'Commands: export, transfer, refresh, theme, reset, help, about, stats, random';
+        },
+        about: function() {
+          return 'SMART GRADE v4.0.3 - GBHS Foumban | Developed by HANS KEPPER';
+        },
+        stats: function(id) {
+          var g = getStudentGrades(id);
+          var o = calculateYearlyAverage(id);
+          return 'Grades: ' + g.length + ' | Yearly Avg: ' + o.toFixed(2) + '/20';
+        },
+        random: function() {
+          var tips = ['Keep pushing!', 'Every grade counts!', 'You are doing great!', 'Consistency is key!', 'Knowledge is power!'];
+          return tips[Math.floor(Math.random() * tips.length)];
+        }
+      };
+      
+      if (commands[cmd]) return commands[cmd](userId);
+      return 'Unknown command. Type "help" for list.';
+    }
+    
+    function downloadJSON(data, filename) {
+      var blob = new Blob([data], { type: 'application/json' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+    
+    function copyToClipboard(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function() {
+          if (typeof showToast === 'function') showToast('Code copied!');
+        });
+      } else {
+        prompt('Copy this code:', text);
+      }
+    }
+    
+    function generateTransferCode(studentId) {
+      var chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      var code = '';
+      for (var i = 0; i < 8; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+    
+    function applyGlobalFont() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    
+    document.getElementById('cmdInput').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') runCmd(this.value);
+    });
+    
+    document.getElementById('cmdOverlay').addEventListener('click', function(e) {
+      if (e.target === this) closeCmd();
+    });
     
     loadDashboard();
     initMobileMenu();
     initThemeSelector();
+    applyGlobalFont();
   </script>
 </body>
 </html>

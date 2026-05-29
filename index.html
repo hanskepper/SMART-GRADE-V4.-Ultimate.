@@ -68,27 +68,90 @@
       letter-spacing: 1px;
     }
     
-    .student-list-container { margin-top: 8px; }
-    .student-item {
+    /* ============================================ */
+    /* EXACTEMENT LE MÊME STYLE QUE LOGIN.HTML */
+    /* AVEC HAUTEUR FIXE */
+    /* ============================================ */
+    
+    .student-selector-label {
+      display: block;
+      text-align: left;
+      margin-bottom: 6px;
+      font-weight: 500;
+      color: var(--text-light);
+      font-size: 0.75rem;
+    }
+    .student-selector-label i {
+      width: 20px;
+      color: var(--primary);
+    }
+    .students-count-badge {
+      display: inline-block;
+      background: rgba(0,0,0,0.03);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      color: var(--text-light);
+      margin-bottom: 8px;
+    }
+    
+    /* CONTENEUR À HAUTEUR FIXE - NE GRANDIT PAS */
+    .student-list-scroll {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      margin-bottom: 16px;
+      max-height: 300px;
+      min-height: 200px;
+      overflow-y: auto;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: rgba(0,0,0,0.015);
+    }
+    
+    /* Empêcher la carte de s'agrandir */
+    .glass-card {
+      overflow: hidden;
+    }
+    
+    /* Custom scrollbar */
+    .student-list-scroll::-webkit-scrollbar {
+      width: 3px;
+    }
+    .student-list-scroll::-webkit-scrollbar-track {
+      background: var(--border);
+      border-radius: 3px;
+    }
+    .student-list-scroll::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 3px;
+    }
+    
+    .student-item-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 12px 14px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      margin-bottom: 8px;
-      transition: all 0.2s ease;
+      gap: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: left;
+      border-left: 4px solid transparent;
+      border-bottom: 1px solid rgba(0,0,0,0.03);
+      flex-shrink: 0;
     }
-    .student-item:hover {
-      transform: translateX(4px);
-      border-color: var(--primary);
+    .student-item-row:last-child {
+      border-bottom: none;
+    }
+    .student-item-row:hover {
       background: rgba(0,0,0,0.02);
     }
-    .student-info { display: flex; align-items: center; gap: 12px; }
-    .student-avatar {
-      width: 45px;
-      height: 45px;
+    .student-item-row.selected {
+      background: rgba(15,59,72,0.05);
+      border-left-color: var(--primary);
+    }
+    .student-item-row .sa-avatar {
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       display: flex;
@@ -96,47 +159,71 @@
       justify-content: center;
       flex-shrink: 0;
       overflow: hidden;
-      color: white;
-      font-size: 1.2rem;
     }
-    .student-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .student-details { flex: 1; }
-    .student-name { font-weight: 700; font-size: 0.85rem; margin-bottom: 2px; }
-    .student-class { font-size: 0.6rem; color: var(--text-light); }
-    .delete-btn {
+    .student-item-row .sa-avatar img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .student-item-row .sa-avatar i {
+      font-size: 1.2rem;
+      color: white;
+    }
+    .student-item-row .sa-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .student-item-row .sa-name {
+      font-weight: 600;
+      font-size: 0.75rem;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .student-item-row .sa-class {
+      font-size: 0.55rem;
+      color: var(--text-light);
+    }
+    .student-item-row .delete-btn-row {
       background: rgba(231,76,60,0.1);
       border: 1px solid rgba(231,76,60,0.3);
       color: #e74c3c;
-      padding: 6px 14px;
-      border-radius: 25px;
-      font-size: 0.65rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.6rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
+      flex-shrink: 0;
     }
-    .delete-btn:hover { background: #e74c3c; color: white; border-color: #e74c3c; }
+    .student-item-row .delete-btn-row:hover {
+      background: #e74c3c;
+      color: white;
+      border-color: #e74c3c;
+    }
     
     .show-more-btn {
       text-align: center;
-      padding: 12px;
-      margin-top: 12px;
-      background: rgba(0,0,0,0.03);
-      border-radius: 40px;
-      cursor: pointer;
-      font-size: 0.7rem;
+      padding: 8px;
+      font-size: 0.6rem;
       color: var(--primary);
-      border: 1px solid var(--border);
+      cursor: pointer;
+      border-top: 1px solid var(--border);
+      background: rgba(0,0,0,0.01);
       transition: all 0.2s;
-      font-weight: 500;
+      flex-shrink: 0;
     }
-    .show-more-btn:hover { background: rgba(0,0,0,0.06); }
+    .show-more-btn:hover {
+      background: rgba(0,0,0,0.03);
+    }
     
-    .empty-state { text-align: center; padding: 40px 20px; }
-    .empty-state i { font-size: 50px; opacity: 0.2; margin-bottom: 12px; display: block; }
-    .empty-state p { color: var(--text-light); font-size: 0.8rem; }
-    
-    .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 20px;
+    }
     .btn {
       padding: 14px 20px;
       border-radius: 40px;
@@ -152,21 +239,36 @@
       width: 100%;
       transition: all 0.2s ease;
     }
-    .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      box-shadow: 0 6px 20px rgba(15,59,72,0.3);
+    }
     .btn-primary:active { transform: scale(0.96); }
-    .btn-secondary { background: rgba(0,0,0,0.05); color: var(--text); border: 1px solid var(--border); }
-    
-    .section-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--primary);
+    .btn-secondary {
+      background: rgba(0,0,0,0.05);
+      color: var(--text);
+      border: 1px solid var(--border);
     }
     
-    @media (min-width: 768px) { .btn-group { flex-direction: row; } }
+    .empty-state {
+      text-align: center;
+      padding: 30px;
+    }
+    .empty-state i {
+      font-size: 50px;
+      opacity: 0.15;
+      margin-bottom: 12px;
+      display: block;
+    }
+    .empty-state p {
+      color: var(--text-light);
+      font-size: 0.75rem;
+    }
+    
+    @media (min-width: 768px) {
+      .btn-group { flex-direction: row; }
+    }
   </style>
 </head>
 <body>
@@ -215,8 +317,9 @@
       </div>
       
       <div class="glass-card">
-        <div class="section-title"><i class="fas fa-users"></i> Select Account</div>
-        <div class="student-list-container" id="studentsList"></div>
+        <div class="student-selector-label"><i class="fas fa-users"></i> Select Account</div>
+        <div class="students-count-badge" id="studentsCount"></div>
+        <div class="student-list-scroll" id="studentList"></div>
       </div>
       
       <div class="btn-group">
@@ -254,82 +357,171 @@
   <script src="js/app.js"></script>
   
   <script>
+    // ============================================
+    // INDEX PAGE - HAUTEUR FIXE COMME LOGIN
+    // ============================================
+    
     var currentDeleteId = null;
     var showAllAccounts = false;
+    var allStudents = [];
     
-    function getStudentAvatarHtml(avatarBase64) {
-      if (avatarBase64 && avatarBase64 !== '') return '<img src="' + avatarBase64 + '">';
+    function getStudentAvatarHtml(studentId) {
+      var profile = getProfile(studentId);
+      if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+        return '<img src="' + profile.avatarBase64 + '" alt="Avatar">';
+      }
       return '<i class="fas fa-user-graduate"></i>';
     }
     
-    function getRecentAccounts() { return JSON.parse(localStorage.getItem('smartgrade_recent_accounts') || '[]'); }
-    
-    function renderStudents() {
-      var allStudents = getAllStudents();
-      var recentIds = getRecentAccounts();
-      document.getElementById('totalStudents').innerHTML = allStudents.length;
+    function renderStudentList() {
+      allStudents = getAllStudents();
+      var countDiv = document.getElementById('studentsCount');
+      var listDiv = document.getElementById('studentList');
       
-      var sortedStudents = [];
-      recentIds.forEach(function(id) { var student = allStudents.find(function(s) { return s.id === id; }); if (student) sortedStudents.push(student); });
-      allStudents.forEach(function(student) { if (recentIds.indexOf(student.id) === -1) sortedStudents.push(student); });
-      var displayStudents = showAllAccounts ? sortedStudents : sortedStudents.slice(0, 3);
-      
-      if (displayStudents.length === 0) {
-        document.getElementById('studentsList').innerHTML = '<div class="empty-state"><i class="fas fa-users-slash"></i><p>No accounts yet</p><a href="register.html" class="btn btn-primary" style="display:inline-flex;width:auto;padding:10px 20px;font-size:0.75rem;"><i class="fas fa-user-plus"></i> Create Account</a></div>';
+      if (allStudents.length === 0) {
+        countDiv.innerHTML = '';
+        listDiv.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-light);font-size:0.7rem;">No accounts found. <a href="register.html" style="color:var(--primary);">Create one</a></div>';
+        document.getElementById('totalStudents').innerHTML = '0';
         return;
       }
       
-      var html = '';
-      displayStudents.forEach(function(student) {
-        var profile = getProfile(student.id);
-        var avatarHtml = getStudentAvatarHtml(profile.avatarBase64);
-        html += '<div class="student-item"><div class="student-info"><div class="student-avatar">' + avatarHtml + '</div><div class="student-details"><div class="student-name">' + escapeHtml(student.name) + '</div><div class="student-class">' + student.class + ' #' + student.number + '</div></div></div><button class="delete-btn" onclick="showDeleteModal(' + student.id + ')"><i class="fas fa-trash-alt"></i> Delete</button></div>';
+      document.getElementById('totalStudents').innerHTML = allStudents.length;
+      countDiv.innerHTML = '<i class="fas fa-users"></i> ' + allStudents.length + ' account(s) on this device';
+      
+      var recent = JSON.parse(localStorage.getItem('smartgrade_recent_accounts') || '[]');
+      
+      var sorted = [].concat(allStudents);
+      sorted.sort(function(a, b) {
+        var aRecent = recent.indexOf(a.id);
+        var bRecent = recent.indexOf(b.id);
+        if (aRecent !== -1 && bRecent === -1) return -1;
+        if (aRecent === -1 && bRecent !== -1) return 1;
+        if (aRecent !== -1 && bRecent !== -1) return aRecent - bRecent;
+        return 0;
       });
       
-      if (!showAllAccounts && sortedStudents.length > 3) {
-        html += '<div class="show-more-btn" onclick="toggleShowAll()"><i class="fas fa-chevron-down"></i> Show all (' + sortedStudents.length + ' accounts)</div>';
-      } else if (showAllAccounts && sortedStudents.length > 3) {
-        html += '<div class="show-more-btn" onclick="toggleShowAll()"><i class="fas fa-chevron-up"></i> Show less</div>';
+      function renderList(showAllFlag) {
+        var displayStudents = showAllFlag ? sorted : sorted.slice(0, 3);
+        var html = '';
+        
+        for (var i = 0; i < displayStudents.length; i++) {
+          var student = displayStudents[i];
+          var avatarHtml = getStudentAvatarHtml(student.id);
+          
+          html += '<div class="student-item-row" data-id="' + student.id + '">' +
+            '<div class="sa-avatar">' + avatarHtml + '</div>' +
+            '<div class="sa-info">' +
+              '<div class="sa-name">' + escapeHtml(student.name) + '</div>' +
+              '<div class="sa-class">' + student.class + ' #' + student.number + '</div>' +
+            '</div>' +
+            '<button class="delete-btn-row" onclick="event.stopPropagation(); showDeleteModal(' + student.id + ')"><i class="fas fa-trash-alt"></i> Delete</button>' +
+          '</div>';
+        }
+        
+        if (!showAllFlag && sorted.length > 3) {
+          html += '<div class="show-more-btn" onclick="expandList()"><i class="fas fa-chevron-down"></i> Show all (' + sorted.length + ' accounts)</div>';
+        }
+        if (showAllFlag && sorted.length > 3) {
+          html += '<div class="show-more-btn" onclick="collapseList()"><i class="fas fa-chevron-up"></i> Show less</div>';
+        }
+        
+        listDiv.innerHTML = html;
+        
+        // Add click event to select account
+        document.querySelectorAll('.student-item-row').forEach(function(row) {
+          row.addEventListener('click', function(e) {
+            if (e.target.classList.contains('delete-btn-row')) return;
+            var studentId = parseInt(this.dataset.id);
+            var student = getStudentById(studentId);
+            if (student) {
+              var recentList = JSON.parse(localStorage.getItem('smartgrade_recent_accounts') || '[]');
+              recentList = recentList.filter(function(id) { return id !== studentId; });
+              recentList.unshift(studentId);
+              if (recentList.length > 5) recentList = recentList.slice(0, 5);
+              localStorage.setItem('smartgrade_recent_accounts', JSON.stringify(recentList));
+              localStorage.setItem('smartgrade_selected_student_id', studentId);
+              window.location.href = 'login.html';
+            }
+          });
+        });
       }
-      document.getElementById('studentsList').innerHTML = html;
+      
+      window.expandList = function() {
+        showAllAccounts = true;
+        renderList(true);
+      };
+      
+      window.collapseList = function() {
+        showAllAccounts = false;
+        renderList(false);
+      };
+      
+      renderList(showAllAccounts);
     }
     
-    function toggleShowAll() { showAllAccounts = !showAllAccounts; renderStudents(); }
+    function showDeleteModal(id) {
+      currentDeleteId = id;
+      var modal = document.getElementById('deleteModal');
+      modal.style.display = 'flex';
+      document.getElementById('deletePin').value = '';
+      document.getElementById('deletePin').focus();
+    }
     
-    function showDeleteModal(id) { currentDeleteId = id; var modal = document.getElementById('deleteModal'); modal.style.display = 'flex'; document.getElementById('deletePin').value = ''; document.getElementById('deletePin').focus(); }
-    function closeDeleteModal() { document.getElementById('deleteModal').style.display = 'none'; currentDeleteId = null; }
+    function closeDeleteModal() {
+      document.getElementById('deleteModal').style.display = 'none';
+      currentDeleteId = null;
+    }
     
     function confirmDelete() {
       var pin = document.getElementById('deletePin').value;
       var student = getStudentById(currentDeleteId);
       if (!student) { showToast('Account not found'); closeDeleteModal(); return; }
       if (student.pin !== pin) { showToast('Wrong PIN'); closeDeleteModal(); return; }
-      var recent = getRecentAccounts();
+      
+      var recent = JSON.parse(localStorage.getItem('smartgrade_recent_accounts') || '[]');
       recent = recent.filter(function(id) { return id !== currentDeleteId; });
       localStorage.setItem('smartgrade_recent_accounts', JSON.stringify(recent));
+      
       deleteStudent(currentDeleteId);
-      renderStudents();
+      renderStudentList();
       showToast(student.name + ' deleted');
       closeDeleteModal();
     }
     
-    function escapeHtml(text) { if (!text) return ''; return text.replace(/[&<>]/g, function(m) { if (m === '&') return '&amp;'; if (m === '<') return '&lt;'; if (m === '>') return '&gt;'; return m; }); }
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
     
-    document.getElementById('deleteModal').addEventListener('click', function(e) { if (e.target === this) closeDeleteModal(); });
+    // Event listeners
+    document.getElementById('deleteModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDeleteModal();
+    });
+    
     document.querySelector('.btn-cancel-modal').onclick = closeDeleteModal;
     document.querySelector('.btn-confirm-delete').onclick = confirmDelete;
-    document.getElementById('deletePin').addEventListener('keypress', function(e) { if (e.key === 'Enter') confirmDelete(); });
+    document.getElementById('deletePin').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') confirmDelete();
+    });
     
+    // Export functions globally
     window.showDeleteModal = showDeleteModal;
     window.closeDeleteModal = closeDeleteModal;
     window.confirmDelete = confirmDelete;
-    window.toggleShowAll = toggleShowAll;
     
-    renderStudents();
+    // Initialize
+    renderStudentList();
     initMobileMenu();
     initThemeSelector();
     
-    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
+    setTimeout(function() {
+      if (typeof applyGlobalFont === 'function') applyGlobalFont();
+    }, 100);
   </script>
 </body>
 </html>

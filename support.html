@@ -57,6 +57,13 @@
       backdrop-filter: blur(10px);
     }
     
+    .legal-content {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+    
     .contact-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -66,7 +73,7 @@
     .contact-card {
       text-align: center;
       padding: 20px 12px;
-      background: var(--card-bg);
+      background: rgba(0,0,0,0.02);
       border-radius: 20px;
       border: 1px solid var(--border);
       transition: all 0.2s ease;
@@ -106,7 +113,7 @@
       border-bottom: 2px solid var(--border);
     }
     .faq-item {
-      background: var(--card-bg);
+      background: rgba(0,0,0,0.02);
       border-radius: 16px;
       border: 1px solid var(--border);
       margin-bottom: 12px;
@@ -301,6 +308,18 @@
     .status-error { background: rgba(231,76,60,0.12); color: #e74c3c; }
     .status-loading { background: rgba(52,152,219,0.12); color: #3498db; }
     
+    /* Contact section (same style as terms.html) */
+    .contact-info-section ul {
+      margin-left: 24px;
+      margin-bottom: 16px;
+    }
+    .contact-info-section li {
+      font-size: 0.8rem;
+      color: var(--text-light);
+      line-height: 1.6;
+      margin-bottom: 8px;
+    }
+    
     @media (max-width: 550px) {
       .contact-grid { grid-template-columns: repeat(2, 1fr); }
       .troubleshoot-grid { grid-template-columns: 1fr; }
@@ -336,10 +355,15 @@
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="support.html" class="nav-item active"><i class="fas fa-headset"></i> Support</a>
-        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
-        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms</a>
-        <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
+        <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
+        <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
+        <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
+        <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
+        <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+        <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -358,11 +382,13 @@
         </div>
       </div>
       
+     
+      
       <!-- ============================================ -->
-      <!-- CONTACT INFORMATION -->
+      <!-- QUICK CONTACT CARDS -->
       <!-- ============================================ -->
-      <div class="glass-card">
-        <h3><i class="fas fa-envelope"></i> Contact Information</h3>
+      <div class="legal-content">
+        <h3><i class="fas fa-bolt"></i> Quick Contact</h3>
         <div class="contact-grid">
           <div class="contact-card" onclick="window.open('mailto:hanskepper52@gmail.com')">
             <div class="contact-icon"><i class="fas fa-envelope"></i></div>
@@ -388,12 +414,12 @@
       </div>
       
       <!-- ============================================ -->
-      <!-- FREQUENTLY ASKED QUESTIONS - CATÉGORIES -->
+      <!-- FREQUENTLY ASKED QUESTIONS -->
       <!-- ============================================ -->
-      <div class="glass-card">
+      <div class="legal-content">
         <h3><i class="fas fa-question-circle"></i> Frequently Asked Questions</h3>
         
-        <!-- CATÉGORIE 1: COMPTE ET CONNEXION -->
+        <!-- CATEGORY 1: ACCOUNT & LOGIN -->
         <div class="faq-category">
           <h3><i class="fas fa-user-circle"></i> Account & Login</h3>
           
@@ -441,7 +467,7 @@
           </div>
         </div>
         
-        <!-- CATÉGORIE 2: DONNÉES ET TRANSFERT -->
+        <!-- CATEGORY 2: DATA & TRANSFER -->
         <div class="faq-category">
           <h3><i class="fas fa-database"></i> Data & Transfer</h3>
           
@@ -495,7 +521,7 @@
           </div>
         </div>
         
-        <!-- CATÉGORIE 3: TECHNIQUE -->
+        <!-- CATEGORY 3: TECHNICAL ISSUES -->
         <div class="faq-category">
           <h3><i class="fas fa-microchip"></i> Technical Issues</h3>
           
@@ -565,7 +591,7 @@
           </div>
         </div>
         
-        <!-- CATÉGORIE 4: FONCTIONNALITÉS -->
+        <!-- CATEGORY 4: FEATURES -->
         <div class="faq-category">
           <h3><i class="fas fa-star"></i> Features</h3>
           
@@ -667,7 +693,7 @@
           </div>
         </div>
         
-        <!-- CATÉGORIE 5: INSTALLATION -->
+        <!-- CATEGORY 5: INSTALLATION -->
         <div class="faq-category">
           <h3><i class="fas fa-mobile-alt"></i> Installation & PWA</h3>
           
@@ -716,7 +742,7 @@
       <!-- ============================================ -->
       <!-- TROUBLESHOOTING QUICK FIXES -->
       <!-- ============================================ -->
-      <div class="glass-card">
+      <div class="legal-content">
         <h3><i class="fas fa-wrench"></i> Quick Troubleshooting</h3>
         <div class="troubleshoot-grid">
           <div class="troubleshoot-card" onclick="window.location.href='settings.html'">
@@ -753,7 +779,7 @@
       <!-- ============================================ -->
       <!-- SEND MESSAGE FORM -->
       <!-- ============================================ -->
-      <div class="glass-card">
+      <div class="legal-content">
         <h3><i class="fas fa-paper-plane"></i> Send us a message</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">
           <i class="fas fa-info-circle"></i> Choose how you want to send your message
@@ -795,7 +821,7 @@
       <!-- ============================================ -->
       <!-- HELPFUL RESOURCES -->
       <!-- ============================================ -->
-      <div class="glass-card">
+      <div class="legal-content">
         <h3><i class="fas fa-book"></i> Helpful Resources</h3>
         <div class="resources-list">
           <div class="resource-item" onclick="window.location.href='guide-user.html'">
@@ -841,10 +867,27 @@
         </div>
       </div>
       
+       <!-- ============================================ -->
+      <!-- CONTACT INFORMATION (same style as terms.html) -->
+      <!-- ============================================ -->
+      <div class="legal-content">
+        <div class="contact-info-section">
+          <h3><i class="fas fa-envelope"></i> Contact Information</h3>
+          <p>If you have any questions or need support, please contact the developer:</p>
+          <ul>
+            <li><i class="fas fa-user"></i> <strong>Developer:</strong> HANS KEPPER</li>
+            <li><i class="fas fa-envelope"></i> <strong>Email:</strong> hanskepper52@gmail.com</li>
+            <li><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +237 698 640 885</li>
+            <li><i class="fab fa-github"></i> <strong>GitHub:</strong> hanskepper</li>
+            <li><i class="fas fa-school"></i> <strong>School:</strong> SIN GBHS FOUMBAN, Form 4B Science</li>
+            <li><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> Foumban, West Region, Cameroon</li>
+          </ul>
+        </div>
+      </div>
       <!-- ============================================ -->
       <!-- RESPONSE TIMES -->
       <!-- ============================================ -->
-      <div class="glass-card text-center">
+      <div class="legal-content text-center">
         <i class="fas fa-clock" style="font-size:35px;color:var(--primary);margin-bottom:12px;display:block;"></i>
         <p style="font-size:0.75rem; font-weight:600;">Response Times</p>
         <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin-top:8px;">
@@ -1073,7 +1116,7 @@
     var fontObserver = new MutationObserver(function() { applyGlobalFont(); });
     fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
     
-    // Ouvrir la première FAQ par défaut
+    // Open first FAQ by default
     setTimeout(function() {
       var firstFaq = document.querySelector('.faq-question');
       if (firstFaq) toggleFaq(firstFaq);

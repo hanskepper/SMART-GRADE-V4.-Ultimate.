@@ -120,7 +120,7 @@
     }
     .complete-feature-item i { width: 20px; color: #2ecc71; font-size: 0.7rem; }
     
-    /* Tech grid */
+    /* Tech grid with original colors */
     .tech-grid-extended {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -144,6 +144,7 @@
     .tech-item .tech-name { font-weight: 700; font-size: 0.7rem; }
     .tech-item .tech-desc { font-size: 0.55rem; color: var(--text-light); margin-top: 4px; }
     
+    /* Original colors for tech icons */
     .tech-html5 { color: #E44D26; }
     .tech-css3 { color: #264DE4; }
     .tech-js { color: #F7DF1E; text-shadow: 0 0 2px #000; }
@@ -167,31 +168,93 @@
     }
     .info-row-about i { width: 28px; color: var(--primary); text-align: center; }
     
-    .user-stats {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
+    /* Clickable friends row */
+    .info-row-clickable {
+      display: flex;
+      align-items: center;
       gap: 10px;
-      margin-top: 16px;
-      margin-bottom: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-    .user-stat-card {
-      text-align: center;
-      padding: 16px 8px;
-      background: rgba(0,0,0,0.03);
-      border-radius: 16px;
+    .info-row-clickable:hover {
+      background: rgba(0,0,0,0.02);
+      transform: translateX(4px);
+    }
+    .info-row-clickable i { width: 28px; color: var(--primary); text-align: center; }
+    .info-row-clickable .click-hint {
+      margin-left: auto;
+      font-size: 0.55rem;
+      color: var(--text-light);
+    }
+    
+    /* Modal for friends list */
+    .friends-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.95);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .friends-modal.active { display: flex; }
+    .friends-modal-content {
+      background: var(--card-bg);
+      border-radius: 28px;
+      width: 90%;
+      max-width: 320px;
+      max-height: 70%;
+      overflow: hidden;
+      animation: fadeInUp 0.3s ease;
       border: 1px solid var(--border);
     }
-    .user-stat-value {
-      font-size: 1.4rem;
-      font-weight: 800;
-      color: var(--primary);
+    .friends-modal-header {
+      padding: 18px 20px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .user-stat-label {
-      font-size: 0.55rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      margin-top: 4px;
-      opacity: 0.7;
+    .friends-modal-header h3 { color: white; margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
+    .friends-modal-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 0 10px; }
+    .friends-modal-body { padding: 20px; max-height: 60vh; overflow-y: auto; }
+    .friends-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .friend-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+    .friend-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+    }
+    .friend-name {
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--text);
     }
     
     .tech-modal {
@@ -219,6 +282,7 @@
       border: 1px solid rgba(255,255,255,0.1);
     }
     @keyframes techFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .tech-modal-header {
       padding: 18px 20px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -242,7 +306,6 @@
       .features-grid { grid-template-columns: 1fr; }
       .tech-grid-extended { grid-template-columns: repeat(2, 1fr); }
       .complete-features-list { grid-template-columns: 1fr; }
-      .user-stats { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -280,7 +343,11 @@
         <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
         <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
         <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
+        <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
+        <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
+        <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -397,7 +464,12 @@
       <div class="glass-card">
         <h3><i class="fas fa-heart"></i> Acknowledgments</h3>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> My Classmates</div>
-        <div class="info-row-about"><i class="fas fa-gratipay"></i> Form 4B Science Class 2025-2026</div>
+        <!-- My Friends - Clickable -->
+        <div class="info-row-clickable" onclick="openFriendsModal()">
+          <i class="fas fa-user-friends"></i>
+          <span>My Friends</span>
+          <span class="click-hint"><i class="fas fa-eye"></i> Click to see names</span>
+        </div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> Open Source Community</div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> Font Awesome & Google Fonts</div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> Chart.js Team</div>
@@ -407,7 +479,7 @@
       <!-- Developer -->
       <div class="glass-card">
         <h3><i class="fas fa-user-astronaut"></i> Developer</h3>
-        <div class="info-row-about"><i class="fas fa-user"></i><strong>HANS KEEPER</strong></div>
+        <div class="info-row-about"><i class="fas fa-user"></i><strong>HANS KEPPER</strong></div>
         <div class="info-row-about"><i class="fas fa-envelope"></i> hanskepper52@gmail.com</div>
         <div class="info-row-about"><i class="fas fa-phone"></i> +237 698 640 885</div>
         <div class="info-row-about"><i class="fas fa-map-marker-alt"></i> Cameroon</div>
@@ -427,11 +499,26 @@
       <div class="glass-card text-center">
         <i class="fas fa-copyright" style="font-size:30px;opacity:0.3;"></i>
         <p style="font-size:0.65rem;margin-top:8px;">SMART GRADE v4.0 "Ultimate"</p>
-        <p style="font-size:0.6rem;color:var(--text-light);">Developed by HANS KEEPER • SIN GBHS FOUMBAN 2025-2026</p>
+        <p style="font-size:0.6rem;color:var(--text-light);">Developed by HANS KEPPER • SIN GBHS FOUMBAN 2025-2026</p>
         <p style="font-size:0.55rem;color:var(--text-light);">All rights reserved.</p>
       </div>
       
     </main>
+  </div>
+  
+  <!-- FRIENDS MODAL -->
+  <div id="friendsModal" class="friends-modal">
+    <div class="friends-modal-content">
+      <div class="friends-modal-header">
+        <h3><i class="fas fa-user-friends"></i> My Friends</h3>
+        <button class="friends-modal-close" onclick="closeFriendsModal()">&times;</button>
+      </div>
+      <div class="friends-modal-body">
+        <div class="friends-list" id="friendsList">
+          <!-- Friends names will be loaded here -->
+        </div>
+      </div>
+    </div>
   </div>
   
   <!-- TECH MODAL -->
@@ -463,45 +550,57 @@
   <script src="js/app.js"></script>
   
   <script>
-    // Charger les statistiques de l'utilisateur
-    function loadUserStats() {
-      try {
-        var stored = localStorage.getItem('smartgrade_current');
-        if (stored) {
-          var user = JSON.parse(stored);
-          
-          var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + user.id) || '[]');
-          var achievements = JSON.parse(localStorage.getItem('smartgrade_achievements_' + user.id) || '[]');
-          
-          // Calculer la moyenne
-          var total = 0;
-          for (var i = 0; i < grades.length; i++) {
-            total += grades[i].value;
-          }
-          var avg = grades.length > 0 ? (total / grades.length).toFixed(2) : '--';
-          
-          var unlockedBadges = 0;
-          for (var i = 0; i < achievements.length; i++) {
-            if (achievements[i].unlocked) unlockedBadges++;
-          }
-          
-          document.getElementById('userAvg').innerHTML = avg;
-          document.getElementById('userGrades').innerHTML = grades.length;
-          document.getElementById('userBadges').innerHTML = unlockedBadges;
-        }
-      } catch(e) {
-        console.log('Error loading user stats:', e);
+    // ============================================
+    // FRIENDS LIST - ONLY NAMES (NO CLASS, NO NUMBER)
+    // ============================================
+    var FRIENDS_LIST = [
+      "LAMBO ALVARES",
+      "DAVILA GEORGINA",
+      "WANYOU ROMIEL",
+      "SAMARI AYATOU",
+      "EWALOW",
+    ];
+    
+    // Function to get friend avatar letter
+    function getAvatarLetter(name) {
+      return name.charAt(0).toUpperCase();
+    }
+    
+    // Open friends modal
+    function openFriendsModal() {
+      var modal = document.getElementById('friendsModal');
+      var friendsListDiv = document.getElementById('friendsList');
+      
+      // Build friends list HTML - ONLY NAMES
+      var html = '';
+      for (var i = 0; i < FRIENDS_LIST.length; i++) {
+        var friendName = FRIENDS_LIST[i];
+        html += '<div class="friend-item">' +
+          '<div class="friend-avatar">' + getAvatarLetter(friendName) + '</div>' +
+          '<div class="friend-name">' + friendName + '</div>' +
+        '</div>';
       }
+      
+      friendsListDiv.innerHTML = html;
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+    
+    function closeFriendsModal() {
+      document.getElementById('friendsModal').classList.remove('active');
+      document.body.style.overflow = '';
     }
     
     function openTechModal() {
       document.getElementById('techModal').classList.add('active');
       document.body.style.overflow = 'hidden';
     }
+    
     function closeTechModal() {
       document.getElementById('techModal').classList.remove('active');
       document.body.style.overflow = '';
     }
+    
     function showTechTab(tab) {
       document.querySelectorAll('.tech-tab').forEach(function(btn) { btn.classList.remove('active'); });
       document.querySelectorAll('.tech-content').forEach(function(content) { content.classList.remove('active'); });
@@ -511,7 +610,33 @@
       else if (tab === 'storage') { document.querySelector('.tech-tab:nth-child(4)').classList.add('active'); document.getElementById('techStorage').classList.add('active'); }
       else if (tab === 'pwa') { document.querySelector('.tech-tab:nth-child(5)').classList.add('active'); document.getElementById('techPwa').classList.add('active'); }
     }
+    
+    // Close modals when clicking outside
     document.getElementById('techModal').addEventListener('click', function(e) { if (e.target === this) closeTechModal(); });
+    document.getElementById('friendsModal').addEventListener('click', function(e) { if (e.target === this) closeFriendsModal(); });
+    
+    // Load user stats
+    function loadUserStats() {
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (stored) {
+          var user = JSON.parse(stored);
+          var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + user.id) || '[]');
+          var achievements = JSON.parse(localStorage.getItem('smartgrade_achievements_' + user.id) || '[]');
+          
+          var total = 0;
+          for (var i = 0; i < grades.length; i++) { total += grades[i].value; }
+          var avg = grades.length > 0 ? (total / grades.length).toFixed(2) : '--';
+          
+          var unlockedBadges = 0;
+          for (var i = 0; i < achievements.length; i++) { if (achievements[i].unlocked) unlockedBadges++; }
+          
+          if (document.getElementById('userAvg')) document.getElementById('userAvg').innerHTML = avg;
+          if (document.getElementById('userGrades')) document.getElementById('userGrades').innerHTML = grades.length;
+          if (document.getElementById('userBadges')) document.getElementById('userBadges').innerHTML = unlockedBadges;
+        }
+      } catch(e) { console.log('Error loading user stats:', e); }
+    }
     
     loadUserStats();
     initParticles();

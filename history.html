@@ -17,50 +17,52 @@
     .stats-row {
       display: flex;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       flex-wrap: wrap;
     }
-    .stat-card-history {
-      flex: 1;
-      text-align: center;
-      padding: 16px;
+    .stat-badge-sm {
       background: var(--card-bg);
-      border-radius: 16px;
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.65rem;
       border: 1px solid var(--border);
-      min-width: 100px;
     }
-    .stat-number {
-      font-size: 1.8rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-    .stat-label {
-      font-size: 0.6rem;
-      color: var(--text-light);
-      text-transform: uppercase;
-      margin-top: 4px;
-    }
-    .filter-group {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .filter-section {
       margin-bottom: 20px;
+    }
+    .filter-section-title {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
     }
     .filter-chip {
-      padding: 8px 16px;
+      padding: 6px 14px;
       border-radius: 30px;
       font-size: 0.7rem;
       background: rgba(0,0,0,0.03);
       border: 1px solid var(--border);
       cursor: pointer;
       transition: all 0.2s;
+      color: var(--text);
     }
+    .filter-chip i { margin-right: 6px; font-size: 0.7rem; }
     .filter-chip.active {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
       border-color: transparent;
     }
-    .filter-chip i { margin-right: 6px; }
     .timeline {
       position: relative;
       padding-left: 30px;
@@ -109,10 +111,6 @@
       font-weight: 700;
       font-size: 0.85rem;
       margin-bottom: 4px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
     }
     .timeline-desc {
       font-size: 0.7rem;
@@ -134,11 +132,19 @@
     .action-export { background: rgba(155,89,182,0.15); color: #9b59b6; }
     .action-backup { background: rgba(52,152,219,0.15); color: #3498db; }
     .action-settings { background: rgba(26,188,156,0.15); color: #1abc9c; }
-    .empty-state {
-      text-align: center;
-      padding: 50px 20px;
+    .action-transfer { background: rgba(26,188,156,0.15); color: #1abc9c; }
+    .action-subjects { background: rgba(155,89,182,0.15); color: #9b59b6; }
+    .action-flashcard { background: rgba(46,204,113,0.15); color: #27ae60; }
+    .action-goal { background: rgba(241,196,15,0.15); color: #f39c12; }
+    .action-profile { background: rgba(52,152,219,0.15); color: #3498db; }
+    .action-account { background: rgba(231,76,60,0.15); color: #e74c3c; }
+    .empty-state { text-align: center; padding: 50px 20px; }
+    .empty-state i { font-size: 60px; opacity: 0.15; margin-bottom: 16px; display: block; }
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 16px;
     }
-    .empty-state i { font-size: 50px; opacity: 0.2; margin-bottom: 16px; }
     .clear-btn {
       background: rgba(231,76,60,0.1);
       border: 1px solid rgba(231,76,60,0.3);
@@ -148,10 +154,15 @@
       font-size: 0.7rem;
       cursor: pointer;
       transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
     }
     .clear-btn:hover { background: rgba(231,76,60,0.2); }
     @media (max-width: 550px) {
-      .stats-row { flex-wrap: wrap; }
+      .filter-grid { justify-content: center; }
+      .action-bar { justify-content: center; }
+      .stats-row { justify-content: center; }
       .timeline { padding-left: 20px; }
       .timeline-dot { left: -16px; }
     }
@@ -160,6 +171,7 @@
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
+    
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-history"></i><span>ACTIVITY</span></div>
@@ -182,8 +194,8 @@
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
-        <a href="history.html" class="nav-item active"><i class="fas fa-history"></i> Activity</a>
         <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="history.html" class="nav-item active"><i class="fas fa-history"></i> History</a>
         <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
@@ -199,26 +211,61 @@
       </div>
       
       <div class="stats-row">
-        <div class="stat-card-history"><div class="stat-number" id="totalCount">0</div><div class="stat-label">Total Actions</div></div>
-        <div class="stat-card-history"><div class="stat-number" id="gradeCount">0</div><div class="stat-label">Grade Actions</div></div>
-        <div class="stat-card-history"><div class="stat-number" id="loginCount">0</div><div class="stat-label">Logins</div></div>
-        <div class="stat-card-history"><div class="stat-number" id="exportCount">0</div><div class="stat-label">Exports</div></div>
+        <div class="stat-badge-sm" id="totalCount"><i class="fas fa-database"></i> 0 total</div>
+        <div class="stat-badge-sm" id="gradeCount"><i class="fas fa-pen"></i> 0 grades</div>
+        <div class="stat-badge-sm" id="loginCount"><i class="fas fa-sign-in-alt"></i> 0 logins</div>
+        <div class="stat-badge-sm" id="exportCount"><i class="fas fa-download"></i> 0 exports</div>
       </div>
       
       <div class="glass-card">
-        <div class="filter-group">
-          <div class="filter-chip active" data-filter="all" onclick="setHistoryFilter('all')"><i class="fas fa-list"></i> All</div>
-          <div class="filter-chip" data-filter="login" onclick="setHistoryFilter('login')"><i class="fas fa-sign-in-alt"></i> Login</div>
-          <div class="filter-chip" data-filter="grade" onclick="setHistoryFilter('grade')"><i class="fas fa-pen"></i> Grades</div>
-          <div class="filter-chip" data-filter="delete" onclick="setHistoryFilter('delete')"><i class="fas fa-trash"></i> Delete</div>
-          <div class="filter-chip" data-filter="edit" onclick="setHistoryFilter('edit')"><i class="fas fa-edit"></i> Edit</div>
-          <div class="filter-chip" data-filter="export" onclick="setHistoryFilter('export')"><i class="fas fa-download"></i> Export</div>
-          <div class="filter-chip" data-filter="backup" onclick="setHistoryFilter('backup')"><i class="fas fa-database"></i> Backup</div>
-          <div class="filter-chip" data-filter="settings" onclick="setHistoryFilter('settings')"><i class="fas fa-sliders-h"></i> Settings</div>
+        <div class="action-bar">
+          <div class="clear-btn" onclick="clearHistory()"><i class="fas fa-trash-alt"></i> Clear History</div>
         </div>
         
-        <div style="text-align: right; margin-bottom: 16px;">
-          <button class="clear-btn" onclick="clearHistory()"><i class="fas fa-trash-alt"></i> Clear History</button>
+        <!-- SECTION 1: ALL (toujours en premier) -->
+        <div class="filter-section">
+          <div class="filter-section-title"><i class="fas fa-star"></i> All Activities</div>
+          <div class="filter-grid">
+            <div class="filter-chip active" data-filter="all" onclick="setFilter('all')"><i class="fas fa-list"></i> All</div>
+          </div>
+        </div>
+        
+        <!-- SECTION 2: ACADEMIC -->
+        <div class="filter-section">
+          <div class="filter-section-title"><i class="fas fa-graduation-cap"></i> Academic</div>
+          <div class="filter-grid">
+            <div class="filter-chip" data-filter="grade" onclick="setFilter('grade')"><i class="fas fa-pen"></i> Grades</div>
+            <div class="filter-chip" data-filter="badge" onclick="setFilter('badge')"><i class="fas fa-medal"></i> Badges</div>
+            <div class="filter-chip" data-filter="streak" onclick="setFilter('streak')"><i class="fas fa-fire"></i> Streaks</div>
+            <div class="filter-chip" data-filter="goal" onclick="setFilter('goal')"><i class="fas fa-bullseye"></i> Goals</div>
+            <div class="filter-chip" data-filter="subjects" onclick="setFilter('subjects')"><i class="fas fa-layer-group"></i> Subjects</div>
+            <div class="filter-chip" data-filter="flashcard" onclick="setFilter('flashcard')"><i class="fas fa-clone"></i> Flashcards</div>
+            <div class="filter-chip" data-filter="timetable" onclick="setFilter('timetable')"><i class="fas fa-calendar-alt"></i> Timetable</div>
+          </div>
+        </div>
+        
+        <!-- SECTION 3: DATA & STORAGE -->
+        <div class="filter-section">
+          <div class="filter-section-title"><i class="fas fa-database"></i> Data & Storage</div>
+          <div class="filter-grid">
+            <div class="filter-chip" data-filter="backup" onclick="setFilter('backup')"><i class="fas fa-database"></i> Backup</div>
+            <div class="filter-chip" data-filter="import" onclick="setFilter('import')"><i class="fas fa-download"></i> Import</div>
+            <div class="filter-chip" data-filter="export" onclick="setFilter('export')"><i class="fas fa-upload"></i> Export</div>
+            <div class="filter-chip" data-filter="transfer" onclick="setFilter('transfer')"><i class="fas fa-exchange-alt"></i> Transfer</div>
+          </div>
+        </div>
+        
+        <!-- SECTION 4: ACCOUNT -->
+        <div class="filter-section">
+          <div class="filter-section-title"><i class="fas fa-user"></i> Account</div>
+          <div class="filter-grid">
+            <div class="filter-chip" data-filter="login" onclick="setFilter('login')"><i class="fas fa-sign-in-alt"></i> Login</div>
+            <div class="filter-chip" data-filter="profile" onclick="setFilter('profile')"><i class="fas fa-user"></i> Profile</div>
+            <div class="filter-chip" data-filter="account" onclick="setFilter('account')"><i class="fas fa-key"></i> Security</div>
+            <div class="filter-chip" data-filter="settings" onclick="setFilter('settings')"><i class="fas fa-sliders-h"></i> Settings</div>
+            <div class="filter-chip" data-filter="delete" onclick="setFilter('delete')"><i class="fas fa-trash"></i> Delete</div>
+            <div class="filter-chip" data-filter="edit" onclick="setFilter('edit')"><i class="fas fa-edit"></i> Edit</div>
+          </div>
         </div>
         
         <div id="historyTimeline" class="timeline">
@@ -239,46 +286,74 @@
   
   <script>
     var currentUser = null;
-    var currentHistoryFilter = 'all';
+    var currentFilter = 'all';
     var allHistory = [];
     
-    function getHistoryKey() { return 'smartgrade_audit_history_' + (currentUser ? currentUser.id : 'global'); }
+    function getHistoryKey() {
+      return 'smartgrade_audit_history_' + (currentUser ? currentUser.id : 'global');
+    }
     
     function addHistoryAction(actionType, title, description, icon) {
       if (!currentUser) return;
       var history = JSON.parse(localStorage.getItem(getHistoryKey()) || '[]');
-      history.unshift({ id: Date.now(), type: actionType, title: title, description: description, icon: icon || getIconForType(actionType), date: new Date().toISOString(), timestamp: Date.now() });
+      history.unshift({
+        id: Date.now(),
+        type: actionType,
+        title: title,
+        description: description,
+        icon: icon || getIconForType(actionType),
+        date: new Date().toISOString(),
+        timestamp: Date.now()
+      });
       if (history.length > 200) history = history.slice(0, 200);
       localStorage.setItem(getHistoryKey(), JSON.stringify(history));
       if (document.getElementById('historyTimeline')) loadHistory();
     }
     
     function getIconForType(type) {
-      var icons = { login: 'fa-sign-in-alt', logout: 'fa-sign-out-alt', grade: 'fa-pen', delete: 'fa-trash', edit: 'fa-edit', export: 'fa-download', import: 'fa-upload', backup: 'fa-database', settings: 'fa-sliders-h', pin: 'fa-key', fingerprint: 'fa-fingerprint', theme: 'fa-palette', font: 'fa-font', profile: 'fa-user', flashcard: 'fa-clone', goal: 'fa-bullseye' };
+      var icons = {
+        login: 'fa-sign-in-alt', logout: 'fa-sign-out-alt', grade: 'fa-pen',
+        delete: 'fa-trash', edit: 'fa-edit', export: 'fa-download',
+        import: 'fa-upload', backup: 'fa-database', settings: 'fa-sliders-h',
+        pin: 'fa-key', fingerprint: 'fa-fingerprint', theme: 'fa-palette',
+        font: 'fa-font', profile: 'fa-user', flashcard: 'fa-clone',
+        goal: 'fa-bullseye', badge: 'fa-medal', streak: 'fa-fire',
+        subjects: 'fa-layer-group', transfer: 'fa-exchange-alt',
+        timetable: 'fa-calendar-alt', account: 'fa-user-shield'
+      };
       return icons[type] || 'fa-history';
     }
     
     function getBadgeClass(type) {
-      var classes = { login: 'action-login', logout: 'action-login', grade: 'action-grade', delete: 'action-delete', edit: 'action-edit', export: 'action-export', import: 'action-export', backup: 'action-backup', settings: 'action-settings', pin: 'action-settings', fingerprint: 'action-settings', theme: 'action-settings', font: 'action-settings', profile: 'action-settings', flashcard: 'action-grade', goal: 'action-grade' };
+      var classes = {
+        login: 'action-login', logout: 'action-login', grade: 'action-grade',
+        delete: 'action-delete', edit: 'action-edit', export: 'action-export',
+        import: 'action-export', backup: 'action-backup', settings: 'action-settings',
+        pin: 'action-settings', fingerprint: 'action-settings', theme: 'action-settings',
+        font: 'action-settings', profile: 'action-profile', flashcard: 'action-flashcard',
+        goal: 'action-goal', badge: 'action-grade', streak: 'action-grade',
+        subjects: 'action-subjects', transfer: 'action-transfer', account: 'action-account'
+      };
       return classes[type] || 'action-login';
     }
     
     function loadHistory() {
       if (!currentUser) return;
       allHistory = JSON.parse(localStorage.getItem(getHistoryKey()) || '[]');
-      var filtered = allHistory;
-      if (currentHistoryFilter !== 'all') filtered = allHistory.filter(function(item) { return item.type === currentHistoryFilter; });
       updateStats();
-      var container = document.getElementById('historyTimeline');
-      if (filtered.length === 0) { container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>No activity recorded</p><p style="font-size:0.6rem;">Your actions will appear here</p></div>'; return; }
-      var html = '';
-      filtered.forEach(function(item) {
-        var date = new Date(item.date);
-        var formattedDate = formatHistoryDate(date);
-        var badgeClass = getBadgeClass(item.type);
-        html += '<div class="timeline-item"><div class="timeline-dot" style="background: var(--primary);"></div><div class="timeline-date"><i class="fas fa-calendar-alt"></i> ' + formattedDate + '</div><div class="timeline-title"><span class="action-badge ' + badgeClass + '"><i class="fas ' + item.icon + '"></i> ' + item.type.toUpperCase() + '</span> ' + item.title + '</div><div class="timeline-desc">' + item.description + '</div></div>';
-      });
-      container.innerHTML = html;
+      displayHistory();
+    }
+    
+    function updateStats() {
+      var total = allHistory.length;
+      var gradeCount = allHistory.filter(function(i) { return i.type === 'grade'; }).length;
+      var loginCount = allHistory.filter(function(i) { return i.type === 'login'; }).length;
+      var exportCount = allHistory.filter(function(i) { return i.type === 'export' || i.type === 'import'; }).length;
+      
+      document.getElementById('totalCount').innerHTML = '<i class="fas fa-database"></i> ' + total + ' total';
+      document.getElementById('gradeCount').innerHTML = '<i class="fas fa-pen"></i> ' + gradeCount + ' grades';
+      document.getElementById('loginCount').innerHTML = '<i class="fas fa-sign-in-alt"></i> ' + loginCount + ' logins';
+      document.getElementById('exportCount').innerHTML = '<i class="fas fa-download"></i> ' + exportCount + ' exports';
     }
     
     function formatHistoryDate(date) {
@@ -288,58 +363,144 @@
       if (diff < 3600) return Math.floor(diff / 60) + ' minutes ago';
       if (diff < 86400) return Math.floor(diff / 3600) + ' hours ago';
       if (diff < 604800) return Math.floor(diff / 86400) + ' days ago';
-      return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString();
+      return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString().slice(0,5);
     }
     
-    function updateStats() {
-      var total = allHistory.length;
-      var gradeCount = allHistory.filter(function(i) { return i.type === 'grade'; }).length;
-      var loginCount = allHistory.filter(function(i) { return i.type === 'login'; }).length;
-      var exportCount = allHistory.filter(function(i) { return i.type === 'export' || i.type === 'import'; }).length;
-      document.getElementById('totalCount').innerHTML = total;
-      document.getElementById('gradeCount').innerHTML = gradeCount;
-      document.getElementById('loginCount').innerHTML = loginCount;
-      document.getElementById('exportCount').innerHTML = exportCount;
-    }
-    
-    function setHistoryFilter(filter) {
-      currentHistoryFilter = filter;
-      document.querySelectorAll('.filter-chip').forEach(function(chip) { chip.classList.remove('active'); if (chip.dataset.filter === filter) chip.classList.add('active'); });
-      loadHistory();
-    }
-    
-    function clearHistory() {
-      showSmartConfirm({
-        title: 'Clear History', message: 'Are you sure you want to clear all activity history?', detail: 'This action cannot be undone.',
-        icon: 'fa-trash-alt', iconColor: '#e74c3c', confirmText: 'Clear', confirmColor: '#e74c3c',
-        onConfirm: function() { localStorage.setItem(getHistoryKey(), '[]'); loadHistory(); showToast('History cleared'); }
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
       });
     }
     
-    function initHistory() {
-      try { var stored = localStorage.getItem('smartgrade_current'); if (stored) currentUser = JSON.parse(stored); } catch(e) {}
-      if (!currentUser || !currentUser.id) { window.location.href = 'login.html'; return; }
+    function displayHistory() {
+      var container = document.getElementById('historyTimeline');
+      if (!container) return;
+      
+      var filtered = allHistory;
+      if (currentFilter !== 'all') {
+        filtered = allHistory.filter(function(item) { return item.type === currentFilter; });
+      }
+      
+      if (filtered.length === 0) {
+        container.innerHTML = '<div class="empty-state"><i class="fas fa-history"></i><p>No activity recorded</p><p style="font-size:0.6rem;">Your actions will appear here</p></div>';
+        return;
+      }
+      
+      var html = '';
+      for (var i = 0; i < filtered.length; i++) {
+        var item = filtered[i];
+        var date = new Date(item.date);
+        var formattedDate = formatHistoryDate(date);
+        var badgeClass = getBadgeClass(item.type);
+        var icon = item.icon || getIconForType(item.type);
+        
+        html += '<div class="timeline-item">' +
+          '<div class="timeline-dot" style="background: var(--primary);"></div>' +
+          '<div class="timeline-date"><i class="fas fa-calendar-alt"></i> ' + formattedDate + '</div>' +
+          '<div class="timeline-title">' +
+            '<span class="action-badge ' + badgeClass + '"><i class="fas ' + icon + '"></i> ' + item.type.toUpperCase() + '</span> ' +
+            escapeHtml(item.title) +
+          '</div>' +
+          '<div class="timeline-desc">' + escapeHtml(item.description) + '</div>' +
+        '</div>';
+      }
+      container.innerHTML = html;
+    }
+    
+    function setFilter(filter) {
+      currentFilter = filter;
+      var chips = document.querySelectorAll('.filter-chip');
+      for (var i = 0; i < chips.length; i++) {
+        chips[i].classList.remove('active');
+        if (chips[i].getAttribute('data-filter') === filter) {
+          chips[i].classList.add('active');
+        }
+      }
+      displayHistory();
+    }
+    
+    function clearHistory() {
+      if (confirm('Are you sure you want to clear all activity history? This action cannot be undone.')) {
+        localStorage.setItem(getHistoryKey(), '[]');
+        loadHistory();
+        if (typeof showToast === 'function') showToast('History cleared');
+        else alert('History cleared');
+      }
+    }
+    
+    function applyGlobalFont() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    
+    function init() {
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (stored) {
+          currentUser = JSON.parse(stored);
+        } else {
+          window.location.href = 'login.html';
+          return;
+        }
+      } catch(e) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      // Add demo history entries if empty
+      var existing = JSON.parse(localStorage.getItem(getHistoryKey()) || '[]');
+      if (existing.length === 0) {
+        addHistoryAction('login', 'Login Successful', 'Welcome back, ' + currentUser.name, 'fa-sign-in-alt');
+        addHistoryAction('grade', 'Grades Updated', 'Added 5 new grades for Term 1', 'fa-pen');
+        addHistoryAction('badge', 'Badge Unlocked', 'First Grade badge unlocked', 'fa-medal');
+        addHistoryAction('export', 'Data Exported', 'Exported grades as JSON file', 'fa-download');
+        addHistoryAction('settings', 'PIN Changed', 'Security PIN has been updated', 'fa-key');
+        addHistoryAction('flashcard', 'Flashcard Created', 'Added 3 new flashcards for Mathematics', 'fa-clone');
+        addHistoryAction('subjects', 'Subjects Updated', 'Term 2 subjects selection changed', 'fa-layer-group');
+        addHistoryAction('profile', 'Profile Updated', 'Profile photo and bio updated', 'fa-user');
+      }
+      
       loadHistory();
       updateHeaderProfile();
     }
     
     function updateHeaderProfile() {
+      var headerAvatar = document.getElementById('headerAvatar');
+      if (!headerAvatar || !currentUser) return;
       try {
         var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + currentUser.id) || '{}');
-        var headerAvatar = document.getElementById('headerAvatar');
-        if (profile.avatarBase64) headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-      } catch(e) {}
+        if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
+          headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+          headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+        }
+      } catch(e) {
+        headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      }
     }
     
     window.addHistoryAction = addHistoryAction;
-    window.setHistoryFilter = setHistoryFilter;
+    window.setFilter = setFilter;
     window.clearHistory = clearHistory;
     
-    initHistory();
+    init();
     if (typeof initMobileMenu === 'function') initMobileMenu();
     if (typeof initThemeSelector === 'function') initThemeSelector();
+    applyGlobalFont();
     
-    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
+    var fontObserver = new MutationObserver(function() { applyGlobalFont(); });
+    fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   </script>
 </body>
 </html>

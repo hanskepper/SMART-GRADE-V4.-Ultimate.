@@ -105,40 +105,12 @@
       line-height: 1.6;
       margin-bottom: 8px;
     }
-    .badge-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-      gap: 12px;
-      margin-top: 16px;
-    }
-    .badge-item {
-      background: rgba(0,0,0,0.02);
+    .legal-section .highlight {
+      background: rgba(var(--primary-rgb), 0.08);
+      padding: 12px 16px;
       border-radius: 12px;
-      padding: 12px;
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      border: 1px solid var(--border);
-    }
-    .badge-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      background: var(--primary);
-      color: white;
-    }
-    .badge-info h4 {
-      font-size: 0.8rem;
-      font-weight: 700;
-      margin-bottom: 2px;
-    }
-    .badge-info p {
-      font-size: 0.6rem;
-      margin: 0;
+      border-left: 3px solid var(--primary);
+      margin: 16px 0;
     }
     .legal-date {
       text-align: center;
@@ -183,7 +155,6 @@
       .legal-section h3 { font-size: 0.95rem; }
       .legal-section p, .legal-section li { font-size: 0.75rem; }
       .toc-grid { grid-template-columns: 1fr; }
-      .badge-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -214,9 +185,11 @@
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="license.html" class="nav-item active"><i class="fas fa-balance-scale"></i> License</a>
-        
         <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
+        <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
+        <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
         <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
         <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
         <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
@@ -232,7 +205,7 @@
         <h1>MIT License</h1>
         <p>Open Source Software License for SMART GRADE</p>
         <div class="version-badge">
-          <i class="fas fa-code-branch"></i> Version 4.0.3 "Ultimate"
+          <i class="fas fa-calendar-alt"></i> Last updated: May 28, 2026
         </div>
       </div>
       
@@ -242,19 +215,24 @@
           <div class="toc-grid">
             <a href="#license-text"><i class="fas fa-chevron-right"></i> MIT License Text</a>
             <a href="#what-it-means"><i class="fas fa-chevron-right"></i> What This Means For You</a>
+            <a href="#permissions"><i class="fas fa-chevron-right"></i> Permissions</a>
             <a href="#limitations"><i class="fas fa-chevron-right"></i> Limitations</a>
+            <a href="#conditions"><i class="fas fa-chevron-right"></i> Conditions</a>
+            <a href="#disclaimer"><i class="fas fa-chevron-right"></i> Disclaimer of Warranty</a>
+            <a href="#liability"><i class="fas fa-chevron-right"></i> Limitation of Liability</a>
             <a href="#third-party"><i class="fas fa-chevron-right"></i> Third-Party Libraries</a>
             <a href="#open-source"><i class="fas fa-chevron-right"></i> Open Source Contributions</a>
-            <a href="#author"><i class="fas fa-chevron-right"></i> Author Information</a>
+            <a href="#contact"><i class="fas fa-chevron-right"></i> Contact Information</a>
           </div>
         </div>
         
+        <!-- MIT LICENSE TEXT -->
         <div id="license-text" class="legal-section">
           <h3><i class="fas fa-file-code"></i> MIT License Text</h3>
           <div class="license-box">
 MIT License
 
-Copyright (c) 2025-2026 HANS KEEPER
+Copyright (c) 2025-2026 HANS KEPPER
 
 SIN GBHS FOUMBAN - Form 4B Science
 Academic Year 2025-2026
@@ -279,116 +257,92 @@ SOFTWARE.
           </div>
         </div>
         
+        <!-- WHAT THIS MEANS FOR YOU -->
         <div id="what-it-means" class="legal-section">
           <h3><i class="fas fa-info-circle"></i> What This Means For You</h3>
-          <div class="badge-grid">
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-play"></i></div>
-              <div class="badge-info">
-                <h4>USE</h4>
-                <p>Use SMART GRADE for any purpose, personal or educational</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-book-open"></i></div>
-              <div class="badge-info">
-                <h4>STUDY</h4>
-                <p>Study how the application works and learn from the code</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-code"></i></div>
-              <div class="badge-info">
-                <h4>MODIFY</h4>
-                <p>Adapt and modify the code to suit your needs</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-share-alt"></i></div>
-              <div class="badge-info">
-                <h4>SHARE</h4>
-                <p>Distribute copies of the application to others</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-sync-alt"></i></div>
-              <div class="badge-info">
-                <h4>SUBLICENSE</h4>
-                <p>Distribute modified versions under the same license</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon"><i class="fas fa-chart-line"></i></div>
-              <div class="badge-info">
-                <h4>COMMERCIAL USE</h4>
-                <p>Use the software for commercial purposes (with attribution)</p>
-              </div>
-            </div>
-          </div>
-          <div class="highlight" style="background: rgba(46,204,113,0.1); border-left-color: #2ecc71; padding: 12px 16px; border-radius: 12px; margin-top: 16px;">
+          <ul>
+            <li><i class="fas fa-check-circle"></i> <strong>Use:</strong> You can use SMART GRADE for any purpose, personal or educational</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Study:</strong> You can study how the application works and learn from the code</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Modify:</strong> You can adapt and modify the code to suit your needs</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Share:</strong> You can distribute copies of the application to others</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Sublicense:</strong> You can distribute modified versions under the same license</li>
+            <li><i class="fas fa-check-circle"></i> <strong>Commercial Use:</strong> You can use the software for commercial purposes (with attribution)</li>
+          </ul>
+          <div class="highlight">
             <i class="fas fa-check-circle" style="color:#2ecc71;"></i> <strong>Attribution required:</strong> You must include the original copyright notice and license text in all copies or substantial portions of the Software.
           </div>
         </div>
         
-        <div id="limitations" class="legal-section">
-          <h3><i class="fas fa-exclamation-triangle"></i> Limitations</h3>
+        <!-- PERMISSIONS -->
+        <div id="permissions" class="legal-section">
+          <h3><i class="fas fa-check-circle"></i> Permissions</h3>
           <ul>
-            <li><i class="fas fa-file-signature"></i> <strong>No Warranty:</strong> The software is provided "AS IS" without any warranty of any kind</li>
-            <li><i class="fas fa-gavel"></i> <strong>No Liability:</strong> The authors are not liable for any damages arising from use</li>
-            <li><i class="fas fa-copyright"></i> <strong>Copyright Notice:</strong> Must be retained in all copies</li>
-            <li><i class="fas fa-balance-scale"></i> <strong>No Trademark Rights:</strong> The license does not grant trademark rights</li>
+            <li><i class="fas fa-check"></i> <strong>Commercial Use:</strong> The software can be used commercially</li>
+            <li><i class="fas fa-check"></i> <strong>Modification:</strong> The software can be modified</li>
+            <li><i class="fas fa-check"></i> <strong>Distribution:</strong> The software can be distributed</li>
+            <li><i class="fas fa-check"></i> <strong>Private Use:</strong> The software can be used privately</li>
+            <li><i class="fas fa-check"></i> <strong>Sublicensing:</strong> Modified versions can be sublicensed under the same terms</li>
+            <li><i class="fas fa-check"></i> <strong>Patent Grant:</strong> Contributors grant patent rights for contributions</li>
           </ul>
         </div>
         
-        <div id="third-party" class="legal-section">
-          <h3><i class="fas fa-code"></i> Third-Party Libraries</h3>
-          <p>SMART GRADE uses the following open source libraries and resources:</p>
-          <div class="badge-grid">
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#f1c40f;"><i class="fas fa-chart-line"></i></div>
-              <div class="badge-info">
-                <h4>Chart.js</h4>
-                <p>MIT License - Interactive charts and graphs</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#2ecc71;"><i class="fas fa-qrcode"></i></div>
-              <div class="badge-info">
-                <h4>QRCode.js</h4>
-                <p>MIT License - QR code generation</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#e74c3c;"><i class="fas fa-camera"></i></div>
-              <div class="badge-info">
-                <h4>html5-qrcode</h4>
-                <p>Apache License 2.0 - QR code scanning</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#3498db;"><i class="fab fa-font-awesome"></i></div>
-              <div class="badge-info">
-                <h4>Font Awesome</h4>
-                <p>CC BY 4.0 / SIL OFL 1.1 - Icons</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#9b59b6;"><i class="fab fa-google"></i></div>
-              <div class="badge-info">
-                <h4>Google Fonts</h4>
-                <p>Open Font License - Web fonts</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:#1abc9c;"><i class="fas fa-file-pdf"></i></div>
-              <div class="badge-info">
-                <h4>html2pdf.js</h4>
-                <p>MIT License - PDF generation</p>
-              </div>
-            </div>
-          </div>
+        <!-- LIMITATIONS -->
+        <div id="limitations" class="legal-section">
+          <h3><i class="fas fa-exclamation-triangle"></i> Limitations</h3>
+          <ul>
+            <li><i class="fas fa-ban"></i> <strong>No Warranty:</strong> The software is provided "AS IS" without any warranty of any kind</li>
+            <li><i class="fas fa-ban"></i> <strong>No Liability:</strong> The authors are not liable for any damages arising from use</li>
+            <li><i class="fas fa-ban"></i> <strong>No Trademark Rights:</strong> The license does not grant trademark rights</li>
+            <li><i class="fas fa-ban"></i> <strong>No Support Obligation:</strong> The authors are not obligated to provide support</li>
+          </ul>
         </div>
         
+        <!-- CONDITIONS -->
+        <div id="conditions" class="legal-section">
+          <h3><i class="fas fa-clipboard-list"></i> Conditions</h3>
+          <ul>
+            <li><i class="fas fa-copyright"></i> <strong>Copyright Notice:</strong> Must be retained in all copies</li>
+            <li><i class="fas fa-file-signature"></i> <strong>License Text:</strong> Must be included in all copies or substantial portions</li>
+            <li><i class="fas fa-user-check"></i> <strong>Attribution:</strong> Original authors must be credited</li>
+          </ul>
+        </div>
+        
+        <!-- DISCLAIMER OF WARRANTY -->
+        <div id="disclaimer" class="legal-section">
+          <h3><i class="fas fa-scale-balanced"></i> Disclaimer of Warranty</h3>
+          <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE SOFTWARE IS WITH YOU.</p>
+          <p>Grade calculations are for informational purposes only. The official grades from SIN GBHS FOUMBAN take precedence over any calculations in this software.</p>
+        </div>
+        
+        <!-- LIMITATION OF LIABILITY -->
+        <div id="liability" class="legal-section">
+          <h3><i class="fas fa-shield"></i> Limitation of Liability</h3>
+          <p>IN NO EVENT SHALL THE DEVELOPER (HANS KEPPER) BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+          <p>This includes, but is not limited to:</p>
+          <ul>
+            <li>Loss of data or grades</li>
+            <li>Academic consequences resulting from use</li>
+            <li>Errors or inaccuracies in calculations</li>
+            <li>Unauthorized access to your account</li>
+            <li>Third-party services (GitHub, JSONBin.io, etc.)</li>
+          </ul>
+        </div>
+        
+        <!-- THIRD-PARTY LIBRARIES -->
+        <div id="third-party" class="legal-section">
+          <h3><i class="fas fa-code"></i> Third-Party Libraries</h3>
+          <p>SMART GRADE uses the following open source libraries and resources. Each library is distributed under its own license:</p>
+          <ul>
+            <li><i class="fas fa-chart-line"></i> <strong>Chart.js</strong> - MIT License - Interactive charts and graphs</li>
+            <li><i class="fas fa-qrcode"></i> <strong>QRCode.js</strong> - MIT License - QR code generation</li>
+            <li><i class="fas fa-camera"></i> <strong>html5-qrcode</strong> - Apache License 2.0 - QR code scanning</li>
+            <li><i class="fab fa-font-awesome"></i> <strong>Font Awesome</strong> - CC BY 4.0 / SIL OFL 1.1 - Icons</li>
+            <li><i class="fab fa-google"></i> <strong>Google Fonts</strong> - Open Font License - Web fonts</li>
+            <li><i class="fas fa-file-pdf"></i> <strong>html2pdf.js</strong> - MIT License - PDF generation</li>
+          </ul>
+        </div>
+        
+        <!-- OPEN SOURCE CONTRIBUTIONS -->
         <div id="open-source" class="legal-section">
           <h3><i class="fab fa-github"></i> Open Source Contributions</h3>
           <p>SMART GRADE is an open source project. You can contribute by:</p>
@@ -397,66 +351,32 @@ SOFTWARE.
             <li><i class="fas fa-code-branch"></i> Submitting pull requests with improvements</li>
             <li><i class="fas fa-lightbulb"></i> Suggesting new features</li>
             <li><i class="fas fa-language"></i> Helping with documentation</li>
+            <li><i class="fas fa-globe"></i> Translating the application</li>
           </ul>
           <div class="highlight" style="background: rgba(52,152,219,0.1); border-left-color: #3498db; margin-top: 16px;">
             <i class="fab fa-github"></i> <strong>Repository:</strong> <a href="https://github.com/hanskepper/SMART-GRADE-V4.-Ultimate." target="_blank" style="color:var(--primary);">https://github.com/hanskepper/SMART-GRADE-V4.-Ultimate.</a>
           </div>
         </div>
         
-        <div id="author" class="legal-section">
-          <h3><i class="fas fa-user-astronaut"></i> Author Information</h3>
-          <p><strong>SMART GRADE v4.0 "Ultimate"</strong> was developed by:</p>
-          <div class="badge-grid">
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fas fa-user"></i></div>
-              <div class="badge-info">
-                <h4>Developer</h4>
-                <p>HANS KEEPER</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fas fa-school"></i></div>
-              <div class="badge-info">
-                <h4>School</h4>
-                <p>SIN GBHS FOUMBAN - Form 4B Science</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fas fa-calendar"></i></div>
-              <div class="badge-info">
-                <h4>Year</h4>
-                <p>2025-2026</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fas fa-envelope"></i></div>
-              <div class="badge-info">
-                <h4>Contact</h4>
-                <p>hanskepper52@gmail.com</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fab fa-whatsapp"></i></div>
-              <div class="badge-info">
-                <h4>WhatsApp</h4>
-                <p>+237 698 640 885</p>
-              </div>
-            </div>
-            <div class="badge-item">
-              <div class="badge-icon" style="background:var(--primary);"><i class="fas fa-map-marker-alt"></i></div>
-              <div class="badge-info">
-                <h4>Location</h4>
-                <p>Foumban, Cameroon</p>
-              </div>
-            </div>
-          </div>
+        <!-- CONTACT INFORMATION (same style as terms.html) -->
+        <div id="contact" class="legal-section">
+          <h3><i class="fas fa-envelope"></i> Contact Information</h3>
+          <p>If you have any questions about this license or the software, please contact the developer:</p>
+          <ul>
+            <li><i class="fas fa-user"></i> <strong>Developer:</strong> HANS KEPPER</li>
+            <li><i class="fas fa-envelope"></i> <strong>Email:</strong> hanskepper52@gmail.com</li>
+            <li><i class="fab fa-whatsapp"></i> <strong>WhatsApp:</strong> +237 698 640 885</li>
+            <li><i class="fab fa-github"></i> <strong>GitHub:</strong> hanskepper</li>
+            <li><i class="fas fa-school"></i> <strong>School:</strong> SIN GBHS FOUMBAN, Form 4B Science</li>
+            <li><i class="fas fa-map-marker-alt"></i> <strong>Location:</strong> Foumban, West Region, Cameroon</li>
+          </ul>
         </div>
         
         <div class="legal-date">
           <i class="fas fa-calendar-alt"></i> License effective: May 28, 2026<br>
           <i class="fas fa-code-branch"></i> Version: 4.0.3 "Ultimate"<br>
           <i class="fas fa-school"></i> SIN GBHS FOUMBAN - Form 4B Science<br>
-          <i class="fas fa-copyright"></i> 2025-2026 HANS KEEPER. Open Source Software<br>
+          <i class="fas fa-copyright"></i> 2025-2026 HANS KEPPER. Open Source Software<br>
           <i class="fab fa-osi"></i> OSI Approved - MIT License
         </div>
       </div>

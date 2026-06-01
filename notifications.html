@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SMART GRADE - Notifications</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -19,6 +19,13 @@
       gap: 12px;
       margin-bottom: 16px;
       flex-wrap: wrap;
+    }
+    .stat-badge-sm {
+      background: var(--card-bg);
+      border-radius: 30px;
+      padding: 6px 14px;
+      font-size: 0.65rem;
+      border: 1px solid var(--border);
     }
     .filter-section {
       margin-bottom: 20px;
@@ -127,13 +134,6 @@
       justify-content: flex-end;
       margin-bottom: 16px;
     }
-    .stat-badge-sm {
-      background: var(--card-bg);
-      border-radius: 30px;
-      padding: 6px 14px;
-      font-size: 0.65rem;
-      border: 1px solid var(--border);
-    }
     @media (max-width: 550px) {
       .filter-grid { justify-content: center; }
       .action-bar { justify-content: center; }
@@ -193,7 +193,6 @@
           <div class="action-btn" onclick="markAllAsRead()"><i class="fas fa-check-double"></i> Mark all as read</div>
         </div>
         
-        <!-- SECTION 1: ALL (toujours en premier) -->
         <div class="filter-section">
           <div class="filter-section-title"><i class="fas fa-star"></i> All Notifications</div>
           <div class="filter-grid">
@@ -201,7 +200,6 @@
           </div>
         </div>
         
-        <!-- SECTION 2: ACADEMIC -->
         <div class="filter-section">
           <div class="filter-section-title"><i class="fas fa-graduation-cap"></i> Academic</div>
           <div class="filter-grid">
@@ -209,38 +207,23 @@
             <div class="filter-chip" data-filter="badge" onclick="setFilter('badge')"><i class="fas fa-medal"></i> Badges</div>
             <div class="filter-chip" data-filter="streak" onclick="setFilter('streak')"><i class="fas fa-fire"></i> Streaks</div>
             <div class="filter-chip" data-filter="goal" onclick="setFilter('goal')"><i class="fas fa-bullseye"></i> Goals</div>
-            <div class="filter-chip" data-filter="subjects" onclick="setFilter('subjects')"><i class="fas fa-layer-group"></i> Subjects</div>
-            <div class="filter-chip" data-filter="flashcard" onclick="setFilter('flashcard')"><i class="fas fa-clone"></i> Flashcards</div>
-            <div class="filter-chip" data-filter="timetable" onclick="setFilter('timetable')"><i class="fas fa-calendar-alt"></i> Timetable</div>
           </div>
         </div>
         
-        <!-- SECTION 3: DATA & STORAGE -->
         <div class="filter-section">
-          <div class="filter-section-title"><i class="fas fa-database"></i> Data & Storage</div>
+          <div class="filter-section-title"><i class="fas fa-database"></i> Data</div>
           <div class="filter-grid">
-            <div class="filter-chip" data-filter="backup" onclick="setFilter('backup')"><i class="fas fa-database"></i> Backup</div>
-            <div class="filter-chip" data-filter="import" onclick="setFilter('import')"><i class="fas fa-download"></i> Import</div>
             <div class="filter-chip" data-filter="export" onclick="setFilter('export')"><i class="fas fa-upload"></i> Export</div>
-            <div class="filter-chip" data-filter="transfer" onclick="setFilter('transfer')"><i class="fas fa-exchange-alt"></i> Transfer</div>
+            <div class="filter-chip" data-filter="import" onclick="setFilter('import')"><i class="fas fa-download"></i> Import</div>
           </div>
         </div>
         
-        <!-- SECTION 4: ACCOUNT -->
         <div class="filter-section">
           <div class="filter-section-title"><i class="fas fa-user"></i> Account</div>
           <div class="filter-grid">
             <div class="filter-chip" data-filter="login" onclick="setFilter('login')"><i class="fas fa-sign-in-alt"></i> Login</div>
             <div class="filter-chip" data-filter="profile" onclick="setFilter('profile')"><i class="fas fa-user"></i> Profile</div>
             <div class="filter-chip" data-filter="account" onclick="setFilter('account')"><i class="fas fa-key"></i> Security</div>
-          </div>
-        </div>
-        
-        <!-- SECTION 5: SYSTEM -->
-        <div class="filter-section">
-          <div class="filter-section-title"><i class="fas fa-cog"></i> System</div>
-          <div class="filter-grid">
-            <div class="filter-chip" data-filter="system" onclick="setFilter('system')"><i class="fas fa-bell"></i> System</div>
           </div>
         </div>
         
@@ -273,16 +256,11 @@
       streak: { icon: 'fa-fire', bg: 'streak' },
       goal: { icon: 'fa-bullseye', bg: 'goal' },
       profile: { icon: 'fa-user', bg: 'profile' },
-      backup: { icon: 'fa-database', bg: 'backup' },
-      import: { icon: 'fa-download', bg: 'import' },
       export: { icon: 'fa-upload', bg: 'export' },
-      subjects: { icon: 'fa-layer-group', bg: 'subjects' },
-      transfer: { icon: 'fa-exchange-alt', bg: 'transfer' },
-      account: { icon: 'fa-key', bg: 'account' },
-      flashcard: { icon: 'fa-clone', bg: 'flashcard' },
-      timetable: { icon: 'fa-calendar-alt', bg: 'timetable' },
-      system: { icon: 'fa-bell', bg: 'system' },
+      import: { icon: 'fa-download', bg: 'import' },
       login: { icon: 'fa-sign-in-alt', bg: 'login' },
+      account: { icon: 'fa-key', bg: 'account' },
+      system: { icon: 'fa-bell', bg: 'system' },
       default: { icon: 'fa-bell', bg: 'system' }
     };
     
@@ -310,15 +288,23 @@
         allNotifications = JSON.parse(saved);
       } else {
         allNotifications = [];
-        allNotifications.unshift({ id: Date.now(), type: 'system', title: 'Welcome to SMART GRADE!', body: 'Start by adding your first grade to unlock achievements.', date: new Date().toISOString(), read: false });
-        allNotifications.unshift({ id: Date.now() + 1, type: 'login', title: 'Login Successful', body: 'Welcome back, ' + currentUser.name + '!', date: new Date().toISOString(), read: false });
-        saveNotifications();
+        addDemoNotifications();
       }
       
       allNotifications.sort(function(a, b) { return new Date(b.date) - new Date(a.date); });
       updateStats();
       displayNotifications();
       updateHeaderProfile();
+    }
+    
+    function addDemoNotifications() {
+      var now = new Date().toISOString();
+      allNotifications = [
+        { id: Date.now(), type: 'login', title: 'Welcome to SMART GRADE', body: 'Start by adding your first grade.', date: now, read: false },
+        { id: Date.now()+1, type: 'grade', title: 'Grades Ready', body: 'You can now add your grades for Term 1.', date: now, read: false },
+        { id: Date.now()+2, type: 'badge', title: 'Badges Available', body: 'Complete actions to unlock achievements.', date: now, read: false }
+      ];
+      saveNotifications();
     }
     
     function saveNotifications() {
@@ -409,7 +395,7 @@
       saveNotifications();
       updateStats();
       displayNotifications();
-      if (typeof showToast === 'function') showToast('All notifications marked as read');
+      showToast('All notifications marked as read');
     }
     
     function setFilter(filter) {
@@ -449,6 +435,15 @@
         'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
       };
       document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    
+    function showToast(message) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
     }
     
     window.markAsRead = markAsRead;

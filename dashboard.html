@@ -15,7 +15,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <meta name="theme-color" content="#0f3b48">
   <style>
-    /* Dashboard specific styles - no hardcoded colors */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -209,8 +208,6 @@
       justify-content: space-between;
       align-items: center;
     }
-    
-    /* Command Modal */
     .cmd-overlay {
       position: fixed;
       top: 0;
@@ -223,9 +220,7 @@
       align-items: center;
       justify-content: center;
     }
-    .cmd-overlay.show {
-      display: flex;
-    }
+    .cmd-overlay.show { display: flex; }
     .cmd-box {
       background: var(--card-bg);
       border-radius: 20px;
@@ -262,9 +257,7 @@
       transition: all 0.2s;
       color: var(--text);
     }
-    .cmd-chip:hover {
-      border-color: var(--primary);
-    }
+    .cmd-chip:hover { border-color: var(--primary); }
     .cmd-result {
       background: rgba(0,0,0,0.03);
       padding: 12px;
@@ -283,20 +276,10 @@
       color: var(--text);
       cursor: pointer;
     }
-    
-    @media (min-width: 768px) {
-      .btn-group {
-        flex-direction: row;
-      }
-    }
+    @media (min-width: 768px) { .btn-group { flex-direction: row; } }
     @media (max-width: 550px) {
-      .stats-grid, .term-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-      .stat-value {
-        font-size: 1.4rem;
-      }
+      .stats-grid, .term-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+      .stat-value { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -337,7 +320,7 @@
         <a href="statistics.html" class="nav-item"><i class="fas fa-chart-pie"></i> Statistics</a>
         <a href="achievements.html" class="nav-item"><i class="fas fa-medal"></i> Achievements</a>
         <a href="history.html" class="nav-item"><i class="fas fa-history"></i> History</a>
-        <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
+       
         <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
         <a href="backup.html" class="nav-item"><i class="fas fa-database"></i> Backup</a>
         <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
@@ -349,6 +332,10 @@
         <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms</a>
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
+        <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
+        
+        <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
+        <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
         <div id="devSidebarContainer" style="display:none; margin-top:16px; padding-top:16px; border-top:2px solid var(--primary);">
           <div style="font-size:0.7rem; font-weight:700; color:var(--primary); margin-bottom:8px; display:flex; align-items:center; gap:8px;">
             <i class="fas fa-code"></i> Developer Tools
@@ -386,7 +373,7 @@
       <div class="goal-card">
         <h3 class="text-center"><i class="fas fa-bullseye"></i> Your Goal</h3>
         <div class="goal-value" id="goalValue">12.00</div>
-        <input type="range" class="goal-slider" id="goalSlider" min="10" max="20" step="0.5" value="12" oninput="updateGoal(this.value)">
+        <input type="range" class="goal-slider" id="goalSlider" min="10" max="20" step="0.5" value="12">
         <div class="goal-status" id="goalStatus"></div>
       </div>
       
@@ -421,11 +408,10 @@
     </main>
   </div>
 
-  <!-- COMMAND MODAL -->
   <div class="cmd-overlay" id="cmdOverlay">
     <div class="cmd-box">
       <h3><i class="fas fa-terminal"></i> Commands</h3>
-      <input type="text" id="cmdInput" placeholder="Type command..." autocomplete="off">
+      <input type="text" id="cmdInput" placeholder="Type command...">
       <div class="cmd-grid">
         <div class="cmd-chip" onclick="runCmd('export')"><i class="fas fa-download"></i><br>Export</div>
         <div class="cmd-chip" onclick="runCmd('transfer')"><i class="fas fa-exchange-alt"></i><br>Transfer</div>
@@ -451,7 +437,10 @@
   <script src="js/app.js"></script>
   
   <script>
-    var pc = null;
+    // ============================================
+    // DASHBOARD - VERSION CORRIGÉE
+    // ============================================
+    
     var allSubs = [
       {id:1,name:"COMPUTER SCIENCES",icon:"fa-laptop-code"},
       {id:2,name:"MATHEMATICS",icon:"fa-square-root-variable"},
@@ -469,164 +458,243 @@
       {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
     ];
     
+    // 30 PROVERBES ET CITATIONS MOTIVANTES
     var MQ = [
-      {q:"Success is not final, failure is not fatal.",a:"Churchill"},
-      {q:"Education is the passport to the future.",a:"Malcolm X"},
-      {q:"Believe you can and you're halfway there.",a:"Theodore Roosevelt"},
-      {q:"Strive for progress, not perfection.",a:"Unknown"},
-      {q:"The secret of getting ahead is getting started.",a:"Mark Twain"},
-      {q:"Fall seven times, stand up eight.",a:"Japanese Proverb"},
-      {q:"You don't have to be great to start.",a:"Zig Ziglar"},
-      {q:"Make today so awesome that yesterday gets jealous.",a:"Unknown"},
-      {q:"Consistency is more important than perfection.",a:"Unknown"},
-      {q:"Every day is a new opportunity.",a:"Unknown"}
+      {q:"Success is not final, failure is not fatal. It is the courage to continue that counts.", a:"Winston Churchill"},
+      {q:"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", a:"Malcolm X"},
+      {q:"Believe you can and you're halfway there.", a:"Theodore Roosevelt"},
+      {q:"Strive for progress, not perfection.", a:"Unknown"},
+      {q:"The secret of getting ahead is getting started.", a:"Mark Twain"},
+      {q:"Fall seven times, stand up eight.", a:"Japanese Proverb"},
+      {q:"You don't have to be great to start, but you have to start to be great.", a:"Zig Ziglar"},
+      {q:"Make today so awesome that yesterday gets jealous.", a:"Unknown"},
+      {q:"Consistency is more important than perfection.", a:"Unknown"},
+      {q:"Every day is a new opportunity to improve yourself.", a:"Unknown"},
+      {q:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt"},
+      {q:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius"},
+      {q:"The expert in anything was once a beginner.", a:"Helen Hayes"},
+      {q:"The beautiful thing about learning is that no one can take it away from you.", a:"B.B. King"},
+      {q:"Education is not the filling of a pail, but the lighting of a fire.", a:"W.B. Yeats"},
+      {q:"Start where you are. Use what you have. Do what you can.", a:"Arthur Ashe"},
+      {q:"Little by little, one travels far.", a:"J.R.R. Tolkien"},
+      {q:"Small progress is still progress.", a:"Unknown"},
+      {q:"Never give up on a dream.", a:"Unknown"},
+      {q:"You are stronger than you think.", a:"A.A. Milne"},
+      {q:"The only limit to our realization of tomorrow is our doubts of today.", a:"Franklin D. Roosevelt"},
+      {q:"Don't watch the clock; do what it does. Keep going.", a:"Sam Levenson"},
+      {q:"The harder you work for something, the greater you'll feel when you achieve it.", a:"Unknown"},
+      {q:"Dream it. Wish it. Do it.", a:"Unknown"},
+      {q:"Success doesn't come to you, you go to it.", a:"Marva Collins"},
+      {q:"The only way to do great work is to love what you do.", a:"Steve Jobs"},
+      {q:"Your limitation—it's only your imagination.", a:"Unknown"},
+      {q:"Push yourself, because no one else is going to do it for you.", a:"Unknown"},
+      {q:"Great things never come from comfort zones.", a:"Unknown"},
+      {q:"Study while others are sleeping; work while others are loafing.", a:"William A. Ward"}
     ];
     
+    // Appliquer la police correctement
+    function applyDashboardFont() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+      
+      var allElements = document.querySelectorAll('*');
+      for (var i = 0; i < allElements.length; i++) {
+        if (allElements[i].style) {
+          allElements[i].style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+        }
+      }
+    }
+    
+    function checkAuth() {
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (!stored) {
+          window.location.href = 'login.html';
+          return false;
+        }
+        return true;
+      } catch(e) {
+        window.location.href = 'login.html';
+        return false;
+      }
+    }
+    
     function showDeveloperLinks() {
+      var devHidden = localStorage.getItem('smartgrade_dev_links_hidden');
+      var container = document.getElementById('devSidebarContainer');
+      if (!container) return;
+      if (devHidden === 'true') {
+        container.style.display = 'none';
+        return;
+      }
       try {
         var stored = localStorage.getItem('smartgrade_current');
         if (stored) {
           var user = JSON.parse(stored);
           if (user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9) {
-            var container = document.getElementById('devSidebarContainer');
-            if (container) container.style.display = 'block';
+            container.style.display = 'block';
+          } else {
+            container.style.display = 'none';
           }
         }
       } catch(e) {}
     }
     
     function calcTermAvg(sid, term) {
-      var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
-      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + term) || '[]');
-      var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
-      
-      if (!selected || selected.length === 0) return 0;
-      
-      var totalWeighted = 0;
-      var totalCoeff = 0;
-      var seq1 = (term - 1) * 2 + 1;
-      var seq2 = seq1 + 1;
-      
-      for (var i = 0; i < selected.length; i++) {
-        var subjectId = selected[i];
-        var coeff = coeffs[subjectId] || 5;
+      try {
+        var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
+        var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + term) || '[]');
+        var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
         
-        var n1 = [], n2 = [];
-        for (var k = 0; k < grades.length; k++) {
-          if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq1) n1.push(grades[k].value);
-          if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq2) n2.push(grades[k].value);
+        if (!selected || selected.length === 0) return 0;
+        
+        var totalWeighted = 0;
+        var totalCoeff = 0;
+        var seq1 = (term - 1) * 2 + 1;
+        var seq2 = seq1 + 1;
+        
+        for (var i = 0; i < selected.length; i++) {
+          var subjectId = selected[i];
+          var coeff = coeffs[subjectId] || 5;
+          
+          var n1 = [], n2 = [];
+          for (var k = 0; k < grades.length; k++) {
+            if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq1) n1.push(grades[k].value);
+            if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq2) n2.push(grades[k].value);
+          }
+          
+          var a1 = 0, a2 = 0;
+          if (n1.length > 0) {
+            var sum1 = 0;
+            for (var j = 0; j < n1.length; j++) sum1 += n1[j];
+            a1 = sum1 / n1.length;
+          }
+          if (n2.length > 0) {
+            var sum2 = 0;
+            for (var j = 0; j < n2.length; j++) sum2 += n2[j];
+            a2 = sum2 / n2.length;
+          }
+          
+          var subjectAvg = (a1 + a2) / 2;
+          totalWeighted += subjectAvg * coeff;
+          totalCoeff += coeff;
         }
-        
-        var a1 = 0, a2 = 0;
-        if (n1.length > 0) { var sum1 = 0; for (var j = 0; j < n1.length; j++) sum1 += n1[j]; a1 = sum1 / n1.length; }
-        if (n2.length > 0) { var sum2 = 0; for (var j = 0; j < n2.length; j++) sum2 += n2[j]; a2 = sum2 / n2.length; }
-        
-        var subjectAvg = (a1 + a2) / 2;
-        totalWeighted += subjectAvg * coeff;
-        totalCoeff += coeff;
+        return totalCoeff > 0 ? Math.round((totalWeighted / totalCoeff) * 100) / 100 : 0;
+      } catch(e) {
+        return 0;
       }
-      return totalCoeff > 0 ? Math.round((totalWeighted / totalCoeff) * 100) / 100 : 0;
     }
     
     function loadDashboard() {
-      var current = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-      if (!current) { window.location.href = 'login.html'; return; }
-      var sid = current.id;
+      if (!checkAuth()) return;
       
-      document.getElementById('greeting').innerHTML = getGreeting() + ', ' + (current.name || 'Student') + '!';
-      document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + (current.class || 'B2');
-      
-      var randomIndex = Math.floor(Math.random() * MQ.length);
-      var q = MQ[randomIndex];
-      document.getElementById('motivationQuote').innerHTML = '"' + q.q + '"';
-      document.getElementById('motivationAuthor').innerHTML = '- ' + q.a;
-      
-      var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
-      var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + getCurrentTerm()) || '[]');
-      var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
-      var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + sid) || '{}');
-      
-      var headerAvatar = document.getElementById('headerAvatar');
-      if (headerAvatar) {
-        if (profile.avatarBase64 && profile.avatarBase64 !== '') {
-          headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        } else {
-          headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      try {
+        var current = JSON.parse(localStorage.getItem('smartgrade_current'));
+        var sid = current.id;
+        
+        document.getElementById('greeting').innerHTML = getGreeting() + ', ' + (current.name || 'Student') + '!';
+        document.getElementById('userInfo').innerHTML = '<i class="fas fa-hashtag"></i> ' + current.number + ' | Class ' + (current.class || 'B2');
+        
+        var randomIndex = Math.floor(Math.random() * MQ.length);
+        var q = MQ[randomIndex];
+        document.getElementById('motivationQuote').innerHTML = '"' + q.q + '"';
+        document.getElementById('motivationAuthor').innerHTML = '- ' + q.a;
+        
+        var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + sid) || '[]');
+        var selected = JSON.parse(localStorage.getItem('smartgrade_selected_' + sid + '_term' + getCurrentTerm()) || '[]');
+        var coeffs = JSON.parse(localStorage.getItem('smartgrade_coeffs_' + sid) || '{}');
+        var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + sid) || '{}');
+        
+        var headerAvatar = document.getElementById('headerAvatar');
+        if (headerAvatar) {
+          if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+            headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+          } else {
+            headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+          }
         }
-      }
-      
-      var subs = [];
-      for (var i = 0; i < allSubs.length; i++) {
-        if (selected.indexOf(allSubs[i].id) !== -1) {
-          var s = allSubs[i];
-          s.coefficient = coeffs[s.id] || 5;
-          subs.push(s);
+        
+        var subs = [];
+        for (var i = 0; i < allSubs.length; i++) {
+          if (selected.indexOf(allSubs[i].id) !== -1) {
+            var s = allSubs[i];
+            s.coefficient = coeffs[s.id] || 5;
+            subs.push(s);
+          }
         }
-      }
-      document.getElementById('selectedCount').innerHTML = subs.length;
-      document.getElementById('totalGrades').innerHTML = grades.length;
-      
-      var t1 = calcTermAvg(sid, 1);
-      var t2 = calcTermAvg(sid, 2);
-      var t3 = calcTermAvg(sid, 3);
-      var yearly = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
-      
-      document.getElementById('term1Avg').innerHTML = t1.toFixed(2);
-      document.getElementById('term2Avg').innerHTML = t2.toFixed(2);
-      document.getElementById('term3Avg').innerHTML = t3.toFixed(2);
-      document.getElementById('yearlyAvg').innerHTML = yearly.toFixed(2);
-      document.getElementById('overallAvg').innerHTML = yearly.toFixed(2);
-      
-      var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + sid) || '[]');
-      var unlockedCount = 0;
-      for (var i = 0; i < ach.length; i++) if (ach[i].unlocked) unlockedCount++;
-      document.getElementById('achievementsCount').innerHTML = unlockedCount;
-      
-      var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + sid) || 12);
-      document.getElementById('goalValue').innerHTML = goal.toFixed(2);
-      document.getElementById('goalSlider').value = goal;
-      var gs = document.getElementById('goalStatus');
-      if (yearly >= goal) { 
-        gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
-        gs.className = 'goal-status achieved'; 
-      } else { 
-        var diff = (goal - yearly).toFixed(2);
-        gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
-        gs.className = 'goal-status not-achieved'; 
-      }
-      
-      // Top subjects (use theme color, not hardcoded green)
-      var subPrev = [];
-      for (var i = 0; i < subs.length; i++) {
-        var s = subs[i];
-        var allSG = grades.filter(function(g) { return g.subjectId === s.id; });
-        var yearlySubjectAvg = 0;
-        if (allSG.length > 0) {
-          var sum = 0;
-          for (var j = 0; j < allSG.length; j++) sum += allSG[j].value;
-          yearlySubjectAvg = roundToTwo(sum / allSG.length);
+        document.getElementById('selectedCount').innerHTML = subs.length;
+        document.getElementById('totalGrades').innerHTML = grades.length;
+        
+        var t1 = calcTermAvg(sid, 1);
+        var t2 = calcTermAvg(sid, 2);
+        var t3 = calcTermAvg(sid, 3);
+        var yearly = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
+        
+        document.getElementById('term1Avg').innerHTML = t1.toFixed(2);
+        document.getElementById('term2Avg').innerHTML = t2.toFixed(2);
+        document.getElementById('term3Avg').innerHTML = t3.toFixed(2);
+        document.getElementById('yearlyAvg').innerHTML = yearly.toFixed(2);
+        document.getElementById('overallAvg').innerHTML = yearly.toFixed(2);
+        
+        var ach = JSON.parse(localStorage.getItem('smartgrade_achievements_' + sid) || '[]');
+        var unlockedCount = 0;
+        for (var i = 0; i < ach.length; i++) if (ach[i].unlocked) unlockedCount++;
+        document.getElementById('achievementsCount').innerHTML = unlockedCount;
+        
+        var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + sid) || 12);
+        document.getElementById('goalValue').innerHTML = goal.toFixed(2);
+        document.getElementById('goalSlider').value = goal;
+        var gs = document.getElementById('goalStatus');
+        if (yearly >= goal) { 
+          gs.innerHTML = '<i class="fas fa-trophy"></i> Goal Achieved!'; 
+          gs.className = 'goal-status achieved'; 
+        } else { 
+          var diff = (goal - yearly).toFixed(2);
+          gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
+          gs.className = 'goal-status not-achieved'; 
         }
-        subPrev.push({ id: s.id, name: s.name, icon: s.icon, avg: yearlySubjectAvg });
+        
+        document.getElementById('goalSlider').oninput = function() { updateGoal(this.value); };
+        
+        var subPrev = [];
+        for (var i = 0; i < subs.length; i++) {
+          var s = subs[i];
+          var allSG = grades.filter(function(g) { return g.subjectId === s.id; });
+          var yearlySubjectAvg = 0;
+          if (allSG.length > 0) {
+            var sum = 0;
+            for (var j = 0; j < allSG.length; j++) sum += allSG[j].value;
+            yearlySubjectAvg = roundToTwo(sum / allSG.length);
+          }
+          subPrev.push({ id: s.id, name: s.name, icon: s.icon, avg: yearlySubjectAvg });
+        }
+        subPrev.sort(function(a, b) { return b.avg - a.avg; });
+        subPrev = subPrev.slice(0, 5);
+        
+        document.getElementById('subjectsPreview').innerHTML = subPrev.map(function(s) {
+          return '<div class="subject-card" onclick="location=\'subject-detail.html?id=' + s.id + '\'">' +
+            '<div class="subject-info">' +
+              '<div class="subject-name"><i class="fas ' + s.icon + '" style="color:var(--primary);"></i> ' + s.name + '</div>' +
+            '</div>' +
+            '<div class="subject-avg">' + s.avg.toFixed(2) + '</div>' +
+          '</div>';
+        }).join('');
+        
+        loadHistory(sid);
+        showDeveloperLinks();
+        applyDashboardFont();
+        
+      } catch(e) {
+        console.error('Error loading dashboard:', e);
+        document.getElementById('motivationQuote').innerHTML = 'Error loading dashboard. Please refresh.';
       }
-      subPrev.sort(function(a, b) { return b.avg - a.avg; });
-      subPrev = subPrev.slice(0, 5);
-      
-      document.getElementById('subjectsPreview').innerHTML = subPrev.map(function(s) {
-        return '<div class="subject-card" onclick="location=\'subject-detail.html?id=' + s.id + '\'">' +
-          '<div class="subject-info">' +
-            '<div class="subject-name"><i class="fas ' + s.icon + '" style="color:var(--primary);"></i> ' + s.name + '</div>' +
-          '</div>' +
-          '<div class="subject-avg">' + s.avg.toFixed(2) + '</div>' +
-        '</div>';
-      }).join('');
-      
-      loadHistory(sid);
-      checkStreakMilestone(sid);
-      checkAndNotifyAchievements(sid);
-      if (typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(sid); }
-      
-      showDeveloperLinks();
-      applyGlobalFont();
     }
     
     function updateGoal(v) { 
@@ -648,20 +716,24 @@
     }
     
     function loadHistory(sid) { 
-      var h = JSON.parse(localStorage.getItem('smartgrade_history_' + sid) || '[]'); 
-      h = h.slice(0, 5); 
-      var el = document.getElementById('historyList'); 
-      if (h.length === 0) {
-        el.innerHTML = '<p class="text-center" style="color:var(--text-light);">No activity yet</p>';
-      } else {
-        el.innerHTML = h.map(function(x) { 
-          return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + (x.action || 'Activity') + '<span class="history-time">' + formatDate(x.date) + '</span></div>'; 
-        }).join('');
+      try {
+        var h = JSON.parse(localStorage.getItem('smartgrade_history_' + sid) || '[]'); 
+        h = h.slice(0, 5); 
+        var el = document.getElementById('historyList'); 
+        if (h.length === 0) {
+          el.innerHTML = '<p class="text-center" style="color:var(--text-light);">No activity yet</p>';
+        } else {
+          el.innerHTML = h.map(function(x) { 
+            return '<div class="history-item"><i class="fas fa-circle" style="font-size:0.4rem;color:var(--primary);"></i> ' + (x.action || 'Activity') + '<span class="history-time">' + formatDate(x.date) + '</span></div>'; 
+          }).join('');
+        }
+      } catch(e) {
+        document.getElementById('historyList').innerHTML = '<p class="text-center">No activity yet</p>';
       }
     }
     
     // ============================================
-    // COMMAND SYSTEM - FULLY FUNCTIONAL
+    // COMMAND SYSTEM - DEV COMMAND SECRÈTE
     // ============================================
     
     function openCmd() {
@@ -707,10 +779,7 @@
           copyToClipboard(code);
           return 'Transfer code: ' + code + ' (copied)';
         },
-        refresh: function() {
-          location.reload();
-          return 'Refreshing...';
-        },
+        refresh: function() { location.reload(); return 'Refreshing...'; },
         theme: function() {
           var themes = ['default','crimson','forest','ocean','royal','sunset','rose','turquoise','amber','graphite','lavender','cherry','midnight','mint','coral','indigo','chocolate','electric','steel','lime'];
           var randomTheme = themes[Math.floor(Math.random() * themes.length)];
@@ -726,20 +795,30 @@
           }
           return 'Cancelled';
         },
-        help: function() {
-          return 'Commands: export, transfer, refresh, theme, reset, help, about, stats, random';
-        },
-        about: function() {
-          return 'SMART GRADE v4.0.3 - GBHS Foumban | Developed by HANS KEPPER';
-        },
+        help: function() { return 'Commands: export, transfer, refresh, theme, reset, help, about, stats, random'; },
+        about: function() { return 'SMART GRADE v4.0.3 - GBHS Foumban | Developed by HANS KEPPER'; },
         stats: function(id) {
           var g = getStudentGrades(id);
           var o = calculateYearlyAverage(id);
           return 'Grades: ' + g.length + ' | Yearly Avg: ' + o.toFixed(2) + '/20';
         },
         random: function() {
-          var tips = ['Keep pushing!', 'Every grade counts!', 'You are doing great!', 'Consistency is key!', 'Knowledge is power!'];
+          var tips = ['Keep pushing!', 'Every grade counts!', 'You are doing great!', 'Consistency is key!', 'Knowledge is power!', 'Stay focused!', 'You can do this!', 'Believe in yourself!'];
           return tips[Math.floor(Math.random() * tips.length)];
+        },
+        // COMMANDE SECRÈTE - N'APPARAÎT PAS DANS LA LISTE
+        dev: function(id) {
+          var devHidden = localStorage.getItem('smartgrade_dev_links_hidden');
+          var container = document.getElementById('devSidebarContainer');
+          if (devHidden === 'true') {
+            localStorage.removeItem('smartgrade_dev_links_hidden');
+            if (container) container.style.display = 'block';
+            return '🔓 Developer links are now VISIBLE';
+          } else {
+            localStorage.setItem('smartgrade_dev_links_hidden', 'true');
+            if (container) container.style.display = 'none';
+            return '🔒 Developer links are now HIDDEN';
+          }
         }
       };
       
@@ -776,18 +855,6 @@
       return code;
     }
     
-    function applyGlobalFont() {
-      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-      var fontMap = {
-        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
-        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
-        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
-        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
-        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
-      };
-      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
-    }
-    
     document.getElementById('cmdInput').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') runCmd(this.value);
     });
@@ -797,9 +864,14 @@
     });
     
     loadDashboard();
-    initMobileMenu();
-    initThemeSelector();
-    applyGlobalFont();
+    if (typeof initMobileMenu === 'function') initMobileMenu();
+    if (typeof initThemeSelector === 'function') initThemeSelector();
+    
+    // Observer pour les changements de thème/police
+    var observer = new MutationObserver(function() {
+      applyDashboardFont();
+    });
+    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   </script>
 </body>
 </html>

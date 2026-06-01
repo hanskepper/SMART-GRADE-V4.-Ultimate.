@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     .about-hero {
       text-align: center;
@@ -32,7 +31,6 @@
       font-size: 0.7rem;
     }
     
-    /* Stats section */
     .stats-grid-about {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -59,7 +57,42 @@
       opacity: 0.7;
     }
     
-    /* Features grid */
+    .tech-grid-extended {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .tech-item {
+      text-align: center;
+      padding: 16px 10px;
+      background: var(--card-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    .tech-item:hover {
+      transform: translateY(-4px);
+      border-color: var(--primary);
+    }
+    .tech-item i { font-size: 2rem; margin-bottom: 8px; display: block; }
+    .tech-item .tech-name { font-weight: 700; font-size: 0.7rem; }
+    .tech-item .tech-desc { font-size: 0.55rem; color: var(--text-light); margin-top: 4px; }
+    
+    .tech-html5 { color: #E44D26; }
+    .tech-css3 { color: #264DE4; }
+    .tech-js { color: #F7DF1E; text-shadow: 0 0 2px #000; }
+    .tech-json { color: #000000; }
+    .tech-pwa { color: #5A0FC8; }
+    .tech-storage { color: #F39C12; }
+    .tech-webauthn { color: #2ECC71; }
+    .tech-qr { color: #1ABC9C; }
+    .tech-chart { color: #FF6384; }
+    .tech-database { color: #3498DB; }
+    .tech-api { color: #9B59B6; }
+    .tech-sw { color: #E67E22; }
+    
     .features-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -104,7 +137,6 @@
     .feature-title { font-weight: 700; font-size: 0.75rem; }
     .feature-desc { font-size: 0.6rem; color: var(--text-light); margin-top: 2px; }
     
-    /* Complete features list */
     .complete-features-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -120,44 +152,6 @@
     }
     .complete-feature-item i { width: 20px; color: #2ecc71; font-size: 0.7rem; }
     
-    /* Tech grid with original colors */
-    .tech-grid-extended {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-bottom: 16px;
-    }
-    .tech-item {
-      text-align: center;
-      padding: 16px 10px;
-      background: var(--card-bg);
-      border-radius: 16px;
-      border: 1px solid var(--border);
-      transition: all 0.2s;
-      cursor: pointer;
-    }
-    .tech-item:hover {
-      transform: translateY(-4px);
-      border-color: var(--primary);
-    }
-    .tech-item i { font-size: 2rem; margin-bottom: 8px; display: block; }
-    .tech-item .tech-name { font-weight: 700; font-size: 0.7rem; }
-    .tech-item .tech-desc { font-size: 0.55rem; color: var(--text-light); margin-top: 4px; }
-    
-    /* Original colors for tech icons */
-    .tech-html5 { color: #E44D26; }
-    .tech-css3 { color: #264DE4; }
-    .tech-js { color: #F7DF1E; text-shadow: 0 0 2px #000; }
-    .tech-json { color: #000000; }
-    .tech-pwa { color: #5A0FC8; }
-    .tech-storage { color: #F39C12; }
-    .tech-webauthn { color: #2ECC71; }
-    .tech-qr { color: #1ABC9C; }
-    .tech-chart { color: #FF6384; }
-    .tech-database { color: #3498DB; }
-    .tech-api { color: #9B59B6; }
-    .tech-sw { color: #E67E22; }
-    
     .info-row-about {
       display: flex;
       align-items: center;
@@ -168,7 +162,6 @@
     }
     .info-row-about i { width: 28px; color: var(--primary); text-align: center; }
     
-    /* Clickable friends row */
     .info-row-clickable {
       display: flex;
       align-items: center;
@@ -190,7 +183,6 @@
       color: var(--text-light);
     }
     
-    /* Modal for friends list */
     .friends-modal {
       display: none;
       position: fixed;
@@ -275,14 +267,13 @@
       background: var(--card-bg);
       border-radius: 28px;
       width: 95%;
-      max-width: 550px;
+      max-width: 650px;
       max-height: 85%;
       overflow: hidden;
       animation: techFadeIn 0.3s ease;
       border: 1px solid rgba(255,255,255,0.1);
     }
     @keyframes techFadeIn { from { opacity: 0; transform: scale(0.9); } to { opacity: 1; transform: scale(1); } }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     .tech-modal-header {
       padding: 18px 20px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -293,19 +284,59 @@
     .tech-modal-header h3 { color: white; margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 8px; }
     .tech-modal-close { background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 0 10px; }
     .tech-modal-body { padding: 20px; max-height: 70vh; overflow-y: auto; }
-    .tech-tabs { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-    .tech-tab { padding: 8px 16px; border-radius: 40px; background: rgba(0,0,0,0.05); cursor: pointer; font-size: 0.7rem; transition: all 0.2s; }
-    .tech-tab.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+    .tech-tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .tech-tab {
+      padding: 8px 20px;
+      border-radius: 40px;
+      background: rgba(0,0,0,0.05);
+      cursor: pointer;
+      font-size: 0.7rem;
+      transition: all 0.2s;
+      border: 1px solid var(--border);
+    }
+    .tech-tab.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+    }
     .tech-content { display: none; }
     .tech-content.active { display: block; }
-    .tech-content ul { list-style: none; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-    .tech-content li { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; padding: 8px 12px; background: rgba(0,0,0,0.03); border-radius: 30px; }
+    .tech-content ul {
+      list-style: none;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .tech-content li {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      padding: 8px 12px;
+      background: rgba(0,0,0,0.03);
+      border-radius: 30px;
+      border: 1px solid var(--border);
+    }
+    .tech-content li i { width: 24px; color: var(--primary); }
+    
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
     
     @media (max-width: 550px) {
       .stats-grid-about { grid-template-columns: repeat(2, 1fr); }
       .features-grid { grid-template-columns: 1fr; }
       .tech-grid-extended { grid-template-columns: repeat(2, 1fr); }
       .complete-features-list { grid-template-columns: 1fr; }
+      .tech-content ul { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -317,7 +348,11 @@
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-info-circle"></i><span>ABOUT</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <a href="profile.html">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
@@ -339,8 +374,10 @@
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
-        <a href="about-user.html" class="nav-item active"><i class="fas fa-info-circle"></i> About</a>
+         <a href="about-user.html" class="nav-item active"><i class="fas fa-info-circle"></i> About</a>
+         
         <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+      
         <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
         <a href="terms.html" class="nav-item"><i class="fas fa-file-contract"></i> Terms of Use</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
@@ -348,6 +385,7 @@
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
         <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
         <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -358,7 +396,7 @@
         <i class="fas fa-info-circle" style="font-size:50px;opacity:0.5;"></i>
         <h1>SMART GRADE</h1>
         <p style="opacity:0.8;font-size:0.75rem;">Ultimate Grade Management System</p>
-        <div class="version-badge">Version 4.0 "Ultimate"</div>
+        <div class="version-badge">Version 4.0 Ultimate</div>
       </div>
       
       <!-- Stats -->
@@ -397,8 +435,8 @@
         <div class="complete-features-list">
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> 14 Subjects with customizable coefficients</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> 6 Sequences / 3 Terms per year</div>
-          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Smart rounding & compensation system</div>
-          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Advanced statistics & predictions</div>
+          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Smart rounding and compensation system</div>
+          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Advanced statistics and predictions</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> 14 Achievement badges + 4 Streak badges</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> 20 Themes + 12 Fonts</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Night mode (auto 20h-6h)</div>
@@ -406,7 +444,7 @@
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> PWA - 100% offline ready</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Smart grade calculator</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Flashcards for each subject</div>
-          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Personal goals & targets</div>
+          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Personal goals and targets</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Data transfer between devices (QR Code)</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Profile photos from gallery</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Export/Import JSON backup</div>
@@ -416,7 +454,6 @@
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Interactive charts (line, bar, radar)</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Zoomable progress chart</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Auto-backup every hour</div>
-          <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Cloud sync support</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> 7 error pages (400,401,403,404,500,502,503)</div>
           <div class="complete-feature-item"><i class="fas fa-check-circle"></i> Smart notifications system</div>
         </div>
@@ -427,11 +464,11 @@
         <h3><i class="fas fa-fire"></i> Key Features Highlights</h3>
         <div class="features-grid">
           <div class="feature-card"><div class="feature-icon transfer"><i class="fas fa-exchange-alt"></i></div><div class="feature-info"><div class="feature-title">Data Transfer</div><div class="feature-desc">QR Code + 6-digit code between devices</div></div></div>
-          <div class="feature-card"><div class="feature-icon backup"><i class="fas fa-database"></i></div><div class="feature-info"><div class="feature-title">Auto Backup</div><div class="feature-desc">Hourly backups + Cloud sync</div></div></div>
+          <div class="feature-card"><div class="feature-icon backup"><i class="fas fa-database"></i></div><div class="feature-info"><div class="feature-title">Auto Backup</div><div class="feature-desc">Hourly backups</div></div></div>
           <div class="feature-card"><div class="feature-icon notifications"><i class="fas fa-bell"></i></div><div class="feature-info"><div class="feature-title">Smart Notifications</div><div class="feature-desc">Real-time alerts for all activities</div></div></div>
           <div class="feature-card"><div class="feature-icon security"><i class="fas fa-fingerprint"></i></div><div class="feature-info"><div class="feature-title">Biometric Security</div><div class="feature-desc">Fingerprint login + 4-digit PIN</div></div></div>
           <div class="feature-card"><div class="feature-icon flashcard"><i class="fas fa-clone"></i></div><div class="feature-info"><div class="feature-title">Flashcards</div><div class="feature-desc">Study with custom cards per subject</div></div></div>
-          <div class="feature-card"><div class="feature-icon goal"><i class="fas fa-bullseye"></i></div><div class="feature-info"><div class="feature-title">Goals & Streaks</div><div class="feature-desc">Track progress with achievements</div></div></div>
+          <div class="feature-card"><div class="feature-icon goal"><i class="fas fa-bullseye"></i></div><div class="feature-info"><div class="feature-title">Goals and Streaks</div><div class="feature-desc">Track progress with achievements</div></div></div>
           <div class="feature-card"><div class="feature-icon export"><i class="fas fa-file-export"></i></div><div class="feature-info"><div class="feature-title">Export Options</div><div class="feature-desc">JSON, CSV, HTML, PDF formats</div></div></div>
           <div class="feature-card"><div class="feature-icon theme"><i class="fas fa-palette"></i></div><div class="feature-info"><div class="feature-title">Customization</div><div class="feature-desc">20 themes + 12 fonts + Night mode</div></div></div>
           <div class="feature-card"><div class="feature-icon history"><i class="fas fa-history"></i></div><div class="feature-info"><div class="feature-title">Activity History</div><div class="feature-desc">Track all your actions</div></div></div>
@@ -442,17 +479,17 @@
       <!-- Version History -->
       <div class="glass-card">
         <h3><i class="fas fa-history"></i> Version History</h3>
-        <div class="info-row-about"><i class="fas fa-tag"></i><strong>v4.0 "Ultimate"</strong><span style="margin-left:auto;">Current</span></div>
+        <div class="info-row-about"><i class="fas fa-tag"></i><strong>v4.0 Ultimate</strong><span style="margin-left:auto;">Current</span></div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Profile photos from gallery</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> QR Code transfer system</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> 20 themes + 12 fonts</div>
-        <div class="info-row-about"><i class="fas fa-plus-circle"></i> Flashcards & Goals system</div>
+        <div class="info-row-about"><i class="fas fa-plus-circle"></i> Flashcards and Goals system</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Cross-tab data sync</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Auto-backup every hour</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> 7 error pages (400-503)</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Smart notifications system</div>
         <div class="info-row-about"><i class="fas fa-tag"></i><strong>v3.0</strong><span style="margin-left:auto;">Previous</span></div>
-        <div class="info-row-about"><i class="fas fa-plus-circle"></i> Achievements & Streaks</div>
+        <div class="info-row-about"><i class="fas fa-plus-circle"></i> Achievements and Streaks</div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Compensation system</div>
         <div class="info-row-about"><i class="fas fa-tag"></i><strong>v2.0</strong><span style="margin-left:auto;">Legacy</span></div>
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> PWA + Offline support</div>
@@ -460,18 +497,17 @@
         <div class="info-row-about"><i class="fas fa-plus-circle"></i> Basic grade management</div>
       </div>
       
-      <!-- Acknowledgments -->
+      <!-- Acknowledgments WITH FRIENDS -->
       <div class="glass-card">
         <h3><i class="fas fa-heart"></i> Acknowledgments</h3>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> My Classmates</div>
-        <!-- My Friends - Clickable -->
         <div class="info-row-clickable" onclick="openFriendsModal()">
           <i class="fas fa-user-friends"></i>
           <span>My Friends</span>
           <span class="click-hint"><i class="fas fa-eye"></i> Click to see names</span>
         </div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> Open Source Community</div>
-        <div class="info-row-about"><i class="fas fa-gratipay"></i> Font Awesome & Google Fonts</div>
+        <div class="info-row-about"><i class="fas fa-gratipay"></i> Font Awesome and Google Fonts</div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> Chart.js Team</div>
         <div class="info-row-about"><i class="fas fa-gratipay"></i> html2pdf.js Team</div>
       </div>
@@ -498,7 +534,7 @@
       
       <div class="glass-card text-center">
         <i class="fas fa-copyright" style="font-size:30px;opacity:0.3;"></i>
-        <p style="font-size:0.65rem;margin-top:8px;">SMART GRADE v4.0 "Ultimate"</p>
+        <p style="font-size:0.65rem;margin-top:8px;">SMART GRADE v4.0 Ultimate</p>
         <p style="font-size:0.6rem;color:var(--text-light);">Developed by HANS KEPPER • SIN GBHS FOUMBAN 2025-2026</p>
         <p style="font-size:0.55rem;color:var(--text-light);">All rights reserved.</p>
       </div>
@@ -514,9 +550,7 @@
         <button class="friends-modal-close" onclick="closeFriendsModal()">&times;</button>
       </div>
       <div class="friends-modal-body">
-        <div class="friends-list" id="friendsList">
-          <!-- Friends names will be loaded here -->
-        </div>
+        <div class="friends-list" id="friendsList"></div>
       </div>
     </div>
   </div>
@@ -531,13 +565,111 @@
           <button class="tech-tab" onclick="showTechTab('css3')">CSS3</button>
           <button class="tech-tab" onclick="showTechTab('js')">JavaScript</button>
           <button class="tech-tab" onclick="showTechTab('storage')">Storage</button>
-          <button class="tech-tab" onclick="showTechTab('pwa')">PWA & APIs</button>
+          <button class="tech-tab" onclick="showTechTab('pwa')">PWA and APIs</button>
+          <button class="tech-tab" onclick="showTechTab('features')">Features</button>
         </div>
-        <div id="techHtml5" class="tech-content active"><ul><li><i class="fab fa-html5"></i> Semantic Elements</li><li><i class="fas fa-check-circle"></i> LocalStorage API</li><li><i class="fas fa-check-circle"></i> Canvas API</li><li><i class="fas fa-check-circle"></i> FileReader API</li><li><i class="fas fa-check-circle"></i> MediaDevices API</li><li><i class="fas fa-check-circle"></i> Notification API</li><li><i class="fas fa-check-circle"></i> Vibration API</li><li><i class="fas fa-check-circle"></i> Clipboard API</li><li><i class="fas fa-check-circle"></i> Web Storage API</li><li><i class="fas fa-check-circle"></i> Viewport meta for mobile</li></ul></div>
-        <div id="techCss3" class="tech-content"><ul><li><i class="fab fa-css3-alt"></i> Flexbox & Grid Layout</li><li><i class="fas fa-check-circle"></i> CSS Animations & Keyframes</li><li><i class="fas fa-check-circle"></i> CSS Variables (Custom Properties)</li><li><i class="fas fa-check-circle"></i> Glassmorphism (backdrop-filter)</li><li><i class="fas fa-check-circle"></i> Media Queries (Responsive)</li><li><i class="fas fa-check-circle"></i> Gradients & Transforms</li><li><i class="fas fa-check-circle"></i> 20 Color Themes</li><li><i class="fas fa-check-circle"></i> Dark / Light Mode (Night mode)</li><li><i class="fas fa-check-circle"></i> Custom Scrollbar</li><li><i class="fas fa-check-circle"></i> Box Shadow & Border Radius</li></ul></div>
-        <div id="techJs" class="tech-content"><ul><li><i class="fab fa-js"></i> ES6+ Syntax (let, const, arrow)</li><li><i class="fas fa-check-circle"></i> Promises & Async/Await</li><li><i class="fas fa-check-circle"></i> LocalStorage Database Management</li><li><i class="fas fa-chart-line"></i> Chart.js Integration</li><li><i class="fas fa-fingerprint"></i> WebAuthn API (Fingerprint)</li><li><i class="fas fa-mobile-alt"></i> Service Worker (PWA)</li><li><i class="fas fa-qrcode"></i> QR Code Generation & Scanning</li><li><i class="fas fa-volume-up"></i> Speech Synthesis (TTS Audio Guide)</li><li><i class="fas fa-camera"></i> Camera & QR Scanning (html5-qrcode)</li><li><i class="fas fa-palette"></i> Dynamic Theme Switching</li></ul></div>
-        <div id="techStorage" class="tech-content"><ul><li><i class="fas fa-database"></i> localStorage (Client-side DB)</li><li><i class="fas fa-file-code"></i> JSON Data Exchange Format</li><li><i class="fas fa-file-export"></i> Export/Import (CSV, JSON, PDF, HTML)</li><li><i class="fas fa-cloud-upload-alt"></i> Backup & Restore System</li><li><i class="fas fa-sync-alt"></i> Cross-tab Data Sync (storage event)</li><li><i class="fas fa-qrcode"></i> QR Code Data Transfer</li><li><i class="fas fa-key"></i> 6-Character Secure Transfer Codes</li><li><i class="fas fa-chart-bar"></i> Data Compression (Base64 for images)</li><li><i class="fas fa-chart-simple"></i> Storage Usage Monitoring</li><li><i class="fas fa-save"></i> Auto-save every 30 seconds</li></ul></div>
-        <div id="techPwa" class="tech-content"><ul><li><i class="fas fa-mobile-alt"></i> Progressive Web App (PWA)</li><li><i class="fas fa-cloud-upload-alt"></i> Service Worker (Offline Mode)</li><li><i class="fas fa-file-alt"></i> Web App Manifest</li><li><i class="fas fa-fingerprint"></i> WebAuthn (Fingerprint Login)</li><li><i class="fas fa-camera"></i> MediaDevices (Camera for QR)</li><li><i class="fas fa-qrcode"></i> html5-qrcode Library</li><li><i class="fas fa-chart-line"></i> Chart.js (Bar, Radar, Doughnut)</li><li><i class="fas fa-search-plus"></i> chartjs-plugin-zoom</li><li><i class="fas fa-bell"></i> Notification API</li><li><i class="fas fa-mobile"></i> Vibration API (Haptic Feedback)</li><li><i class="fas fa-copy"></i> Clipboard API (Copy/Paste)</li><li><i class="fas fa-file"></i> FileReader API (Import/Export)</li><li><i class="fas fa-volume-up"></i> Speech Synthesis (Audio Guide 16 chapters)</li><li><i class="fas fa-file-pdf"></i> html2pdf.js (PDF Generation)</li></ul></div>
+        
+        <div id="techHtml5" class="tech-content active">
+          <ul>
+            <li><i class="fab fa-html5"></i> Semantic Elements</li>
+            <li><i class="fas fa-check-circle"></i> LocalStorage API</li>
+            <li><i class="fas fa-check-circle"></i> Canvas API</li>
+            <li><i class="fas fa-check-circle"></i> FileReader API</li>
+            <li><i class="fas fa-check-circle"></i> MediaDevices API</li>
+            <li><i class="fas fa-check-circle"></i> Notification API</li>
+            <li><i class="fas fa-check-circle"></i> Vibration API</li>
+            <li><i class="fas fa-check-circle"></i> Clipboard API</li>
+            <li><i class="fas fa-check-circle"></i> Web Storage API</li>
+            <li><i class="fas fa-check-circle"></i> Viewport meta for mobile</li>
+          </ul>
+        </div>
+        
+        <div id="techCss3" class="tech-content">
+          <ul>
+            <li><i class="fab fa-css3-alt"></i> Flexbox and Grid Layout</li>
+            <li><i class="fas fa-check-circle"></i> CSS Animations and Keyframes</li>
+            <li><i class="fas fa-check-circle"></i> CSS Variables (Custom Properties)</li>
+            <li><i class="fas fa-check-circle"></i> Glassmorphism (backdrop-filter)</li>
+            <li><i class="fas fa-check-circle"></i> Media Queries (Responsive)</li>
+            <li><i class="fas fa-check-circle"></i> Gradients and Transforms</li>
+            <li><i class="fas fa-check-circle"></i> 20 Color Themes</li>
+            <li><i class="fas fa-check-circle"></i> Dark / Light Mode (Night mode)</li>
+            <li><i class="fas fa-check-circle"></i> Custom Scrollbar</li>
+            <li><i class="fas fa-check-circle"></i> Box Shadow and Border Radius</li>
+          </ul>
+        </div>
+        
+        <div id="techJs" class="tech-content">
+          <ul>
+            <li><i class="fab fa-js"></i> ES6+ Syntax (let, const, arrow)</li>
+            <li><i class="fas fa-check-circle"></i> Promises and Async/Await</li>
+            <li><i class="fas fa-check-circle"></i> LocalStorage Database Management</li>
+            <li><i class="fas fa-chart-line"></i> Chart.js Integration</li>
+            <li><i class="fas fa-fingerprint"></i> WebAuthn API (Fingerprint)</li>
+            <li><i class="fas fa-mobile-alt"></i> Service Worker (PWA)</li>
+            <li><i class="fas fa-qrcode"></i> QR Code Generation and Scanning</li>
+            <li><i class="fas fa-volume-up"></i> Speech Synthesis (TTS Audio Guide)</li>
+            <li><i class="fas fa-camera"></i> Camera and QR Scanning</li>
+            <li><i class="fas fa-palette"></i> Dynamic Theme Switching</li>
+          </ul>
+        </div>
+        
+        <div id="techStorage" class="tech-content">
+          <ul>
+            <li><i class="fas fa-database"></i> localStorage (Client-side DB)</li>
+            <li><i class="fas fa-file-code"></i> JSON Data Exchange Format</li>
+            <li><i class="fas fa-file-export"></i> Export/Import (CSV, JSON, PDF, HTML)</li>
+            <li><i class="fas fa-cloud-upload-alt"></i> Backup and Restore System</li>
+            <li><i class="fas fa-sync-alt"></i> Cross-tab Data Sync (storage event)</li>
+            <li><i class="fas fa-qrcode"></i> QR Code Data Transfer</li>
+            <li><i class="fas fa-key"></i> 6-Character Secure Transfer Codes</li>
+            <li><i class="fas fa-chart-bar"></i> Data Compression (Base64 for images)</li>
+            <li><i class="fas fa-chart-simple"></i> Storage Usage Monitoring</li>
+            <li><i class="fas fa-save"></i> Auto-save every 30 seconds</li>
+          </ul>
+        </div>
+        
+        <div id="techPwa" class="tech-content">
+          <ul>
+            <li><i class="fas fa-mobile-alt"></i> Progressive Web App (PWA)</li>
+            <li><i class="fas fa-cloud-upload-alt"></i> Service Worker (Offline Mode)</li>
+            <li><i class="fas fa-file-alt"></i> Web App Manifest</li>
+            <li><i class="fas fa-fingerprint"></i> WebAuthn (Fingerprint Login)</li>
+            <li><i class="fas fa-camera"></i> MediaDevices (Camera for QR)</li>
+            <li><i class="fas fa-qrcode"></i> html5-qrcode Library</li>
+            <li><i class="fas fa-chart-line"></i> Chart.js (Bar, Radar, Doughnut)</li>
+            <li><i class="fas fa-search-plus"></i> chartjs-plugin-zoom</li>
+            <li><i class="fas fa-bell"></i> Notification API</li>
+            <li><i class="fas fa-mobile"></i> Vibration API (Haptic Feedback)</li>
+            <li><i class="fas fa-copy"></i> Clipboard API (Copy/Paste)</li>
+            <li><i class="fas fa-file"></i> FileReader API (Import/Export)</li>
+            <li><i class="fas fa-volume-up"></i> Speech Synthesis (Audio Guide 16 chapters)</li>
+            <li><i class="fas fa-file-pdf"></i> html2pdf.js (PDF Generation)</li>
+          </ul>
+        </div>
+        
+        <div id="techFeatures" class="tech-content">
+          <ul>
+            <li><i class="fas fa-layer-group"></i> 14 Subjects with coefficients</li>
+            <li><i class="fas fa-chart-line"></i> 3 Terms / 6 Sequences</li>
+            <li><i class="fas fa-medal"></i> 23 Achievement Badges</li>
+            <li><i class="fas fa-palette"></i> 20 Color Themes</li>
+            <li><i class="fas fa-font"></i> 12 Font Families</li>
+            <li><i class="fas fa-moon"></i> Night Mode (auto 20h-6h)</li>
+            <li><i class="fas fa-fingerprint"></i> Fingerprint Login</li>
+            <li><i class="fas fa-clone"></i> Flashcards System</li>
+            <li><i class="fas fa-bullseye"></i> Goals and Targets</li>
+            <li><i class="fas fa-qrcode"></i> QR Code Transfer</li>
+            <li><i class="fas fa-database"></i> JSON Backup/Restore</li>
+            <li><i class="fas fa-file-csv"></i> CSV Export</li>
+            <li><i class="fas fa-file-pdf"></i> PDF Export</li>
+            <li><i class="fas fa-chart-pie"></i> Interactive Charts</li>
+            <li><i class="fas fa-calendar-alt"></i> Class Timetable</li>
+            <li><i class="fas fa-history"></i> Activity History</li>
+            <li><i class="fas fa-bell"></i> Smart Notifications</li>
+            <li><i class="fas fa-balance-scale"></i> Compensation System</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -550,28 +682,22 @@
   <script src="js/app.js"></script>
   
   <script>
-    // ============================================
-    // FRIENDS LIST - ONLY NAMES (NO CLASS, NO NUMBER)
-    // ============================================
     var FRIENDS_LIST = [
       "LAMBO ALVARES",
       "DAVILA GEORGINA",
       "WANYOU ROMIEL",
       "SAMARI AYATOU",
-      "EWALOW",
+      "EWALOW"
     ];
     
-    // Function to get friend avatar letter
     function getAvatarLetter(name) {
       return name.charAt(0).toUpperCase();
     }
     
-    // Open friends modal
     function openFriendsModal() {
       var modal = document.getElementById('friendsModal');
       var friendsListDiv = document.getElementById('friendsList');
       
-      // Build friends list HTML - ONLY NAMES
       var html = '';
       for (var i = 0; i < FRIENDS_LIST.length; i++) {
         var friendName = FRIENDS_LIST[i];
@@ -604,45 +730,63 @@
     function showTechTab(tab) {
       document.querySelectorAll('.tech-tab').forEach(function(btn) { btn.classList.remove('active'); });
       document.querySelectorAll('.tech-content').forEach(function(content) { content.classList.remove('active'); });
-      if (tab === 'html5') { document.querySelector('.tech-tab:nth-child(1)').classList.add('active'); document.getElementById('techHtml5').classList.add('active'); }
-      else if (tab === 'css3') { document.querySelector('.tech-tab:nth-child(2)').classList.add('active'); document.getElementById('techCss3').classList.add('active'); }
-      else if (tab === 'js') { document.querySelector('.tech-tab:nth-child(3)').classList.add('active'); document.getElementById('techJs').classList.add('active'); }
-      else if (tab === 'storage') { document.querySelector('.tech-tab:nth-child(4)').classList.add('active'); document.getElementById('techStorage').classList.add('active'); }
-      else if (tab === 'pwa') { document.querySelector('.tech-tab:nth-child(5)').classList.add('active'); document.getElementById('techPwa').classList.add('active'); }
+      
+      if (tab === 'html5') {
+        document.querySelector('.tech-tab:nth-child(1)').classList.add('active');
+        document.getElementById('techHtml5').classList.add('active');
+      } else if (tab === 'css3') {
+        document.querySelector('.tech-tab:nth-child(2)').classList.add('active');
+        document.getElementById('techCss3').classList.add('active');
+      } else if (tab === 'js') {
+        document.querySelector('.tech-tab:nth-child(3)').classList.add('active');
+        document.getElementById('techJs').classList.add('active');
+      } else if (tab === 'storage') {
+        document.querySelector('.tech-tab:nth-child(4)').classList.add('active');
+        document.getElementById('techStorage').classList.add('active');
+      } else if (tab === 'pwa') {
+        document.querySelector('.tech-tab:nth-child(5)').classList.add('active');
+        document.getElementById('techPwa').classList.add('active');
+      } else if (tab === 'features') {
+        document.querySelector('.tech-tab:nth-child(6)').classList.add('active');
+        document.getElementById('techFeatures').classList.add('active');
+      }
     }
     
-    // Close modals when clicking outside
-    document.getElementById('techModal').addEventListener('click', function(e) { if (e.target === this) closeTechModal(); });
-    document.getElementById('friendsModal').addEventListener('click', function(e) { if (e.target === this) closeFriendsModal(); });
-    
-    // Load user stats
-    function loadUserStats() {
+    function updateHeaderAvatar() {
+      var headerAvatar = document.getElementById('headerAvatar');
+      if (!headerAvatar) return;
       try {
         var stored = localStorage.getItem('smartgrade_current');
         if (stored) {
           var user = JSON.parse(stored);
-          var grades = JSON.parse(localStorage.getItem('smartgrade_grades_' + user.id) || '[]');
-          var achievements = JSON.parse(localStorage.getItem('smartgrade_achievements_' + user.id) || '[]');
-          
-          var total = 0;
-          for (var i = 0; i < grades.length; i++) { total += grades[i].value; }
-          var avg = grades.length > 0 ? (total / grades.length).toFixed(2) : '--';
-          
-          var unlockedBadges = 0;
-          for (var i = 0; i < achievements.length; i++) { if (achievements[i].unlocked) unlockedBadges++; }
-          
-          if (document.getElementById('userAvg')) document.getElementById('userAvg').innerHTML = avg;
-          if (document.getElementById('userGrades')) document.getElementById('userGrades').innerHTML = grades.length;
-          if (document.getElementById('userBadges')) document.getElementById('userBadges').innerHTML = unlockedBadges;
+          var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{}');
+          if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
+            headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+          } else {
+            headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+          }
         }
-      } catch(e) { console.log('Error loading user stats:', e); }
+      } catch(e) {
+        headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      }
     }
     
-    loadUserStats();
+    document.getElementById('techModal').addEventListener('click', function(e) {
+      if (e.target === this) closeTechModal();
+    });
+    
+    document.getElementById('friendsModal').addEventListener('click', function(e) {
+      if (e.target === this) closeFriendsModal();
+    });
+    
     initParticles();
     initThemeSelector();
     initMobileMenu();
-    initHeaderProfile();
+    updateHeaderAvatar();
+    
+    if (typeof applyGlobalFont === 'function') {
+      applyGlobalFont();
+    }
   </script>
 </body>
 </html>

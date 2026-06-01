@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SMART GRADE - Premium Shop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/layout.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/themes.css">
+  <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
+  <style>
+    .premium-hero {
+      text-align: center;
+      padding: 35px 20px;
+      border-radius: 28px;
+      color: white;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      position: relative;
+      overflow: hidden;
+    }
+    .premium-hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
+      animation: stripeMove 3s linear infinite;
+      z-index: 0;
+    }
+    @keyframes stripeMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
+    }
+    .premium-hero > * { position: relative; z-index: 1; }
+    .premium-hero h1 { font-size: 1.6rem; margin: 8px 0; }
+    .premium-hero .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      margin-top: 8px;
+    }
+    
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    .pricing-card {
+      background: var(--card-bg);
+      border-radius: 24px;
+      padding: 24px 16px;
+      text-align: center;
+      border: 1px solid var(--border);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .pricing-card:hover {
+      transform: translateY(-5px);
+      border-color: #f39c12;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
+    .pricing-card.popular {
+      border: 2px solid #f39c12;
+      transform: scale(1.02);
+    }
+    .popular-badge {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      font-size: 0.6rem;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-weight: 600;
+    }
+    .pricing-name {
+      font-size: 1.2rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .pricing-price {
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #f39c12;
+      margin-bottom: 4px;
+    }
+    .pricing-price small {
+      font-size: 0.7rem;
+      font-weight: 400;
+      color: var(--text-light);
+    }
+    .pricing-duration {
+      font-size: 0.65rem;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .pricing-features {
+      text-align: left;
+      margin: 16px 0;
+      padding-left: 20px;
+    }
+    .pricing-features li {
+      font-size: 0.7rem;
+      margin-bottom: 8px;
+      color: var(--text-light);
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .pricing-features li i {
+      width: 20px;
+      color: #2ecc71;
+      font-size: 0.7rem;
+    }
+    .btn-upgrade {
+      width: 100%;
+      padding: 12px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      margin-top: 12px;
+    }
+    .btn-upgrade.primary {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+    }
+    .btn-upgrade.secondary {
+      background: rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+      color: var(--text);
+    }
+    .btn-upgrade:active {
+      transform: scale(0.97);
+    }
+    .btn-upgrade:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 12px;
+    }
+    .feature-compare {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      border: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+    .compare-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border);
+    }
+    .compare-row:last-child {
+      border-bottom: none;
+    }
+    .compare-feature {
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text);
+    }
+    .compare-free {
+      width: 80px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #e74c3c;
+    }
+    .compare-premium {
+      width: 80px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #2ecc71;
+      font-weight: 600;
+    }
+    .compare-premium i, .compare-free i {
+      margin-right: 4px;
+    }
+    
+    .payment-methods {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+    }
+    .payment-icon {
+      font-size: 2rem;
+      color: var(--text-light);
+      transition: all 0.2s;
+    }
+    .payment-icon:hover {
+      color: var(--primary);
+      transform: translateY(-3px);
+    }
+    
+    @media (max-width: 550px) {
+      .pricing-grid {
+        grid-template-columns: 1fr;
+      }
+      .feature-grid {
+        grid-template-columns: 1fr;
+      }
+      .pricing-card.popular {
+        transform: scale(1);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="particles" id="particles"></div>
+  <div class="app-container">
+    
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-crown"></i><span>PREMIUM</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
+    </div>
+    
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <nav class="sidebar-nav">
+        <div class="nav-section-title"><i class="fas fa-compass"></i> Main</div>
+        <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
+        <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
+        <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
+        
+        <div class="nav-divider"></div>
+        
+        <div class="nav-section-title"><i class="fas fa-crown"></i> Premium</div>
+        <a href="premium-shop.html" class="nav-item active"><i class="fas fa-crown"></i> Premium Shop</a>
+        
+        <div class="nav-divider"></div>
+        
+        <div class="nav-section-title"><i class="fas fa-life-ring"></i> Help & Support</div>
+        <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
+        <a href="guide-user.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a>
+        <a href="about-user.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a>
+        
+        <div class="nav-divider"></div>
+        
+        <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+      </nav>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    
+    <main class="main-content">
+      
+      <div class="premium-hero">
+        <i class="fas fa-crown" style="font-size:50px;opacity:0.5;"></i>
+        <h1>Unlock Premium Features</h1>
+        <p>Get the most out of SMART GRADE</p>
+        <div class="badge"><i class="fas fa-gem"></i> Lifetime access | One-time payment</div>
+      </div>
+      
+      <!-- PRICING PLANS -->
+      <div class="pricing-grid">
+        <!-- Free Plan -->
+        <div class="pricing-card">
+          <div class="pricing-name">Free</div>
+          <div class="pricing-price">0 <small>XAF</small></div>
+          <div class="pricing-duration">Forever free</div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> 14 Subjects with coefficients</li>
+            <li><i class="fas fa-check-circle"></i> 3 Terms / 6 Sequences</li>
+            <li><i class="fas fa-check-circle"></i> Basic Statistics</li>
+            <li><i class="fas fa-check-circle"></i> 10 Flashcards per subject</li>
+            <li><i class="fas fa-check-circle"></i> 10 Themes</li>
+            <li><i class="fas fa-times-circle" style="color:#e74c3c;"></i> PDF Export</li>
+            <li><i class="fas fa-times-circle" style="color:#e74c3c;"></i> Cloud Backup</li>
+          </ul>
+          <button class="btn-upgrade secondary" disabled>Current Plan</button>
+        </div>
+        
+        <!-- Premium Plan -->
+        <div class="pricing-card popular" id="premiumCard">
+          <div class="popular-badge"><i class="fas fa-star"></i> POPULAR</div>
+          <div class="pricing-name">Premium</div>
+          <div class="pricing-price">500 <small>XAF</small></div>
+          <div class="pricing-duration">Lifetime access</div>
+          <ul class="pricing-features">
+            <li><i class="fas fa-check-circle"></i> All Free features included</li>
+            <li><i class="fas fa-check-circle"></i> PDF Export (Reports)</li>
+            <li><i class="fas fa-check-circle"></i> Cloud Backup (Auto)</li>
+            <li><i class="fas fa-check-circle"></i> Advanced Statistics</li>
+            <li><i class="fas fa-check-circle"></i> Unlimited Flashcards</li>
+            <li><i class="fas fa-check-circle"></i> All 20 Themes + Custom</li>
+            <li><i class="fas fa-check-circle"></i> Priority Support</li>
+          </ul>
+          <button class="btn-upgrade primary" id="upgradeBtn" onclick="processUpgrade()">
+            <i class="fas fa-crown"></i> Upgrade Now - 500 XAF
+          </button>
+        </div>
+      </div>
+      
+      <!-- FEATURES COMPARISON -->
+      <div class="feature-compare">
+        <h3 style="margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+          <i class="fas fa-chart-simple"></i> Feature Comparison
+        </h3>
+        <div class="feature-grid">
+          <div class="compare-row">
+            <span class="compare-feature">PDF Export</span>
+            <span class="compare-free"><i class="fas fa-times-circle"></i> Free</span>
+            <span class="compare-premium"><i class="fas fa-check-circle"></i> Premium</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Cloud Backup</span>
+            <span class="compare-free"><i class="fas fa-times-circle"></i> Free</span>
+            <span class="compare-premium"><i class="fas fa-check-circle"></i> Premium</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Advanced Statistics</span>
+            <span class="compare-free"><i class="fas fa-times-circle"></i> Free</span>
+            <span class="compare-premium"><i class="fas fa-check-circle"></i> Premium</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Unlimited Flashcards</span>
+            <span class="compare-free">10/subject</span>
+            <span class="compare-premium">Unlimited</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Themes Available</span>
+            <span class="compare-free">10 themes</span>
+            <span class="compare-premium">20 themes + Custom</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Priority Support</span>
+            <span class="compare-free"><i class="fas fa-times-circle"></i> Free</span>
+            <span class="compare-premium"><i class="fas fa-check-circle"></i> Premium</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Data Transfer (QR/Cloud)</span>
+            <span class="compare-free">Limited</span>
+            <span class="compare-premium">Full Access</span>
+          </div>
+          <div class="compare-row">
+            <span class="compare-feature">Ad Experience</span>
+            <span class="compare-free">With ads</span>
+            <span class="compare-premium">Ad-Free</span>
+          </div>
+        </div>
+      </div>
+      
+      <!-- PAYMENT METHODS -->
+      <div class="glass-card text-center">
+        <h3><i class="fas fa-credit-card"></i> Payment Methods</h3>
+        <div class="payment-methods">
+          <i class="fab fa-cc-visa payment-icon" title="Visa"></i>
+          <i class="fab fa-cc-mastercard payment-icon" title="Mastercard"></i>
+          <i class="fab fa-paypal payment-icon" title="PayPal"></i>
+          <i class="fas fa-mobile-alt payment-icon" title="Orange Money"></i>
+          <i class="fas fa-mobile-alt payment-icon" title="MTN Mobile Money"></i>
+          <i class="fas fa-university payment-icon" title="Bank Transfer"></i>
+        </div>
+        <p style="font-size:0.65rem; color:var(--text-light); margin-top:12px;">
+          <i class="fas fa-lock"></i> Secure payment via MTN Mobile Money, Orange Money, or International cards
+        </p>
+        <p style="font-size:0.6rem; color:var(--text-light); margin-top:8px;">
+          <i class="fas fa-shield-alt"></i> 100% money-back guarantee within 7 days
+        </p>
+      </div>
+      
+    </main>
+  </div>
+  
+  <div id="toastContainer" class="toast-container"></div>
+  
+  <!-- PREMIUM MODAL -->
+  <div id="premiumModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <i class="fas fa-crown" style="font-size:48px;color:#f39c12;margin-bottom:16px;"></i>
+      <h3>Upgrade to Premium</h3>
+      <p style="font-size:0.75rem; margin:8px 0;">Complete payment to unlock all features</p>
+      <div style="background:rgba(0,0,0,0.03); border-radius:16px; padding:16px; margin:16px 0;">
+        <div style="font-size:1.5rem; font-weight:800; color:#f39c12;">500 XAF</div>
+        <div style="font-size:0.6rem;">Lifetime access</div>
+      </div>
+      <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+        <button class="btn" style="flex:1; background:#25D366; color:white;" onclick="payWith('orange')">
+          <i class="fas fa-mobile-alt"></i> Orange Money
+        </button>
+        <button class="btn" style="flex:1; background:#128C7E; color:white;" onclick="payWith('mtn')">
+          <i class="fas fa-mobile-alt"></i> MTN Mobile Money
+        </button>
+        <button class="btn" style="flex:1; background:linear-gradient(135deg,#f39c12,#e67e22); color:white;" onclick="payWith('card')">
+          <i class="fab fa-cc-visa"></i> Card / PayPal
+        </button>
+      </div>
+      <div class="modal-buttons">
+        <button class="btn-cancel" onclick="closePremiumModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+  
+  <script src="js/utils.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+    // ============================================
+    // PREMIUM SYSTEM - COMPLETE VERSION
+    // ============================================
+    
+    var currentUser = null;
+    var PRICE = 500;
+    var CURRENCY = 'XAF';
+    
+    // Premium status
+    function isPremium() {
+      if (!currentUser) return false;
+      var premium = localStorage.getItem('smartgrade_premium_' + currentUser.id);
+      if (!premium) return false;
+      try {
+        var data = JSON.parse(premium);
+        return data.active && data.expires > Date.now();
+      } catch(e) {
+        return false;
+      }
+    }
+    
+    function getPremiumInfo() {
+      if (!currentUser) return null;
+      var premium = localStorage.getItem('smartgrade_premium_' + currentUser.id);
+      if (!premium) return null;
+      try {
+        return JSON.parse(premium);
+      } catch(e) {
+        return null;
+      }
+    }
+    
+    function activatePremium(durationDays) {
+      if (!currentUser) return false;
+      var expires = Date.now() + (durationDays * 24 * 60 * 60 * 1000);
+      var data = {
+        active: true,
+        activatedAt: Date.now(),
+        expires: expires,
+        durationDays: durationDays,
+        paymentMethod: 'demo'
+      };
+      localStorage.setItem('smartgrade_premium_' + currentUser.id, JSON.stringify(data));
+      
+      // Add notification
+      if (typeof addNotification === 'function') {
+        addNotification('premium', 'Premium Activated', 'You now have access to all premium features!');
+      }
+      
+      return true;
+    }
+    
+    function initPremiumPage() {
+      currentUser = getCurrentStudent();
+      if (!currentUser) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      initHeaderProfile();
+      initMobileMenu();
+      initThemeSelector();
+      
+      // Update button if already premium
+      if (isPremium()) {
+        var btn = document.getElementById('upgradeBtn');
+        if (btn) {
+          btn.innerHTML = '<i class="fas fa-check-circle"></i> Premium Active';
+          btn.disabled = true;
+          btn.style.opacity = '0.6';
+        }
+        
+        // Add premium badge to header if premium
+        var headerLogo = document.querySelector('.header-logo');
+        if (headerLogo && !document.querySelector('.premium-badge-header')) {
+          var badge = document.createElement('span');
+          badge.className = 'premium-badge-header';
+          badge.style.cssText = 'background: linear-gradient(135deg, #f39c12, #e67e22); padding: 2px 8px; border-radius: 20px; font-size: 0.55rem; margin-left: 8px; color: white;';
+          badge.innerHTML = '<i class="fas fa-crown"></i> PREMIUM';
+          headerLogo.appendChild(badge);
+        }
+      }
+    }
+    
+    function processUpgrade() {
+      if (isPremium()) {
+        showToast('You are already a premium user!');
+        return;
+      }
+      
+      document.getElementById('premiumModal').style.display = 'flex';
+    }
+    
+    function closePremiumModal() {
+      document.getElementById('premiumModal').style.display = 'none';
+    }
+    
+    function payWith(method) {
+      closePremiumModal();
+      
+      var methodNames = {
+        'orange': 'Orange Money',
+        'mtn': 'MTN Mobile Money',
+        'card': 'Card / PayPal'
+      };
+      
+      // Show processing
+      showToast('Processing payment via ' + methodNames[method] + '...');
+      
+      // Simulate payment processing
+      setTimeout(function() {
+        // Demo payment success
+        showConfirmDialog({
+          title: 'Payment Successful!',
+          message: 'Your premium account has been activated.',
+          detail: 'Amount: 500 XAF\nMethod: ' + methodNames[method] + '\nLifetime access',
+          icon: 'fa-check-circle',
+          iconColor: '#2ecc71',
+          confirmText: 'Continue',
+          onConfirm: function() {
+            activatePremium(365 * 10); // 10 years (lifetime)
+            
+            // Update UI
+            var btn = document.getElementById('upgradeBtn');
+            if (btn) {
+              btn.innerHTML = '<i class="fas fa-check-circle"></i> Premium Active';
+              btn.disabled = true;
+              btn.style.opacity = '0.6';
+            }
+            
+            // Add premium badge to header
+            var headerLogo = document.querySelector('.header-logo');
+            if (headerLogo && !document.querySelector('.premium-badge-header')) {
+              var badge = document.createElement('span');
+              badge.className = 'premium-badge-header';
+              badge.style.cssText = 'background: linear-gradient(135deg, #f39c12, #e67e22); padding: 2px 8px; border-radius: 20px; font-size: 0.55rem; margin-left: 8px; color: white;';
+              badge.innerHTML = '<i class="fas fa-crown"></i> PREMIUM';
+              headerLogo.appendChild(badge);
+            }
+            
+            showToast('Welcome to Premium! 🎉');
+          }
+        });
+      }, 1500);
+    }
+    
+    function logout() {
+      localStorage.removeItem('smartgrade_current');
+      window.location.href = 'index.html';
+    }
+    
+    // Close modal when clicking outside
+    document.getElementById('premiumModal').addEventListener('click', function(e) {
+      if (e.target === this) closePremiumModal();
+    });
+    
+    initPremiumPage();
+  </script>
+</body>
+</html>

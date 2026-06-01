@@ -13,7 +13,7 @@
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
-  <style>
+<style>
     .hero-card {
       text-align: center;
       padding: 20px;
@@ -69,8 +69,8 @@
     }
     
     /* ============================================ */
-    /* EXACTEMENT LE MÊME STYLE QUE LOGIN.HTML */
-    /* AVEC HAUTEUR FIXE */
+    /* EXACTEMENT LE MEME STYLE QUE LOGIN.HTML */
+    /* AVEC HAUTEUR FIXE ET SCROLL */
     /* ============================================ */
     
     .student-selector-label {
@@ -95,23 +95,17 @@
       margin-bottom: 8px;
     }
     
-    /* CONTENEUR À HAUTEUR FIXE - NE GRANDIT PAS */
+    /* CONTENEUR À HAUTEUR FIXE - COMME LOGIN */
     .student-list-scroll {
       display: flex;
       flex-direction: column;
       gap: 3px;
       margin-bottom: 16px;
-      max-height: 300px;
-      min-height: 200px;
+      max-height: 200px;
       overflow-y: auto;
       border-radius: 14px;
       border: 1px solid var(--border);
       background: rgba(0,0,0,0.015);
-    }
-    
-    /* Empêcher la carte de s'agrandir */
-    .glass-card {
-      overflow: hidden;
     }
     
     /* Custom scrollbar */
@@ -358,7 +352,7 @@
   
   <script>
     // ============================================
-    // INDEX PAGE - HAUTEUR FIXE COMME LOGIN
+    // INDEX PAGE - MEME STYLE QUE LOGIN
     // ============================================
     
     var currentDeleteId = null;
@@ -427,7 +421,7 @@
         
         listDiv.innerHTML = html;
         
-        // Add click event to select account
+        // Ajouter l'effet de survol/click comme sur login
         document.querySelectorAll('.student-item-row').forEach(function(row) {
           row.addEventListener('click', function(e) {
             if (e.target.classList.contains('delete-btn-row')) return;
@@ -496,6 +490,18 @@
         if (m === '>') return '&gt;';
         return m;
       });
+    }
+    
+    function showToast(message) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+      }, 3000);
     }
     
     // Event listeners

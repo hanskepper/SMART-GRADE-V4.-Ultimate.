@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SMART GRADE - Welcome</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     @keyframes floatUp {
       0% { transform: translateY(60px); opacity: 0; }
@@ -62,6 +61,14 @@
     @keyframes numberCount {
       0% { opacity: 0; transform: scale(0.5); }
       100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes confettiFall {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+    }
+    @keyframes stripeMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
     }
     
     .anim-float-up { animation: floatUp 0.8s ease forwards; opacity: 0; }
@@ -112,11 +119,6 @@
     }
     .welcome-hero > * { position: relative; z-index: 1; }
     
-    @keyframes stripeMove {
-      0% { background-position: 0 0; }
-      100% { background-position: 40px 0; }
-    }
-    
     .welcome-avatar {
       width: 100px;
       height: 100px;
@@ -130,6 +132,7 @@
       animation: glowPulse 3s ease infinite, iconBounce 3s ease infinite;
       position: relative;
       overflow: hidden;
+      cursor: pointer;
     }
     .welcome-avatar .ripple-ring {
       position: absolute;
@@ -173,7 +176,6 @@
       backdrop-filter: blur(10px);
     }
     
-    /* 4 CARRES D'INFORMATIONS */
     .stats-grid-welcome {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -249,24 +251,20 @@
       width: 8px;
       height: 8px;
       border-radius: 2px;
-      z-index: 999;
+      z-index: 9999;
       pointer-events: none;
       animation: confettiFall 3s ease-in forwards;
     }
     
-    @keyframes confettiFall {
-      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-    }
-    
     .sparkle-dot {
-      position: absolute;
+      position: fixed;
       width: 5px;
       height: 5px;
       background: white;
       border-radius: 50%;
       pointer-events: none;
       animation: sparkle 0.8s ease forwards;
+      z-index: 9999;
     }
     
     @media (min-width: 600px) {
@@ -278,11 +276,9 @@
 </head>
 <body>
   <div class="particles" id="particles"></div>
-  <div id="confettiContainer" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998;"></div>
   
   <div class="app-container">
     
-    <!-- HEADER PRIVE -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-graduation-cap"></i><span>WELCOME</span></div>
@@ -299,7 +295,10 @@
     <div class="sheet-overlay" id="sheetOverlay"></div>
     <div class="bottom-sheet" id="bottomSheet">
       <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
-      <div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
@@ -316,7 +315,6 @@
     
     <main class="main-content">
       
-      <!-- HERO AVEC AVATAR ANIMÉ -->
       <div class="welcome-hero anim-pop" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
         <div class="welcome-avatar" id="welcomeAvatar">
           <div class="ripple-ring"></div>
@@ -329,7 +327,6 @@
         </div>
       </div>
       
-      <!-- 4 CARTES D'INFORMATIONS -->
       <div class="stats-grid-welcome">
         <div class="stat-card-welcome anim-slide-right delay-5" onclick="location='dashboard.html'">
           <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
@@ -353,14 +350,12 @@
         </div>
       </div>
       
-      <!-- CITATION -->
       <div class="quote-card-welcome anim-slide-up delay-7">
         <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
         <p class="quote-text" id="wQuote"></p>
         <p class="quote-author" id="wAuthor"></p>
       </div>
       
-      <!-- BOUTONS -->
       <div class="welcome-buttons anim-slide-up delay-8">
         <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-chalkboard-user"></i> Go to Dashboard</a>
         <a href="notifications.html" class="btn btn-secondary"><i class="fas fa-bell"></i> Notifications</a>
@@ -402,10 +397,37 @@
     var t3 = calculateStudentTermAverage ? calculateStudentTermAverage(cu.id, 3) : 0;
     var overall = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
     
-    document.getElementById('wOverall').textContent = overall.toFixed(2);
-    document.getElementById('wGrades').textContent = grades.length;
-    document.getElementById('wBadges').textContent = ach.filter(function(a) { return a.unlocked; }).length;
-    document.getElementById('wStreak').textContent = streak.days || 0;
+    // Animation des nombres
+    function animateNumber(element, final) {
+      var current = 0;
+      var step = final / 30;
+      var timer = setInterval(function() {
+        current += step;
+        if (current >= final) {
+          element.textContent = final.toFixed(2);
+          clearInterval(timer);
+        } else {
+          element.textContent = current.toFixed(2);
+        }
+      }, 20);
+    }
+    
+    var overallEl = document.getElementById('wOverall');
+    var gradesEl = document.getElementById('wGrades');
+    var badgesEl = document.getElementById('wBadges');
+    var streakEl = document.getElementById('wStreak');
+    
+    if (overallEl) overallEl.textContent = '0.00';
+    if (gradesEl) gradesEl.textContent = '0';
+    if (badgesEl) badgesEl.textContent = '0';
+    if (streakEl) streakEl.textContent = '0';
+    
+    setTimeout(function() {
+      if (overallEl) overallEl.textContent = overall.toFixed(2);
+      if (gradesEl) gradesEl.textContent = grades.length;
+      if (badgesEl) badgesEl.textContent = ach.filter(function(a) { return a.unlocked; }).length;
+      if (streakEl) streakEl.textContent = streak.days || 0;
+    }, 500);
     
     // Header avatar
     var headerAvatar = document.getElementById('headerAvatar');
@@ -424,19 +446,7 @@
       { q: "The expert in anything was once a beginner.", a: "Helen Hayes" },
       { q: "The beautiful thing about learning is that no one can take it away from you.", a: "B.B. King" },
       { q: "Education is not the filling of a pail, but the lighting of a fire.", a: "W.B. Yeats" },
-      { q: "Believe you can and you're halfway there.", a: "Theodore Roosevelt" },
-      { q: "Strive for progress, not perfection.", a: "Unknown" },
-      { q: "The secret of getting ahead is getting started.", a: "Mark Twain" },
-      { q: "Fall seven times, stand up eight.", a: "Japanese Proverb" },
-      { q: "Start where you are. Use what you have. Do what you can.", a: "Arthur Ashe" },
-      { q: "Little by little, one travels far.", a: "J.R.R. Tolkien" },
-      { q: "You don't have to be great to start, but you have to start to be great.", a: "Zig Ziglar" },
-      { q: "Make today so awesome that yesterday gets jealous.", a: "Unknown" },
-      { q: "Consistency is more important than perfection.", a: "Unknown" },
-      { q: "Every day is a new opportunity to improve yourself.", a: "Unknown" },
-      { q: "Small progress is still progress.", a: "Unknown" },
-      { q: "Never give up on a dream.", a: "Unknown" },
-      { q: "You are stronger than you think.", a: "A.A. Milne" }
+      { q: "Believe you can and you're halfway there.", a: "Theodore Roosevelt" }
     ];
     var randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
     document.getElementById('wQuote').textContent = '"' + randomQuote.q + '"';
@@ -444,38 +454,42 @@
     
     // Confettis
     function launchConfetti() {
-      var container = document.getElementById('confettiContainer');
       var colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#00bcd4', '#ff6b6b', '#ffd93d'];
       for (var i = 0; i < 60; i++) {
         var piece = document.createElement('div');
         piece.className = 'confetti-piece';
         piece.style.left = Math.random() * 100 + '%';
-        piece.style.top = -(Math.random() * 30) + 'px';
+        piece.style.top = '-20px';
         piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.animationDelay = Math.random() * 2 + 's';
-        piece.style.animationDuration = (Math.random() * 2 + 2.5) + 's';
-        piece.style.width = (Math.random() * 8 + 4) + 'px';
-        piece.style.height = (Math.random() * 8 + 4) + 'px';
-        container.appendChild(piece);
-        setTimeout(function(p) { return function() { if(p.parentNode) p.remove(); }; }(piece), 4000);
+        piece.style.animationDelay = Math.random() * 1 + 's';
+        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        piece.style.width = (Math.random() * 6 + 4) + 'px';
+        piece.style.height = (Math.random() * 6 + 4) + 'px';
+        document.body.appendChild(piece);
+        setTimeout(function(p) { if(p && p.parentNode) p.parentNode.removeChild(p); }, 4000);
       }
     }
-    setTimeout(launchConfetti, 400);
+    setTimeout(launchConfetti, 300);
     
     // Effet sparkle au clic sur l'avatar
     document.getElementById('welcomeAvatar').addEventListener('click', function(e) {
       var sparkColors = ['#fff', '#ffd93d', '#ff6b6b', '#00ffff', '#ff69b4'];
-      for (var i = 0; i < 15; i++) {
+      var rect = this.getBoundingClientRect();
+      var centerX = rect.left + rect.width / 2;
+      var centerY = rect.top + rect.height / 2;
+      for (var i = 0; i < 20; i++) {
         var dot = document.createElement('div');
         dot.className = 'sparkle-dot';
-        dot.style.left = (e.clientX + (Math.random() - 0.5) * 100) + 'px';
-        dot.style.top = (e.clientY + (Math.random() - 0.5) * 100) + 'px';
+        var angle = Math.random() * Math.PI * 2;
+        var radius = Math.random() * 60;
+        dot.style.left = (centerX + Math.cos(angle) * radius - 2) + 'px';
+        dot.style.top = (centerY + Math.sin(angle) * radius - 2) + 'px';
         dot.style.backgroundColor = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-        dot.style.width = (Math.random() * 8 + 3) + 'px';
+        dot.style.width = (Math.random() * 6 + 2) + 'px';
         dot.style.height = dot.style.width;
-        dot.style.animationDuration = (Math.random() * 0.5 + 0.8) + 's';
+        dot.style.animationDuration = (Math.random() * 0.5 + 0.6) + 's';
         document.body.appendChild(dot);
-        setTimeout(function(d) { return function() { if(d.parentNode) d.remove(); }; }(dot), 1000);
+        setTimeout(function(d) { if(d && d.parentNode) d.parentNode.removeChild(d); }, 800);
       }
     });
     
@@ -483,8 +497,8 @@
     localStorage.setItem('smartgrade_last_page', 'welcome.html');
     
     requestNotificationPermission();
-    checkStreakMilestone(cu.id);
-    checkAndNotifyAchievements(cu.id);
+    if (typeof checkStreakMilestone === 'function') checkStreakMilestone(cu.id);
+    if (typeof checkAndNotifyAchievements === 'function') checkAndNotifyAchievements(cu.id);
   </script>
 </body>
 </html>

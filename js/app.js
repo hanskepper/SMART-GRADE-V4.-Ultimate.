@@ -1,10 +1,11 @@
 // ============================================
 // SMART GRADE v4.0 - APP.JS COMPLET
-// 23 BADGES | 12 POLICES | MODE NUIT | AVATAR
-// SÉLECTEUR DE POLICES INTÉGRÉ DANS LE THEME SHEET
-// CORRIGÉ : Pas d'erreur sur les pages publiques
+// VERSION CORRIGÉE - AVATAR GLOBAL
 // ============================================
 
+// ============================================
+// VARIABLES GLOBALES
+// ============================================
 var THEMES = [
   { name: 'default', color: '#0f3b48', label: 'Deep Teal' },
   { name: 'crimson', color: '#c0392b', label: 'Crimson' },
@@ -28,6 +29,70 @@ var THEMES = [
   { name: 'lime', color: '#558b2f', label: 'Lime' }
 ];
 
+var FONT_MAP = {
+  'inter': { name: 'Inter', family: 'Inter, sans-serif', google: 'Inter' },
+  'roboto': { name: 'Roboto', family: 'Roboto, sans-serif', google: 'Roboto' },
+  'cinzel': { name: 'Cinzel', family: 'Cinzel, serif', google: 'Cinzel' },
+  'quicksand': { name: 'Quicksand', family: 'Quicksand, sans-serif', google: 'Quicksand' },
+  'courier-prime': { name: 'Courier Prime', family: '"Courier Prime", monospace', google: 'Courier+Prime' },
+  'fredoka': { name: 'Fredoka', family: 'Fredoka, sans-serif', google: 'Fredoka' },
+  'pacifico': { name: 'Pacifico', family: 'Pacifico, cursive', google: 'Pacifico' },
+  'bangers': { name: 'Bangers', family: 'Bangers, cursive', google: 'Bangers' },
+  'lobster': { name: 'Lobster', family: 'Lobster, cursive', google: 'Lobster' },
+  'permanent-marker': { name: 'Permanent Marker', family: '"Permanent Marker", cursive', google: 'Permanent+Marker' },
+  'comfortaa': { name: 'Comfortaa', family: 'Comfortaa, sans-serif', google: 'Comfortaa' },
+  'righteous': { name: 'Righteous', family: 'Righteous, sans-serif', google: 'Righteous' }
+};
+
+var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
+
+// ============================================
+// FONCTION PRINCIPALE : METTRE À JOUR L'AVATAR DANS TOUTES LES PAGES
+// ============================================
+function updateHeaderAvatar() {
+  var headerAvatar = document.getElementById('headerAvatar');
+  if (!headerAvatar) return;
+  
+  // Vérifier si on est sur une page publique
+  var currentPath = window.location.pathname;
+  var publicPages = ['index.html', 'login.html', 'register.html', 'about.html', 'guide.html', '404.html', '400.html', '401.html', '403.html', '500.html', '502.html', '503.html'];
+  
+  var isPublic = false;
+  for (var i = 0; i < publicPages.length; i++) {
+    if (currentPath.indexOf(publicPages[i]) !== -1) {
+      isPublic = true;
+      break;
+    }
+  }
+  
+  if (isPublic) {
+    headerAvatar.innerHTML = '<i class="fas fa-info-circle"></i>';
+    return;
+  }
+  
+  try {
+    var stored = localStorage.getItem('smartgrade_current');
+    if (!stored) {
+      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      return;
+    }
+    
+    var user = JSON.parse(stored);
+    var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{"avatarBase64":""}');
+    
+    if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
+      headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+    } else {
+      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+    }
+  } catch(e) {
+    headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  }
+}
+
+// ============================================
+// AUTRES FONCTIONS UTILITAIRES
+// ============================================
 function fixMobileHeight() {
   var vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', vh + 'px');
@@ -35,12 +100,6 @@ function fixMobileHeight() {
 fixMobileHeight();
 window.addEventListener('resize', fixMobileHeight);
 window.addEventListener('orientationchange', fixMobileHeight);
-
-// ============================================
-// MODE NUIT - AUTO (20h-6h) + MANUEL
-// ============================================
-
-var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
 
 function checkNightMode() {
   if (manualThemeFlag === 'dark') {
@@ -62,17 +121,6 @@ function checkNightMode() {
   }
 }
 
-window.addEventListener('storage', function(e) {
-  if (e.key === 'smartgrade_manual_theme') {
-    manualThemeFlag = e.newValue;
-    checkNightMode();
-  }
-});
-
-// ============================================
-// BOUTON CLAIR/SOMBRE
-// ============================================
-
 function toggleDarkLightMode() {
   var btn = document.getElementById('darkLightBtn');
   
@@ -80,68 +128,110 @@ function toggleDarkLightMode() {
     manualThemeFlag = 'light';
     document.body.classList.remove('night-mode');
     if (btn) btn.innerHTML = '<i class="fas fa-moon"></i> Switch to Dark Mode';
-    showToast('Light mode activated');
   } else {
     manualThemeFlag = 'dark';
     document.body.classList.add('night-mode');
     if (btn) btn.innerHTML = '<i class="fas fa-sun"></i> Switch to Light Mode';
-    showToast('Dark mode activated');
   }
   
   localStorage.setItem('smartgrade_manual_theme', manualThemeFlag);
 }
 
-// ============================================
-// INITIALISATION PRINCIPALE
-// ============================================
-(function initApp() {
-  var ss = document.createElement('style');
-  ss.textContent = '@keyframes floatParticle{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:0.5}90%{opacity:0.3}100%{transform:translateY(-20vh) rotate(360deg);opacity:0}}';
-  document.head.appendChild(ss);
+function applyFontToAllElements(fontId) {
+  var fontInfo = FONT_MAP[fontId];
+  if (!fontInfo) {
+    fontId = 'inter';
+    fontInfo = FONT_MAP['inter'];
+  }
   
-  // Appliquer le thème sauvegardé
-  var savedTheme = getSavedTheme();
-  if (savedTheme) document.body.classList.add('theme-' + savedTheme);
+  var fontFamily = fontInfo.family;
+  document.body.style.fontFamily = fontFamily;
   
-  // Appliquer la taille de police sauvegardée
-  var savedFontSize = getSavedFontSize();
-  if (savedFontSize) document.body.classList.add('font-' + savedFontSize);
-  
-  initFontFamily();
-  checkNightMode();
-  initParticles();
-  initThemeSelector();
-  initMobileMenu();
-  initHeaderProfile();
-  autoUpdateCurrentUserStreak();
-  if (typeof initPWA === 'function') initPWA();
-  
-  setInterval(function() {
-    if (manualThemeFlag !== 'dark' && manualThemeFlag !== 'light') {
-      checkNightMode();
+  var allElements = document.querySelectorAll('*');
+  for (var i = 0; i < allElements.length; i++) {
+    if (allElements[i].style) {
+      allElements[i].style.fontFamily = fontFamily;
     }
-  }, 60000);
+  }
   
-  window.addEventListener('focus', function() {
-    checkNightMode();
-  });
+  localStorage.setItem('smartgrade_font_family', fontId);
   
-  window.addEventListener('pageshow', function() {
-    initHeaderProfile();
-    initFontFamily();
-    checkNightMode();
-  });
-  
-  document.addEventListener('DOMContentLoaded', function() {
-    initHeaderProfile();
-    initFontFamily();
-    checkNightMode();
-  });
-})();
+  var oldFonts = ['font-inter', 'font-roboto', 'font-cinzel', 'font-quicksand', 'font-courier-prime', 'font-fredoka', 'font-pacifico', 'font-bangers', 'font-lobster', 'font-permanent-marker', 'font-comfortaa', 'font-righteous'];
+  for (var i = 0; i < oldFonts.length; i++) {
+    document.body.classList.remove(oldFonts[i]);
+  }
+  document.body.classList.add('font-' + fontId);
+}
 
-// ============================================
-// INIT THEME SELECTOR - AVEC SÉLECTEUR DE POLICES
-// ============================================
+function initFontFamily() {
+  var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+  applyFontToAllElements(savedFont);
+}
+
+function applySizeToAllElements(size) {
+  var sizeMap = { small: '14px', medium: '16px', large: '18px' };
+  var fontSize = sizeMap[size] || '16px';
+  
+  document.body.style.fontSize = fontSize;
+  document.body.classList.remove('font-small', 'font-medium', 'font-large');
+  document.body.classList.add('font-' + size);
+  
+  var allElements = document.querySelectorAll('*');
+  for (var i = 0; i < allElements.length; i++) {
+    if (allElements[i].style) {
+      allElements[i].style.fontSize = fontSize;
+    }
+  }
+  
+  localStorage.setItem('smartgrade_font', size);
+}
+
+function generateFontSelectorHTML() {
+  var currentFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+  var html = '';
+  
+  for (var id in FONT_MAP) {
+    var font = FONT_MAP[id];
+    var isActive = (currentFont === id);
+    var fontFamilyName = font.family.split(',')[0].replace(/['"]/g, '');
+    html += '<div class="font-selector-item ' + (isActive ? 'active' : '') + '" data-font="' + id + '" style="font-family: \'' + fontFamilyName + '\', ' + font.family.split(',').slice(1).join(',') + '; padding: 10px 6px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; background: ' + (isActive ? 'linear-gradient(135deg, var(--primary), var(--secondary))' : 'rgba(0,0,0,0.03)') + '; color: ' + (isActive ? 'white' : 'var(--text)') + '; border: 1px solid var(--border); font-size: 0.7rem; font-weight: 500;">' + font.name + '</div>';
+  }
+  
+  return html;
+}
+
+function initFontSelector() {
+  var fontGrid = document.getElementById('fontSelectorGrid');
+  if (!fontGrid) return;
+  
+  fontGrid.innerHTML = generateFontSelectorHTML();
+  
+  document.querySelectorAll('.font-selector-item').forEach(function(item) {
+    item.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var fontId = this.dataset.font;
+      applyFontToAllElements(fontId);
+      
+      document.querySelectorAll('.font-selector-item').forEach(function(el) {
+        el.classList.remove('active');
+        el.style.background = 'rgba(0,0,0,0.03)';
+        el.style.color = 'var(--text)';
+      });
+      this.classList.add('active');
+      this.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
+      this.style.color = 'white';
+      
+      try {
+        var student = getCurrentStudent();
+        if (student && student.id && typeof trackFontUsage === 'function') {
+          trackFontUsage(student.id, fontId);
+        }
+      } catch(err) {}
+      
+      closeBottomSheet();
+    });
+  });
+}
 
 function initThemeSelector() {
   var c = document.getElementById('themeGrid');
@@ -149,7 +239,6 @@ function initThemeSelector() {
   
   var bottomSheetContent = document.querySelector('.bottom-sheet-content');
   
-  // AJOUTER LE BOUTON CLAIR/SOMBRE
   if (bottomSheetContent && !document.getElementById('darkLightBtn')) {
     var modeBtn = document.createElement('div');
     modeBtn.style.cssText = 'margin-bottom: 16px; padding: 0 4px;';
@@ -190,7 +279,6 @@ function initThemeSelector() {
     }
   }
   
-  // SÉLECTEUR DE POLICES
   if (bottomSheetContent && !document.getElementById('fontSelectorSection')) {
     var fontSection = document.createElement('div');
     fontSection.id = 'fontSelectorSection';
@@ -214,53 +302,8 @@ function initThemeSelector() {
     }
   }
   
-  // CHARGER LES 12 POLICES
-  var fontGrid = document.getElementById('fontSelectorGrid');
-  if (fontGrid) {
-    var currentFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-    
-    var fonts = [
-      { id: 'inter', name: 'Inter', style: 'Inter' },
-      { id: 'roboto', name: 'Roboto', style: 'Roboto' },
-      { id: 'cinzel', name: 'Cinzel', style: 'Cinzel' },
-      { id: 'quicksand', name: 'Quicksand', style: 'Quicksand' },
-      { id: 'courier-prime', name: 'Courier Prime', style: 'Courier Prime' },
-      { id: 'fredoka', name: 'Fredoka', style: 'Fredoka' },
-      { id: 'pacifico', name: 'Pacifico', style: 'Pacifico' },
-      { id: 'bangers', name: 'Bangers', style: 'Bangers' },
-      { id: 'lobster', name: 'Lobster', style: 'Lobster' },
-      { id: 'permanent-marker', name: 'Permanent Marker', style: 'Permanent Marker' },
-      { id: 'comfortaa', name: 'Comfortaa', style: 'Comfortaa' },
-      { id: 'righteous', name: 'Righteous', style: 'Righteous' }
-    ];
-    
-    fontGrid.innerHTML = fonts.map(function(f) {
-      var isActive = (currentFont === f.id);
-      return '<div class="font-selector-item ' + (isActive ? 'active' : '') + '" data-font="' + f.id + '" style="padding: 8px 4px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s; font-family: \'' + f.style + '\', sans-serif; background: ' + (isActive ? 'linear-gradient(135deg, var(--primary), var(--secondary))' : 'rgba(0,0,0,0.03)') + '; color: ' + (isActive ? 'white' : 'var(--text)') + '; border: 1px solid var(--border); font-size: 0.65rem; font-weight: 500;">' + f.name + '</div>';
-    }).join('');
-    
-    document.querySelectorAll('.font-selector-item').forEach(function(item) {
-      item.addEventListener('click', function(e) {
-        e.stopPropagation();
-        var fontId = this.dataset.font;
-        selectFontFamilyFromSheet(fontId);
-        
-        document.querySelectorAll('.font-selector-item').forEach(function(el) {
-          el.classList.remove('active');
-          el.style.background = 'rgba(0,0,0,0.03)';
-          el.style.color = 'var(--text)';
-        });
-        this.classList.add('active');
-        this.style.background = 'linear-gradient(135deg, var(--primary), var(--secondary))';
-        this.style.color = 'white';
-        
-        showToast('Font: ' + this.textContent);
-        setTimeout(function() { closeBottomSheet(); }, 500);
-      });
-    });
-  }
+  initFontSelector();
   
-  // AFFICHER LES 20 THÈMES
   var st = getSavedTheme();
   c.innerHTML = THEMES.map(function(t) {
     return '<div class="theme-rect ' + (st === t.name ? 'active' : '') + '" data-theme="' + t.name + '" style="background:' + t.color + ';" title="' + t.label + '">' + t.label + '</div>';
@@ -274,43 +317,33 @@ function initThemeSelector() {
       document.body.classList.add('theme-' + t);
       saveTheme(t);
       
-      // ⚠️ BADGE 34: Theme Collector - Ne pas appeler sur pages publiques
-      // La vérification se fait via try/catch pour éviter les erreurs
       try {
         var student = getCurrentStudent();
         if (student && student.id && typeof trackThemeUsage === 'function') {
           trackThemeUsage(student.id, t);
         }
-      } catch(err) {
-        // Ignorer l'erreur sur les pages publiques
-        console.log('Theme changed on public page');
-      }
+      } catch(err) {}
       
       document.querySelectorAll('.theme-rect').forEach(function(x) { x.classList.remove('active'); });
       this.classList.add('active');
       checkNightMode();
-      showToast('Theme: ' + t);
       closeBottomSheet();
     });
   });
   
-  // TAILLES DE POLICE
   var sf = getSavedFontSize();
   document.querySelectorAll('.font-sheet').forEach(function(o) {
     if (o.dataset.font === sf) o.classList.add('active');
     o.addEventListener('click', function(e) {
       e.stopPropagation();
       var f = this.dataset.font;
-      saveFontSize(f);
-      document.body.classList.remove('font-small', 'font-medium', 'font-large');
-      document.body.classList.add('font-' + f);
+      applySizeToAllElements(f);
       document.querySelectorAll('.font-sheet').forEach(function(x) { x.classList.remove('active'); });
       this.classList.add('active');
-      showToast('Font size: ' + f);
+      closeBottomSheet();
     });
   });
   
-  // GESTION DU BOTTOM SHEET
   var tb = document.getElementById('themeBtn');
   var bs = document.getElementById('bottomSheet');
   var so = document.getElementById('sheetOverlay');
@@ -341,25 +374,6 @@ function initThemeSelector() {
   }
 }
 
-function selectFontFamilyFromSheet(fontId) {
-  localStorage.setItem('smartgrade_font_family', fontId);
-  
-  // ⚠️ BADGE 50: Font Collector - Ne pas appeler sur pages publiques
-  try {
-    var student = getCurrentStudent();
-    if (student && student.id && typeof trackFontUsage === 'function') {
-      trackFontUsage(student.id, fontId);
-    }
-  } catch(err) {
-    console.log('Font changed on public page');
-  }
-  
-  if (typeof initFontFamily === 'function') {
-    initFontFamily();
-  }
-  playActionFeedback();
-}
-
 function closeBottomSheet() {
   var bs = document.getElementById('bottomSheet');
   var so = document.getElementById('sheetOverlay');
@@ -377,46 +391,8 @@ function initMobileMenu() {
   }
 }
 
-// ============================================
-// INIT HEADER PROFILE
-// ============================================
 function initHeaderProfile() {
-  var ha = document.getElementById('headerAvatar');
-  if (!ha) return;
-  
-  var currentPath = window.location.pathname;
-  var publicPages = ['index.html', 'login.html', 'register.html', 'about.html', 'guide.html', '404.html', '400.html', '401.html', '403.html', '500.html', '502.html', '503.html'];
-  
-  var isPublic = false;
-  for (var i = 0; i < publicPages.length; i++) {
-    if (currentPath.indexOf(publicPages[i]) !== -1) {
-      isPublic = true;
-      break;
-    }
-  }
-  
-  if (isPublic) {
-    ha.innerHTML = '<i class="fas fa-info-circle"></i>';
-    return;
-  }
-  
-  try {
-    var cu = getCurrentStudent();
-    if (!cu) {
-      ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
-      return;
-    }
-    
-    var profile = getProfile(cu.id);
-    
-    if (profile.avatarBase64 && profile.avatarBase64 !== '') {
-      ha.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-    } else {
-      ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
-    }
-  } catch(err) {
-    ha.innerHTML = '<i class="fas fa-user-graduate"></i>';
-  }
+  updateHeaderAvatar();
 }
 
 function getProfile(studentId) {
@@ -437,27 +413,7 @@ function getProfile(studentId) {
 
 function saveProfile(studentId, profile) {
   localStorage.setItem('smartgrade_profile_' + studentId, JSON.stringify(profile));
-}
-
-// ============================================
-// GESTION DES 12 POLICES
-// ============================================
-
-function initFontFamily() {
-  var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-  var validFonts = ['inter', 'roboto', 'cinzel', 'quicksand', 'courier-prime', 'fredoka', 'pacifico', 'bangers', 'lobster', 'permanent-marker', 'comfortaa', 'righteous'];
-  
-  if (validFonts.indexOf(savedFont) === -1) {
-    savedFont = 'inter';
-  }
-  
-  var oldFonts = ['font-inter', 'font-roboto', 'font-cinzel', 'font-quicksand', 'font-courier-prime', 'font-fredoka', 'font-pacifico', 'font-bangers', 'font-lobster', 'font-permanent-marker', 'font-comfortaa', 'font-righteous'];
-  
-  for (var i = 0; i < oldFonts.length; i++) {
-    document.body.classList.remove(oldFonts[i]);
-  }
-  
-  document.body.classList.add('font-' + savedFont);
+  updateHeaderAvatar();
 }
 
 function playClickSound() {
@@ -478,7 +434,7 @@ window.addEventListener('beforeinstallprompt', function(e) { e.preventDefault();
 function installApp() {
   if (deferredPrompt) {
     deferredPrompt.prompt();
-    deferredPrompt.userChoice.then(function(r) { if (r.outcome === 'accepted') showToast('App installed!'); deferredPrompt = null; });
+    deferredPrompt.userChoice.then(function(r) { if (r.outcome === 'accepted'); deferredPrompt = null; });
     var p = document.getElementById('installPrompt'); if (p) p.classList.remove('show');
   } else { alert('Menu > Add to Home Screen'); }
 }
@@ -488,7 +444,6 @@ function autoUpdateCurrentUserStreak() { var u = getCurrentStudent(); if (u) upd
 function getSavedTheme() { return localStorage.getItem('smartgrade_theme') || 'default'; }
 function saveTheme(t) { localStorage.setItem('smartgrade_theme', t); }
 function getSavedFontSize() { return localStorage.getItem('smartgrade_font') || 'medium'; }
-function saveFontSize(f) { localStorage.setItem('smartgrade_font', f); }
 
 function initParticles() {
   var c = document.getElementById('particles');
@@ -517,10 +472,6 @@ function formatDate(d) { if (!d) return '--'; var dt = new Date(d); var m = ['Ja
 
 function getGreeting() { var h = new Date().getHours(); if (h < 12) return 'Good Morning'; if (h < 18) return 'Good Afternoon'; return 'Good Evening'; }
 
-// ============================================
-// NOTIFICATIONS
-// ============================================
-
 function requestNotificationPermission() {
   if ('Notification' in window && Notification.permission === 'default') {
     Notification.requestPermission();
@@ -531,9 +482,7 @@ function sendLocalNotification(title, body) {
   if ('Notification' in window && Notification.permission === 'granted') {
     try {
       new Notification(title, { body: body, icon: 'icon.svg', vibrate: [200, 100, 200] });
-    } catch (e) {
-      console.log('Notification error:', e);
-    }
+    } catch (e) {}
   }
   showInAppNotification(title, body);
 }
@@ -608,11 +557,6 @@ function checkAndNotifyAchievements(id) {
   }
 }
 
-// ============================================
-// NOUVEAUX BADGES - FONCTIONS DE DÉBLOCAGE
-// ============================================
-
-// Badge 34: Theme Collector (10 thèmes différents)
 function trackThemeUsage(studentId, themeName) {
   var usedThemes = JSON.parse(localStorage.getItem('smartgrade_used_themes_' + studentId) || '[]');
   if (usedThemes.indexOf(themeName) === -1) {
@@ -625,7 +569,6 @@ function trackThemeUsage(studentId, themeName) {
   }
 }
 
-// Badge 50: Font Collector (6 polices différentes)
 function trackFontUsage(studentId, fontId) {
   var usedFonts = JSON.parse(localStorage.getItem('smartgrade_used_fonts_' + studentId) || '[]');
   if (usedFonts.indexOf(fontId) === -1) {
@@ -638,7 +581,6 @@ function trackFontUsage(studentId, fontId) {
   }
 }
 
-// Badge 38: Welcome Aboard (première connexion)
 function checkWelcomeBadge(studentId) {
   var welcomed = localStorage.getItem('smartgrade_welcome_badge_' + studentId);
   if (!welcomed) {
@@ -647,7 +589,6 @@ function checkWelcomeBadge(studentId) {
   }
 }
 
-// Badge 36: Photo Uploader
 function checkPhotoBadge(studentId) {
   var profile = getProfile(studentId);
   if (profile.avatarBase64 && profile.avatarBase64 !== '') {
@@ -655,7 +596,6 @@ function checkPhotoBadge(studentId) {
   }
 }
 
-// Badge 57: Timetable Viewer (10 vues)
 function incrementTimetableView(studentId) {
   var count = parseInt(localStorage.getItem('smartgrade_timetable_views_' + studentId) || '0');
   count++;
@@ -666,7 +606,6 @@ function incrementTimetableView(studentId) {
   return count;
 }
 
-// Badges 58/59: Flashcards
 function checkFlashcardBadges(studentId) {
   var cards = getFlashcards(studentId);
   var customCount = cards.filter(function(c) { return !c.isOriginal; }).length;
@@ -675,7 +614,6 @@ function checkFlashcardBadges(studentId) {
   if (customCount >= 10) unlockBadgeById(studentId, 59);
 }
 
-// Badge 25: Comeback King (progression <10 → >14)
 function checkComebackBadge(studentId) {
   var grades = getStudentGrades(studentId);
   var subjects = {};
@@ -704,7 +642,6 @@ function checkComebackBadge(studentId) {
   }
 }
 
-// Fonction générique pour débloquer un badge
 function unlockBadgeById(studentId, badgeId) {
   var achievements = getStudentAchievements(studentId);
   var existing = achievements.find(function(a) { return a.id === badgeId; });
@@ -730,7 +667,6 @@ function unlockBadgeById(studentId, badgeId) {
   
   saveStudentAchievements(studentId, achievements);
   
-  // PAS DE NOTIFICATION POUR LES BADGES 34 ET 50
   if (badgeId !== 34 && badgeId !== 50) {
     checkAndNotifyAchievements(studentId);
   }
@@ -738,21 +674,13 @@ function unlockBadgeById(studentId, badgeId) {
   return true;
 }
 
-// Fonction pour vérifier TOUS les badges
 function checkAndUnlockAllNewBadges(studentId) {
   if (!studentId) return;
-  
   checkWelcomeBadge(studentId);
   checkPhotoBadge(studentId);
   checkFlashcardBadges(studentId);
   checkComebackBadge(studentId);
 }
-
-console.log('SMART GRADE v4.0 - App initialized with 23 badges');
-
-// ============================================
-// VERSION DE L'APPLICATION
-// ============================================
 
 var APP_VERSION = '4.0.3';
 
@@ -777,10 +705,6 @@ document.addEventListener('focusout', function(e) {
 window.getAppVersion = function() {
   return APP_VERSION;
 };
-
-// ============================================
-// AUTO UPDATE SYSTEM
-// ============================================
 
 var AutoUpdate = {
   currentVersion: '4.0.3',
@@ -816,11 +740,9 @@ function checkForUpdates() {
         localStorage.setItem('smartgrade_new_version', AutoUpdate.newVersion);
         localStorage.setItem('smartgrade_release_notes', AutoUpdate.releaseNotes);
         
-        console.log('[AutoUpdate] Nouvelle version disponible:', AutoUpdate.newVersion);
-        
         if ('Notification' in window && Notification.permission === 'granted') {
           new Notification('SMART GRADE', {
-            body: 'Version ' + AutoUpdate.newVersion + ' disponible. Allez dans Paramètres pour télécharger.',
+            body: 'Version ' + AutoUpdate.newVersion + ' disponible.',
             icon: 'icon.svg',
             silent: true
           });
@@ -831,24 +753,15 @@ function checkForUpdates() {
     })
     .catch(function(err) {
       AutoUpdate.checking = false;
-      console.log('[AutoUpdate] Erreur:', err.message);
     });
 }
 
 function downloadUpdate() {
-  if (AutoUpdate.downloading) {
-    showToast('Téléchargement déjà en cours...');
-    return;
-  }
+  if (AutoUpdate.downloading) return;
   
-  if (!AutoUpdate.updateAvailable) {
-    showToast('Aucune mise à jour disponible');
-    return;
-  }
+  if (!AutoUpdate.updateAvailable) return;
   
   AutoUpdate.downloading = true;
-  
-  showToast('Téléchargement de la mise à jour...');
   
   var link = document.createElement('a');
   link.href = AutoUpdate.apkUrl;
@@ -860,7 +773,6 @@ function downloadUpdate() {
   setTimeout(function() {
     document.body.removeChild(link);
     AutoUpdate.downloading = false;
-    showToast('Téléchargement terminé! Ouvrez le fichier pour installer.');
   }, 3000);
 }
 
@@ -868,66 +780,265 @@ setTimeout(checkForUpdates, 5000);
 setInterval(checkForUpdates, 10 * 60 * 1000);
 
 // ============================================
-// GESTION DES LIENS - EMPÊCHE L'OUVERTURE DE LIENS EXTERNES
+// INITIALISATION PRINCIPALE
+// ============================================
+(function initApp() {
+  var savedTheme = getSavedTheme();
+  if (savedTheme) document.body.classList.add('theme-' + savedTheme);
+  
+  var savedFontSize = getSavedFontSize();
+  if (savedFontSize) {
+    var sizeMap = { small: '14px', medium: '16px', large: '18px' };
+    document.body.style.fontSize = sizeMap[savedFontSize] || '16px';
+    document.body.classList.add('font-' + savedFontSize);
+  }
+  
+  initFontFamily();
+  checkNightMode();
+  initParticles();
+  initThemeSelector();
+  initMobileMenu();
+  updateHeaderAvatar();
+  autoUpdateCurrentUserStreak();
+  if (typeof initPWA === 'function') initPWA();
+  
+  setInterval(function() {
+    if (manualThemeFlag !== 'dark' && manualThemeFlag !== 'light') {
+      checkNightMode();
+    }
+  }, 60000);
+  
+  window.addEventListener('focus', function() {
+    checkNightMode();
+    initFontFamily();
+    updateHeaderAvatar();
+  });
+  
+  window.addEventListener('pageshow', function() {
+    updateHeaderAvatar();
+    initFontFamily();
+    checkNightMode();
+  });
+  
+  document.addEventListener('DOMContentLoaded', function() {
+    updateHeaderAvatar();
+    initFontFamily();
+    checkNightMode();
+  });
+  
+  window.addEventListener('storage', function(e) {
+    if (e.key && e.key.indexOf('smartgrade_profile_') !== -1) {
+      updateHeaderAvatar();
+    }
+    if (e.key === 'smartgrade_current') {
+      updateHeaderAvatar();
+    }
+  });
+})();
+// ============================================
+// FONCTION GLOBALE POUR METTRE À JOUR L'AVATAR
+// ============================================
+
+window.updateHeaderAvatarGlobal = function() {
+  var headerAvatar = document.getElementById('headerAvatar');
+  if (!headerAvatar) return;
+  
+  try {
+    var stored = localStorage.getItem('smartgrade_current');
+    if (!stored) {
+      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      return;
+    }
+    
+    var user = JSON.parse(stored);
+    var profile = localStorage.getItem('smartgrade_profile_' + user.id);
+    
+    if (profile) {
+      var profileData = JSON.parse(profile);
+      if (profileData.avatarBase64 && profileData.avatarBase64 !== '' && profileData.avatarBase64.length > 100) {
+        headerAvatar.innerHTML = '<img src="' + profileData.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        return;
+      }
+    }
+    
+    headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  } catch(e) {
+    headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  }
+};
+
+// Exécuter au chargement de chaque page
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', window.updateHeaderAvatarGlobal);
+} else {
+  window.updateHeaderAvatarGlobal();
+}
+
+// Écouter les changements dans localStorage
+window.addEventListener('storage', function(e) {
+  if (e.key && (e.key.indexOf('smartgrade_profile_') !== -1 || e.key === 'smartgrade_current')) {
+    window.updateHeaderAvatarGlobal();
+  }
+});
+// ============================================
+// FONCTION UNIQUE POUR L'AVATAR - SIMPLE ET FIABLE
+// ============================================
+
+function refreshAvatarInHeader() {
+  var avatarElement = document.getElementById('headerAvatar');
+  if (!avatarElement) return;
+  
+  try {
+    var currentUser = localStorage.getItem('smartgrade_current');
+    if (!currentUser) {
+      avatarElement.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      return;
+    }
+    
+    var user = JSON.parse(currentUser);
+    var profileStr = localStorage.getItem('smartgrade_profile_' + user.id);
+    
+    if (profileStr) {
+      var profile = JSON.parse(profileStr);
+      if (profile.avatarBase64 && profile.avatarBase64.length > 100) {
+        avatarElement.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        return;
+      }
+    }
+    
+    avatarElement.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  } catch(e) {
+    avatarElement.innerHTML = '<i class="fas fa-user-graduate"></i>';
+  }
+}
+
+// Exécuter au chargement et à chaque changement de page
+refreshAvatarInHeader();
+
+// Écouter les changements dans localStorage
+window.addEventListener('storage', function(e) {
+  if (e.key && (e.key.indexOf('smartgrade_profile_') !== -1 || e.key === 'smartgrade_current')) {
+    refreshAvatarInHeader();
+  }
+});
+
+// Forcer l'exécution quand la page devient visible
+document.addEventListener('visibilitychange', function() {
+  if (!document.hidden) refreshAvatarInHeader();
+});
+
+// Remplacer l'ancienne fonction pour la compatibilité
+window.updateHeaderAvatar = refreshAvatarInHeader;
+window.initHeaderProfile = refreshAvatarInHeader;
+
+// ============================================
+// SYSTÈME D'AVATAR INDÉPENDANT - SOLUTION FINALE
 // ============================================
 
 (function() {
-  var APP_DOMAIN = 'hanskepper.github.io';
-  var APP_PATH = '/SMART-GRAD/';
   
-  var allowedPages = [
-    'index.html', 'dashboard.html', 'login.html', 'register.html',
-    'add-grade.html', 'subjects.html', 'subject-detail.html',
-    'settings.html', 'profile.html', 'statistics.html',
-    'achievements.html', 'history.html', 'transfer.html',
-    'export.html', 'flashcards.html', 'goals.html', 'timetable.html',
-    'term1.html', 'term2.html', 'term3.html', 'yearly.html',
-    'guide.html', 'guide-user.html', 'about.html', 'about-user.html',
-    'notifications.html', 'shortcuts.html', 'welcome.html', '404.html',
-    '400.html', '401.html', '403.html', '500.html', '502.html', '503.html'
-  ];
-  
-  document.addEventListener('click', function(e) {
-    var link = e.target.closest('a');
-    if (!link) return;
-    
-    var href = link.getAttribute('href');
-    if (!href) return;
-    
-    if (href === '#' || href === '') return;
-    
-    if (href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
-    
-    var isExternal = false;
-    
-    if (href.indexOf('http') === 0) {
-      if (!href.includes(APP_DOMAIN)) {
-        isExternal = true;
-      } else if (APP_PATH && !href.includes(APP_PATH)) {
-        isExternal = true;
-      }
+  // Sauvegarder l'avatar
+  window.saveAvatarGlobal = function(base64) {
+    try {
+      var user = localStorage.getItem('smartgrade_current');
+      if (!user) return false;
+      var userData = JSON.parse(user);
+      
+      var profile = localStorage.getItem('smartgrade_profile_' + userData.id);
+      var profileData = profile ? JSON.parse(profile) : {};
+      profileData.avatarBase64 = base64;
+      localStorage.setItem('smartgrade_profile_' + userData.id, JSON.stringify(profileData));
+      
+      // Sauvegarder aussi dans une clé globale
+      localStorage.setItem('smartgrade_global_avatar_' + userData.id, base64);
+      
+      // Mettre à jour l'affichage
+      updateAllAvatars(base64);
+      
+      return true;
+    } catch(e) {
+      console.error('Save avatar error:', e);
+      return false;
     }
-    
-    if (!isExternal && href.indexOf('http') !== 0 && href.indexOf('/') !== 0) {
-      var isAllowed = false;
-      for (var i = 0; i < allowedPages.length; i++) {
-        if (href === allowedPages[i] || href.indexOf(allowedPages[i]) !== -1) {
-          isAllowed = true;
-          break;
+  };
+  
+  // Charger l'avatar
+  window.loadAvatarGlobal = function() {
+    try {
+      var user = localStorage.getItem('smartgrade_current');
+      if (!user) return '';
+      var userData = JSON.parse(user);
+      
+      // D'abord essayer la clé globale
+      var globalAvatar = localStorage.getItem('smartgrade_global_avatar_' + userData.id);
+      if (globalAvatar && globalAvatar.length > 100) return globalAvatar;
+      
+      // Sinon essayer le profil
+      var profile = localStorage.getItem('smartgrade_profile_' + userData.id);
+      if (profile) {
+        var profileData = JSON.parse(profile);
+        if (profileData.avatarBase64 && profileData.avatarBase64.length > 100) {
+          localStorage.setItem('smartgrade_global_avatar_' + userData.id, profileData.avatarBase64);
+          return profileData.avatarBase64;
         }
       }
       
-      if (!isAllowed && href.indexOf('.html') !== -1) {
-        isExternal = true;
+      return '';
+    } catch(e) {
+      return '';
+    }
+  };
+  
+  // Mettre à jour tous les affichages d'avatar
+  function updateAllAvatars(base64) {
+    // Mettre à jour l'en-tête
+    var headerAvatar = document.getElementById('headerAvatar');
+    if (headerAvatar) {
+      if (base64 && base64.length > 100) {
+        headerAvatar.innerHTML = '<img src="' + base64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+      } else {
+        headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
       }
     }
     
-    if (isExternal) {
-      e.preventDefault();
-      window.open(href, '_blank');
-      console.log('[LinkHandler] Lien externe ouvert:', href);
+    // Mettre à jour la prévisualisation sur la page profil
+    var avatarPreview = document.getElementById('avatarPreview');
+    if (avatarPreview) {
+      if (base64 && base64.length > 100) {
+        avatarPreview.innerHTML = '<img src="' + base64 + '">';
+      } else {
+        avatarPreview.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      }
+    }
+  }
+  
+  // Initialiser l'avatar au chargement
+  function initAvatar() {
+    var avatar = loadAvatarGlobal();
+    updateAllAvatars(avatar);
+  }
+  
+  // Exécuter au chargement
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initAvatar);
+  } else {
+    initAvatar();
+  }
+  
+  // Écouter les changements
+  window.addEventListener('storage', function(e) {
+    if (e.key && e.key.indexOf('smartgrade_global_avatar_') !== -1) {
+      updateAllAvatars(e.newValue);
     }
   });
   
-  console.log('[LinkHandler] Activé - ' + allowedPages.length + ' pages autorisées');
+  // Rafraîchir quand la page devient visible
+  document.addEventListener('visibilitychange', function() {
+    if (!document.hidden) {
+      var avatar = loadAvatarGlobal();
+      updateAllAvatars(avatar);
+    }
+  });
+  
 })();
+console.log('SMART GRADE v4.0 - App initialized');

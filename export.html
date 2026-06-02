@@ -323,6 +323,7 @@
     
     // ============================================
     // FONCTION DE CALCUL - IDENTIQUE AU DASHBOARD
+    // Traite les notes manquantes = 0
     // ============================================
     function calculateTermAvgForExport(studentId, term) {
       try {
@@ -417,7 +418,7 @@
     }
     
     // ============================================
-    // CSV BULLETIN
+    // CSV BULLETIN - TRAITE LES 0 COMME NOTES
     // ============================================
     function generateCSVBulletin() {
       var grades = getStudentGrades(cu.id);
@@ -437,10 +438,9 @@
       var totalWeighted = 0;
       var totalCoeff = 0;
       
-      // CLÉS DES SUJETS SÉLECTIONNÉS - Par terme (yearly = tous les 3 termes)
+      // CLÉS DES SUJETS SÉLECTIONNÉS
       var selectedSubjects = [];
       if (isYearly) {
-        // Pour yearly, on prend l'union de tous les sujets de tous les termes
         var s1 = getStudentSelectedSubjects(cu.id, 1);
         var s2 = getStudentSelectedSubjects(cu.id, 2);
         var s3 = getStudentSelectedSubjects(cu.id, 3);
@@ -461,28 +461,25 @@
           var t2 = calculateSubjectTermAverage(s.id, 2, grades);
           var t3 = calculateSubjectTermAverage(s.id, 3, grades);
           var yearly = (t1 + t2 + t3) / 3;
-          var hasGrade = (t1 > 0 || t2 > 0 || t3 > 0);
-          var yearlyFormatted = yearly > 0 ? yearly.toFixed(2) : '—';
-          var letter = hasGrade && yearly > 0 ? getGradeLetter(yearly) : '—';
+          // CONSIDÉRER COMME NOTE VALIDE MÊME SI = 0
+          var yearlyFormatted = yearly.toFixed(2);
+          var letter = getGradeLetter(yearly);
           
-          rows.push([s.name, coef, (t1 > 0 ? t1.toFixed(2) : '—'), (t2 > 0 ? t2.toFixed(2) : '—'), (t3 > 0 ? t3.toFixed(2) : '—'), yearlyFormatted, letter]);
+          rows.push([s.name, coef, (t1 >= 0 ? t1.toFixed(2) : '—'), (t2 >= 0 ? t2.toFixed(2) : '—'), (t3 >= 0 ? t3.toFixed(2) : '—'), yearlyFormatted, letter]);
           
-          if (hasGrade && yearly > 0) {
-            totalWeighted += yearly * coef;
-            totalCoeff += coef;
-          }
+          // TOUJOURS COMPTER DANS LA MOYENNE
+          totalWeighted += yearly * coef;
+          totalCoeff += coef;
         } else {
           var termAvg = calculateSubjectTermAverage(s.id, termNum, grades);
-          var hasGrade = (termAvg > 0);
-          var termAvgFormatted = hasGrade ? termAvg.toFixed(2) : '—';
-          var letter = hasGrade ? getGradeLetter(termAvg) : '—';
+          var termAvgFormatted = termAvg.toFixed(2);
+          var letter = getGradeLetter(termAvg);
           
           rows.push([s.name, coef, termAvgFormatted, letter]);
           
-          if (hasGrade) {
-            totalWeighted += termAvg * coef;
-            totalCoeff += coef;
-          }
+          // TOUJOURS COMPTER DANS LA MOYENNE
+          totalWeighted += termAvg * coef;
+          totalCoeff += coef;
         }
       }
       
@@ -619,7 +616,7 @@
     function fn(ext) { var t = selectedTerm === 'yearly' ? 'Yearly' : 'Term' + selectedTerm; return 'SMART-GRADE-Bulletin-' + t + '-' + cu.name.replace(/\s+/g, '-') + '-' + ts() + '.' + ext; }
     
     // ============================================
-    // BUILD BULLETIN HTML - AVEC FILTRAGE CORRECT
+    // BUILD BULLETIN HTML - TRAITE LES 0 COMME NOTES
     // ============================================
     function buildBulletinHTML() {
       var grades = getStudentGrades(cu.id);
@@ -660,43 +657,40 @@
           var t2 = calculateSubjectTermAverage(s.id, 2, grades);
           var t3 = calculateSubjectTermAverage(s.id, 3, grades);
           var yearly = (t1 + t2 + t3) / 3;
-          var hasGrade = (t1 > 0 || t2 > 0 || t3 > 0);
-          var yearlyFormatted = yearly > 0 ? yearly.toFixed(2) : '—';
-          var letter = hasGrade && yearly > 0 ? getGradeLetter(yearly) : '—';
+          // CONSIDÉRER COMME NOTE VALIDE MÊME SI = 0
+          var yearlyFormatted = yearly.toFixed(2);
+          var letter = getGradeLetter(yearly);
           var gradeClass = getGradeClass(letter);
           
           rows += '<tr>' +
             '<td class="subject-name">' + s.name + '</td>' +
             '<td>' + coef + '</td>' +
-            '<td>' + (t1 > 0 ? t1.toFixed(2) : '—') + '</td>' +
-            '<td>' + (t2 > 0 ? t2.toFixed(2) : '—') + '</td>' +
-            '<td>' + (t3 > 0 ? t3.toFixed(2) : '—') + '</td>' +
+            '<td>' + t1.toFixed(2) + '</td>' +
+            '<td>' + t2.toFixed(2) + '</td>' +
+            '<td>' + t3.toFixed(2) + '</td>' +
             '<td><strong>' + yearlyFormatted + '</strong></td>' +
-            '<td>' + (hasGrade && yearly > 0 ? '<span class="grade-letter grade-' + gradeClass + '">' + letter + '</span>' : '—') + '</td>' +
+            '<td><span class="grade-letter grade-' + gradeClass + '">' + letter + '</span></td>' +
           '</tr>';
           
-          if (hasGrade && yearly > 0) {
-            totalWeighted += yearly * coef;
-            totalCoeff += coef;
-          }
+          // TOUJOURS COMPTER DANS LA MOYENNE
+          totalWeighted += yearly * coef;
+          totalCoeff += coef;
         } else {
           var termAvg = calculateSubjectTermAverage(s.id, termNum, grades);
-          var hasGrade = (termAvg > 0);
-          var termAvgFormatted = hasGrade ? termAvg.toFixed(2) : '—';
-          var letter = hasGrade ? getGradeLetter(termAvg) : '—';
+          var termAvgFormatted = termAvg.toFixed(2);
+          var letter = getGradeLetter(termAvg);
           var gradeClass = getGradeClass(letter);
           
           rows += '<tr>' +
             '<td class="subject-name">' + s.name + '</td>' +
             '<td>' + coef + '</td>' +
             '<td><strong>' + termAvgFormatted + '</strong></td>' +
-            '<td>' + (hasGrade ? '<span class="grade-letter grade-' + gradeClass + '">' + letter + '</span>' : '—') + '</td>' +
+            '<td><span class="grade-letter grade-' + gradeClass + '">' + letter + '</span></td>' +
           '</tr>';
           
-          if (hasGrade) {
-            totalWeighted += termAvg * coef;
-            totalCoeff += coef;
-          }
+          // TOUJOURS COMPTER DANS LA MOYENNE
+          totalWeighted += termAvg * coef;
+          totalCoeff += coef;
         }
       }
       

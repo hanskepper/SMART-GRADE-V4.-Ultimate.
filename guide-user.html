@@ -309,6 +309,11 @@
       font-size:0.6rem;
       display:block;
     }
+    
+    .btn-download-guide:active {
+      transform: scale(0.96);
+    }
+    
     @media(min-width:600px){
       .quick-tips-grid{grid-template-columns:repeat(4,1fr);}
     }
@@ -318,7 +323,6 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
-    <!-- HEADER PRIVE -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-question-circle"></i><span>GUIDE</span></div>
@@ -345,7 +349,6 @@
       </div>
     </div>
     
-    <!-- SIDEBAR PRIVE -->
     <div class="sidebar-menu" id="sidebarMenu">
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
@@ -357,9 +360,8 @@
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
         <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
-          <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
+        <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
         <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
-        
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
@@ -373,6 +375,22 @@
         <p style="opacity:0.8;font-size:0.85rem;">Listen to each chapter with synchronized text</p>
         <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);padding:8px 16px;border-radius:30px;margin-top:12px;font-size:0.7rem;">
           <i class="fas fa-clock"></i> 16 chapters <i class="fas fa-volume-up" style="margin-left:8px;"></i> Text-to-Speech
+        </div>
+      </div>
+      
+      <!-- TÉLÉCHARGEMENT DU GUIDE - BOUTONS SUR LA MÊME LIGNE -->
+      <div class="glass-card" style="margin-top: 16px;">
+        <h3><i class="fas fa-download"></i> Download User Guide</h3>
+        <p style="font-size:0.65rem; color:var(--text-light); margin-bottom: 12px;">
+          Download the complete user guide with all 16 chapters
+        </p>
+        <div style="display: flex; gap: 12px; justify-content: center;">
+          <button class="btn-download-guide" onclick="confirmDownload('pdf')" style="background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-file-pdf"></i> PDF Guide
+          </button>
+          <button class="btn-download-guide" onclick="confirmDownload('html')" style="background: linear-gradient(135deg, #3498db, #2980b9); border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fas fa-file-alt"></i> HTML Guide
+          </button>
         </div>
       </div>
       
@@ -426,6 +444,19 @@
     </div>
   </div>
   
+  <!-- MODALE DE CONFIRMATION POUR TÉLÉCHARGEMENT -->
+  <div id="downloadConfirmModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
+    <div style="background:var(--card-bg); border-radius:24px; padding:24px; max-width:320px; width:85%; text-align:center;">
+      <i class="fas fa-download" style="font-size:48px; color:#3498db; margin-bottom:16px;"></i>
+      <h3 id="confirmTitle">Download Guide</h3>
+      <p id="confirmMessage" style="font-size:0.75rem; color:var(--text-light); margin-bottom:16px;">Do you want to download the user guide?</p>
+      <div style="display:flex; gap:12px;">
+        <button class="confirm-cancel" onclick="closeDownloadModal()" style="flex:1; padding:10px; border-radius:30px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; font-weight:600;">Cancel</button>
+        <button id="confirmOkBtn" class="confirm-ok" style="flex:1; padding:10px; border-radius:30px; background:#3498db; color:white; border:none; cursor:pointer; font-weight:600;">Download</button>
+      </div>
+    </div>
+  </div>
+  
   <div id="toastContainer" class="toast-container"></div>
   
   <script src="js/utils.js"></script>
@@ -436,7 +467,7 @@
   
   <script>
     // ============================================
-    // 16 CHAPITRES AVEC TEXTE OPTIMISÉ
+    // 16 CHAPITRES
     // ============================================
     
     var TUTORIALS = [
@@ -471,11 +502,11 @@
       { id: 15, icon: 'fa-file-export', title: '15. Export and Backup', desc: 'Save your data', tip: 'Make a backup each term',
         text: "Go to the Export page. JSON Backup exports all your data. CSV exports your grades for Excel. HTML Bulletin generates a report card in your browser. PDF Bulletin creates a PDF file you can download. To import a backup, go to Settings and click Import Backup File." },
       { id: 16, icon: 'fa-calendar-alt', title: '16. Timetable', desc: 'Weekly class schedule', tip: 'Use it to plan your study sessions',
-        text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic and Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology and Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
+        text: "The Timetable page shows your weekly class schedule for GBHS Foumban Form 4B Science. Monday: Biology, Physics, Citizenship, Logic/Geology, Additional Mathematics, French. Tuesday: Citizenship, P.E., English Language, Human Biology/Geology, Geography. Wednesday: Physics, Mathematics, Biology, French, Chemistry, Geography. Thursday: Computer Science, Economics, English Language, Food and Nutrition, Economics. Friday: Mathematics, Food and Nutrition, Chemistry. Thank you for using SMART GRADE!" }
     ];
     
     // ============================================
-    // TTS OPTIMISÉ AVEC SYNCHRONISATION RÉELLE
+    // TTS
     // ============================================
     
     var currentIndex = 0;
@@ -485,14 +516,12 @@
     var ttsSupported = true;
     var voicesLoaded = false;
     
-    // Vérifier TTS
     function checkTTSSupport() {
       if (!('speechSynthesis' in window)) {
         ttsSupported = false;
         showToast('Audio guide not supported on this device');
         return false;
       }
-      
       if (speechSynthesis.getVoices().length === 0) {
         speechSynthesis.addEventListener('voiceschanged', function() {
           voicesLoaded = true;
@@ -500,35 +529,28 @@
       } else {
         voicesLoaded = true;
       }
-      
       return true;
     }
     
     checkTTSSupport();
     
-    // Arrêter la lecture en cours
     function stopPlayback() {
       if (progressInterval) {
         clearInterval(progressInterval);
         progressInterval = null;
       }
-      try { 
-        speechSynthesis.cancel(); 
-      } catch(e) {}
+      try { speechSynthesis.cancel(); } catch(e) {}
       isPlaying = false;
       currentUtterance = null;
-      
       var playBtn = document.getElementById('playPauseBtn');
       if (playBtn) playBtn.innerHTML = '<i class="fas fa-play"></i>';
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
-    // Découpage en phrases
     function splitIntoSentences(text) {
       return text.split(/(?<=[.!?])\s+/);
     }
     
-    // Mettre à jour la ligne active
     function updateActiveLine(index) {
       var lines = document.querySelectorAll('.lyrics-line');
       for (var i = 0; i < lines.length; i++) {
@@ -540,7 +562,6 @@
       }
     }
     
-    // Lecture du chapitre avec synchronisation précise
     function speakCurrentChapter() {
       if (!ttsSupported) {
         showToast('Audio not available on this device');
@@ -579,12 +600,10 @@
         
         progressInterval = setInterval(function() {
           if (!isPlaying || !startTime) return;
-          
           var elapsed = (Date.now() - startTime) / 1000;
           var estimatedDuration = totalChars / 15;
           var progress = Math.min(100, (elapsed / estimatedDuration) * 100);
           document.getElementById('videoProgressFill').style.width = progress + '%';
-          
           var charIndex = Math.min(totalChars - 1, Math.floor((elapsed / estimatedDuration) * totalChars));
           if (charIndex !== lastCharIndex) {
             lastCharIndex = charIndex;
@@ -610,7 +629,6 @@
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('videoProgressFill').style.width = '100%';
         document.getElementById('audioStatus').textContent = 'Completed';
-        
         setTimeout(function() {
           if (!isPlaying) {
             document.getElementById('videoProgressFill').style.width = '0%';
@@ -619,7 +637,6 @@
       };
       
       currentUtterance.onerror = function(event) {
-        console.error('Speech error:', event);
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
         currentUtterance = null;
@@ -631,7 +648,6 @@
       speechSynthesis.speak(currentUtterance);
     }
     
-    // Pause / Lecture
     function togglePlayPause() {
       if (isPlaying) {
         speechSynthesis.cancel();
@@ -645,7 +661,6 @@
       }
     }
     
-    // Navigation
     function openModal(index) {
       currentIndex = index;
       updateModalContent();
@@ -717,7 +732,52 @@
       }).join('');
     }
     
-    // Charger l'avatar
+    // ============================================
+    // TÉLÉCHARGEMENT GUIDE
+    // ============================================
+    
+    var pendingDownloadType = null;
+    
+    function confirmDownload(type) {
+      pendingDownloadType = type;
+      var modal = document.getElementById('downloadConfirmModal');
+      var title = document.getElementById('confirmTitle');
+      var message = document.getElementById('confirmMessage');
+      var okBtn = document.getElementById('confirmOkBtn');
+      
+      if (type === 'pdf') {
+        title.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF Guide';
+        message.innerHTML = 'Download the complete user guide as PDF?<br><span style="font-size:0.6rem;">The guide will open in a new tab. Use browser print to save as PDF.</span>';
+        okBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+      } else {
+        title.innerHTML = '<i class="fas fa-file-alt"></i> Download HTML Guide';
+        message.innerHTML = 'Download the complete user guide as HTML?<br><span style="font-size:0.6rem;">The guide will open in a new tab. You can save it from there.</span>';
+        okBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+      }
+      
+      modal.style.display = 'flex';
+    }
+    
+    function closeDownloadModal() {
+      document.getElementById('downloadConfirmModal').style.display = 'none';
+      pendingDownloadType = null;
+    }
+    
+    function performDownload() {
+      if (pendingDownloadType === 'pdf') {
+        var win = window.open('guide-pdf.html?print=1', '_blank');
+        showToast('Click Save as PDF in the print dialog');
+      } else if (pendingDownloadType === 'html') {
+        window.open('guide-pdf.html', '_blank');
+        showToast('Guide opened in new tab');
+      }
+      closeDownloadModal();
+    }
+    
+    // ============================================
+    // INITIALISATION
+    // ============================================
+    
     var currentUser = getCurrentStudent();
     if (currentUser) {
       var profile = getProfile(currentUser.id);
@@ -727,12 +787,19 @@
       }
     }
     
-    // Initialisation
     renderSteps();
     initMobileMenu();
     initThemeSelector();
     initParticles();
     if (typeof initFontFamily === 'function') initFontFamily();
+    
+    // Attacher l'événement au bouton OK de la modale
+    document.getElementById('confirmOkBtn').onclick = performDownload;
+    
+    // Fermer la modale en cliquant à l'extérieur
+    document.getElementById('downloadConfirmModal').addEventListener('click', function(e) {
+      if (e.target === this) closeDownloadModal();
+    });
   </script>
 </body>
 </html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SMART GRADE - Complete User Guide</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Cinzel:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      background: #e8edf2;
+      padding: 20px;
+    }
+    
+    .full-page {
+      width: 210mm;
+      min-height: 297mm;
+      margin: 0 auto;
+      padding: 8mm 10mm;
+      background: linear-gradient(135deg, var(--primary-color, #0f3b48) 0%, var(--secondary-color, #00ffff) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+    
+    .full-page:last-child {
+      page-break-after: auto;
+    }
+    
+    .deco-dots {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      background-image: radial-gradient(circle at 10px 10px, rgba(255,255,255,0.1) 1px, transparent 1px);
+      background-size: 20px 20px;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .deco-circle-1 {
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .deco-circle-2 {
+      position: absolute;
+      bottom: -50px;
+      left: -50px;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.05);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .deco-diagonal {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(255,255,255,0.03) 30px, rgba(255,255,255,0.03) 60px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .bulletin-page {
+      width: 100%;
+      max-width: 190mm;
+      min-height: 270mm;
+      background: white;
+      border-radius: 16px;
+      padding: 7mm 9mm;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      color: #1a2a3a;
+      position: relative;
+      z-index: 2;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    
+    .bulletin-header {
+      text-align: center;
+      margin-bottom: 5mm;
+    }
+    
+    .bulletin-header h1 {
+      font-size: 22pt;
+      font-weight: 800;
+      color: var(--primary-color, #0f3b48);
+      margin: 0;
+      font-family: 'Cinzel', serif;
+    }
+    
+    .bulletin-header .school-name {
+      font-size: 11pt;
+      font-weight: 700;
+      color: var(--primary-color, #0f3b48);
+      margin-top: 4px;
+    }
+    
+    .bulletin-header .class-info {
+      font-size: 9pt;
+      color: #5a7a8a;
+      margin-bottom: 3mm;
+    }
+    
+    .bulletin-header .version {
+      font-size: 8pt;
+      color: #8aaec0;
+      margin-top: 2mm;
+    }
+    
+    .toc-section {
+      background: #f0f6fa;
+      padding: 5mm 6mm;
+      border-radius: 12px;
+      margin-bottom: 6mm;
+      border: 1px solid #c8dce8;
+    }
+    
+    .toc-section h2 {
+      font-size: 13pt;
+      font-weight: 700;
+      color: var(--primary-color, #0f3b48);
+      margin-bottom: 4mm;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 5px;
+    }
+    
+    .toc-item {
+      font-size: 8pt;
+      color: #34495e;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 0;
+    }
+    
+    .toc-item i {
+      color: var(--primary-color, #0f3b48);
+      font-size: 7pt;
+    }
+    
+    .chapter {
+      margin-bottom: 6mm;
+      page-break-inside: avoid;
+    }
+    
+    .chapter h2 {
+      font-size: 14pt;
+      font-weight: 700;
+      color: var(--primary-color, #0f3b48);
+      margin-bottom: 3mm;
+      padding-bottom: 2mm;
+      border-bottom: 2px solid var(--primary-color, #0f3b48);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .chapter h2 i {
+      font-size: 14pt;
+      color: var(--secondary-color, #00b4d8);
+    }
+    
+    .chapter h3 {
+      font-size: 10pt;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 4mm 0 2mm;
+    }
+    
+    .chapter p {
+      font-size: 9pt;
+      line-height: 1.5;
+      color: #34495e;
+      margin-bottom: 2mm;
+    }
+    
+    .chapter ul, .chapter ol {
+      margin-left: 6mm;
+      margin-bottom: 3mm;
+    }
+    
+    .chapter li {
+      font-size: 9pt;
+      line-height: 1.5;
+      color: #34495e;
+      margin-bottom: 1mm;
+    }
+    
+    .tip-box {
+      background: #e8f8f5;
+      border-left: 3px solid #1abc9c;
+      padding: 3mm 4mm;
+      border-radius: 8px;
+      margin: 4mm 0;
+    }
+    
+    .tip-box i {
+      color: #1abc9c;
+      margin-right: 5px;
+      font-size: 8pt;
+    }
+    
+    .tip-box strong, .tip-box span {
+      font-size: 8pt;
+    }
+    
+    .warning-box {
+      background: #fef9e7;
+      border-left: 3px solid #f39c12;
+      padding: 3mm 4mm;
+      border-radius: 8px;
+      margin: 4mm 0;
+    }
+    
+    .warning-box i {
+      color: #f39c12;
+      margin-right: 5px;
+      font-size: 8pt;
+    }
+    
+    .warning-box strong, .warning-box span {
+      font-size: 8pt;
+    }
+    
+    .info-box {
+      background: #e8f0fe;
+      border-left: 3px solid #3498db;
+      padding: 3mm 4mm;
+      border-radius: 8px;
+      margin: 4mm 0;
+    }
+    
+    .info-box i {
+      color: #3498db;
+      margin-right: 5px;
+      font-size: 8pt;
+    }
+    
+    .badge-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin: 4mm 0;
+    }
+    
+    .badge-item {
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      padding: 3px 10px;
+      border-radius: 25px;
+      font-size: 7pt;
+      font-weight: 600;
+    }
+    
+    .theme-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 4px;
+      margin: 4mm 0;
+    }
+    
+    .theme-color {
+      padding: 5px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 7pt;
+      font-weight: 600;
+      color: white;
+    }
+    
+    .font-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 4mm 0;
+    }
+    
+    .font-item {
+      background: #f0f6fa;
+      padding: 3px 12px;
+      border-radius: 20px;
+      font-size: 8pt;
+      font-weight: 500;
+      border: 1px solid #c8dce8;
+    }
+    
+    .footer {
+      text-align: center;
+      padding-top: 5mm;
+      margin-top: 6mm;
+      border-top: 1px solid #d4e0e8;
+      font-size: 7pt;
+      color: #8aaec0;
+    }
+    
+    .page-number {
+      text-align: center;
+      font-size: 7pt;
+      color: #8aaec0;
+      margin-top: 4mm;
+    }
+    
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+        margin: 0;
+      }
+      .full-page {
+        margin: 0;
+        padding: 0;
+        page-break-after: always;
+      }
+      .bulletin-page {
+        box-shadow: none;
+        border-radius: 0;
+      }
+      .chapter {
+        page-break-inside: avoid;
+      }
+      .tip-box, .warning-box, .info-box, .toc-section {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .badge-item, .theme-color, .font-item {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      .full-page {
+        width: 100%;
+        padding: 4mm;
+      }
+      .bulletin-page {
+        padding: 4mm;
+      }
+      .toc-grid {
+        grid-template-columns: 1fr;
+      }
+      .theme-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- PAGE 1 - COUVERTURE + SOMMAIRE -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="bulletin-header">
+      <h1>SMART GRADE</h1>
+      <div class="school-name">SIN GBHS FOUMBAN</div>
+      <div class="class-info">Form 4B Science · Complete User Guide</div>
+      <div class="version">Version 4.0 Ultimate · Academic Year 2025-2026</div>
+    </div>
+    
+    <div style="text-align: center; margin: 8mm 0;">
+      <i class="fas fa-graduation-cap" style="font-size: 48pt; color: var(--primary-color, #0f3b48); opacity: 0.3;"></i>
+    </div>
+    
+    <div style="text-align: center; margin: 5mm 0;">
+      <p style="font-size: 10pt; font-weight: 600; color: var(--primary-color, #0f3b48);">Ultimate Grade Management System</p>
+      <p style="font-size: 8pt; color: #5a7a8a; margin-top: 3mm;">Track your academic performance with ease</p>
+    </div>
+    
+    <div class="toc-section">
+      <h2><i class="fas fa-list"></i> Table of Contents</h2>
+      <div class="toc-grid">
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 1. Introduction</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 2. Create an Account</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 3. Login Methods</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 4. Subjects and Coefficients</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 5. Add Your Grades</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 6. Dashboard Overview</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 7. Reports and Statistics</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 8. Achievements and Badges</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 9. Data Transfer</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 10. Themes and Fonts</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 11. Profile and Photo</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 12. Flashcards</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 13. Goals and Streaks</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 14. Grade Calculator</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 15. Export and Backup</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 16. History Log</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 17. Timetable</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 18. Technical Specifications</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 19. Troubleshooting</div>
+        <div class="toc-item"><i class="fas fa-chevron-right"></i> 20. Contact and Support</div>
+      </div>
+    </div>
+    
+    <div class="info-box">
+      <i class="fas fa-info-circle"></i> <strong>About This Guide</strong>
+      <p style="font-size: 8pt; margin-top: 2mm;">This comprehensive guide will help you master all features of SMART GRADE. Each chapter includes step-by-step instructions, tips, and best practices.</p>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Developed by HANS KEPPER</p>
+      <p>SIN GBHS FOUMBAN - Form 4B Science - Academic Year 2025-2026</p>
+    </div>
+    <div class="page-number">Page 1 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 2 - INTRODUCTION + CRÉATION DE COMPTE + LOGIN -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-info-circle"></i> 1. Introduction</h2>
+      <p>SMART GRADE is a complete Progressive Web Application (PWA) for grade management, designed specifically for SIN GBHS FOUMBAN Form 4B Science students. The application works 100% offline after first installation and stores all data locally on your device.</p>
+      
+      <h3>Key Features Overview</h3>
+      <ul>
+        <li>14 subjects with customizable coefficients (1-10)</li>
+        <li>6 sequences per year (2 per term)</li>
+        <li>3 terms per academic year</li>
+        <li>23 achievement badges</li>
+        <li>20 color themes and 12 font families</li>
+        <li>Night mode (automatic 8pm to 6am)</li>
+        <li>Biometric fingerprint login</li>
+        <li>Export to PDF, CSV, HTML, JSON</li>
+        <li>QR code data transfer between devices</li>
+        <li>Flashcards and goal setting</li>
+        <li>Interactive charts and statistics</li>
+      </ul>
+      
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> After first installation, you can use SMART GRADE without internet connection.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-user-plus"></i> 2. Create an Account</h2>
+      <ol>
+        <li>From the Home page, tap the menu button in the top left corner</li>
+        <li>Select Register</li>
+        <li>Enter your full name exactly as it appears on your school records</li>
+        <li>Select your class (B1 or B2)</li>
+        <li>Enter your unique student number (1 to 70)</li>
+        <li>Create a secure 4-digit PIN - this is your password</li>
+        <li>Confirm your PIN by typing it again</li>
+        <li>Click the Create Account button</li>
+      </ol>
+      <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Your PIN cannot be recovered if lost. Write it down in a safe place.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-sign-in-alt"></i> 3. Login Methods</h2>
+      <h3>PIN Method</h3>
+      <ul>
+        <li>Go to the Login page</li>
+        <li>Select your name from the list</li>
+        <li>Enter your 4-digit PIN</li>
+        <li>Click Sign In</li>
+      </ul>
+      <h3>Fingerprint Method</h3>
+      <ul>
+        <li>First register your fingerprint in Settings</li>
+        <li>On the Login page, tap the fingerprint icon</li>
+        <li>Place your finger on the sensor</li>
+        <li>You will be automatically logged in</li>
+      </ul>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Fingerprint login is faster and more secure. Enable it in Settings.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Complete User Guide</p>
+    </div>
+    <div class="page-number">Page 2 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 3 - SUJETS + NOTES + DASHBOARD -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-layer-group"></i> 4. Subjects and Coefficients</h2>
+      <p>Each term can have different subjects. You must select between 10 and 14 subjects per term.</p>
+      <ol>
+        <li>Go to the Settings page</li>
+        <li>Select Term 1, Term 2, or Term 3</li>
+        <li>Tap on subject cards to select or deselect them</li>
+        <li>Adjust coefficients using the + and - buttons (range 1 to 10)</li>
+        <li>Click Save Subjects when done</li>
+      </ol>
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i> <strong>The 14 Subjects:</strong> Computer Sciences, Mathematics, Chemistry, Human Biology, Geology, Physics, Additional Mathematics, Biology, Economics, English Language, Geography, Citizenship, French, Food and Nutrition.
+      </div>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> The coefficient represents how important the subject is for your final average. Most subjects use coefficient 5.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-pen-fancy"></i> 5. Add Your Grades</h2>
+      <ol>
+        <li>Go to the Add Grade page</li>
+        <li>Select the term (Term 1, 2, or 3)</li>
+        <li>For each subject, enter your grades in the input fields</li>
+        <li>Grades must be between 0 and 20 (decimals allowed, e.g., 14.5)</li>
+        <li>The term average updates automatically as you type</li>
+        <li>Click Save All Grades when done</li>
+      </ol>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Grades are auto-saved every 30 seconds while you type.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-chalkboard-user"></i> 6. Dashboard Overview</h2>
+      <p>The Dashboard is your main hub with:</p>
+      <ul>
+        <li><strong>Motivation Card:</strong> Inspirational quote to start your day</li>
+        <li><strong>Stats Grid:</strong> Shows overall average, total grades, subjects count, and badges</li>
+        <li><strong>Goal Card:</strong> Set your target average using the slider (10-20)</li>
+        <li><strong>Term Averages:</strong> Shows your average for Term 1, Term 2, Term 3</li>
+        <li><strong>Yearly Average:</strong> Combined average of all three terms</li>
+        <li><strong>Top Subjects:</strong> Your best performing subjects</li>
+        <li><strong>Recent Activity:</strong> Latest actions in your account</li>
+        <li><strong>Command Interface:</strong> Type commands like "export", "transfer", "theme"</li>
+      </ul>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Click any Term Card to see the detailed report for that term.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Complete User Guide</p>
+    </div>
+    <div class="page-number">Page 3 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 4 - STATISTIQUES + BADGES + TRANSFERT -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-chart-line"></i> 7. Reports and Statistics</h2>
+      <p>Access detailed reports for each term:</p>
+      <ul>
+        <li><strong>Term 1, Term 2, Term 3:</strong> Detailed tables with grades per sequence</li>
+        <li><strong>Yearly:</strong> Complete summary of your entire school year</li>
+        <li><strong>Statistics:</strong> Shows best subject, worst subject, total grades, and performance charts</li>
+        <li><strong>Performance by Subject:</strong> Bar chart comparing all your subject averages</li>
+        <li><strong>Grade Distribution:</strong> Doughnut chart showing how your grades are spread</li>
+        <li><strong>Skills Radar:</strong> Radar chart comparing your performance across subjects</li>
+        <li><strong>Zoom Feature:</strong> Pinch to zoom on any chart for detailed view</li>
+      </ul>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-medal"></i> 8. Achievements and Badges</h2>
+      <p>SMART GRADE rewards your progress with 23 badges:</p>
+      <h3>Streak Badges (Auto-unlock)</h3>
+      <ul>
+        <li><strong>Beginner Streak:</strong> Use the app for 3 consecutive days</li>
+        <li><strong>Regular Streak:</strong> Use the app for 7 consecutive days</li>
+        <li><strong>Dedicated Streak:</strong> Use the app for 15 consecutive days</li>
+        <li><strong>Legendary Streak:</strong> Use the app for 30 consecutive days</li>
+      </ul>
+      <h3>Achievement Badges</h3>
+      <div class="badge-list">
+        <span class="badge-item">First Grade</span>
+        <span class="badge-item">Perfect Score</span>
+        <span class="badge-item">High Average</span>
+        <span class="badge-item">Bookworm</span>
+        <span class="badge-item">Dedication</span>
+        <span class="badge-item">Scholar</span>
+        <span class="badge-item">Rising Star</span>
+        <span class="badge-item">Unstoppable</span>
+        <span class="badge-item">Subject Completion</span>
+        <span class="badge-item">Active Semester</span>
+        <span class="badge-item">Discipline Mastery</span>
+        <span class="badge-item">Study Progress</span>
+        <span class="badge-item">Full Achievement</span>
+        <span class="badge-item">Excellent Result</span>
+        <span class="badge-item">Comeback King</span>
+        <span class="badge-item">Theme Collector</span>
+        <span class="badge-item">Photo Uploader</span>
+        <span class="badge-item">Welcome Aboard</span>
+        <span class="badge-item">Font Collector</span>
+        <span class="badge-item">Timetable Viewer</span>
+        <span class="badge-item">Flashcard Beginner</span>
+        <span class="badge-item">Flashcard Master</span>
+      </div>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Open the app every day to build your streak and unlock more badges!
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-exchange-alt"></i> 9. Data Transfer</h2>
+      <p>Transfer your data between devices:</p>
+      <ol>
+        <li>Go to the Transfer page</li>
+        <li>Select QR Code Transfer or Local Transfer</li>
+        <li>Click Generate Code or Generate QR Code</li>
+        <li>On the other device, go to Import tab</li>
+        <li>Scan the QR code or enter the 6-digit code</li>
+        <li>The data will be imported immediately</li>
+      </ol>
+      <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Transfer codes expire after 10 minutes for security.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Complete User Guide</p>
+    </div>
+    <div class="page-number">Page 4 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 5 - THÈMES + PROFIL + FLASHCARDS + GOALS -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-palette"></i> 10. Themes and Fonts</h2>
+      <p>Customize the appearance of SMART GRADE:</p>
+      <ol>
+        <li>Tap the Theme button in the top right corner</li>
+        <li>A bottom sheet will show 20 color themes</li>
+        <li>Tap any theme to apply it instantly</li>
+        <li>Scroll down to the Font Family section to choose from 12 fonts</li>
+      </ol>
+      <h3>20 Color Themes</h3>
+      <div class="theme-grid">
+        <div class="theme-color" style="background:#0f3b48;">Deep Teal</div>
+        <div class="theme-color" style="background:#c0392b;">Crimson</div>
+        <div class="theme-color" style="background:#1e8449;">Forest</div>
+        <div class="theme-color" style="background:#006994;">Ocean</div>
+        <div class="theme-color" style="background:#6c3483;">Royal</div>
+        <div class="theme-color" style="background:#d35400;">Sunset</div>
+        <div class="theme-color" style="background:#c44569;">Rose</div>
+        <div class="theme-color" style="background:#00897b;">Turquoise</div>
+        <div class="theme-color" style="background:#b7950b;">Amber</div>
+        <div class="theme-color" style="background:#455a64;">Graphite</div>
+        <div class="theme-color" style="background:#7b1fa2;">Lavender</div>
+        <div class="theme-color" style="background:#b71c1c;">Cherry</div>
+        <div class="theme-color" style="background:#1a237e;">Midnight</div>
+        <div class="theme-color" style="background:#00b894;">Mint</div>
+        <div class="theme-color" style="background:#e74c3c;">Coral</div>
+        <div class="theme-color" style="background:#283593;">Indigo</div>
+        <div class="theme-color" style="background:#5d4037;">Chocolate</div>
+        <div class="theme-color" style="background:#6a1b9a;">Electric</div>
+        <div class="theme-color" style="background:#37474f;">Steel</div>
+        <div class="theme-color" style="background:#558b2f;">Lime</div>
+      </div>
+      <h3>12 Font Families</h3>
+      <div class="font-list">
+        <span class="font-item">Inter</span>
+        <span class="font-item">Roboto</span>
+        <span class="font-item">Cinzel</span>
+        <span class="font-item">Quicksand</span>
+        <span class="font-item">Courier Prime</span>
+        <span class="font-item">Fredoka</span>
+        <span class="font-item">Pacifico</span>
+        <span class="font-item">Bangers</span>
+        <span class="font-item">Lobster</span>
+        <span class="font-item">Permanent Marker</span>
+        <span class="font-item">Comfortaa</span>
+        <span class="font-item">Righteous</span>
+      </div>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Night mode activates automatically between 8 PM and 6 AM.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-user-circle"></i> 11. Profile and Photo</h2>
+      <ol>
+        <li>Go to Profile from the menu</li>
+        <li>Tap the + button on the avatar</li>
+        <li>Select a photo from your gallery (max 5MB)</li>
+        <li>The system automatically resizes your photo</li>
+        <li>Tap on the photo to zoom in</li>
+        <li>Write a bio and click Save Profile</li>
+      </ol>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Adding a photo unlocks the Photo Uploader badge!
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-clone"></i> 12. Flashcards</h2>
+      <ol>
+        <li>Go to Flashcards from the menu</li>
+        <li>Select a subject</li>
+        <li>Tap the card to flip it (question on front, answer on back)</li>
+        <li>Use Prev/Next buttons to navigate</li>
+        <li>To add your own card, scroll down and enter question and answer</li>
+        <li>Click Add Card</li>
+      </ol>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Create 5 flashcards to unlock the Flashcard Beginner badge, and 10 for Flashcard Master!
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Complete User Guide</p>
+    </div>
+    <div class="page-number">Page 5 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 6 - GOALS + CALCULATOR + EXPORT + HISTORY -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-bullseye"></i> 13. Goals and Streaks</h2>
+      <p>Set academic goals and track your progress:</p>
+      <ol>
+        <li>On the Dashboard, use the Goal Card slider to set your target yearly average (10-20)</li>
+        <li>Go to the Goals page to set subject-specific targets</li>
+        <li>Each subject has a slider to set your target grade</li>
+        <li>A progress bar shows how close you are to your target</li>
+        <li>The app tracks your daily usage for streak badges</li>
+      </ol>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Set realistic goals and watch your progress grow. The app notifies you when you achieve a goal!
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-calculator"></i> 14. Grade Calculator</h2>
+      <p>Plan your studies by calculating what grade you need on your next exam:</p>
+      <ol>
+        <li>Go to Settings and scroll down to Grade Calculator</li>
+        <li>Select a subject</li>
+        <li>Enter your current average</li>
+        <li>Enter your target average</li>
+        <li>Enter the coefficient of your next exam</li>
+        <li>The calculator shows you exactly what score you need</li>
+      </ol>
+      <div class="info-box">
+        <i class="fas fa-info-circle"></i> <strong>Formula:</strong> Needed Grade = (Target × Total Coeff - Current × Current Coeff) ÷ Exam Coeff
+      </div>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use this to know what grade you need to achieve your goal!
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-file-export"></i> 15. Export and Backup</h2>
+      <p>Save and restore your data:</p>
+      <ul>
+        <li><strong>JSON Backup:</strong> Complete backup of all data (grades, badges, profile, flashcards)</li>
+        <li><strong>CSV Export:</strong> Spreadsheet format for Excel</li>
+        <li><strong>HTML Bulletin:</strong> Viewable report card in your browser</li>
+        <li><strong>PDF Bulletin:</strong> Professional PDF file you can download or print</li>
+        <li><strong>Import JSON:</strong> Restore your data from a backup file</li>
+      </ul>
+      <div class="warning-box">
+        <i class="fas fa-exclamation-triangle"></i> <strong>Important:</strong> Make a backup each term to avoid losing your data. Export before clearing browser cache.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-history"></i> 16. History Log</h2>
+      <p>Track all your actions in the app:</p>
+      <ul>
+        <li>Every time you add a grade, it is recorded</li>
+        <li>Subject changes are logged</li>
+        <li>Data transfers appear in history</li>
+        <li>Badge unlocks are recorded</li>
+        <li>Export and import actions are tracked</li>
+        <li>Login times are recorded</li>
+      </ul>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use the filter chips at the top to see specific types of activity (grades, login, export, etc.).
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Complete User Guide</p>
+    </div>
+    <div class="page-number">Page 6 / 7</div>
+  </div>
+</div>
+
+<!-- PAGE 7 - TIMETABLE + TECHNICAL + TROUBLESHOOTING + CONTACT -->
+<div class="full-page">
+  <div class="deco-dots"></div>
+  <div class="deco-circle-1"></div>
+  <div class="deco-circle-2"></div>
+  <div class="deco-diagonal"></div>
+  
+  <div class="bulletin-page">
+    <div class="chapter">
+      <h2><i class="fas fa-calendar-alt"></i> 17. Timetable</h2>
+      <p>View your weekly class schedule for GBHS Foumban Form 4B Science:</p>
+      <ul>
+        <li><strong>Monday:</strong> Biology, Physics, Citizenship, Logic/Geology, Additional Mathematics, French</li>
+        <li><strong>Tuesday:</strong> Citizenship, P.E., English Language, Human Biology/Geology, Geography</li>
+        <li><strong>Wednesday:</strong> Physics, Mathematics, Biology, French, Chemistry, Geography</li>
+        <li><strong>Thursday:</strong> Computer Science, Economics, English Language, Food and Nutrition, Economics</li>
+        <li><strong>Friday:</strong> Mathematics, Food and Nutrition, Chemistry</li>
+      </ul>
+      <div class="tip-box">
+        <i class="fas fa-lightbulb"></i> <strong>Tip:</strong> Use the timetable to plan your study sessions and prepare for upcoming classes.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-microchip"></i> 18. Technical Specifications</h2>
+      <ul>
+        <li><strong>Version:</strong> 4.0 Ultimate</li>
+        <li><strong>PWA Support:</strong> Yes - Works offline after first installation</li>
+        <li><strong>Storage:</strong> localStorage (client-side database)</li>
+        <li><strong>Authentication:</strong> 4-digit PIN + WebAuthn fingerprint</li>
+        <li><strong>Charts:</strong> Chart.js v4.4.0 with zoom plugin</li>
+        <li><strong>PDF Generation:</strong> html2pdf.js v0.10.1</li>
+        <li><strong>QR Code:</strong> QRCode.js + html5-qrcode</li>
+        <li><strong>Icons:</strong> Font Awesome 6.5.1</li>
+        <li><strong>Fonts:</strong> Google Fonts (12 families)</li>
+        <li><strong>Themes:</strong> 20 color schemes</li>
+        <li><strong>Badges:</strong> 23 achievements</li>
+        <li><strong>Subjects:</strong> 14 with customizable coefficients (1-10)</li>
+        <li><strong>Sequences:</strong> 6 per year (2 per term)</li>
+        <li><strong>Terms:</strong> 3 per academic year</li>
+      </ul>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-wrench"></i> 19. Troubleshooting</h2>
+      <h3>Common Issues and Solutions</h3>
+      <ul>
+        <li><strong>App not loading:</strong> Clear browser cache and reload</li>
+        <li><strong>Data not saving:</strong> Check localStorage permissions</li>
+        <li><strong>Fingerprint not working:</strong> Use PIN login instead</li>
+        <li><strong>QR code not scanning:</strong> Ensure good lighting and hold steady</li>
+        <li><strong>PDF not generating:</strong> Check internet connection for first use</li>
+        <li><strong>Theme not applying:</strong> Refresh the page after selection</li>
+        <li><strong>Grades not showing:</strong> Verify subjects are selected in Settings</li>
+      </ul>
+      <div class="info-box">
+        <i class="fas fa-download"></i> <strong>Recovery:</strong> Always export your data as JSON backup regularly.
+      </div>
+    </div>
+    
+    <div class="chapter">
+      <h2><i class="fas fa-envelope"></i> 20. Contact and Support</h2>
+      <ul>
+        <li><strong>Developer:</strong> HANS KEPPER</li>
+        <li><strong>Email:</strong> hanskepper52@gmail.com</li>
+        <li><strong>WhatsApp:</strong> +237 698 640 885</li>
+        <li><strong>GitHub:</strong> hanskepper</li>
+        <li><strong>School:</strong> SIN GBHS FOUMBAN, Form 4B Science</li>
+        <li><strong>Website:</strong> https://hanskepper.github.io/SMART-GRADE-V4.-Ultimate./</li>
+      </ul>
+      <div class="tip-box">
+        <i class="fas fa-headset"></i> <strong>Support Hours:</strong> Responses within 24-48 hours on email, faster on WhatsApp.
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>SMART GRADE v4.0 Ultimate - Developed by HANS KEPPER</p>
+      <p>SIN GBHS FOUMBAN - Form 4B Science - Academic Year 2025-2026</p>
+      <p>Generated on <span id="date"></span></p>
+    </div>
+    <div class="page-number">Page 7 / 7</div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('date').innerHTML = new Date().toLocaleDateString();
+  
+  // Auto-print for PDF generation
+  if (window.location.search.includes('print')) {
+    setTimeout(function() {
+      window.print();
+    }, 500);
+  }
+</script>
+
+</body>
+</html>

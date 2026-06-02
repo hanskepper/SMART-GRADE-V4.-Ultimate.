@@ -14,22 +14,9 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    @keyframes pulseGlow{
-      0%{box-shadow:0 0 0 0 rgba(255,255,255,0.4);transform:scale(1)}
-      50%{box-shadow:0 0 0 20px rgba(255,255,255,0);transform:scale(1.05)}
-      100%{box-shadow:0 0 0 0 rgba(255,255,255,0);transform:scale(1)}
-    }
     @keyframes fadeInUp{
       from{opacity:0;transform:translateY(20px)}
       to{opacity:1;transform:translateY(0)}
-    }
-    @keyframes stripeMove{
-      0%{background-position:0 0}
-      100%{background-position:40px 0}
-    }
-    @keyframes pulseMic{
-      0%,100%{transform:scale(1);opacity:0.7}
-      50%{transform:scale(1.2);opacity:1}
     }
     
     .guide-hero{
@@ -39,19 +26,9 @@
       position:relative;
       overflow:hidden;
       margin-bottom:20px;
+      background:linear-gradient(135deg,var(--primary),var(--secondary));
+      color:white;
     }
-    .guide-hero::before{
-      content:'';
-      position:absolute;
-      top:-50%;
-      left:-50%;
-      width:200%;
-      height:200%;
-      background:repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.03) 10px, rgba(255,255,255,0.03) 20px);
-      animation:stripeMove 3s linear infinite;
-      z-index:0;
-    }
-    .guide-hero>*{position:relative;z-index:1;}
     
     .hero-icon-circle{
       width:100px;
@@ -62,7 +39,6 @@
       align-items:center;
       justify-content:center;
       margin:0 auto 20px;
-      animation:pulseGlow 2s infinite;
     }
     .hero-icon-circle i{font-size:40px;color:white;}
     
@@ -103,7 +79,6 @@
     .tutorial-info{flex:1;}
     .tutorial-title{font-weight:700;font-size:0.9rem;margin-bottom:4px;}
     .tutorial-desc{font-size:0.65rem;color:var(--text-light);}
-    .tutorial-steps{font-size:0.55rem;color:var(--primary);margin-top:4px;}
     .tutorial-play{
       width:40px;
       height:40px;
@@ -166,10 +141,6 @@
       justify-content:center;
       transition:all 0.2s;
     }
-    .video-modal-close:active{
-      transform:scale(0.9);
-      background:rgba(255,255,255,0.2);
-    }
     .video-screen{
       background:#0a0a15;
       min-height:400px;
@@ -196,7 +167,6 @@
       align-items:center;
       justify-content:center;
       margin:0 auto 15px;
-      animation:pulseMic 1.5s infinite;
     }
     .video-icon-anim i{font-size:38px;color:white;}
     .video-step-title{
@@ -264,7 +234,6 @@
       justify-content:center;
       transition:all 0.2s;
     }
-    .video-controls button:active{transform:scale(0.9);}
     .video-controls .play-btn{
       background:var(--primary);
       width:50px;
@@ -309,11 +278,6 @@
       font-size:0.6rem;
       display:block;
     }
-    
-    .btn-download-guide:active {
-      transform: scale(0.96);
-    }
-    
     @media(min-width:600px){
       .quick-tips-grid{grid-template-columns:repeat(4,1fr);}
     }
@@ -323,6 +287,7 @@
   <div class="particles" id="particles"></div>
   <div class="app-container">
     
+    <!-- HEADER PUBLIC -->
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-question-circle"></i><span>GUIDE</span></div>
@@ -356,7 +321,8 @@
     
     <main class="main-content">
       
-      <div class="guide-hero" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
+      <!-- HERO SECTION -->
+      <div class="guide-hero">
         <div class="hero-icon-circle"><i class="fas fa-headphones"></i></div>
         <h2 style="color:white;margin-bottom:8px;">Interactive Audio Guide</h2>
         <p style="opacity:0.8;font-size:0.85rem;">Listen to each chapter with synchronized text</p>
@@ -365,28 +331,14 @@
         </div>
       </div>
       
-      <!-- TÉLÉCHARGEMENT DU GUIDE - BOUTONS SUR LA MÊME LIGNE -->
-      <div class="glass-card" style="margin-top: 16px;">
-        <h3><i class="fas fa-download"></i> Download User Guide</h3>
-        <p style="font-size:0.65rem; color:var(--text-light); margin-bottom: 12px;">
-          Download the complete user guide with all 16 chapters
-        </p>
-        <div style="display: flex; gap: 12px; justify-content: center;">
-          <button class="btn-download-guide" onclick="confirmDownload('pdf')" style="background: linear-gradient(135deg, #e74c3c, #c0392b); border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px;">
-            <i class="fas fa-file-pdf"></i> PDF Guide
-          </button>
-          <button class="btn-download-guide" onclick="confirmDownload('html')" style="background: linear-gradient(135deg, #3498db, #2980b9); border: none; padding: 8px 20px; border-radius: 30px; color: white; font-weight: 600; cursor: pointer; font-size: 0.7rem; display: inline-flex; align-items: center; gap: 6px;">
-            <i class="fas fa-file-alt"></i> HTML Guide
-          </button>
-        </div>
-      </div>
-      
+      <!-- TUTORIAL CHAPTERS -->
       <div class="glass-card">
         <h3><i class="fas fa-list-ol"></i> Tutorial Chapters</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">Click any chapter to listen</p>
         <div id="stepsList"></div>
       </div>
       
+      <!-- QUICK TIPS -->
       <div class="glass-card">
         <h3><i class="fas fa-lightbulb"></i> Quick Tips</h3>
         <div class="quick-tips-grid">
@@ -428,19 +380,6 @@
         <button onclick="nextChapter()"><i class="fas fa-forward-step"></i></button>
       </div>
       <div class="video-progress"><div class="video-progress-fill" id="videoProgressFill"></div></div>
-    </div>
-  </div>
-  
-  <!-- MODALE DE CONFIRMATION POUR TÉLÉCHARGEMENT -->
-  <div id="downloadConfirmModal" class="modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:2000; align-items:center; justify-content:center;">
-    <div style="background:var(--card-bg); border-radius:24px; padding:24px; max-width:320px; width:85%; text-align:center;">
-      <i class="fas fa-download" style="font-size:48px; color:#3498db; margin-bottom:16px;"></i>
-      <h3 id="confirmTitle">Download Guide</h3>
-      <p id="confirmMessage" style="font-size:0.75rem; color:var(--text-light); margin-bottom:16px;">Do you want to download the user guide?</p>
-      <div style="display:flex; gap:12px;">
-        <button class="confirm-cancel" onclick="closeDownloadModal()" style="flex:1; padding:10px; border-radius:30px; border:1px solid var(--border); background:transparent; color:var(--text); cursor:pointer; font-weight:600;">Cancel</button>
-        <button id="confirmOkBtn" class="confirm-ok" style="flex:1; padding:10px; border-radius:30px; background:#3498db; color:white; border:none; cursor:pointer; font-weight:600;">Download</button>
-      </div>
     </div>
   </div>
   
@@ -493,7 +432,7 @@
     ];
     
     // ============================================
-    // TTS
+    // TTS OPTIMISÉ
     // ============================================
     
     var currentIndex = 0;
@@ -501,7 +440,6 @@
     var progressInterval = null;
     var currentUtterance = null;
     var ttsSupported = true;
-    var voicesLoaded = false;
     
     function checkTTSSupport() {
       if (!('speechSynthesis' in window)) {
@@ -509,23 +447,26 @@
         showToast('Audio guide not supported on this device');
         return false;
       }
-      if (speechSynthesis.getVoices().length === 0) {
-        speechSynthesis.addEventListener('voiceschanged', function() {
-          voicesLoaded = true;
-        });
-      } else {
-        voicesLoaded = true;
-      }
       return true;
     }
     
     checkTTSSupport();
     
-    function stopPlayback() {
-      if (progressInterval) {
-        clearInterval(progressInterval);
-        progressInterval = null;
+    function splitIntoSentences(text) {
+      return text.split(/(?<=[.!?])\s+/);
+    }
+    
+    function updateActiveLine(index) {
+      var lines = document.querySelectorAll('.lyrics-line');
+      for (var i = 0; i < lines.length; i++) lines[i].classList.remove('active');
+      if (lines[index]) {
+        lines[index].classList.add('active');
+        lines[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+    }
+    
+    function stopPlayback() {
+      if (progressInterval) { clearInterval(progressInterval); progressInterval = null; }
       try { speechSynthesis.cancel(); } catch(e) {}
       isPlaying = false;
       currentUtterance = null;
@@ -534,26 +475,8 @@
       document.getElementById('audioStatus').textContent = 'Ready';
     }
     
-    function splitIntoSentences(text) {
-      return text.split(/(?<=[.!?])\s+/);
-    }
-    
-    function updateActiveLine(index) {
-      var lines = document.querySelectorAll('.lyrics-line');
-      for (var i = 0; i < lines.length; i++) {
-        lines[i].classList.remove('active');
-      }
-      if (lines[index]) {
-        lines[index].classList.add('active');
-        lines[index].scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
-    }
-    
     function speakCurrentChapter() {
-      if (!ttsSupported) {
-        showToast('Audio not available on this device');
-        return;
-      }
+      if (!ttsSupported) { showToast('Audio not available on this device'); return; }
       
       stopPlayback();
       
@@ -571,20 +494,17 @@
       currentUtterance.rate = 0.9;
       currentUtterance.pitch = 1.0;
       
-      if (voicesLoaded || speechSynthesis.getVoices().length > 0) {
-        var voices = speechSynthesis.getVoices();
-        for (var i = 0; i < voices.length; i++) {
-          if (voices[i].lang === 'en-US' && voices[i].name.indexOf('Google') !== -1) {
-            currentUtterance.voice = voices[i];
-            break;
-          }
+      var voices = speechSynthesis.getVoices();
+      for (var i = 0; i < voices.length; i++) {
+        if (voices[i].lang === 'en-US') {
+          currentUtterance.voice = voices[i];
+          break;
         }
       }
       
       currentUtterance.onstart = function() {
         startTime = Date.now();
         isPlaying = true;
-        
         progressInterval = setInterval(function() {
           if (!isPlaying || !startTime) return;
           var elapsed = (Date.now() - startTime) / 1000;
@@ -597,14 +517,10 @@
             var charCount = 0;
             for (var i = 0; i < sentences.length; i++) {
               charCount += sentences[i].length;
-              if (charIndex < charCount) {
-                updateActiveLine(i);
-                break;
-              }
+              if (charIndex < charCount) { updateActiveLine(i); break; }
             }
           }
         }, 50);
-        
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-pause"></i>';
         document.getElementById('audioStatus').textContent = 'Playing...';
       };
@@ -616,14 +532,10 @@
         document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
         document.getElementById('videoProgressFill').style.width = '100%';
         document.getElementById('audioStatus').textContent = 'Completed';
-        setTimeout(function() {
-          if (!isPlaying) {
-            document.getElementById('videoProgressFill').style.width = '0%';
-          }
-        }, 2000);
+        setTimeout(function() { if (!isPlaying) document.getElementById('videoProgressFill').style.width = '0%'; }, 2000);
       };
       
-      currentUtterance.onerror = function(event) {
+      currentUtterance.onerror = function() {
         if (progressInterval) clearInterval(progressInterval);
         isPlaying = false;
         currentUtterance = null;
@@ -636,16 +548,8 @@
     }
     
     function togglePlayPause() {
-      if (isPlaying) {
-        speechSynthesis.cancel();
-        if (progressInterval) clearInterval(progressInterval);
-        isPlaying = false;
-        currentUtterance = null;
-        document.getElementById('playPauseBtn').innerHTML = '<i class="fas fa-play"></i>';
-        document.getElementById('audioStatus').textContent = 'Paused';
-      } else {
-        speakCurrentChapter();
-      }
+      if (isPlaying) { stopPlayback(); }
+      else { speakCurrentChapter(); }
     }
     
     function openModal(index) {
@@ -695,9 +599,7 @@
       var sentences = splitIntoSentences(t.text);
       var lyricsHTML = '';
       for (var i = 0; i < sentences.length; i++) {
-        if (sentences[i].length > 0) {
-          lyricsHTML += '<div class="lyrics-line">' + sentences[i] + '</div>';
-        }
+        if (sentences[i].length > 0) { lyricsHTML += '<div class="lyrics-line">' + sentences[i] + '</div>'; }
       }
       document.getElementById('lyricsBox').innerHTML = lyricsHTML;
     }
@@ -719,74 +621,11 @@
       }).join('');
     }
     
-    // ============================================
-    // TÉLÉCHARGEMENT GUIDE
-    // ============================================
-    
-    var pendingDownloadType = null;
-    
-    function confirmDownload(type) {
-      pendingDownloadType = type;
-      var modal = document.getElementById('downloadConfirmModal');
-      var title = document.getElementById('confirmTitle');
-      var message = document.getElementById('confirmMessage');
-      var okBtn = document.getElementById('confirmOkBtn');
-      
-      if (type === 'pdf') {
-        title.innerHTML = '<i class="fas fa-file-pdf"></i> Download PDF Guide';
-        message.innerHTML = 'Download the complete user guide as PDF?<br><span style="font-size:0.6rem;">The guide will open in a new tab. Use browser print to save as PDF.</span>';
-        okBtn.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
-      } else {
-        title.innerHTML = '<i class="fas fa-file-alt"></i> Download HTML Guide';
-        message.innerHTML = 'Download the complete user guide as HTML?<br><span style="font-size:0.6rem;">The guide will open in a new tab. You can save it from there.</span>';
-        okBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
-      }
-      
-      modal.style.display = 'flex';
-    }
-    
-    function closeDownloadModal() {
-      document.getElementById('downloadConfirmModal').style.display = 'none';
-      pendingDownloadType = null;
-    }
-    
-    function performDownload() {
-      if (pendingDownloadType === 'pdf') {
-        var win = window.open('guide-pdf.html?print=1', '_blank');
-        showToast('Click Save as PDF in the print dialog');
-      } else if (pendingDownloadType === 'html') {
-        window.open('guide-pdf.html', '_blank');
-        showToast('Guide opened in new tab');
-      }
-      closeDownloadModal();
-    }
-    
-    // ============================================
-    // INITIALISATION
-    // ============================================
-    
-    function showToast(message) {
-      var container = document.getElementById('toastContainer');
-      var toast = document.createElement('div');
-      toast.className = 'toast';
-      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
-      container.appendChild(toast);
-      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
-    }
-    
     renderSteps();
     initMobileMenu();
     initThemeSelector();
     initParticles();
     if (typeof initFontFamily === 'function') initFontFamily();
-    
-    // Attacher l'événement au bouton OK de la modale
-    document.getElementById('confirmOkBtn').onclick = performDownload;
-    
-    // Fermer la modale en cliquant à l'extérieur
-    document.getElementById('downloadConfirmModal').addEventListener('click', function(e) {
-      if (e.target === this) closeDownloadModal();
-    });
   </script>
 </body>
 </html>

@@ -322,6 +322,55 @@
     function loadExport() { cu = requireAuth(); if (!cu) return; initHeaderProfile(); }
     
     // ============================================
+    // FONCTION DE CALCUL - IDENTIQUE AU DASHBOARD
+    // ============================================
+    function calculateTermAvgForExport(studentId, term) {
+      try {
+        var grades = getStudentGrades(studentId);
+        var selected = getStudentSelectedSubjects(studentId, term);
+        var coeffs = getSubjectCoefficients(studentId);
+        
+        if (!selected || selected.length === 0) return 0;
+        
+        var totalWeighted = 0;
+        var totalCoeff = 0;
+        var seq1 = (term - 1) * 2 + 1;
+        var seq2 = seq1 + 1;
+        
+        // Pour CHAQUE matière SÉLECTIONNÉE
+        for (var i = 0; i < selected.length; i++) {
+          var subjectId = selected[i];
+          var coeff = coeffs[subjectId] || 5;
+          
+          var n1 = [], n2 = [];
+          for (var k = 0; k < grades.length; k++) {
+            if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq1) n1.push(grades[k].value);
+            if (grades[k].subjectId === subjectId && grades[k].sequenceId === seq2) n2.push(grades[k].value);
+          }
+          
+          var a1 = 0, a2 = 0;
+          if (n1.length > 0) {
+            var sum1 = 0;
+            for (var j = 0; j < n1.length; j++) sum1 += n1[j];
+            a1 = sum1 / n1.length;
+          }
+          if (n2.length > 0) {
+            var sum2 = 0;
+            for (var j = 0; j < n2.length; j++) sum2 += n2[j];
+            a2 = sum2 / n2.length;
+          }
+          
+          var subjectAvg = (a1 + a2) / 2;
+          totalWeighted += subjectAvg * coeff;
+          totalCoeff += coeff;
+        }
+        return totalCoeff > 0 ? Math.round((totalWeighted / totalCoeff) * 100) / 100 : 0;
+      } catch(e) {
+        return 0;
+      }
+    }
+    
+    // ============================================
     // JSON EXPORT AVEC CONFIRMATION
     // ============================================
     function exportJSONWithConfirm() {
@@ -388,8 +437,23 @@
       var totalWeighted = 0;
       var totalCoeff = 0;
       
+      // CLÉS DES SUJETS SÉLECTIONNÉS - Par terme (yearly = tous les 3 termes)
+      var selectedSubjects = [];
+      if (isYearly) {
+        // Pour yearly, on prend l'union de tous les sujets de tous les termes
+        var s1 = getStudentSelectedSubjects(cu.id, 1);
+        var s2 = getStudentSelectedSubjects(cu.id, 2);
+        var s3 = getStudentSelectedSubjects(cu.id, 3);
+        selectedSubjects = [...new Set([...s1, ...s2, ...s3])];
+      } else {
+        selectedSubjects = getStudentSelectedSubjects(cu.id, termNum);
+      }
+      
       for (var i = 0; i < subs.length; i++) {
         var s = subs[i];
+        // NE TRAITER QUE LES SUJETS SÉLECTIONNÉS
+        if (selectedSubjects.indexOf(s.id) === -1) continue;
+        
         var coef = coeffs[s.id] || 5;
         
         if (isYearly) {
@@ -422,7 +486,7 @@
         }
       }
       
-      var overallAvg = totalCoeff > 0 ? totalWeighted / totalCoeff : (isYearly ? calculateYearlyAverage(cu.id) : calculateStudentTermAverage(cu.id, termNum));
+      var overallAvg = totalCoeff > 0 ? totalWeighted / totalCoeff : (isYearly ? calculateYearlyAverage(cu.id) : calculateTermAvgForExport(cu.id, termNum));
       overallAvg = Math.round(overallAvg * 100) / 100;
       var overallLetter = getGradeLetter(overallAvg);
       
@@ -551,11 +615,11 @@
       });
     }
     
-    function ts() { var d = new Date(); return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + ('0' + d.getHours()).slice(-2) + ('0' + d.getMinutes()).slice(-2) + ('0' + d.getSeconds()).slice(-2); }
+    function ts() { var d = new Date(); return d.getFullYear() + ('0' + (d.getMonth() + 1)).slice(-2) + ('0' + d.getDate()).slice(-2) + '-' + ('0' + d.getHours()).slice(-2) + ('0' + d.getMinutes()).slice(-2); }
     function fn(ext) { var t = selectedTerm === 'yearly' ? 'Yearly' : 'Term' + selectedTerm; return 'SMART-GRADE-Bulletin-' + t + '-' + cu.name.replace(/\s+/g, '-') + '-' + ts() + '.' + ext; }
     
     // ============================================
-    // BUILD BULLETIN HTML - STYLE CORRIGE
+    // BUILD BULLETIN HTML - AVEC FILTRAGE CORRECT
     // ============================================
     function buildBulletinHTML() {
       var grades = getStudentGrades(cu.id);
@@ -566,6 +630,17 @@
       var termNum = isYearly ? 0 : parseInt(selectedTerm);
       var displayTitle = isYearly ? 'YEARLY REPORT' : 'TERM ' + termNum + ' REPORT';
       
+      // SUJETS SÉLECTIONNÉS
+      var selectedSubjects = [];
+      if (isYearly) {
+        var s1 = getStudentSelectedSubjects(cu.id, 1);
+        var s2 = getStudentSelectedSubjects(cu.id, 2);
+        var s3 = getStudentSelectedSubjects(cu.id, 3);
+        selectedSubjects = [...new Set([...s1, ...s2, ...s3])];
+      } else {
+        selectedSubjects = getStudentSelectedSubjects(cu.id, termNum);
+      }
+      
       var rows = '';
       var totalWeighted = 0;
       var totalCoeff = 0;
@@ -575,6 +650,9 @@
       
       for (var i = 0; i < subs.length; i++) {
         var s = subs[i];
+        // NE TRAITER QUE LES SUJETS SÉLECTIONNÉS
+        if (selectedSubjects.indexOf(s.id) === -1) continue;
+        
         var coef = coeffs[s.id] || 5;
         
         if (isYearly) {
@@ -622,7 +700,7 @@
         }
       }
       
-      var overallAvg = totalCoeff > 0 ? totalWeighted / totalCoeff : (isYearly ? calculateYearlyAverage(cu.id) : calculateStudentTermAverage(cu.id, termNum));
+      var overallAvg = totalCoeff > 0 ? totalWeighted / totalCoeff : (isYearly ? calculateYearlyAverage(cu.id) : calculateTermAvgForExport(cu.id, termNum));
       overallAvg = Math.round(overallAvg * 100) / 100;
       var overallLetter = getGradeLetter(overallAvg);
       var overallClass = getGradeClass(overallLetter);
@@ -637,9 +715,9 @@
       
       var totalRow = '';
       if (isYearly) {
-        totalRow = '<tr class="total-row"><td colspan="5"><strong>YEARLY AVERAGE</strong><\/td><td><strong>' + overallAvg.toFixed(2) + '<\/strong><\/td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '<\/span><\/td><\/tr>';
+        totalRow = '<tr class="total-row"><td colspan="5"><strong>YEARLY AVERAGE</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>';
       } else {
-        totalRow = '<tr class="total-row"><td colspan="2"><strong>TERM AVERAGE</strong><\/td><td><strong>' + overallAvg.toFixed(2) + '<\/strong><\/td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '<\/span><\/td><\/tr>';
+        totalRow = '<tr class="total-row"><td colspan="2"><strong>TERM AVERAGE</strong></td><td><strong>' + overallAvg.toFixed(2) + '</strong></td><td><span class="grade-letter grade-' + overallClass + '">' + overallLetter + '</span></td></tr>';
       }
       
       return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + displayTitle + ' - ' + cu.name + '</title>' +

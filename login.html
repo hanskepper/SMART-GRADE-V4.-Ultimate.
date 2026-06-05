@@ -127,7 +127,7 @@
     
     <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-sign-in-alt"></i><span>LOGIN</span></div><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div>
     <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
-    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="index.html" class="nav-item"><i class="fas fa-home"></i> Home</a><a href="login.html" class="nav-item active"><i class="fas fa-sign-in-alt"></i> Login</a><a href="register.html" class="nav-item"><i class="fas fa-user-plus"></i> Register</a><a href="guide.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></nav></div>
+    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav"><a href="index.html" class="nav-item"><i class="fas fa-home"></i> Home</a><a href="login.html" class="nav-item active"><i class="fas fa-sign-in-alt"></i> Login</a><a href="register.html" class="nav-item"><i class="fas fa-user-plus"></i> Register</a><a href="guide.html" class="nav-item"><i class="fas fa-question-circle"></i> Guide</a><a href="about.html" class="nav-item"><i class="fas fa-info-circle"></i> About</a></nav></div>
     <div class="overlay" id="overlay"></div>
     
     <main class="login-container">
@@ -136,7 +136,6 @@
         <i class="fas fa-graduation-cap" style="font-size:45px;background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent;"></i>
         <h2 style="background:linear-gradient(135deg,var(--primary),var(--secondary));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:16px;">Welcome Back</h2>
         
-        <!-- FINGERPRINT -->
         <div class="fingerprint-status" id="fpStatus"><i class="fas fa-fingerprint"></i> Tap to login with fingerprint</div>
         <button class="fingerprint-btn" id="fpBtn" onclick="handleFingerprintLogin()"><i class="fas fa-fingerprint"></i></button>
         
@@ -145,16 +144,14 @@
         <div class="error-msg" id="errorMsg"></div>
         <div class="success-msg" id="successMsg"></div>
         
-        <!-- SELECT STUDENT AVEC AVATAR -->
         <div class="student-selector-label"><i class="fas fa-user"></i> Select Account</div>
         <div class="students-count-badge" id="studentsCount"></div>
         <div class="student-list-scroll" id="studentList"></div>
         
-        <!-- PIN -->
         <div class="pin-group">
           <label><i class="fas fa-lock"></i> Enter PIN</label>
           <div class="pin-input-wrapper">
-            <input type="password" id="pinInput" maxlength="4" placeholder="••••" inputmode="numeric" autocomplete="off">
+            <input type="password" id="pinInput" maxlength="4" placeholder="****" inputmode="numeric" autocomplete="off">
             <button class="pin-toggle" id="pinToggle" onclick="togglePin()" title="Show PIN"><i class="fas fa-eye"></i></button>
           </div>
         </div>
@@ -283,7 +280,64 @@
     function showSuccess(m){var d=document.getElementById('successMsg');d.innerHTML='<i class="fas fa-check-circle"></i> '+m;d.style.display='block';document.getElementById('errorMsg').style.display='none';}
     function hideMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
     
-    function goWelcome(st){setCurrentStudent(st);updateStreakOnVisit(st.id);showSuccess('Welcome '+st.name+'!');document.getElementById('fpBtn').disabled=true;document.querySelector('.login-btn-primary').disabled=true;setTimeout(function(){location='welcome.html';},600);}
+    function goWelcome(st){
+      setCurrentStudent(st);
+      updateStreakOnVisit(st.id);
+      
+      showToast('Welcome back, ' + st.name + '!');
+      
+      if (typeof unlockWelcomeBadge === 'function') {
+        unlockWelcomeBadge(st.id);
+      } else if (typeof checkWelcomeBadge === 'function') {
+        checkWelcomeBadge(st.id);
+      } else {
+        var achievements = JSON.parse(localStorage.getItem('smartgrade_achievements_' + st.id) || '[]');
+        var alreadyUnlocked = false;
+        for (var i = 0; i < achievements.length; i++) {
+          if (achievements[i].id === 38 && achievements[i].unlocked) {
+            alreadyUnlocked = true;
+            break;
+          }
+        }
+        if (!alreadyUnlocked) {
+          var loginCount = localStorage.getItem('smartgrade_login_count_' + st.id);
+          if (!loginCount) {
+            localStorage.setItem('smartgrade_login_count_' + st.id, '1');
+            achievements.push({
+              id: 38,
+              name: "Welcome Aboard",
+              desc: "First login after installation",
+              unlocked: true,
+              unlockDate: new Date().toLocaleDateString(),
+              notified: false
+            });
+            localStorage.setItem('smartgrade_achievements_' + st.id, JSON.stringify(achievements));
+            showToast('Badge unlocked: Welcome Aboard!');
+          } else {
+            localStorage.setItem('smartgrade_login_count_' + st.id, parseInt(loginCount) + 1);
+          }
+        }
+      }
+      
+      if (typeof checkAndUnlockAllNewBadges === 'function') {
+        checkAndUnlockAllNewBadges(st.id);
+      }
+      
+      if (typeof addNotification === 'function') {
+        addNotification('login', 'Login Successful', 'Welcome back, ' + st.name + '!');
+      }
+      
+      if (typeof addHistory === 'function') {
+        addHistory(st.id, 'Login successful');
+      }
+      
+      showSuccess('Welcome ' + st.name + '!');
+      document.getElementById('fpBtn').disabled = true;
+      document.querySelector('.login-btn-primary').disabled = true;
+      setTimeout(function(){
+        window.location.href = 'welcome.html';
+      }, 600);
+    }
     
     function handlePinLogin(){hideMessages();var pin=document.getElementById('pinInput').value;if(!selectedUserId){showError('Please select an account first');return;}if(!pin||pin.length!==4||!/^\d+$/.test(pin)){showError('Please enter a valid 4-digit PIN');return;}var r=authenticateWithPin(selectedUserId,pin);if(r.success){goWelcome(r.student);}else{showError(r.message);document.getElementById('pinInput').value='';document.getElementById('pinInput').focus();}}
     

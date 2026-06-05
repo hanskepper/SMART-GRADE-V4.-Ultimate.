@@ -62,7 +62,7 @@
       <div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div>
     </div>
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="timetable.html" class="nav-item active"><i class="fas fa-calendar-alt"></i> Timetable</a>
@@ -120,21 +120,31 @@
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
   <script>
-    var cu = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
-    if (cu) { var p = JSON.parse(localStorage.getItem('smartgrade_profile_' + cu.id) || '{}'); document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + (p.avatar || 'fa-graduation-cap') + '"></i>'; }
-    initMobileMenu(); initThemeSelector();
+    var cu = null;
+    try {
+      cu = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
+      if (cu) {
+        var p = JSON.parse(localStorage.getItem('smartgrade_profile_' + cu.id) || '{}');
+        document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + (p.avatar || 'fa-graduation-cap') + '"></i>';
+      }
+    } catch(e) {}
     
-    // ⭐ TIMETABLE VIEWS NOTIFICATION
+    initMobileMenu();
+    initThemeSelector();
+    
     (function() {
-      var currentUser = getCurrentStudent();
+      var currentUser = null;
+      try {
+        currentUser = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
+      } catch(e) {}
+      
       if (currentUser && currentUser.id) {
-        var viewCount = parseInt(localStorage.getItem('smartgrade_timetable_views_' + currentUser.id) || '0');
-        viewCount++;
-        localStorage.setItem('smartgrade_timetable_views_' + currentUser.id, viewCount);
-        if ((viewCount === 5 || viewCount === 10) && typeof notifyTimetableView === 'function') {
-          notifyTimetableView(viewCount);
+        if (typeof incrementTimetableView === 'function') {
+          incrementTimetableView(currentUser.id);
         }
-        if (typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(currentUser.id); }
+        if (typeof checkAndUnlockAllNewBadges === 'function') {
+          checkAndUnlockAllNewBadges(currentUser.id);
+        }
       }
     })();
   </script>

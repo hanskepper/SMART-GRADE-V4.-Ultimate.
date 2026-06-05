@@ -199,7 +199,7 @@
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="settings.html" class="nav-item active"><i class="fas fa-sliders-h"></i> Settings</a>
@@ -207,12 +207,10 @@
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
-    
+
     <main class="main-content">
       
-      <!-- ============================================ -->
-      <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
-      <!-- ============================================ -->
+      <!-- SECTION VERSION ET MISE À JOUR -->
       <div class="glass-card" id="updateCheckSection">
         <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
@@ -236,9 +234,7 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- SUBJECTS BY TERM -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
         <div class="term-selector-row" id="termSelector">
@@ -255,9 +251,7 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- PROFILE INFO -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-user"></i> Profile Info</h3>
         <div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div>
@@ -265,25 +259,19 @@
         <div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div>
       </div>
       
-      <!-- ============================================ -->
       <!-- CHANGE PIN -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-key"></i> Change PIN</h3>
         <button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button>
       </div>
       
-      <!-- ============================================ -->
       <!-- FINGERPRINT -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
         <div id="fingerprintSection"></div>
       </div>
       
-      <!-- ============================================ -->
-      <!-- JSON BACKUP (Utilise les nouvelles fonctions) -->
-      <!-- ============================================ -->
+      <!-- JSON BACKUP -->
       <div class="glass-card">
         <h3><i class="fas fa-file-code"></i> JSON Backup</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;"><i class="fas fa-info-circle"></i> Export your data as a JSON file or import a previously saved backup.</p>
@@ -294,9 +282,7 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- DANGER ZONE -->
-      <!-- ============================================ -->
       <div class="danger-zone">
         <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
         <button class="btn btn-danger" onclick="resetAllGrades()" style="width:100%;margin-bottom:8px;"><i class="fas fa-trash-alt"></i> Reset All Grades</button>
@@ -390,7 +376,6 @@
       resultMsg.style.color = '#3498db';
       
       try {
-        // Essayer d'abord de récupérer la dernière release
         var releaseResponse = await fetch(GITHUB_RELEASES_URL, {
           headers: { 'Accept': 'application/vnd.github.v3+json' },
           cache: 'no-store'
@@ -408,7 +393,6 @@
           remoteMessage = release.body ? release.body.split('\n')[0] : 'New version available';
           zipUrl = release.zipball_url;
         } else {
-          // Fallback: récupérer le dernier commit
           var commitResponse = await fetch(GITHUB_API_URL, {
             headers: { 'Accept': 'application/vnd.github.v3+json' },
             cache: 'no-store'
@@ -502,7 +486,6 @@
           progressFill.style.width = '0%';
           progressText.innerHTML = 'Preparing update...';
           
-          // Sauvegarder les données utilisateur
           try {
             var stored = localStorage.getItem('smartgrade_current');
             if (stored) {
@@ -537,10 +520,8 @@
                 progressFill.style.width = '100%';
                 progressText.innerHTML = 'Update ready! Opening GitHub...';
                 
-                // Mettre à jour la version locale
                 setLocalVersion(pendingUpdate.version);
                 
-                // Nettoyer le cache
                 if ('caches' in window) {
                   caches.keys().then(function(names) {
                     names.forEach(function(name) {
@@ -769,7 +750,6 @@
       });
     }
     
-    // Utilise les nouvelles fonctions d'export/import de utils.js
     function exportJSONBackup() {
       var user = getCurrentStudent();
       if (!user) { showToast('Please login first'); return; }

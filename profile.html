@@ -187,7 +187,7 @@
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="profile.html" class="nav-item active"><i class="fas fa-user"></i> Profile</a>
@@ -240,15 +240,10 @@
   <script src="js/app.js"></script>
   
   <script>
-    // ============================================
-    // PROFILE PAGE - VERSION FINALE AVEC BIOS SUGGERES
-    // ============================================
-    
     var currentUser = null;
     var currentAvatarBase64 = '';
     var isSaving = false;
     
-    // 16 BIOS SUGGERES
     var SUGGESTED_BIOS = [
       "Student at SIN GBHS Foumban, Form 4B Science. Passionate about technology and innovation.",
       "Aspiring software engineer. Love coding, reading, and playing football.",
@@ -418,6 +413,13 @@
           updateHeaderAvatar();
         }
         
+        if (typeof checkPhotoBadge === 'function') {
+          checkPhotoBadge(currentUser.id);
+        }
+        if (typeof checkAndUnlockAllNewBadges === 'function') {
+          checkAndUnlockAllNewBadges(currentUser.id);
+        }
+        
         showToast('Profile saved successfully!');
         
         checkAndUnlockPhotoBadge();
@@ -544,8 +546,8 @@
           <h3 style="margin-bottom:8px;">${options.title}</h3>
           <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:16px;">${options.message}</p>
           <div style="display:flex;gap:12px;">
-            <button class="confirm-cancel-btn" style="flex:1;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-weight:600;">${options.cancelText || 'Cancel'}</button>
-            <button class="confirm-ok-btn" style="flex:1;padding:12px;border-radius:30px;background:#e74c3c;color:white;border:none;cursor:pointer;font-weight:600;">${options.confirmText || 'Remove'}</button>
+            <button class="confirm-cancel-btn" style="flex:1;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;">${options.cancelText || 'Cancel'}</button>
+            <button class="confirm-ok-btn" style="flex:1;padding:12px;border-radius:30px;background:#e74c3c;color:white;border:none;cursor:pointer;">${options.confirmText || 'Remove'}</button>
           </div>
         </div>
       `;

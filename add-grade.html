@@ -150,7 +150,7 @@
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="add-grade.html" class="nav-item active"><i class="fas fa-pen-fancy"></i> Add Grade</a>
@@ -212,8 +212,12 @@
       var bodyHtml = '';
       for (var i = 0; i < subjects.length; i++) {
         var s = subjects[i];
-        var g1 = grades.find(function(x) { return x.subjectId === s.id && x.sequenceId === seq1; });
-        var g2 = grades.find(function(x) { return x.subjectId === s.id && x.sequenceId === seq2; });
+        var g1 = null;
+        var g2 = null;
+        for (var k = 0; k < grades.length; k++) {
+          if (grades[k].subjectId === s.id && grades[k].sequenceId === seq1) g1 = grades[k];
+          if (grades[k].subjectId === s.id && grades[k].sequenceId === seq2) g2 = grades[k];
+        }
         var v1 = g1 ? g1.value : '';
         var v2 = g2 ? g2.value : '';
         var avg = (v1 !== '' && v2 !== '') ? formatNumber((parseFloat(v1) + parseFloat(v2)) / 2) : '--';
@@ -270,7 +274,6 @@
       var inputs = document.querySelectorAll('.grade-input');
       var changed = false;
       var savedCount = 0;
-      var newGrades = [];
       
       inputs.forEach(function(input) {
         var subjectId = parseInt(input.dataset.subj);
@@ -279,9 +282,13 @@
         
         if (!isNaN(value) && value >= 0 && value <= 20) {
           var roundedValue = Math.round(value * 100) / 100;
-          var existingIndex = grades.findIndex(function(g) {
-            return g.subjectId === subjectId && g.sequenceId === sequenceId;
-          });
+          var existingIndex = -1;
+          for (var i = 0; i < grades.length; i++) {
+            if (grades[i].subjectId === subjectId && grades[i].sequenceId === sequenceId) {
+              existingIndex = i;
+              break;
+            }
+          }
           
           if (existingIndex !== -1) {
             if (grades[existingIndex].value !== roundedValue) {
@@ -289,7 +296,7 @@
               changed = true;
               savedCount++;
             }
-          } else {
+          } else if (input.value !== '') {
             var newId = grades.length > 0 ? Math.max.apply(null, grades.map(function(g) { return g.id; })) + 1 : 1;
             grades.push({
               id: newId,
@@ -310,9 +317,8 @@
         playActionFeedback();
         showToast('Grades saved successfully!');
         
-        // ⭐ NOTIFICATION
-        if (typeof notifyGradesSaved === 'function') {
-          notifyGradesSaved(savedCount);
+        if (typeof checkAndUnlockAllNewBadges === 'function') {
+          checkAndUnlockAllNewBadges(currentUser.id);
         }
         
         loadAddGrade();

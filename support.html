@@ -349,9 +349,9 @@
         <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
       </div>
     </div>
-    
+      
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="support.html" class="nav-item active"><i class="fas fa-headset"></i> Support</a>
@@ -412,7 +412,50 @@
           </div>
         </div>
       </div>
-      
+       
+           
+      <!-- ============================================ -->
+      <!-- SEND MESSAGE FORM -->
+      <!-- ============================================ -->
+      <div class="legal-content">
+        <h3><i class="fas fa-paper-plane"></i> Send us a message</h3>
+        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">
+          <i class="fas fa-info-circle"></i> Choose how you want to send your message
+        </p>
+        <div class="report-form">
+          <div class="form-group">
+            <label><i class="fas fa-tag"></i> Message Type</label>
+            <select id="messageType" class="custom-select">
+              <option value="question">❓ Question / Help</option>
+              <option value="bug">🐛 Bug Report</option>
+              <option value="feature">💡 Feature Request</option>
+              <option value="feedback">👍 Feedback</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-user"></i> Your Name</label>
+            <input type="text" id="userName" readonly placeholder="Auto-detected from account">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-heading"></i> Subject</label>
+            <input type="text" id="messageSubject" placeholder="Brief description">
+          </div>
+          <div class="form-group">
+            <label><i class="fas fa-align-left"></i> Message</label>
+            <textarea id="messageBody" rows="4" placeholder="Describe your issue in detail..."></textarea>
+          </div>
+          <div class="send-options">
+            <button class="btn-send btn-email" onclick="sendViaEmail()">
+              <i class="fas fa-envelope"></i> Send via Email
+            </button>
+            <button class="btn-send btn-whatsapp" onclick="sendViaWhatsApp()">
+              <i class="fab fa-whatsapp"></i> Send via WhatsApp
+            </button>
+          </div>
+          <div id="sendStatus" style="margin-top:12px; text-align:center;"></div>
+        </div>
+      </div>
+  
       <!-- ============================================ -->
       <!-- FREQUENTLY ASKED QUESTIONS -->
       <!-- ============================================ -->
@@ -775,49 +818,7 @@
           </div>
         </div>
       </div>
-      
-      <!-- ============================================ -->
-      <!-- SEND MESSAGE FORM -->
-      <!-- ============================================ -->
-      <div class="legal-content">
-        <h3><i class="fas fa-paper-plane"></i> Send us a message</h3>
-        <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:16px;">
-          <i class="fas fa-info-circle"></i> Choose how you want to send your message
-        </p>
-        <div class="report-form">
-          <div class="form-group">
-            <label><i class="fas fa-tag"></i> Message Type</label>
-            <select id="messageType" class="custom-select">
-              <option value="question">❓ Question / Help</option>
-              <option value="bug">🐛 Bug Report</option>
-              <option value="feature">💡 Feature Request</option>
-              <option value="feedback">👍 Feedback</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-user"></i> Your Name</label>
-            <input type="text" id="userName" readonly placeholder="Auto-detected from account">
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-heading"></i> Subject</label>
-            <input type="text" id="messageSubject" placeholder="Brief description">
-          </div>
-          <div class="form-group">
-            <label><i class="fas fa-align-left"></i> Message</label>
-            <textarea id="messageBody" rows="4" placeholder="Describe your issue in detail..."></textarea>
-          </div>
-          <div class="send-options">
-            <button class="btn-send btn-email" onclick="sendViaEmail()">
-              <i class="fas fa-envelope"></i> Send via Email
-            </button>
-            <button class="btn-send btn-whatsapp" onclick="sendViaWhatsApp()">
-              <i class="fab fa-whatsapp"></i> Send via WhatsApp
-            </button>
-          </div>
-          <div id="sendStatus" style="margin-top:12px; text-align:center;"></div>
-        </div>
-      </div>
-      
+     
       <!-- ============================================ -->
       <!-- HELPFUL RESOURCES -->
       <!-- ============================================ -->

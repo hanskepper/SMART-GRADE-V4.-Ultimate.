@@ -137,6 +137,8 @@
     .action-transfer { background: rgba(26,188,156,0.15); color: #1abc9c; }
     .action-flashcard { background: rgba(46,204,113,0.15); color: #27ae60; }
     .action-goal { background: rgba(241,196,15,0.15); color: #f39c12; }
+    .action-badge { background: rgba(155,89,182,0.15); color: #9b59b6; }
+    .action-streak { background: rgba(241,196,15,0.15); color: #f39c12; }
     .empty-state { text-align: center; padding: 50px 20px; }
     .empty-state i { font-size: 60px; opacity: 0.15; margin-bottom: 16px; display: block; }
     .action-bar {
@@ -190,7 +192,7 @@
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
@@ -259,9 +261,7 @@
           </div>
         </div>
         
-        <div id="historyTimeline" class="timeline">
-          <div class="empty-state"><i class="fas fa-history"></i><p>No activity recorded yet</p><p style="font-size:0.6rem;">Your actions will appear here</p></div>
-        </div>
+        <div id="historyTimeline" class="timeline"></div>
       </div>
       
     </main>
@@ -303,6 +303,7 @@
         allHistory = JSON.parse(saved);
       } else {
         allHistory = [];
+        // Ajouter des démos si vide
         addDemoHistory();
       }
       
@@ -363,8 +364,8 @@
         login: 'action-login', grade: 'action-grade', delete: 'action-delete',
         edit: 'action-edit', export: 'action-export', import: 'action-export',
         backup: 'action-backup', settings: 'action-settings', profile: 'action-profile',
-        flashcard: 'action-flashcard', goal: 'action-goal', badge: 'action-grade',
-        streak: 'action-grade', transfer: 'action-transfer'
+        flashcard: 'action-flashcard', goal: 'action-goal', badge: 'action-badge',
+        streak: 'action-streak', transfer: 'action-transfer'
       };
       return classes[type] || 'action-login';
     }
@@ -425,13 +426,20 @@
     }
     
     function clearHistory() {
-      if (confirm('Are you sure you want to clear all activity history? This action cannot be undone.')) {
-        allHistory = [];
-        saveHistory();
-        updateStats();
-        displayHistory();
-        showToast('History cleared');
-      }
+      showConfirmDialog({
+        title: 'Clear History',
+        message: 'Are you sure you want to clear all activity history? This action cannot be undone.',
+        icon: 'fa-trash-alt',
+        iconColor: '#e74c3c',
+        confirmText: 'Clear',
+        onConfirm: function() {
+          allHistory = [];
+          saveHistory();
+          updateStats();
+          displayHistory();
+          showToast('History cleared');
+        }
+      });
     }
     
     function updateHeaderProfile() {
@@ -468,6 +476,47 @@
       toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
       container.appendChild(toast);
       setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+    }
+    
+    function showConfirmDialog(options) {
+      var existingModal = document.querySelector('.custom-confirm-modal');
+      if (existingModal) existingModal.remove();
+      
+      var modal = document.createElement('div');
+      modal.className = 'custom-confirm-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);z-index:2000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);';
+      
+      modal.innerHTML = `
+        <div style="background:var(--card-bg);border-radius:24px;padding:24px;max-width:320px;width:85%;text-align:center;animation:fadeInUp 0.3s ease;">
+          <i class="fas ${options.icon || 'fa-exclamation-triangle'}" style="font-size:48px;color:${options.iconColor || '#e74c3c'};margin-bottom:16px;"></i>
+          <h3 style="margin-bottom:8px;">${options.title}</h3>
+          <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:8px;">${options.message}</p>
+          ${options.detail ? '<p style="font-size:0.7rem;font-weight:600;color:#e74c3c;margin-bottom:16px;">' + options.detail + '</p>' : ''}
+          <div style="display:flex;gap:12px;">
+            <button class="confirm-cancel-btn" style="flex:1;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;">${options.cancelText || 'Cancel'}</button>
+            <button class="confirm-ok-btn" style="flex:1;padding:12px;border-radius:30px;background:${options.confirmColor || '#e74c3c'};color:white;border:none;cursor:pointer;">${options.confirmText || 'Confirm'}</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      modal.querySelector('.confirm-cancel-btn').onclick = function() {
+        modal.remove();
+        if (options.onCancel) options.onCancel();
+      };
+      
+      modal.querySelector('.confirm-ok-btn').onclick = function() {
+        modal.remove();
+        if (options.onConfirm) options.onConfirm();
+      };
+      
+      modal.onclick = function(e) {
+        if (e.target === modal) {
+          modal.remove();
+          if (options.onCancel) options.onCancel();
+        }
+      };
     }
     
     window.setFilter = setFilter;

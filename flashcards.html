@@ -94,6 +94,9 @@
       color:#e74c3c;
       border:1px solid rgba(231,76,60,0.3);
     }
+    .flashcard-controls button.danger:active{
+      transform:scale(0.95);
+    }
     .form-group-flash{
       margin-bottom:12px;
     }
@@ -154,9 +157,23 @@
       border-radius:8px;
       transition:all 0.2s;
     }
+    .delete-card-btn:hover:not(:disabled){
+      background:rgba(231,76,60,0.15);
+      transform:scale(1.1);
+    }
     .delete-card-btn:disabled{
-      opacity:0.3;
+      opacity:0.4;
       cursor:not-allowed;
+      filter:grayscale(0.3);
+    }
+    .delete-card-btn:disabled:hover{
+      transform:none;
+      background:none;
+    }
+    .original-lock-icon{
+      color:#95a5a6;
+      font-size:0.7rem;
+      margin-right:4px;
     }
   </style>
 </head>
@@ -167,7 +184,11 @@
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
       <div class="header-logo"><i class="fas fa-clone"></i><span>FLASHCARDS</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
-        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-graduation-cap"></i></div></a>
+        <a href="profile.html">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+        </a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
     </div>
@@ -180,7 +201,7 @@
       </div>
     </div>
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="flashcards.html" class="nav-item active"><i class="fas fa-clone"></i> Flashcards</a>
@@ -218,7 +239,7 @@
           <button onclick="prevCard()"><i class="fas fa-arrow-left"></i> Prev</button>
           <button class="primary" onclick="flipCard()"><i class="fas fa-sync-alt"></i> Flip</button>
           <button onclick="nextCard()"><i class="fas fa-arrow-right"></i> Next</button>
-          <button class="danger" id="deleteCardBtn" onclick="deleteCurrentCard()" disabled><i class="fas fa-trash"></i> Delete</button>
+          <button class="danger" id="deleteCardBtn" onclick="deleteCurrentCard()" disabled><i class="fas fa-trash-alt"></i> Delete</button>
         </div>
       </div>
       
@@ -286,28 +307,56 @@
       14: [{ q: "What is a good source of Vitamin C?", a: "Citrus fruits" }, { q: "What is the function of proteins?", a: "Build and repair tissues" }, { q: "How many food groups are there?", a: "5" }]
     };
     
+    function updateAvatar() {
+      var headerAvatar = document.getElementById('headerAvatar');
+      if (!headerAvatar) return;
+      
+      try {
+        var stored = localStorage.getItem('smartgrade_current');
+        if (!stored) {
+          headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+          return;
+        }
+        
+        var user = JSON.parse(stored);
+        var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{"avatarBase64":""}');
+        
+        if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
+          headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+        } else {
+          headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+        }
+      } catch(e) {
+        headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      }
+    }
+    
     function initFC() {
-      cu = requireAuth();
-      if (!cu) return;
+      cu = getCurrentStudent();
+      if (!cu) {
+        window.location.href = 'login.html';
+        return;
+      }
       allSaved = getFlashcards(cu.id);
       buildSubjectSelector();
       if (ALL_SUBJECTS.length > 0) selectSubject(ALL_SUBJECTS[0].id);
-      updateHeaderAvatar();
+      updateAvatar();
     }
-    
-    function updateHeaderAvatar() { if (cu) { var p = getProfile(cu.id); var avatar = p.avatar || 'fa-graduation-cap'; document.getElementById('headerAvatar').innerHTML = '<i class="fas ' + avatar + '"></i>'; } }
     
     function buildSubjectSelector() {
       var container = document.getElementById('subjectSelector');
       container.innerHTML = '';
-      ALL_SUBJECTS.forEach(function(s) {
+      for (var i = 0; i < ALL_SUBJECTS.length; i++) {
+        var s = ALL_SUBJECTS[i];
         var btn = document.createElement('button');
         btn.className = 'btn ' + (fcSubj === s.id ? 'btn-primary' : 'btn-secondary');
         btn.style.cssText = 'width:auto;padding:8px 12px;font-size:0.7rem;flex:1;min-width:80px;';
         btn.innerHTML = '<i class="fas ' + s.icon + '"></i> ' + s.code;
-        btn.onclick = function() { selectSubject(s.id); };
+        btn.onclick = (function(sid) {
+          return function() { selectSubject(sid); };
+        })(s.id);
         container.appendChild(btn);
-      });
+      }
     }
     
     function selectSubject(sid) {
@@ -316,27 +365,50 @@
       fcFlipped = false;
       allSaved = getFlashcards(cu.id);
       
-      var userCardsForSubject = allSaved.filter(function(c) { return c.subjectId === fcSubj; });
-      userCardsForSubject.forEach(function(card) { card.isOriginal = false; });
+      var userCardsForSubject = [];
+      for (var i = 0; i < allSaved.length; i++) {
+        if (allSaved[i].subjectId === fcSubj) {
+          var cardCopy = JSON.parse(JSON.stringify(allSaved[i]));
+          cardCopy.isOriginal = false;
+          userCardsForSubject.push(cardCopy);
+        }
+      }
       
-      var defaultCardsForSubject = (DEFAULT_CARDS[fcSubj] || []).map(function(c, idx) {
-        return {
-          id: 'default_' + fcSubj + '_' + idx,
-          subjectId: fcSubj,
-          question: c.q,
-          answer: c.a,
-          isOriginal: true
-        };
-      });
+      var defaultCardsForSubject = [];
+      if (DEFAULT_CARDS[fcSubj]) {
+        for (var j = 0; j < DEFAULT_CARDS[fcSubj].length; j++) {
+          var c = DEFAULT_CARDS[fcSubj][j];
+          defaultCardsForSubject.push({
+            id: 'default_' + fcSubj + '_' + j,
+            subjectId: fcSubj,
+            question: c.q,
+            answer: c.a,
+            isOriginal: true
+          });
+        }
+      }
       
-      fcCards = [...defaultCardsForSubject, ...userCardsForSubject];
+      fcCards = defaultCardsForSubject.concat(userCardsForSubject);
       
-      var cardsToSave = fcCards.filter(function(c) { return !c.isOriginal; });
+      var cardsToSave = [];
+      for (var k = 0; k < fcCards.length; k++) {
+        if (!fcCards[k].isOriginal) {
+          cardsToSave.push({
+            id: fcCards[k].id,
+            subjectId: fcCards[k].subjectId,
+            question: fcCards[k].question,
+            answer: fcCards[k].answer,
+            isOriginal: false,
+            createdAt: fcCards[k].createdAt || new Date().toISOString()
+          });
+        }
+      }
       saveFlashcards(cu.id, cardsToSave);
       
       updateCard();
       buildSubjectSelector();
       renderAllCardsList();
+      updateAvatar();
     }
     
     function updateCard() {
@@ -346,24 +418,61 @@
         document.getElementById('fcBack').innerHTML = '<p style="opacity:0.5;">Add cards below</p>';
         document.getElementById('fcCounter').textContent = '0 / 0';
         document.getElementById('totalCardsCount').textContent = '0';
-        if (deleteBtn) deleteBtn.disabled = true;
+        if (deleteBtn) {
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+        }
         return;
       }
-      document.getElementById('fcFront').innerHTML = '<p style="font-weight:600;">' + fcCards[fcIndex].question + '</p>';
-      document.getElementById('fcBack').innerHTML = '<p>' + fcCards[fcIndex].answer + '</p>';
+      document.getElementById('fcFront').innerHTML = '<p style="font-weight:600;">' + escapeHtml(fcCards[fcIndex].question) + '</p>';
+      document.getElementById('fcBack').innerHTML = '<p>' + escapeHtml(fcCards[fcIndex].answer) + '</p>';
       document.getElementById('fcCounter').textContent = (fcIndex + 1) + ' / ' + fcCards.length;
       document.getElementById('totalCardsCount').textContent = fcCards.length;
       document.getElementById('flashcard').classList.remove('flipped');
       fcFlipped = false;
+      
       if (deleteBtn) {
-        if (fcCards[fcIndex].isOriginal === true) { deleteBtn.disabled = true; deleteBtn.title = "Original cards cannot be deleted"; }
-        else { deleteBtn.disabled = false; deleteBtn.title = "Delete this card"; }
+        if (fcCards[fcIndex].isOriginal === true) {
+          deleteBtn.disabled = true;
+          deleteBtn.innerHTML = '<i class="fas fa-lock"></i> Locked';
+          deleteBtn.title = "Original cards cannot be deleted";
+        } else {
+          deleteBtn.disabled = false;
+          deleteBtn.innerHTML = '<i class="fas fa-trash-alt"></i> Delete';
+          deleteBtn.title = "Delete this card";
+        }
       }
     }
     
-    function flipCard() { if (fcCards.length === 0) return; fcFlipped = !fcFlipped; var f = document.getElementById('flashcard'); if (fcFlipped) f.classList.add('flipped'); else f.classList.remove('flipped'); }
-    function prevCard() { if (fcCards.length === 0) return; fcIndex = (fcIndex - 1 + fcCards.length) % fcCards.length; updateCard(); }
-    function nextCard() { if (fcCards.length === 0) return; fcIndex = (fcIndex + 1) % fcCards.length; updateCard(); }
+    function escapeHtml(text) {
+      if (!text) return '';
+      return text.replace(/[&<>]/g, function(m) {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+      });
+    }
+    
+    function flipCard() {
+      if (fcCards.length === 0) return;
+      fcFlipped = !fcFlipped;
+      var f = document.getElementById('flashcard');
+      if (fcFlipped) f.classList.add('flipped');
+      else f.classList.remove('flipped');
+    }
+    
+    function prevCard() {
+      if (fcCards.length === 0) return;
+      fcIndex = (fcIndex - 1 + fcCards.length) % fcCards.length;
+      updateCard();
+    }
+    
+    function nextCard() {
+      if (fcCards.length === 0) return;
+      fcIndex = (fcIndex + 1) % fcCards.length;
+      updateCard();
+    }
     
     function addCard() {
       var q = document.getElementById('newQuestion').value.trim();
@@ -372,60 +481,113 @@
       if (!fcSubj) { showToast('Please select a subject first'); return; }
       
       var existingUserCards = getFlashcards(cu.id);
-      var newCard = { id: Date.now(), subjectId: fcSubj, question: q, answer: a, isOriginal: false, createdAt: new Date().toISOString() };
+      var newCard = { 
+        id: Date.now(), 
+        subjectId: fcSubj, 
+        question: q, 
+        answer: a, 
+        isOriginal: false, 
+        createdAt: new Date().toISOString() 
+      };
       existingUserCards.push(newCard);
       saveFlashcards(cu.id, existingUserCards);
       
-      var subjectName = ALL_SUBJECTS.find(function(s) { return s.id === fcSubj; });
-      
-      // ⭐ NOTIFICATION
-      if (typeof notifyFlashcardAdded === 'function') {
-        notifyFlashcardAdded(subjectName ? subjectName.name : 'Subject', existingUserCards.length);
+      var subjectName = null;
+      for (var i = 0; i < ALL_SUBJECTS.length; i++) {
+        if (ALL_SUBJECTS[i].id === fcSubj) {
+          subjectName = ALL_SUBJECTS[i].name;
+          break;
+        }
       }
       
-      if (cu && cu.id && typeof checkAndUnlockAllNewBadges === 'function') { checkAndUnlockAllNewBadges(cu.id); }
-      
       selectSubject(fcSubj);
-      for (var i = 0; i < fcCards.length; i++) { if (fcCards[i].id === newCard.id) { fcIndex = i; break; } }
+      for (var j = 0; j < fcCards.length; j++) {
+        if (fcCards[j].id === newCard.id) {
+          fcIndex = j;
+          break;
+        }
+      }
       updateCard();
       renderAllCardsList();
       document.getElementById('newQuestion').value = '';
       document.getElementById('newAnswer').value = '';
       playActionFeedback();
       showToast('Card added!');
+      
+      if (cu && cu.id && typeof checkFlashcardBadges === 'function') {
+        checkFlashcardBadges(cu.id);
+      }
+      if (cu && cu.id && typeof checkAndUnlockAllNewBadges === 'function') {
+        checkAndUnlockAllNewBadges(cu.id);
+      }
     }
     
     function deleteCurrentCard() {
       if (fcCards.length === 0) { showToast('No cards to delete'); return; }
       var currentCard = fcCards[fcIndex];
       if (currentCard.isOriginal === true) { showToast('Original cards cannot be deleted'); return; }
-      if (!confirm('Delete this card? "' + currentCard.question + '"')) return;
-      var userCards = getFlashcards(cu.id);
-      userCards = userCards.filter(function(c) { return c.id !== currentCard.id; });
-      saveFlashcards(cu.id, userCards);
-      selectSubject(fcSubj);
-      if (fcCards.length === 0) fcIndex = 0;
-      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
-      updateCard();
-      renderAllCardsList();
-      showToast('Card deleted');
+      
+      showConfirmDialog({
+        title: 'Delete Card',
+        message: 'Delete this flashcard?',
+        detail: 'Question: ' + currentCard.question,
+        icon: 'fa-trash-alt',
+        iconColor: '#e74c3c',
+        confirmText: 'Delete',
+        onConfirm: function() {
+          var userCards = getFlashcards(cu.id);
+          var newUserCards = [];
+          for (var i = 0; i < userCards.length; i++) {
+            if (userCards[i].id !== currentCard.id) {
+              newUserCards.push(userCards[i]);
+            }
+          }
+          saveFlashcards(cu.id, newUserCards);
+          selectSubject(fcSubj);
+          if (fcCards.length === 0) fcIndex = 0;
+          else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
+          updateCard();
+          renderAllCardsList();
+          showToast('Card deleted');
+        }
+      });
     }
     
     function deleteCardById(id) {
       var cardToDelete = null;
-      for (var i = 0; i < fcCards.length; i++) { if (fcCards[i].id === id) { cardToDelete = fcCards[i]; break; } }
+      for (var i = 0; i < fcCards.length; i++) {
+        if (fcCards[i].id === id) {
+          cardToDelete = fcCards[i];
+          break;
+        }
+      }
       if (!cardToDelete) return;
       if (cardToDelete.isOriginal === true) { showToast('Original cards cannot be deleted'); return; }
-      if (!confirm('Delete this card? "' + cardToDelete.question + '"')) return;
-      var userCards = getFlashcards(cu.id);
-      userCards = userCards.filter(function(c) { return c.id !== id; });
-      saveFlashcards(cu.id, userCards);
-      selectSubject(fcSubj);
-      if (fcCards.length === 0) fcIndex = 0;
-      else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
-      updateCard();
-      renderAllCardsList();
-      showToast('Card deleted');
+      
+      showConfirmDialog({
+        title: 'Delete Card',
+        message: 'Delete this flashcard?',
+        detail: 'Question: ' + cardToDelete.question,
+        icon: 'fa-trash-alt',
+        iconColor: '#e74c3c',
+        confirmText: 'Delete',
+        onConfirm: function() {
+          var userCards = getFlashcards(cu.id);
+          var newUserCards = [];
+          for (var i = 0; i < userCards.length; i++) {
+            if (userCards[i].id !== id) {
+              newUserCards.push(userCards[i]);
+            }
+          }
+          saveFlashcards(cu.id, newUserCards);
+          selectSubject(fcSubj);
+          if (fcCards.length === 0) fcIndex = 0;
+          else if (fcIndex >= fcCards.length) fcIndex = fcCards.length - 1;
+          updateCard();
+          renderAllCardsList();
+          showToast('Card deleted');
+        }
+      });
     }
     
     function renderAllCardsList() {
@@ -434,26 +596,83 @@
         container.innerHTML = '<p style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No cards for this subject yet.<br>Add your first card above!</p>';
         return;
       }
-      container.innerHTML = fcCards.map(function(c, i) {
+      
+      var html = '';
+      for (var i = 0; i < fcCards.length; i++) {
+        var c = fcCards[i];
         var isDefault = (c.isOriginal === true);
         var defaultBadge = isDefault ? '<span class="default-badge"><i class="fas fa-lock"></i> Original</span>' : '';
         var deleteButton = '';
-        if (!isDefault) { deleteButton = '<button class="delete-card-btn" onclick="deleteCardById(' + c.id + ')" title="Delete card"><i class="fas fa-trash"></i></button>'; }
-        else { deleteButton = '<button class="delete-card-btn" disabled style="opacity:0.3;cursor:not-allowed;" title="Original cards cannot be deleted"><i class="fas fa-lock"></i></button>'; }
-        return '<div class="card-item ' + (isDefault ? 'default-card' : '') + '">' +
+        
+        if (!isDefault) {
+          deleteButton = '<button class="delete-card-btn" onclick="deleteCardById(' + c.id + ')" title="Delete card"><i class="fas fa-trash-alt"></i></button>';
+        } else {
+          deleteButton = '<button class="delete-card-btn" disabled title="Original cards cannot be deleted" style="opacity:0.5;cursor:not-allowed;"><i class="fas fa-lock"></i> Locked</button>';
+        }
+        
+        html += '<div class="card-item ' + (isDefault ? 'default-card' : '') + '">' +
           '<div class="card-question">' +
-            '<strong>Q:</strong> ' + c.question + '<br>' +
-            '<small><strong>A:</strong> ' + c.answer + '</small>' +
+            '<strong>Q:</strong> ' + escapeHtml(c.question) + '<br>' +
+            '<small><strong>A:</strong> ' + escapeHtml(c.answer) + '</small>' +
             defaultBadge +
           '</div>' +
           deleteButton +
         '</div>';
-      }).join('');
+      }
+      container.innerHTML = html;
+    }
+    
+    function showToast(message) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+      }, 3000);
+    }
+    
+    function playActionFeedback() {
+      if (typeof navigator.vibrate === 'function') navigator.vibrate(30);
+    }
+    
+    function showConfirmDialog(options) {
+      var existingModal = document.querySelector('.custom-confirm-modal');
+      if (existingModal) existingModal.remove();
+      
+      var modal = document.createElement('div');
+      modal.className = 'custom-confirm-modal';
+      modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);z-index:2000;display:flex;align-items:center;justify-content:center;';
+      
+      modal.innerHTML = `
+        <div style="background:var(--card-bg);border-radius:24px;padding:24px;max-width:320px;width:85%;text-align:center;">
+          <i class="fas ${options.icon || 'fa-exclamation-triangle'}" style="font-size:48px;color:${options.iconColor || '#e74c3c'};margin-bottom:16px;"></i>
+          <h3 style="margin-bottom:8px;">${options.title}</h3>
+          <p style="font-size:0.75rem;color:var(--text-light);margin-bottom:8px;">${options.message}</p>
+          ${options.detail ? '<p style="font-size:0.7rem;font-weight:600;color:#e74c3c;margin-bottom:16px;">' + options.detail + '</p>' : ''}
+          <div style="display:flex;gap:12px;">
+            <button class="confirm-cancel-btn" style="flex:1;padding:12px;border-radius:40px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;">Cancel</button>
+            <button class="confirm-ok-btn" style="flex:1;padding:12px;border-radius:40px;background:${options.confirmColor || '#e74c3c'};color:white;border:none;cursor:pointer;">${options.confirmText || 'Confirm'}</button>
+          </div>
+        </div>
+      `;
+      
+      document.body.appendChild(modal);
+      
+      modal.querySelector('.confirm-cancel-btn').onclick = function() { modal.remove(); if (options.onCancel) options.onCancel(); };
+      modal.querySelector('.confirm-ok-btn').onclick = function() { modal.remove(); if (options.onConfirm) options.onConfirm(); };
+      modal.onclick = function(e) { if (e.target === modal) { modal.remove(); if (options.onCancel) options.onCancel(); } };
     }
     
     initFC();
     initMobileMenu();
     initThemeSelector();
+    
+    setInterval(updateAvatar, 2000);
+    window.addEventListener('pageshow', updateAvatar);
+    document.addEventListener('visibilitychange', function() { if (!document.hidden) updateAvatar(); });
   </script>
 </body>
 </html>

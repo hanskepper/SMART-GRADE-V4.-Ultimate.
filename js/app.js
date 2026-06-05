@@ -1,6 +1,6 @@
 // ============================================
 // SMART GRADE v4.0 - APP.JS COMPLET
-// VERSION CORRIGÉE - AVATAR GLOBAL
+// VERSION CORRIGÉE - AVATAR GLOBAL + BADGES
 // ============================================
 
 // ============================================
@@ -47,13 +47,12 @@ var FONT_MAP = {
 var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
 
 // ============================================
-// FONCTION PRINCIPALE : METTRE À JOUR L'AVATAR DANS TOUTES LES PAGES
+// FONCTION PRINCIPALE : METTRE À JOUR L'AVATAR
 // ============================================
 function updateHeaderAvatar() {
   var headerAvatar = document.getElementById('headerAvatar');
   if (!headerAvatar) return;
   
-  // Vérifier si on est sur une page publique
   var currentPath = window.location.pathname;
   var publicPages = ['index.html', 'login.html', 'register.html', 'about.html', 'guide.html', '404.html', '400.html', '401.html', '403.html', '500.html', '502.html', '503.html'];
   
@@ -635,7 +634,7 @@ function checkComebackBadge(studentId) {
     for (var k = lastStart; k < values.length; k++) lastAvg += values[k];
     lastAvg = lastAvg / Math.min(values.length, 2);
     
-    if (firstAvg < 10 && lastAvg > 14) {
+    if (lastAvg - firstAvg >= 5) {
       unlockBadgeById(studentId, 25);
       break;
     }
@@ -706,78 +705,47 @@ window.getAppVersion = function() {
   return APP_VERSION;
 };
 
-var AutoUpdate = {
-  currentVersion: '4.0.3',
-  updateUrl: 'https://smart-grade-v4.github.io/version.json',
-  apkUrl: 'https://smart-grade-v4.github.io/smart-grade-latest.apk',
-  checking: false,
-  downloading: false,
-  updateAvailable: false,
-  newVersion: null,
-  releaseNotes: null
-};
+// ============================================
+// GLOBAL BADGE FUNCTIONS
+// ============================================
 
-function checkForUpdates() {
-  if (AutoUpdate.checking) return;
-  if (AutoUpdate.downloading) return;
-  
-  AutoUpdate.checking = true;
-  
-  fetch(AutoUpdate.updateUrl + '?t=' + Date.now())
-    .then(function(response) {
-      if (!response.ok) throw new Error('HTTP ' + response.status);
-      return response.json();
-    })
-    .then(function(data) {
-      AutoUpdate.checking = false;
-      
-      if (data.version && data.version !== AutoUpdate.currentVersion) {
-        AutoUpdate.updateAvailable = true;
-        AutoUpdate.newVersion = data.version;
-        AutoUpdate.releaseNotes = data.releaseNotes || '';
-        
-        localStorage.setItem('smartgrade_update_available', 'true');
-        localStorage.setItem('smartgrade_new_version', AutoUpdate.newVersion);
-        localStorage.setItem('smartgrade_release_notes', AutoUpdate.releaseNotes);
-        
-        if ('Notification' in window && Notification.permission === 'granted') {
-          new Notification('SMART GRADE', {
-            body: 'Version ' + AutoUpdate.newVersion + ' disponible.',
-            icon: 'icon.svg',
-            silent: true
-          });
-        }
-      } else {
-        localStorage.setItem('smartgrade_update_available', 'false');
-      }
-    })
-    .catch(function(err) {
-      AutoUpdate.checking = false;
-    });
+function afterGradeAdded(studentId) {
+  if (studentId && typeof checkAndUnlockAllNewBadges === 'function') {
+    setTimeout(function() {
+      checkAndUnlockAllNewBadges(studentId);
+    }, 500);
+  }
 }
 
-function downloadUpdate() {
-  if (AutoUpdate.downloading) return;
-  
-  if (!AutoUpdate.updateAvailable) return;
-  
-  AutoUpdate.downloading = true;
-  
-  var link = document.createElement('a');
-  link.href = AutoUpdate.apkUrl;
-  link.download = 'smart-grade-update.apk';
-  link.style.display = 'none';
-  document.body.appendChild(link);
-  link.click();
-  
-  setTimeout(function() {
-    document.body.removeChild(link);
-    AutoUpdate.downloading = false;
-  }, 3000);
+function afterGradesSaved(studentId, count) {
+  if (studentId && typeof checkAndUnlockAllNewBadges === 'function') {
+    checkAndUnlockAllNewBadges(studentId);
+  }
 }
 
-setTimeout(checkForUpdates, 5000);
-setInterval(checkForUpdates, 10 * 60 * 1000);
+function afterLogin(studentId) {
+  if (studentId && typeof checkAndUnlockAllNewBadges === 'function') {
+    checkAndUnlockAllNewBadges(studentId);
+  }
+  if (studentId && typeof updateStreakOnVisit === 'function') {
+    updateStreakOnVisit(studentId);
+  }
+  if (studentId && typeof checkWelcomeBadge === 'function') {
+    checkWelcomeBadge(studentId);
+  }
+}
+
+function afterPhotoUploaded(studentId) {
+  if (studentId && typeof checkPhotoBadge === 'function') {
+    checkPhotoBadge(studentId);
+  }
+}
+
+function afterFlashcardAdded(studentId) {
+  if (studentId && typeof checkFlashcardBadges === 'function') {
+    checkFlashcardBadges(studentId);
+  }
+}
 
 // ============================================
 // INITIALISATION PRINCIPALE
@@ -835,53 +803,9 @@ setInterval(checkForUpdates, 10 * 60 * 1000);
     }
   });
 })();
-// ============================================
-// FONCTION GLOBALE POUR METTRE À JOUR L'AVATAR
-// ============================================
 
-window.updateHeaderAvatarGlobal = function() {
-  var headerAvatar = document.getElementById('headerAvatar');
-  if (!headerAvatar) return;
-  
-  try {
-    var stored = localStorage.getItem('smartgrade_current');
-    if (!stored) {
-      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
-      return;
-    }
-    
-    var user = JSON.parse(stored);
-    var profile = localStorage.getItem('smartgrade_profile_' + user.id);
-    
-    if (profile) {
-      var profileData = JSON.parse(profile);
-      if (profileData.avatarBase64 && profileData.avatarBase64 !== '' && profileData.avatarBase64.length > 100) {
-        headerAvatar.innerHTML = '<img src="' + profileData.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-        return;
-      }
-    }
-    
-    headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
-  } catch(e) {
-    headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
-  }
-};
-
-// Exécuter au chargement de chaque page
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', window.updateHeaderAvatarGlobal);
-} else {
-  window.updateHeaderAvatarGlobal();
-}
-
-// Écouter les changements dans localStorage
-window.addEventListener('storage', function(e) {
-  if (e.key && (e.key.indexOf('smartgrade_profile_') !== -1 || e.key === 'smartgrade_current')) {
-    window.updateHeaderAvatarGlobal();
-  }
-});
 // ============================================
-// FONCTION UNIQUE POUR L'AVATAR - SIMPLE ET FIABLE
+// FONCTION UNIQUE POUR L'AVATAR
 // ============================================
 
 function refreshAvatarInHeader() {
@@ -912,133 +836,34 @@ function refreshAvatarInHeader() {
   }
 }
 
-// Exécuter au chargement et à chaque changement de page
 refreshAvatarInHeader();
 
-// Écouter les changements dans localStorage
 window.addEventListener('storage', function(e) {
   if (e.key && (e.key.indexOf('smartgrade_profile_') !== -1 || e.key === 'smartgrade_current')) {
     refreshAvatarInHeader();
   }
 });
 
-// Forcer l'exécution quand la page devient visible
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden) refreshAvatarInHeader();
 });
 
-// Remplacer l'ancienne fonction pour la compatibilité
 window.updateHeaderAvatar = refreshAvatarInHeader;
 window.initHeaderProfile = refreshAvatarInHeader;
 
-// ============================================
-// SYSTÈME D'AVATAR INDÉPENDANT - SOLUTION FINALE
-// ============================================
+// Export global functions
+window.afterGradeAdded = afterGradeAdded;
+window.afterGradesSaved = afterGradesSaved;
+window.afterLogin = afterLogin;
+window.afterPhotoUploaded = afterPhotoUploaded;
+window.afterFlashcardAdded = afterFlashcardAdded;
+window.checkAndUnlockAllNewBadges = checkAndUnlockAllNewBadges;
+window.unlockBadgeById = unlockBadgeById;
+window.trackThemeUsage = trackThemeUsage;
+window.trackFontUsage = trackFontUsage;
+window.incrementTimetableView = incrementTimetableView;
+window.checkFlashcardBadges = checkFlashcardBadges;
+window.checkPhotoBadge = checkPhotoBadge;
+window.checkWelcomeBadge = checkWelcomeBadge;
 
-(function() {
-  
-  // Sauvegarder l'avatar
-  window.saveAvatarGlobal = function(base64) {
-    try {
-      var user = localStorage.getItem('smartgrade_current');
-      if (!user) return false;
-      var userData = JSON.parse(user);
-      
-      var profile = localStorage.getItem('smartgrade_profile_' + userData.id);
-      var profileData = profile ? JSON.parse(profile) : {};
-      profileData.avatarBase64 = base64;
-      localStorage.setItem('smartgrade_profile_' + userData.id, JSON.stringify(profileData));
-      
-      // Sauvegarder aussi dans une clé globale
-      localStorage.setItem('smartgrade_global_avatar_' + userData.id, base64);
-      
-      // Mettre à jour l'affichage
-      updateAllAvatars(base64);
-      
-      return true;
-    } catch(e) {
-      console.error('Save avatar error:', e);
-      return false;
-    }
-  };
-  
-  // Charger l'avatar
-  window.loadAvatarGlobal = function() {
-    try {
-      var user = localStorage.getItem('smartgrade_current');
-      if (!user) return '';
-      var userData = JSON.parse(user);
-      
-      // D'abord essayer la clé globale
-      var globalAvatar = localStorage.getItem('smartgrade_global_avatar_' + userData.id);
-      if (globalAvatar && globalAvatar.length > 100) return globalAvatar;
-      
-      // Sinon essayer le profil
-      var profile = localStorage.getItem('smartgrade_profile_' + userData.id);
-      if (profile) {
-        var profileData = JSON.parse(profile);
-        if (profileData.avatarBase64 && profileData.avatarBase64.length > 100) {
-          localStorage.setItem('smartgrade_global_avatar_' + userData.id, profileData.avatarBase64);
-          return profileData.avatarBase64;
-        }
-      }
-      
-      return '';
-    } catch(e) {
-      return '';
-    }
-  };
-  
-  // Mettre à jour tous les affichages d'avatar
-  function updateAllAvatars(base64) {
-    // Mettre à jour l'en-tête
-    var headerAvatar = document.getElementById('headerAvatar');
-    if (headerAvatar) {
-      if (base64 && base64.length > 100) {
-        headerAvatar.innerHTML = '<img src="' + base64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
-      } else {
-        headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
-      }
-    }
-    
-    // Mettre à jour la prévisualisation sur la page profil
-    var avatarPreview = document.getElementById('avatarPreview');
-    if (avatarPreview) {
-      if (base64 && base64.length > 100) {
-        avatarPreview.innerHTML = '<img src="' + base64 + '">';
-      } else {
-        avatarPreview.innerHTML = '<i class="fas fa-user-graduate"></i>';
-      }
-    }
-  }
-  
-  // Initialiser l'avatar au chargement
-  function initAvatar() {
-    var avatar = loadAvatarGlobal();
-    updateAllAvatars(avatar);
-  }
-  
-  // Exécuter au chargement
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initAvatar);
-  } else {
-    initAvatar();
-  }
-  
-  // Écouter les changements
-  window.addEventListener('storage', function(e) {
-    if (e.key && e.key.indexOf('smartgrade_global_avatar_') !== -1) {
-      updateAllAvatars(e.newValue);
-    }
-  });
-  
-  // Rafraîchir quand la page devient visible
-  document.addEventListener('visibilitychange', function() {
-    if (!document.hidden) {
-      var avatar = loadAvatarGlobal();
-      updateAllAvatars(avatar);
-    }
-  });
-  
-})();
 console.log('SMART GRADE v4.0 - App initialized');

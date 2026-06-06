@@ -3,7 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  
+  <!-- PWA META TAGS -->
+  <meta name="theme-color" content="#0f3b48">
+  <meta name="msapplication-navbutton-color" content="#0f3b48">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SMART GRADE">
+  
   <title>SMART GRADE - Home</title>
+  
+  <!-- PWA ICONS Android -->
+  <link rel="icon" type="image/png" sizes="48x48" href="./icons/android/launchericon-48x48.png">
+  <link rel="icon" type="image/png" sizes="72x72" href="./icons/android/launchericon-72x72.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="./icons/android/launchericon-96x96.png">
+  <link rel="icon" type="image/png" sizes="144x144" href="./icons/android/launchericon-144x144.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/android/launchericon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/android/launchericon-512x512.png">
+  
+  <!-- Apple Touch Icons iOS -->
+  <link rel="apple-touch-icon" sizes="57x57" href="./icons/ios/57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="./icons/ios/60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="./icons/ios/72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="./icons/ios/76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="./icons/ios/114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="./icons/ios/120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="./icons/ios/144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./icons/ios/152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="./icons/ios/167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/ios/180.png">
+  <link rel="apple-touch-icon" sizes="1024x1024" href="./icons/ios/1024.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
@@ -12,8 +42,8 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f3b48">
-<style>
+  
+  <style>
     .hero-card {
       text-align: center;
       padding: 20px;
@@ -68,11 +98,6 @@
       letter-spacing: 1px;
     }
     
-    /* ============================================ */
-    /* EXACTEMENT LE MEME STYLE QUE LOGIN.HTML */
-    /* AVEC HAUTEUR FIXE ET SCROLL */
-    /* ============================================ */
-    
     .student-selector-label {
       display: block;
       text-align: left;
@@ -95,7 +120,6 @@
       margin-bottom: 8px;
     }
     
-    /* CONTENEUR À HAUTEUR FIXE - COMME LOGIN */
     .student-list-scroll {
       display: flex;
       flex-direction: column;
@@ -108,7 +132,6 @@
       background: rgba(0,0,0,0.015);
     }
     
-    /* Custom scrollbar */
     .student-list-scroll::-webkit-scrollbar {
       width: 3px;
     }
@@ -330,7 +353,7 @@
       <i class="fas fa-exclamation-triangle" style="font-size:50px;color:#e74c3c;margin-bottom:12px;"></i>
       <h3>Delete Account</h3>
       <p style="font-size:0.7rem;color:var(--text-light);margin-bottom:16px;">Enter PIN to confirm</p>
-      <input type="text" id="deletePin" maxlength="4" placeholder="****" style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--border);text-align:center;font-size:1.2rem;background:var(--card-bg);color:var(--text);margin-bottom:16px;">
+      <input type="password" id="deletePin" maxlength="4" placeholder="****" inputmode="numeric" pattern="\d*" style="width:100%;padding:12px;border-radius:12px;border:2px solid var(--border);text-align:center;font-size:1.2rem;background:var(--card-bg);color:var(--text);margin-bottom:16px;">
       <div style="display:flex;gap:10px;">
         <button class="btn-cancel-modal" style="flex:1;padding:12px;border-radius:30px;border:1px solid var(--border);background:transparent;cursor:pointer;">Cancel</button>
         <button class="btn-confirm-delete" style="flex:1;padding:12px;border-radius:30px;background:#e74c3c;color:white;border:none;cursor:pointer;">Delete</button>
@@ -351,10 +374,6 @@
   <script src="js/app.js"></script>
   
   <script>
-    // ============================================
-    // INDEX PAGE - MEME STYLE QUE LOGIN
-    // ============================================
-    
     var currentDeleteId = null;
     var showAllAccounts = false;
     var allStudents = [];
@@ -421,7 +440,6 @@
         
         listDiv.innerHTML = html;
         
-        // Ajouter l'effet de survol/click comme sur login
         document.querySelectorAll('.student-item-row').forEach(function(row) {
           row.addEventListener('click', function(e) {
             if (e.target.classList.contains('delete-btn-row')) return;
@@ -457,13 +475,15 @@
       currentDeleteId = id;
       var modal = document.getElementById('deleteModal');
       modal.style.display = 'flex';
-      document.getElementById('deletePin').value = '';
-      document.getElementById('deletePin').focus();
+      var pinInput = document.getElementById('deletePin');
+      pinInput.value = '';
+      pinInput.focus();
     }
     
     function closeDeleteModal() {
       document.getElementById('deleteModal').style.display = 'none';
       currentDeleteId = null;
+      document.getElementById('deletePin').value = '';
     }
     
     function confirmDelete() {
@@ -504,23 +524,25 @@
       }, 3000);
     }
     
-    // Event listeners
     document.getElementById('deleteModal').addEventListener('click', function(e) {
       if (e.target === this) closeDeleteModal();
     });
     
     document.querySelector('.btn-cancel-modal').onclick = closeDeleteModal;
     document.querySelector('.btn-confirm-delete').onclick = confirmDelete;
+    
     document.getElementById('deletePin').addEventListener('keypress', function(e) {
       if (e.key === 'Enter') confirmDelete();
     });
     
-    // Export functions globally
+    document.getElementById('deletePin').addEventListener('input', function(e) {
+      this.value = this.value.replace(/[^0-9]/g, '');
+    });
+    
     window.showDeleteModal = showDeleteModal;
     window.closeDeleteModal = closeDeleteModal;
     window.confirmDelete = confirmDelete;
     
-    // Initialize
     renderStudentList();
     initMobileMenu();
     initThemeSelector();

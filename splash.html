@@ -5,7 +5,32 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="SMART GRADE">
+  <meta name="theme-color" content="#0f3b48">
   <title>SMART GRADE</title>
+  
+  <!-- PWA Icons Android -->
+  <link rel="icon" type="image/png" sizes="48x48" href="./icons/android/launchericon-48x48.png">
+  <link rel="icon" type="image/png" sizes="72x72" href="./icons/android/launchericon-72x72.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="./icons/android/launchericon-96x96.png">
+  <link rel="icon" type="image/png" sizes="144x144" href="./icons/android/launchericon-144x144.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/android/launchericon-192x192.png">
+  <link rel="icon" type="image/png" sizes="512x512" href="./icons/android/launchericon-512x512.png">
+  
+  <!-- Apple Touch Icons iOS -->
+  <link rel="apple-touch-icon" sizes="57x57" href="./icons/ios/57.png">
+  <link rel="apple-touch-icon" sizes="60x60" href="./icons/ios/60.png">
+  <link rel="apple-touch-icon" sizes="72x72" href="./icons/ios/72.png">
+  <link rel="apple-touch-icon" sizes="76x76" href="./icons/ios/76.png">
+  <link rel="apple-touch-icon" sizes="114x114" href="./icons/ios/114.png">
+  <link rel="apple-touch-icon" sizes="120x120" href="./icons/ios/120.png">
+  <link rel="apple-touch-icon" sizes="144x144" href="./icons/ios/144.png">
+  <link rel="apple-touch-icon" sizes="152x152" href="./icons/ios/152.png">
+  <link rel="apple-touch-icon" sizes="167x167" href="./icons/ios/167.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/ios/180.png">
+  <link rel="apple-touch-icon" sizes="1024x1024" href="./icons/ios/1024.png">
+  
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
@@ -14,7 +39,6 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f3b48">
   <style>
     /* Cacher le header et le sidebar pour le splash */
     .mobile-header,
@@ -109,7 +133,6 @@
       font-size: 0.7rem;
     }
     
-    /* LOADER 1 - Original (cercle) */
     .loader-wrapper {
       margin: 20px auto;
       display: flex;
@@ -150,7 +173,6 @@
       100% { stroke-dashoffset: -100; }
     }
     
-    /* LOADER 2 - Particules orbitant */
     .loader2-container {
       --uib-size: 45px;
       --uib-color: var(--primary);
@@ -218,7 +240,6 @@
       75% { transform: translate(0%) scale(1); opacity: 1; }
     }
     
-    /* LOADER 3 - Dots qui sautent */
     .loader3-container {
       --uib-size: 60px;
       --uib-color: var(--primary);
@@ -270,7 +291,6 @@
     .loader3-dot:nth-child(7) { left: 75%; top: 50%; }
     .loader3-dot:nth-child(7)::before { animation-delay: 0s; }
     
-    /* LOADER 4 - Slices */
     .loader4-container {
       --uib-size: 45px;
       --uib-color: var(--primary);
@@ -323,7 +343,6 @@
       75% { transform: translateX(0%) scale(1); opacity: 1; }
     }
     
-    /* LOADER 5 - Path */
     .loader5-container {
       --uib-size: 55px;
       --uib-color: var(--primary);
@@ -421,7 +440,8 @@
     <div class="splash-container">
       <div class="glass-card splash-card">
         
-        <img src="icon.svg" alt="SMART GRADE" class="splash-logo">
+        <!-- Logo SVG depuis le dossier icons -->
+        <img src="./icons/icon.svg" alt="SMART GRADE" class="splash-logo">
         
         <div class="splash-title">SMART GRADE</div>
         <div class="splash-subtitle">GRADE MANAGEMENT SYSTEM</div>
@@ -432,7 +452,6 @@
           <div class="splash-info-item"><i class="fas fa-calendar-alt"></i><span>2025-2026</span></div>
         </div>
         
-        <!-- LOADER AFFICHE ALEATOIREMENT -->
         <div id="loaderContainer" class="loader-wrapper"></div>
         
         <div class="splash-progress-text" id="progressText">
@@ -454,10 +473,6 @@
   <script src="js/app.js"></script>
 
   <script>
-    // ============================================
-    // SYSTEME DE LOADER ALEATOIRE - 5 LOADERS
-    // ============================================
-    
     var LOADERS = [
       {
         name: 'loader1',
@@ -484,9 +499,6 @@
     var selectedLoader = LOADERS[Math.floor(Math.random() * LOADERS.length)];
     document.getElementById('loaderContainer').innerHTML = selectedLoader.html;
     
-    // ============================================
-    // THÈME ALÉATOIRE
-    // ============================================
     var THEMES_LIST = [
       'default', 'crimson', 'forest', 'ocean', 'royal',
       'sunset', 'rose', 'turquoise', 'amber', 'graphite',
@@ -502,9 +514,6 @@
     document.body.classList.add('theme-' + selectedTheme);
     localStorage.setItem('smartgrade_splash_theme', selectedTheme);
 
-    // ============================================
-    // TEXTE PROGRESSIF
-    // ============================================
     var progressMessages = [
       'Initializing system',
       'Loading modules',
@@ -532,9 +541,6 @@
       }
     }, intervalTime);
 
-    // ============================================
-    // REDIRECTION
-    // ============================================
     setTimeout(function() {
       document.body.style.transition = 'opacity 0.6s ease';
       document.body.style.opacity = '0';
@@ -543,9 +549,6 @@
       }, 600);
     }, totalDuration + 500);
 
-    // ============================================
-    // INITIALISATION
-    // ============================================
     if (typeof initParticles === 'function') {
       initParticles();
     }

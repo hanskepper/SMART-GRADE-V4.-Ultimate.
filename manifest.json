@@ -1,13 +1,13 @@
 {
   "name": "SMART GRADE - GBHS Foumban",
   "short_name": "SMART GRADE",
-  "description": "Ultimate Grade Management System",
-  "version": "4.0",
+  "description": "Ultimate Grade Management System for SIN GBHS FOUMBAN Form 4B Science",
+  "version": "4.0.3",
   "start_url": "./splash.html",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#0a1a2a",
+  "background_color": "#0f3b48",
   "theme_color": "#0f3b48",
   "lang": "en",
   "scope": "./",
@@ -15,30 +15,56 @@
   "shortcuts": [
     {
       "name": "Dashboard",
-      "url": "./dashboard.html"
+      "url": "./dashboard.html",
+      "icons": [{ "src": "./icons/android/launchericon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Add Grade",
-      "url": "./add-grade.html"
+      "url": "./add-grade.html",
+      "icons": [{ "src": "./icons/android/launchericon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Statistics",
-      "url": "./statistics.html"
+      "url": "./statistics.html",
+      "icons": [{ "src": "./icons/android/launchericon-96x96.png", "sizes": "96x96" }]
     }
   ],
   "icons": [
     {
-      "src": "icon.svg",
-      "sizes": "48x48 72x72 96x96 128x128 144x144 152x152 192x192 384x384 512x512",
-      "type": "image/svg+xml",
+      "src": "./icons/android/launchericon-48x48.png",
+      "sizes": "48x48",
+      "type": "image/png",
       "purpose": "any"
     },
     {
-      "src": "icon.svg",
-  
-    "sizes": "512x512",
-      "type": "image/svg+xml",
-      "purpose": "maskable"
+      "src": "./icons/android/launchericon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "./icons/android/launchericon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/android/launchericon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/android/launchericon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/android/launchericon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

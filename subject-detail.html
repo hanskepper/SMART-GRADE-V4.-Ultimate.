@@ -42,13 +42,52 @@
 <body>
   <div class="particles" id="particles"></div>
   <div class="app-container">
-    <div class="mobile-header"><button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button><div class="header-logo"><i class="fas fa-book-open"></i><span id="pageTitle">SUBJECT</span></div><div style="display:flex;align-items:center;gap:8px;"><a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a><div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div></div></div>
-    <div class="sheet-overlay" id="sheetOverlay"></div><div class="bottom-sheet" id="bottomSheet"><div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div><div class="bottom-sheet-content"><div class="theme-grid-rect" id="themeGrid"></div><div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div></div></div>
-    <div class="sidebar-menu" id="sidebarMenu"><div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div><nav class="sidebar-nav">
-    <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
-    <a href="subjects.html" class="nav-item"><i class="fas fa-layer-group"></i> Subjects</a>
-    <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a></nav></div>
+    <div class="mobile-header">
+      <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
+      <div class="header-logo"><i class="fas fa-book-open"></i><span id="pageTitle">SUBJECT</span></div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <a href="profile.html"><div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div></a>
+        <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
+      </div>
+    </div>
+    
+    <!-- SIDEBAR MENU DYNAMIQUE -->
+    <div class="sidebar-menu" id="sidebarMenu">
+      <div class="sidebar-header">
+        <h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3>
+        <button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button>
+      </div>
+      <nav class="sidebar-nav" id="sidebarNav">
+        <!-- Dashboard lien -->
+        <a href="dashboard.html" class="nav-item">
+          <i class="fas fa-chalkboard-user"></i> Dashboard
+        </a>
+        
+        <!-- Subjects lien -->
+        <a href="subjects.html" class="nav-item">
+          <i class="fas fa-layer-group"></i> Subjects
+        </a>
+        
+        <!-- SUJETS DYNAMIQUES -->
+        <div id="dynamicSubjectsMenu" style="margin-top: 8px; margin-bottom: 8px;"></div>
+        
+        <!-- Logout -->
+        <a href="#" class="nav-item" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+      </nav>
+    </div>
     <div class="overlay" id="overlay"></div>
+    
     <main class="main-content">
       
       <div class="detail-header" style="background:linear-gradient(135deg,var(--primary),var(--secondary));">
@@ -64,10 +103,8 @@
         <div class="detail-term-card"><div class="lbl">Yearly</div><div class="val" id="yAvg">0.00</div></div>
       </div>
       
-      <!-- STATISTIQUES + GRAPHIQUE (juste après les termes) -->
       <div id="statsContainer"></div>
       
-      <!-- LISTE DES NOTES PAR SEQUENCE -->
       <div id="gradesContainer"></div>
       
       <a href="add-grade.html" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Grade</a>
@@ -86,16 +123,136 @@
     var subjectId = parseInt(new URLSearchParams(location.search).get('id'));
     var currentUser = null;
     var trendChart = null;
+    var currentSubjectName = '';
+    
+    // Liste des 14 sujets dans l'ORDRE CORRECT (comme dans subjects.html et settings)
+    var ALL_SUBJECTS_LIST = [
+      { id: 1, name: "COMPUTER SCIENCES", icon: "fa-laptop-code" },
+      { id: 2, name: "MATHEMATICS", icon: "fa-square-root-variable" },
+      { id: 3, name: "CHEMISTRY", icon: "fa-flask" },
+      { id: 4, name: "HUMAN BIOLOGY", icon: "fa-dna" },
+      { id: 5, name: "GEOLOGY", icon: "fa-mountain" },
+      { id: 6, name: "PHYSICS", icon: "fa-atom" },
+      { id: 7, name: "ADDITIONAL MATHEMATICS", icon: "fa-calculator" },
+      { id: 8, name: "BIOLOGY", icon: "fa-leaf" },
+      { id: 9, name: "ECONOMICS", icon: "fa-chart-line" },
+      { id: 10, name: "ENGLISH LANGUAGE", icon: "fa-language" },
+      { id: 11, name: "GEOGRAPHY", icon: "fa-earth-africa" },
+      { id: 12, name: "CITIZENSHIP", icon: "fa-landmark" },
+      { id: 13, name: "FRENCH", icon: "fa-flag" },
+      { id: 14, name: "FOOD AND NUTRITION", icon: "fa-apple-whole" }
+    ];
+    
+    // Fonction pour obtenir les sujets sélectionnés par l'utilisateur (tous trimestres confondus)
+    // et les trier selon l'ordre de ALL_SUBJECTS_LIST
+    function getAllSelectedSubjectsInOrder() {
+      if (!currentUser) return [];
+      
+      var selectedIds = {};
+      
+      // Récupérer les sujets sélectionnés pour chaque trimestre
+      for (var term = 1; term <= 3; term++) {
+        var selected = getStudentSelectedSubjects(currentUser.id, term);
+        for (var i = 0; i < selected.length; i++) {
+          selectedIds[selected[i]] = true;
+        }
+      }
+      
+      // Filtrer les sujets selon l'ordre de ALL_SUBJECTS_LIST
+      var subjects = [];
+      for (var i = 0; i < ALL_SUBJECTS_LIST.length; i++) {
+        var subject = ALL_SUBJECTS_LIST[i];
+        if (selectedIds[subject.id]) {
+          subjects.push(subject);
+        }
+      }
+      
+      return subjects;
+    }
+    
+    // Fonction pour construire le menu dynamique des sujets
+    // Le sujet actif est placé en PREMIER
+    function buildDynamicSubjectsMenu() {
+      var container = document.getElementById('dynamicSubjectsMenu');
+      if (!container) return;
+      
+      var allSubjects = getAllSelectedSubjectsInOrder();
+      
+      if (allSubjects.length === 0) {
+        container.innerHTML = '<div style="padding: 12px; font-size: 0.7rem; color: var(--text-light); text-align: center;">No subjects selected</div>';
+        return;
+      }
+      
+      // Séparer le sujet actif des autres
+      var activeSubject = null;
+      var otherSubjects = [];
+      
+      for (var i = 0; i < allSubjects.length; i++) {
+        if (allSubjects[i].id === subjectId) {
+          activeSubject = allSubjects[i];
+        } else {
+          otherSubjects.push(allSubjects[i]);
+        }
+      }
+      
+      // Si le sujet actif n'est pas trouvé (cas rare), prendre le premier
+      if (!activeSubject && allSubjects.length > 0) {
+        activeSubject = allSubjects[0];
+        subjectId = activeSubject.id;
+      }
+      
+      var html = '<div style="font-size:0.7rem; font-weight:700; color:var(--primary); margin-bottom:8px; padding-left:12px;">MY SUBJECTS</div>';
+      
+      // Ajouter le sujet actif en PREMIER (avec classe active)
+      if (activeSubject) {
+        html += '<a href="subject-detail.html?id=' + activeSubject.id + '" class="nav-item active">' +
+          '<i class="fas ' + activeSubject.icon + '"></i> ' + activeSubject.name +
+        '</a>';
+      }
+      
+      // Ajouter les autres sujets
+      for (var i = 0; i < otherSubjects.length; i++) {
+        var s = otherSubjects[i];
+        html += '<a href="subject-detail.html?id=' + s.id + '" class="nav-item">' +
+          '<i class="fas ' + s.icon + '"></i> ' + s.name +
+        '</a>';
+      }
+      
+      container.innerHTML = html;
+    }
     
     function loadSubject() {
       currentUser = requireAuth();
       if (!currentUser) return;
       
-      var subjectObj = DEFAULT_SUBJECTS.find(function(s) { return s.id === subjectId; });
-      if (!subjectObj) { location = 'subjects.html'; return; }
+      var allSubjects = getAllSelectedSubjectsInOrder();
       
+      // Vérifier si le sujet existe dans les sujets sélectionnés
+      var subjectObj = null;
+      for (var i = 0; i < allSubjects.length; i++) {
+        if (allSubjects[i].id === subjectId) {
+          subjectObj = allSubjects[i];
+          break;
+        }
+      }
+      
+      if (!subjectObj && allSubjects.length > 0) {
+        // Rediriger vers le premier sujet sélectionné
+        window.location.href = 'subject-detail.html?id=' + allSubjects[0].id;
+        return;
+      }
+      
+      if (!subjectObj) {
+        window.location.href = 'subjects.html';
+        return;
+      }
+      
+      currentSubjectName = subjectObj.name;
       document.getElementById('pageTitle').innerHTML = subjectObj.name;
       document.getElementById('subjectName').innerHTML = subjectObj.name;
+      
+      // Construire le menu dynamique (sujet actif en premier)
+      buildDynamicSubjectsMenu();
       
       var allGrades = getStudentGrades(currentUser.id);
       var grades = allGrades.filter(function(g) { return g.subjectId === subjectId; });
@@ -110,10 +267,8 @@
       document.getElementById('yAvg').innerHTML = formatNumber(yearly);
       document.getElementById('yearlyAvg').innerHTML = formatNumber(yearly);
       
-      // Afficher les statistiques et graphique (juste après les termes)
       addSubjectStats(grades, subjectObj.name);
       
-      // Afficher les notes par séquence
       var gradesHtml = '';
       for (var seq = 1; seq <= 6; seq++) {
         var seqGrades = grades.filter(function(g) { return g.sequenceId === seq; });
@@ -128,7 +283,7 @@
             gradesHtml += '<div class="grade-item">' +
               '<span><i class="fas fa-calendar"></i> ' + formatDate(g.date) + '</span>' +
               '<span class="val">' + formatNumber(g.value) + '/20</span>' +
-              '<button onclick="deleteGrade(' + g.id + ', ' + g.value + ', \'' + subjectObj.name + '\')" style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:8px;"><i class="fas fa-trash"></i></button>' +
+              '<button onclick="deleteGrade(' + g.id + ', ' + g.value + ', \'' + subjectObj.name.replace(/'/g, "\\'") + '\')" style="background:none;border:none;color:#e74c3c;cursor:pointer;padding:8px;"><i class="fas fa-trash"></i></button>' +
             '</div>';
           }
         }
@@ -180,7 +335,6 @@
       var ctx = canvas.getContext('2d');
       var isDark = document.body.classList.contains('night-mode');
       
-      // Couleurs adaptées au mode clair/sombre
       var textColor = isDark ? '#e0e0e0' : '#1a2a3a';
       var gridColor = isDark ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)';
       var lineColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0f3b48';
@@ -189,7 +343,7 @@
       trendChart = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: values.map(function(_, i) { return 'S' + (i + 1); }),
+          labels: values.map(function(_, i) { return 'G' + (i + 1); }),
           datasets: [{
             label: 'Grade',
             data: values,

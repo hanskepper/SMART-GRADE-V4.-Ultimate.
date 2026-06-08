@@ -55,7 +55,7 @@
       font-size: 0.7rem;
     }
     .grade-table input {
-      width: 70px;
+      width: 80px;
       padding: 8px;
       border-radius: 8px;
       border: 2px solid var(--border);
@@ -70,6 +70,10 @@
       outline: none;
       border-color: var(--primary);
       box-shadow: 0 0 0 3px rgba(15,59,72,0.1);
+    }
+    .grade-table input.invalid {
+      border-color: #e74c3c;
+      background: rgba(231,76,60,0.05);
     }
     .grade-table .avg-col {
       font-weight: 800;
@@ -111,9 +115,28 @@
       gap: 12px;
       margin-top: 16px;
     }
+    .badge-notification {
+      position: fixed;
+      bottom: 100px;
+      left: 16px;
+      right: 16px;
+      background: linear-gradient(135deg, #f39c12, #e67e22);
+      color: white;
+      padding: 12px 16px;
+      border-radius: 30px;
+      text-align: center;
+      font-size: 0.75rem;
+      z-index: 1000;
+      animation: slideUp 0.3s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
     @media (max-width: 600px) {
       .grade-table input {
-        width: 55px;
+        width: 65px;
         padding: 6px;
         font-size: 0.7rem;
       }
@@ -197,6 +220,274 @@
     var currentTerm = 1;
     var subjectColors = ['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
     
+    // Convertir virgule en point et valider
+    function validateAndConvertGrade(value) {
+      if (value === '' || value === null || value === undefined) return '';
+      
+      var strValue = String(value).trim();
+      strValue = strValue.replace(',', '.');
+      
+      var num = parseFloat(strValue);
+      
+      if (isNaN(num)) return '';
+      if (num < 0) return '0';
+      if (num > 20) return '20';
+      
+      return Math.round(num * 100) / 100;
+    }
+    
+    function isValidGrade(value) {
+      if (value === '' || value === null || value === undefined) return false;
+      var num = parseFloat(String(value).replace(',', '.'));
+      return !isNaN(num) && num >= 0 && num <= 20;
+    }
+    
+    // ============================================
+    // BADGE 25: COMEBACK KING
+    // Condition simple: amélioration de 5 points à n'importe quel moment
+    // ============================================
+    function checkComebackKingBadge() {
+      if (!currentUser || !currentUser.id) return false;
+      
+      var grades = getStudentGrades(currentUser.id);
+      if (grades.length < 2) return false;
+      
+      var comebackDetected = false;
+      var subjects = {};
+      
+      // Grouper les notes par matière
+      for (var i = 0; i < grades.length; i++) {
+        var g = grades[i];
+        if (!subjects[g.subjectId]) subjects[g.subjectId] = [];
+        subjects[g.subjectId].push({
+          sequenceId: g.sequenceId,
+          value: g.value
+        });
+      }
+      
+      // Pour chaque matière, vérifier toutes les paires de notes
+      for (var subjId in subjects) {
+        var notes = subjects[subjId];
+        
+        // Trier par séquence
+        notes.sort(function(a, b) {
+          return a.sequenceId - b.sequenceId;
+        });
+        
+        // Vérifier chaque paire de séquences (l'une après l'autre)
+        for (var i = 1; i < notes.length; i++) {
+          var prevValue = notes[i-1].value;
+          var currentValue = notes[i].value;
+          var improvement = currentValue - prevValue;
+          
+          // Si amélioration d'au moins 5 points
+          if (improvement >= 5) {
+            comebackDetected = true;
+            console.log('[Comeback King] Détecté! Matière:', subjId, 'Amélioration:', prevValue, '→', currentValue, '(+' + improvement + ')');
+            break;
+          }
+        }
+        if (comebackDetected) break;
+      }
+      
+      if (comebackDetected) {
+        if (unlockBadgeById(currentUser.id, 25)) {
+          showBadgeNotification(['Comeback King']);
+          return true;
+        }
+      }
+      return false;
+    }
+    
+    // Fonction pour vérifier et débloquer TOUS les badges liés aux notes
+    function checkAllGradeBadges() {
+      if (!currentUser || !currentUser.id) return;
+      
+      var allGrades = getStudentGrades(currentUser.id);
+      var totalGrades = allGrades.length;
+      var badgesUnlocked = [];
+      
+      console.log('[Badges] Vérification après sauvegarde - Total grades:', totalGrades);
+      
+      // BADGE 1: First Grade
+      if (totalGrades >= 1) {
+        if (unlockBadgeById(currentUser.id, 1)) badgesUnlocked.push('First Grade');
+      }
+      
+      // BADGE 2: Perfect Score
+      var hasPerfectScore = false;
+      for (var i = 0; i < allGrades.length; i++) {
+        if (allGrades[i].value >= 19.95) {
+          hasPerfectScore = true;
+          break;
+        }
+      }
+      if (hasPerfectScore) {
+        if (unlockBadgeById(currentUser.id, 2)) badgesUnlocked.push('Perfect Score');
+      }
+      
+      // BADGE 4: Bookworm
+      if (totalGrades >= 10) {
+        if (unlockBadgeById(currentUser.id, 4)) badgesUnlocked.push('Bookworm');
+      }
+      
+      // BADGE 5: Dedication
+      if (totalGrades >= 30) {
+        if (unlockBadgeById(currentUser.id, 5)) badgesUnlocked.push('Dedication');
+      }
+      
+      // BADGE 12: Study Progress
+      if (totalGrades >= 25) {
+        if (unlockBadgeById(currentUser.id, 12)) badgesUnlocked.push('Study Progress');
+      }
+      
+      // BADGE 14: Excellent Result
+      if (hasPerfectScore) {
+        if (unlockBadgeById(currentUser.id, 14)) badgesUnlocked.push('Excellent Result');
+      }
+      
+      // BADGE 3: High Average
+      var yearlyAvg = calculateYearlyAverage(currentUser.id);
+      if (yearlyAvg >= 12) {
+        if (unlockBadgeById(currentUser.id, 3)) badgesUnlocked.push('High Average');
+      }
+      
+      // BADGE 6: Scholar
+      var achievements = getStudentAchievements(currentUser.id);
+      var unlockedCount = 0;
+      for (var i = 0; i < achievements.length; i++) {
+        if (achievements[i].unlocked) unlockedCount++;
+      }
+      if (unlockedCount >= 8) {
+        if (unlockBadgeById(currentUser.id, 6)) badgesUnlocked.push('Scholar');
+      }
+      
+      // BADGE 7: Rising Star
+      var t1 = calculateStudentTermAverage(currentUser.id, 1);
+      var t2 = calculateStudentTermAverage(currentUser.id, 2);
+      var t3 = calculateStudentTermAverage(currentUser.id, 3);
+      if ((t2 - t1 >= 1) || (t3 - t2 >= 1)) {
+        if (unlockBadgeById(currentUser.id, 7)) badgesUnlocked.push('Rising Star');
+      }
+      
+      // BADGE 8: Unstoppable
+      if (t1 > 0 && t2 > 0 && t3 > 0) {
+        if (unlockBadgeById(currentUser.id, 8)) badgesUnlocked.push('Unstoppable');
+      }
+      
+      // BADGE 9: Subject Completion
+      for (var term = 1; term <= 3; term++) {
+        var selected = getStudentSelectedSubjects(currentUser.id, term);
+        var allHaveGrades = true;
+        for (var j = 0; j < selected.length; j++) {
+          var hasGrade = false;
+          for (var k = 0; k < allGrades.length; k++) {
+            if (allGrades[k].subjectId === selected[j]) {
+              hasGrade = true;
+              break;
+            }
+          }
+          if (!hasGrade) {
+            allHaveGrades = false;
+            break;
+          }
+        }
+        if (allHaveGrades && selected.length > 0) {
+          if (unlockBadgeById(currentUser.id, 9)) badgesUnlocked.push('Subject Completion');
+          break;
+        }
+      }
+      
+      // BADGE 10: Active Semester
+      for (var term = 1; term <= 3; term++) {
+        var selected = getStudentSelectedSubjects(currentUser.id, term);
+        var allComplete = true;
+        var seq1 = (term - 1) * 2 + 1;
+        var seq2 = seq1 + 1;
+        for (var j = 0; j < selected.length; j++) {
+          var hasSeq1 = false;
+          var hasSeq2 = false;
+          for (var k = 0; k < allGrades.length; k++) {
+            if (allGrades[k].subjectId === selected[j] && allGrades[k].sequenceId === seq1) hasSeq1 = true;
+            if (allGrades[k].subjectId === selected[j] && allGrades[k].sequenceId === seq2) hasSeq2 = true;
+          }
+          if (!hasSeq1 || !hasSeq2) {
+            allComplete = false;
+            break;
+          }
+        }
+        if (allComplete && selected.length > 0) {
+          if (unlockBadgeById(currentUser.id, 10)) badgesUnlocked.push('Active Semester');
+          break;
+        }
+      }
+      
+      // BADGE 11: Discipline Mastery
+      var subjectAverages = {};
+      for (var i = 0; i < allGrades.length; i++) {
+        if (!subjectAverages[allGrades[i].subjectId]) subjectAverages[allGrades[i].subjectId] = [];
+        subjectAverages[allGrades[i].subjectId].push(allGrades[i].value);
+      }
+      for (var subjId in subjectAverages) {
+        var sum = 0;
+        for (var j = 0; j < subjectAverages[subjId].length; j++) sum += subjectAverages[subjId][j];
+        var avg = sum / subjectAverages[subjId].length;
+        if (avg >= 15) {
+          if (unlockBadgeById(currentUser.id, 11)) badgesUnlocked.push('Discipline Mastery');
+          break;
+        }
+      }
+      
+      // BADGE 13: Full Achievement
+      var allRequiredUnlocked = true;
+      for (var badgeId = 1; badgeId <= 14; badgeId++) {
+        var found = false;
+        for (var i = 0; i < achievements.length; i++) {
+          if (achievements[i].id === badgeId && achievements[i].unlocked) {
+            found = true;
+            break;
+          }
+        }
+        if (!found) {
+          allRequiredUnlocked = false;
+          break;
+        }
+      }
+      if (allRequiredUnlocked) {
+        if (unlockBadgeById(currentUser.id, 13)) badgesUnlocked.push('Full Achievement');
+      }
+      
+      // BADGE 25: COMEBACK KING (appel séparé)
+      checkComebackKingBadge();
+      
+      // Afficher les notifications pour les badges débloqués
+      if (badgesUnlocked.length > 0) {
+        showBadgeNotification(badgesUnlocked);
+      }
+      
+      // Recharger l'affichage
+      loadAddGrade();
+    }
+    
+    function showBadgeNotification(badges) {
+      var container = document.getElementById('toastContainer');
+      if (!container) return;
+      
+      var toast = document.createElement('div');
+      toast.className = 'badge-notification';
+      if (badges.length === 1) {
+        toast.innerHTML = '<i class="fas fa-medal"></i> Badge unlocked: ' + badges[0] + '!';
+      } else {
+        toast.innerHTML = '<i class="fas fa-medal"></i> Badges unlocked: ' + badges.join(', ');
+      }
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        toast.style.transition = 'opacity 0.3s';
+        setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
+      }, 4000);
+    }
+    
     function loadAddGrade() {
       currentUser = requireAuth();
       if (!currentUser) return;
@@ -230,8 +521,8 @@
             '<span>' + s.name + '</span>' +
           '</td>' +
           '<td class="coeff-col">' + s.coefficient + '</td>' +
-          '<td><input type="number" step="0.01" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq1 + '" value="' + (v1 !== '' ? v1 : '') + '"></td>' +
-          '<td><input type="number" step="0.01" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq2 + '" value="' + (v2 !== '' ? v2 : '') + '"></td>' +
+          '<td><input type="text" step="any" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq1 + '" value="' + (v1 !== '' ? v1 : '') + '" placeholder="0-20"></td>' +
+          '<td><input type="text" step="any" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq2 + '" value="' + (v2 !== '' ? v2 : '') + '" placeholder="0-20"></td>' +
           '<td class="avg-col" id="avg-' + s.id + '">' + avg + '</td>' +
         '</tr>';
       }
@@ -239,6 +530,30 @@
       
       document.querySelectorAll('.grade-input').forEach(function(input) {
         input.addEventListener('input', function() {
+          var rawValue = this.value;
+          var converted = validateAndConvertGrade(rawValue);
+          if (converted !== '' && converted !== rawValue) {
+            this.value = converted;
+          }
+          if (isValidGrade(this.value)) {
+            this.classList.remove('invalid');
+          } else if (this.value !== '') {
+            this.classList.add('invalid');
+          } else {
+            this.classList.remove('invalid');
+          }
+          updateAverageForSubject(parseInt(this.dataset.subj));
+        });
+        
+        input.addEventListener('blur', function() {
+          var rawValue = this.value;
+          var converted = validateAndConvertGrade(rawValue);
+          if (converted !== '' && converted !== rawValue) {
+            this.value = converted;
+          }
+          if (this.value === '') {
+            this.classList.remove('invalid');
+          }
           updateAverageForSubject(parseInt(this.dataset.subj));
         });
       });
@@ -254,15 +569,15 @@
       var input2 = document.querySelector('.grade-input[data-subj="' + subjectId + '"][data-seq="' + seq2 + '"]');
       var avgCell = document.getElementById('avg-' + subjectId);
       
-      var val1 = input1 ? parseFloat(input1.value) : NaN;
-      var val2 = input2 ? parseFloat(input2.value) : NaN;
+      var val1 = input1 && isValidGrade(input1.value) ? parseFloat(String(input1.value).replace(',', '.')) : NaN;
+      var val2 = input2 && isValidGrade(input2.value) ? parseFloat(String(input2.value).replace(',', '.')) : NaN;
       
       var avg = '--';
-      if (!isNaN(val1) && !isNaN(val2) && val1 !== '' && val2 !== '') {
+      if (!isNaN(val1) && !isNaN(val2)) {
         avg = ((val1 + val2) / 2).toFixed(2);
-      } else if (!isNaN(val1) && val1 !== '') {
+      } else if (!isNaN(val1)) {
         avg = val1.toFixed(2);
-      } else if (!isNaN(val2) && val2 !== '') {
+      } else if (!isNaN(val2)) {
         avg = val2.toFixed(2);
       }
       
@@ -278,35 +593,40 @@
       inputs.forEach(function(input) {
         var subjectId = parseInt(input.dataset.subj);
         var sequenceId = parseInt(input.dataset.seq);
-        var value = parseFloat(input.value);
+        var rawValue = input.value;
         
-        if (!isNaN(value) && value >= 0 && value <= 20) {
-          var roundedValue = Math.round(value * 100) / 100;
-          var existingIndex = -1;
-          for (var i = 0; i < grades.length; i++) {
-            if (grades[i].subjectId === subjectId && grades[i].sequenceId === sequenceId) {
-              existingIndex = i;
-              break;
+        if (rawValue !== '' && rawValue !== null) {
+          var convertedValue = validateAndConvertGrade(rawValue);
+          if (convertedValue !== '') {
+            var value = parseFloat(convertedValue);
+            var roundedValue = Math.round(value * 100) / 100;
+            
+            var existingIndex = -1;
+            for (var i = 0; i < grades.length; i++) {
+              if (grades[i].subjectId === subjectId && grades[i].sequenceId === sequenceId) {
+                existingIndex = i;
+                break;
+              }
             }
-          }
-          
-          if (existingIndex !== -1) {
-            if (grades[existingIndex].value !== roundedValue) {
-              grades[existingIndex].value = roundedValue;
+            
+            if (existingIndex !== -1) {
+              if (grades[existingIndex].value !== roundedValue) {
+                grades[existingIndex].value = roundedValue;
+                changed = true;
+                savedCount++;
+              }
+            } else {
+              var newId = grades.length > 0 ? Math.max.apply(null, grades.map(function(g) { return g.id; })) + 1 : 1;
+              grades.push({
+                id: newId,
+                subjectId: subjectId,
+                sequenceId: sequenceId,
+                value: roundedValue,
+                date: new Date().toISOString().split('T')[0]
+              });
               changed = true;
               savedCount++;
             }
-          } else if (input.value !== '') {
-            var newId = grades.length > 0 ? Math.max.apply(null, grades.map(function(g) { return g.id; })) + 1 : 1;
-            grades.push({
-              id: newId,
-              subjectId: subjectId,
-              sequenceId: sequenceId,
-              value: roundedValue,
-              date: new Date().toISOString().split('T')[0]
-            });
-            changed = true;
-            savedCount++;
           }
         }
       });
@@ -315,13 +635,16 @@
         saveStudentGrades(currentUser.id, grades);
         addHistory(currentUser.id, 'Grades updated for Term ' + currentTerm);
         playActionFeedback();
-        showToast('Grades saved successfully!');
+        showToast('Grades saved successfully! (' + savedCount + ' grade(s) updated)');
         
+        // VÉRIFIER TOUS LES BADGES APRÈS SAUVEGARDE
+        checkAllGradeBadges();
+        
+        // Vérifier aussi les badges généraux
         if (typeof checkAndUnlockAllNewBadges === 'function') {
           checkAndUnlockAllNewBadges(currentUser.id);
         }
         
-        loadAddGrade();
       } else {
         showToast('No valid grades to save');
       }

@@ -45,6 +45,85 @@
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
+    
+    .progress-chart-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+    }
+    .progress-chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .progress-chart-header h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.6rem;
+      color: var(--text-light);
+    }
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 10px;
+    }
+    .legend-line {
+      width: 20px;
+      height: 2px;
+      border-radius: 2px;
+    }
+    .progress-chart {
+      position: relative;
+      height: 280px;
+      width: 100%;
+      margin-top: 8px;
+    }
+    .chart-stats-overlay {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.05);
+      border-radius: 12px;
+      padding: 6px 12px;
+      font-size: 0.6rem;
+      display: flex;
+      gap: 12px;
+      z-index: 10;
+    }
+    .chart-stat {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .chart-stat i {
+      font-size: 0.5rem;
+    }
+    .chart-stat-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
     .term-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -76,6 +155,7 @@
       font-weight: 800;
       color: var(--primary);
     }
+    
     .subject-card {
       display: flex;
       align-items: center;
@@ -105,6 +185,7 @@
       font-size: 1.1rem;
       color: var(--primary);
     }
+    
     .btn-group {
       display: flex;
       flex-direction: column;
@@ -135,6 +216,7 @@
       color: var(--text);
       border: 1px solid var(--border);
     }
+    
     .goal-card {
       background: var(--card-bg);
       border-radius: 20px;
@@ -182,6 +264,7 @@
       background: rgba(231,76,60,0.15);
       color: #e74c3c;
     }
+    
     .history-item {
       display: flex;
       align-items: center;
@@ -195,6 +278,7 @@
       font-size: 0.65rem;
       margin-left: auto;
     }
+    
     .motivation-card {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
@@ -203,11 +287,13 @@
       margin-bottom: 20px;
       text-align: center;
     }
+    
     .flex-between {
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    
     .cmd-overlay {
       position: fixed;
       top: 0;
@@ -276,10 +362,15 @@
       color: var(--text);
       cursor: pointer;
     }
-    @media (min-width: 768px) { .btn-group { flex-direction: row; } }
+    
+    @media (min-width: 768px) { 
+      .btn-group { flex-direction: row; } 
+    }
     @media (max-width: 550px) {
       .stats-grid, .term-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
       .stat-value { font-size: 1.4rem; }
+      .progress-chart { height: 220px; }
+      .chart-stats-overlay { position: relative; top: auto; right: auto; justify-content: center; margin-bottom: 12px; }
     }
   </style>
 </head>
@@ -323,7 +414,9 @@
         <a href="shortcuts.html" class="nav-item"><i class="fas fa-bolt"></i> Shortcuts</a>
         <a href="export.html" class="nav-item"><i class="fas fa-file-export"></i> Export</a>
         <a href="backup.html" class="nav-item"><i class="fas fa-database"></i> Backup</a>
+        <a href="transfer.html" class="nav-item"><i class="fas fa-exchange-alt"></i> Transfer</a>
         <a href="notifications.html" class="nav-item"><i class="fas fa-bell"></i> Notifications</a>
+        <a href="homeworks.html" class="nav-item"><i class="fas fa-tasks"></i> Homework</a>
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
         <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         <a href="support.html" class="nav-item"><i class="fas fa-headset"></i> Support</a>
@@ -333,7 +426,6 @@
         <a href="license.html" class="nav-item"><i class="fas fa-balance-scale"></i> License</a>
         <a href="privacy.html" class="nav-item"><i class="fas fa-shield-alt"></i> Privacy Policy</a>
         <a href="cookies.html" class="nav-item"><i class="fas fa-cookie-bite"></i> Cookies Policy</a>
-        
         <a href="doc.html" class="nav-item"><i class="fas fa-file-alt"></i> Documentation</a>
         <a href="eula.html" class="nav-item"><i class="fas fa-file-signature"></i> EULA</a>
         <div id="devSidebarContainer" style="display:none; margin-top:16px; padding-top:16px; border-top:2px solid var(--primary);">
@@ -345,6 +437,7 @@
           <a href="dev-stats.html" class="nav-item"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
           <a href="dev-logs.html" class="nav-item"><i class="fas fa-history"></i> System Logs</a>
           <a href="dev-backup.html" class="nav-item"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+          <a href="admin-homework.html" class="nav-item"><i class="fas fa-layer-group"></i>Add Homeworks</a>
           <a href="dev-config.html" class="nav-item"><i class="fas fa-cog"></i> System Config</a>
         </div>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
@@ -370,6 +463,7 @@
         <div class="stat-card"><div class="stat-value" id="achievementsCount">0</div><div class="stat-label">BADGES</div></div>
       </div>
       
+    
       <div class="goal-card">
         <h3 class="text-center"><i class="fas fa-bullseye"></i> Your Goal</h3>
         <div class="goal-value" id="goalValue">12.00</div>
@@ -384,6 +478,23 @@
           <div class="term-card" onclick="location='term2.html'"><div class="term-title">TERM 2</div><div class="term-value" id="term2Avg">0.00</div></div>
           <div class="term-card" onclick="location='term3.html'"><div class="term-title">TERM 3</div><div class="term-value" id="term3Avg">0.00</div></div>
           <div class="term-card" onclick="location='yearly.html'"><div class="term-title">YEARLY</div><div class="term-value" id="yearlyAvg">0.00</div></div>
+        </div>
+      </div>
+        <!-- GRAPHIQUE DE PROGRESSION AVEC COULEURS ADAPTATIVES -->
+      <div class="progress-chart-container">
+        <div class="progress-chart-header">
+          <h3><i class="fas fa-chart-line"></i> Academic Progress</h3>
+          <div class="chart-legend">
+            <div class="legend-item"><div class="legend-dot" id="legendDotTerm"></div> Term Average</div>
+            <div class="legend-item"><div class="legend-line" id="legendLineGoal"></div> Target Goal</div>
+          </div>
+        </div>
+        <div class="progress-chart">
+          <canvas id="progressChart"></canvas>
+        </div>
+        <div class="chart-stats-overlay">
+          <div class="chart-stat"><i class="fas fa-arrow-up" id="trendIcon"></i> <span id="trendValue">+0.00</span></div>
+          <div class="chart-stat"><i class="fas fa-chart-simple"></i> Best: <span id="bestTerm" class="chart-stat-value">T1</span></div>
         </div>
       </div>
       
@@ -438,7 +549,7 @@
   
   <script>
     // ============================================
-    // DASHBOARD - VERSION CORRIGÉE
+    // DASHBOARD - COULEURS ADAPTATIVES
     // ============================================
     
     var allSubs = [
@@ -458,7 +569,6 @@
       {id:14,name:"FOOD AND NUTRITION",icon:"fa-apple-whole"}
     ];
     
-    // 30 PROVERBES ET CITATIONS MOTIVANTES
     var MQ = [
       {q:"Success is not final, failure is not fatal. It is the courage to continue that counts.", a:"Winston Churchill"},
       {q:"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", a:"Malcolm X"},
@@ -492,7 +602,171 @@
       {q:"Study while others are sleeping; work while others are loafing.", a:"William A. Ward"}
     ];
     
-    // Appliquer la police correctement
+    var progressChart = null;
+    
+    // Récupérer les couleurs dynamiques du thème
+    function getThemeColors() {
+      var isDark = document.body.classList.contains('night-mode');
+      var primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary').trim() || '#0f3b48';
+      var secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--secondary').trim() || '#00ffff';
+      
+      return {
+        isDark: isDark,
+        primary: primaryColor,
+        secondary: secondaryColor,
+        textColor: isDark ? '#e0e0e0' : '#1a2a3a',
+        gridColor: isDark ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.08)',
+        areaFill: isDark ? 'rgba(0,255,255,0.08)' : 'rgba(15,59,72,0.05)'
+      };
+    }
+    
+    // Mettre à jour les couleurs de la légende
+    function updateLegendColors() {
+      var colors = getThemeColors();
+      var legendDot = document.getElementById('legendDotTerm');
+      var legendLine = document.getElementById('legendLineGoal');
+      if (legendDot) legendDot.style.background = colors.primary;
+      if (legendLine) legendLine.style.background = colors.secondary;
+    }
+    
+    // Créer ou mettre à jour le graphique
+    function updateChart(t1, t2, t3, goal) {
+      var canvas = document.getElementById('progressChart');
+      if (!canvas) return;
+      
+      var colors = getThemeColors();
+      
+      if (progressChart) {
+        progressChart.destroy();
+      }
+      
+      var ctx = canvas.getContext('2d');
+      
+      progressChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: ['Term 1', 'Term 2', 'Term 3'],
+          datasets: [
+            {
+              label: 'Your Average',
+              data: [t1, t2, t3],
+              borderColor: colors.primary,
+              backgroundColor: colors.areaFill,
+              borderWidth: 3,
+              pointRadius: 6,
+              pointHoverRadius: 8,
+              pointBackgroundColor: colors.primary,
+              pointBorderColor: colors.isDark ? '#1a1a2e' : '#ffffff',
+              pointBorderWidth: 2,
+              tension: 0.3,
+              fill: true,
+              order: 1
+            },
+            {
+              label: 'Target Goal',
+              data: [goal, goal, goal],
+              borderColor: colors.secondary,
+              backgroundColor: 'transparent',
+              borderWidth: 2,
+              borderDash: [8, 6],
+              pointRadius: 0,
+              pointHoverRadius: 0,
+              fill: false,
+              tension: 0,
+              order: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.raw.toFixed(2) + ' / 20';
+                }
+              },
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              titleColor: '#fff',
+              bodyColor: '#ddd',
+              padding: 10,
+              cornerRadius: 8
+            },
+            legend: {
+              display: false
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 20,
+              ticks: {
+                stepSize: 5,
+                color: colors.textColor,
+                callback: function(val) { return val + '/20'; },
+                font: { size: 10 }
+              },
+              grid: {
+                color: colors.gridColor,
+                drawBorder: true
+              },
+              title: {
+                display: true,
+                text: 'Grade / 20',
+                color: colors.textColor,
+                font: { size: 10, weight: 'bold' }
+              }
+            },
+            x: {
+              ticks: {
+                color: colors.textColor,
+                font: { size: 11, weight: '500' }
+              },
+              grid: {
+                display: false
+              }
+            }
+          },
+          interaction: {
+            mode: 'index',
+            intersect: false
+          },
+          elements: {
+            line: {
+              tension: 0.3
+            }
+          }
+        }
+      });
+      
+      // Mettre à jour la tendance
+      var trend = t3 - t1;
+      var trendElement = document.getElementById('trendValue');
+      var trendIcon = document.getElementById('trendIcon');
+      if (trendElement) {
+        var trendSymbol = trend > 0 ? '+' : '';
+        trendElement.innerHTML = trendSymbol + trend.toFixed(2);
+        trendElement.style.color = trend >= 0 ? '#2ecc71' : '#e74c3c';
+        if (trendIcon) {
+          trendIcon.className = trend >= 0 ? 'fas fa-arrow-up' : 'fas fa-arrow-down';
+          trendIcon.style.color = trend >= 0 ? '#2ecc71' : '#e74c3c';
+        }
+      }
+      
+      // Meilleur trimestre
+      var bestValue = Math.max(t1, t2, t3);
+      var bestTerm = '';
+      if (bestValue === t1) bestTerm = 'T1';
+      else if (bestValue === t2) bestTerm = 'T2';
+      else bestTerm = 'T3';
+      var bestTermElement = document.getElementById('bestTerm');
+      if (bestTermElement) bestTermElement.innerHTML = bestTerm + ' (' + bestValue.toFixed(1) + ')';
+      
+      // Mettre à jour les couleurs de la légende
+      updateLegendColors();
+    }
+    
     function applyDashboardFont() {
       var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
       var fontMap = {
@@ -503,13 +777,6 @@
         'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
       };
       document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
-      
-      var allElements = document.querySelectorAll('*');
-      for (var i = 0; i < allElements.length; i++) {
-        if (allElements[i].style) {
-          allElements[i].style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
-        }
-      }
     }
     
     function checkAuth() {
@@ -663,6 +930,9 @@
         
         document.getElementById('goalSlider').oninput = function() { updateGoal(this.value); };
         
+        // Créer le graphique avec les couleurs actuelles
+        updateChart(t1, t2, t3, goal);
+        
         var subPrev = [];
         for (var i = 0; i < subs.length; i++) {
           var s = subs[i];
@@ -690,6 +960,7 @@
         loadHistory(sid);
         showDeveloperLinks();
         applyDashboardFont();
+        updateLegendColors();
         
       } catch(e) {
         console.error('Error loading dashboard:', e);
@@ -712,7 +983,9 @@
         var diff = (g - y).toFixed(2);
         gs.innerHTML = 'Need +' + diff + ' to reach goal'; 
         gs.className = 'goal-status not-achieved'; 
-      } 
+      }
+      
+      updateChart(t1, t2, t3, g);
     }
     
     function loadHistory(sid) { 
@@ -733,7 +1006,7 @@
     }
     
     // ============================================
-    // COMMAND SYSTEM - DEV COMMAND SECRÈTE
+    // COMMAND SYSTEM
     // ============================================
     
     function openCmd() {
@@ -786,6 +1059,7 @@
           document.body.classList.remove('theme-default', 'theme-crimson', 'theme-forest', 'theme-ocean', 'theme-royal', 'theme-sunset', 'theme-rose', 'theme-turquoise', 'theme-amber', 'theme-graphite', 'theme-lavender', 'theme-cherry', 'theme-midnight', 'theme-mint', 'theme-coral', 'theme-indigo', 'theme-chocolate', 'theme-electric', 'theme-steel', 'theme-lime');
           document.body.classList.add('theme-' + randomTheme);
           localStorage.setItem('smartgrade_theme', randomTheme);
+          setTimeout(function() { updateChart(calcTermAvg(userId,1), calcTermAvg(userId,2), calcTermAvg(userId,3), parseFloat(localStorage.getItem('smartgrade_goal_' + userId) || 12)); }, 100);
           return 'Theme changed to: ' + randomTheme;
         },
         reset: function(id) {
@@ -806,18 +1080,17 @@
           var tips = ['Keep pushing!', 'Every grade counts!', 'You are doing great!', 'Consistency is key!', 'Knowledge is power!', 'Stay focused!', 'You can do this!', 'Believe in yourself!'];
           return tips[Math.floor(Math.random() * tips.length)];
         },
-        // COMMANDE SECRÈTE - N'APPARAÎT PAS DANS LA LISTE
         dev: function(id) {
           var devHidden = localStorage.getItem('smartgrade_dev_links_hidden');
           var container = document.getElementById('devSidebarContainer');
           if (devHidden === 'true') {
             localStorage.removeItem('smartgrade_dev_links_hidden');
             if (container) container.style.display = 'block';
-            return '🔓 Developer links are now VISIBLE';
+            return 'Developer links are now VISIBLE';
           } else {
             localStorage.setItem('smartgrade_dev_links_hidden', 'true');
             if (container) container.style.display = 'none';
-            return '🔒 Developer links are now HIDDEN';
+            return 'Developer links are now HIDDEN';
           }
         }
       };
@@ -867,11 +1140,20 @@
     if (typeof initMobileMenu === 'function') initMobileMenu();
     if (typeof initThemeSelector === 'function') initThemeSelector();
     
-    // Observer pour les changements de thème/police
-    var observer = new MutationObserver(function() {
+    // Observer les changements de thème pour mettre à jour les couleurs du graphique
+    var themeObserver = new MutationObserver(function() {
       applyDashboardFont();
+      updateLegendColors();
+      var c = JSON.parse(localStorage.getItem('smartgrade_current') || 'null');
+      if (c) {
+        var t1 = calcTermAvg(c.id, 1);
+        var t2 = calcTermAvg(c.id, 2);
+        var t3 = calcTermAvg(c.id, 3);
+        var goal = parseFloat(localStorage.getItem('smartgrade_goal_' + c.id) || 12);
+        updateChart(t1, t2, t3, goal);
+      }
     });
-    observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    themeObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   </script>
 </body>
 </html>

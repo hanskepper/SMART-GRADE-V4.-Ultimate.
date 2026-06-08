@@ -1,6 +1,6 @@
 // ============================================
 // SMART GRADE v4.0 - APP.JS COMPLET
-// VERSION CORRIGÉE - AVATAR GLOBAL + BADGES
+// VERSION CORRIGÉE - SANS TAILLE DE POLICE
 // ============================================
 
 // ============================================
@@ -167,24 +167,6 @@ function initFontFamily() {
   applyFontToAllElements(savedFont);
 }
 
-function applySizeToAllElements(size) {
-  var sizeMap = { small: '14px', medium: '16px', large: '18px' };
-  var fontSize = sizeMap[size] || '16px';
-  
-  document.body.style.fontSize = fontSize;
-  document.body.classList.remove('font-small', 'font-medium', 'font-large');
-  document.body.classList.add('font-' + size);
-  
-  var allElements = document.querySelectorAll('*');
-  for (var i = 0; i < allElements.length; i++) {
-    if (allElements[i].style) {
-      allElements[i].style.fontSize = fontSize;
-    }
-  }
-  
-  localStorage.setItem('smartgrade_font', size);
-}
-
 function generateFontSelectorHTML() {
   var currentFont = localStorage.getItem('smartgrade_font_family') || 'inter';
   var html = '';
@@ -330,19 +312,6 @@ function initThemeSelector() {
     });
   });
   
-  var sf = getSavedFontSize();
-  document.querySelectorAll('.font-sheet').forEach(function(o) {
-    if (o.dataset.font === sf) o.classList.add('active');
-    o.addEventListener('click', function(e) {
-      e.stopPropagation();
-      var f = this.dataset.font;
-      applySizeToAllElements(f);
-      document.querySelectorAll('.font-sheet').forEach(function(x) { x.classList.remove('active'); });
-      this.classList.add('active');
-      closeBottomSheet();
-    });
-  });
-  
   var tb = document.getElementById('themeBtn');
   var bs = document.getElementById('bottomSheet');
   var so = document.getElementById('sheetOverlay');
@@ -442,7 +411,6 @@ function autoUpdateCurrentUserStreak() { var u = getCurrentStudent(); if (u) upd
 
 function getSavedTheme() { return localStorage.getItem('smartgrade_theme') || 'default'; }
 function saveTheme(t) { localStorage.setItem('smartgrade_theme', t); }
-function getSavedFontSize() { return localStorage.getItem('smartgrade_font') || 'medium'; }
 
 function initParticles() {
   var c = document.getElementById('particles');
@@ -687,20 +655,6 @@ if (!localStorage.getItem('smartgrade_version')) {
   localStorage.setItem('smartgrade_version', APP_VERSION);
 }
 
-var isTyping = false;
-
-document.addEventListener('focusin', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    isTyping = true;
-  }
-});
-
-document.addEventListener('focusout', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') {
-    setTimeout(function() { isTyping = false; }, 1000);
-  }
-});
-
 window.getAppVersion = function() {
   return APP_VERSION;
 };
@@ -753,13 +707,6 @@ function afterFlashcardAdded(studentId) {
 (function initApp() {
   var savedTheme = getSavedTheme();
   if (savedTheme) document.body.classList.add('theme-' + savedTheme);
-  
-  var savedFontSize = getSavedFontSize();
-  if (savedFontSize) {
-    var sizeMap = { small: '14px', medium: '16px', large: '18px' };
-    document.body.style.fontSize = sizeMap[savedFontSize] || '16px';
-    document.body.classList.add('font-' + savedFontSize);
-  }
   
   initFontFamily();
   checkNightMode();

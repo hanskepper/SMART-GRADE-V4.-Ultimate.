@@ -12,8 +12,114 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0f3b48">
   <style>
+    /* ============================================
+       OVERLAY DE CONNEXION
+       ============================================ */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+    }
+    .login-overlay .glass-card { 
+      max-width: 350px; 
+      width: 90%; 
+      text-align: center; 
+      background: var(--card-bg);
+      border-radius: 28px;
+      padding: 32px 24px;
+    }
+    .login-overlay .glass-card i { 
+      font-size: 55px; 
+      color: var(--primary); 
+      margin-bottom: 16px; 
+      display: block; 
+    }
+    .login-overlay .glass-card input {
+      width: 100%;
+      padding: 14px;
+      margin: 16px 0;
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      background: var(--card-bg);
+      color: var(--text);
+      text-align: center;
+      font-size: 1rem;
+    }
+    .login-overlay .glass-card button { 
+      width: 100%; 
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      padding: 14px;
+      border-radius: 40px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    
+    /* ============================================
+       SÉLECTEUR PERSONNALISÉ MODERNE
+       ============================================ */
+    .custom-select {
+      position: relative;
+      width: 100%;
+      margin-bottom: 16px;
+    }
+    .custom-select-trigger {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      font-size: 0.85rem;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+    .custom-select-trigger:hover {
+      border-color: var(--primary);
+    }
+    .custom-select-options {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: var(--card-bg);
+      border: 2px solid var(--primary);
+      border-top: none;
+      border-radius: 0 0 12px 12px;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 1000;
+      display: none;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+    .custom-select.open .custom-select-options { display: block; }
+    .custom-select-option {
+      padding: 10px 16px;
+      cursor: pointer;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--text);
+      transition: all 0.2s;
+    }
+    .custom-select-option:hover { background: rgba(15,59,72,0.08); }
+    .custom-select-option.selected { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+    
+    /* ============================================
+       STYLES PRINCIPAUX
+       ============================================ */
     .dev-hero {
       text-align: center;
       padding: 35px 20px;
@@ -31,16 +137,6 @@
       padding: 20px;
       margin-bottom: 16px;
       border: 1px solid var(--border);
-    }
-    
-    .section-title {
-      font-size: 0.9rem;
-      font-weight: 700;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: var(--primary);
     }
     
     .tabs {
@@ -69,9 +165,8 @@
       border-color: transparent;
     }
     
-    .tab-content { display: none; animation: fadeIn 0.3s ease; }
+    .tab-content { display: none; }
     .tab-content.active { display: block; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     
     .form-group { margin-bottom: 16px; }
     .form-group label {
@@ -83,7 +178,7 @@
     }
     .form-group label i { width: 20px; color: var(--primary); margin-right: 6px; }
     
-    .form-group select, .form-group input {
+    .form-group input {
       width: 100%;
       padding: 12px 14px;
       border-radius: 12px;
@@ -93,24 +188,10 @@
       font-size: 0.85rem;
       transition: all 0.2s;
       box-sizing: border-box;
-      cursor: pointer;
     }
-    .form-group select {
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      background-size: 16px;
-    }
-    .form-group select:focus, .form-group input:focus {
+    .form-group input:focus {
       outline: none;
       border-color: var(--primary);
-    }
-    .form-group select option {
-      background: var(--card-bg);
-      color: var(--text);
-      padding: 10px;
     }
     
     .btn-calc {
@@ -126,7 +207,7 @@
       transition: all 0.2s;
       margin-top: 8px;
     }
-    .btn-calc:hover { transform: scale(1.01); opacity: 0.95; }
+    .btn-calc:active { transform: scale(0.97); }
     
     .result-box {
       background: rgba(46,204,113,0.08);
@@ -198,7 +279,6 @@
       justify-content: center;
     }
     
-    /* Menu développeur */
     .dev-sidebar {
       margin-top: 16px;
       padding-top: 16px;
@@ -247,18 +327,7 @@
       color: white;
       border-color: transparent;
     }
-    .dev-nav-link.active i {
-      color: white;
-    }
-    .dev-nav-link.logout-link {
-      margin-top: 8px;
-      border-top: 1px solid var(--border);
-      border-radius: 0;
-      color: #e74c3c;
-    }
-    .dev-nav-link.logout-link i {
-      color: #e74c3c;
-    }
+    .dev-nav-link.active i { color: white; }
     
     @media (max-width: 550px) {
       .stats-grid { grid-template-columns: 1fr; }
@@ -269,8 +338,19 @@
   </style>
 </head>
 <body>
-  <div class="particles" id="particles"></div>
-  <div class="app-container">
+  <!-- Overlay de connexion -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="glass-card">
+      <i class="fas fa-lock"></i>
+      <h2>Admin Access</h2>
+      <input type="password" id="adminPassword" placeholder="Enter password">
+      <button onclick="checkAdminLogin()">Login</button>
+      <div id="loginError" style="color: #e74c3c; margin-top: 12px; display: none;">Wrong password</div>
+    </div>
+  </div>
+
+  <div class="app-container" id="appContainer" style="display: none;">
+    <div class="particles" id="particles"></div>
     
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
@@ -291,22 +371,21 @@
     </div>
     
     <div class="sidebar-menu" id="sidebarMenu">
-      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
+      <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
         <a href="profile.html" class="nav-item"><i class="fas fa-user"></i> Profile</a>
         <a href="settings.html" class="nav-item"><i class="fas fa-sliders-h"></i> Settings</a>
         
-        <div class="dev-sidebar" id="devSidebar" style="display:none;">
+        <div class="dev-sidebar">
           <div class="dev-sidebar-title"><i class="fas fa-code"></i> Developer Tools</div>
           <div class="dev-nav-links">
-            <a href="dev-calculator.html" class="dev-nav-link active" id="devCalculatorLink"><i class="fas fa-calculator"></i> Calculator</a>
-            <a href="dev-database.html" class="dev-nav-link" id="devDatabaseLink"><i class="fas fa-database"></i> Database</a>
-            <a href="dev-stats.html" class="dev-nav-link" id="devStatsLink"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
-            <a href="dev-logs.html" class="dev-nav-link" id="devLogsLink"><i class="fas fa-history"></i> System Logs</a>
-            <a href="dev-backup.html" class="dev-nav-link" id="devBackupLink"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
-            <a href="dev-config.html" class="nav-item" id="devConfigLink"><i class="fas fa-cog"></i> System Config</a>
-            
+            <a href="dev-calculator.html" class="dev-nav-link active"><i class="fas fa-calculator"></i> Calculator</a>
+            <a href="dev-database.html" class="dev-nav-link"><i class="fas fa-database"></i> Database</a>
+            <a href="dev-stats.html" class="dev-nav-link"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
+            <a href="dev-logs.html" class="dev-nav-link"><i class="fas fa-history"></i> System Logs</a>
+            <a href="dev-backup.html" class="dev-nav-link"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+            <a href="dev-config.html" class="dev-nav-link"><i class="fas fa-cog"></i> System Config</a>
           </div>
         </div>
         
@@ -334,7 +413,13 @@
         <div id="tabStudent" class="tab-content active">
           <div class="form-group">
             <label><i class="fas fa-user"></i> Select Student</label>
-            <select id="studentSelect"></select>
+            <div class="custom-select" id="studentSelectCustom">
+              <div class="custom-select-trigger">
+                <span><i class="fas fa-user-graduate"></i> <span id="selectedStudentText">-- Select Student --</span></span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="custom-select-options" id="studentOptions"></div>
+            </div>
           </div>
           <button class="btn-calc" onclick="calculateStudentAverages()"><i class="fas fa-chart-line"></i> Calculate Averages</button>
           <div id="studentResult"></div>
@@ -345,20 +430,38 @@
           <div class="input-row">
             <div class="form-group">
               <label><i class="fas fa-user"></i> Select Student</label>
-              <select id="subjectStudentSelect"></select>
+              <div class="custom-select" id="subjectStudentSelectCustom">
+                <div class="custom-select-trigger">
+                  <span><i class="fas fa-user-graduate"></i> <span id="selectedSubjectStudentText">-- Select Student --</span></span>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-select-options" id="subjectStudentOptions"></div>
+              </div>
             </div>
             <div class="form-group">
               <label><i class="fas fa-book"></i> Subject</label>
-              <select id="subjectId"></select>
+              <div class="custom-select" id="subjectIdCustom">
+                <div class="custom-select-trigger">
+                  <span><i class="fas fa-book"></i> <span id="selectedSubjectText">-- Select Subject --</span></span>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-select-options" id="subjectIdOptions"></div>
+              </div>
             </div>
             <div class="form-group">
               <label><i class="fas fa-calendar"></i> Period</label>
-              <select id="subjectTerm">
-                <option value="1">Term 1</option>
-                <option value="2">Term 2</option>
-                <option value="3">Term 3</option>
-                <option value="yearly">Yearly (All Terms)</option>
-              </select>
+              <div class="custom-select" id="subjectTermCustom">
+                <div class="custom-select-trigger">
+                  <span><i class="fas fa-calendar"></i> <span id="selectedSubjectTermText">Term 1</span></span>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-select-options">
+                  <div class="custom-select-option" data-value="1">Term 1</div>
+                  <div class="custom-select-option" data-value="2">Term 2</div>
+                  <div class="custom-select-option" data-value="3">Term 3</div>
+                  <div class="custom-select-option" data-value="yearly">Yearly (All Terms)</div>
+                </div>
+              </div>
             </div>
           </div>
           <button class="btn-calc" onclick="calculateSubjectAnalysis()"><i class="fas fa-chart-bar"></i> Analyze Subject</button>
@@ -370,11 +473,23 @@
           <div class="input-row">
             <div class="form-group">
               <label><i class="fas fa-user"></i> Select Student</label>
-              <select id="predictStudentSelect"></select>
+              <div class="custom-select" id="predictStudentSelectCustom">
+                <div class="custom-select-trigger">
+                  <span><i class="fas fa-user-graduate"></i> <span id="selectedPredictStudentText">-- Select Student --</span></span>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-select-options" id="predictStudentOptions"></div>
+              </div>
             </div>
             <div class="form-group">
               <label><i class="fas fa-book"></i> Subject</label>
-              <select id="predictSubjectId"></select>
+              <div class="custom-select" id="predictSubjectIdCustom">
+                <div class="custom-select-trigger">
+                  <span><i class="fas fa-book"></i> <span id="selectedPredictSubjectText">-- Select Subject --</span></span>
+                  <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="custom-select-options" id="predictSubjectOptions"></div>
+              </div>
             </div>
           </div>
           <div class="input-row">
@@ -399,7 +514,13 @@
         <div id="tabTarget" class="tab-content">
           <div class="form-group">
             <label><i class="fas fa-user"></i> Select Student</label>
-            <select id="targetStudentSelect"></select>
+            <div class="custom-select" id="targetStudentSelectCustom">
+              <div class="custom-select-trigger">
+                <span><i class="fas fa-user-graduate"></i> <span id="selectedTargetStudentText">-- Select Student --</span></span>
+                <i class="fas fa-chevron-down"></i>
+              </div>
+              <div class="custom-select-options" id="targetStudentOptions"></div>
+            </div>
           </div>
           <div class="input-row">
             <div class="form-group">
@@ -429,8 +550,34 @@
   <script src="js/database.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/confirm-dialog.js"></script>
   
   <script>
+    // ============================================
+    // ADMIN PASSWORD
+    // ============================================
+    const ADMIN_PASSWORD = 'SmartGradeAdmin2026';
+    
+    function checkAdminLogin() {
+      var password = document.getElementById('adminPassword').value;
+      if (password === ADMIN_PASSWORD) {
+        document.getElementById('loginOverlay').style.display = 'none';
+        document.getElementById('appContainer').style.display = 'block';
+        initAppAfterLogin();
+      } else {
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+    
+    // Variables globales pour stocker les sélections
+    var selectedStudentId = null;
+    var selectedSubjectStudentId = null;
+    var selectedSubjectId = null;
+    var selectedSubjectTerm = '1';
+    var selectedPredictStudentId = null;
+    var selectedPredictSubjectId = null;
+    var selectedTargetStudentId = null;
+    
     var DEFAULT_SUBJECTS = [
       {id:1,name:"COMPUTER SCIENCES"},{id:2,name:"MATHEMATICS"},{id:3,name:"CHEMISTRY"},
       {id:4,name:"HUMAN BIOLOGY"},{id:5,name:"GEOLOGY"},{id:6,name:"PHYSICS"},
@@ -439,27 +586,8 @@
       {id:13,name:"FRENCH"},{id:14,name:"FOOD AND NUTRITION"}
     ];
     
-    // Vérifier l'accès développeur
-    function checkDevAccess() {
-      try {
-        var stored = localStorage.getItem('smartgrade_current');
-        if (stored) {
-          var user = JSON.parse(stored);
-          if (user.name === 'HANS KEPPER' && user.class === 'B2' && user.number === 9) {
-            document.getElementById('devSidebar').style.display = 'block';
-          } else {
-            window.location.href = 'dashboard.html';
-          }
-        } else {
-          window.location.href = 'login.html';
-        }
-      } catch(e) {
-        window.location.href = 'login.html';
-      }
-    }
-    
     // ============================================
-    // CALCULER LA MOYENNE D'UN TRIMESTRE - CORRIGÉE
+    // CALCUL CORRECT DES MOYENNES
     // ============================================
     function calculateStudentTermAverageCorrect(studentId, term) {
       var grades = getStudentGrades(studentId);
@@ -502,52 +630,27 @@
       return totalCoeff > 0 ? roundToTwo(totalWeighted / totalCoeff) : 0;
     }
     
-    // Surcharger la fonction globale
-    window.calculateStudentTermAverage = calculateStudentTermAverageCorrect;
-    
-    function populateStudentSelects() {
-      var students = getAllStudents();
-      var html = '<option value="">-- Select Student --</option>';
-      for (var i = 0; i < students.length; i++) {
-        html += '<option value="' + students[i].id + '">' + students[i].name + ' (ID: ' + students[i].id + ')</option>';
-      }
-      document.getElementById('studentSelect').innerHTML = html;
-      document.getElementById('subjectStudentSelect').innerHTML = html;
-      document.getElementById('predictStudentSelect').innerHTML = html;
-      document.getElementById('targetStudentSelect').innerHTML = html;
+    function calculateSubjectTermAverageCalc(subjectId, term, grades) {
+      var seq1 = (term - 1) * 2 + 1;
+      var seq2 = seq1 + 1;
+      var seq1Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq1; });
+      var seq2Grades = grades.filter(function(g) { return g.subjectId === subjectId && g.sequenceId === seq2; });
       
-      var subjectHtml = '<option value="">-- Select Subject --</option>';
-      for (var i = 0; i < DEFAULT_SUBJECTS.length; i++) {
-        subjectHtml += '<option value="' + DEFAULT_SUBJECTS[i].id + '">' + DEFAULT_SUBJECTS[i].name + '</option>';
+      var avg1 = 0;
+      if (seq1Grades.length > 0) {
+        var sum1 = 0;
+        for (var j = 0; j < seq1Grades.length; j++) sum1 += seq1Grades[j].value;
+        avg1 = sum1 / seq1Grades.length;
       }
-      document.getElementById('subjectId').innerHTML = subjectHtml;
-      document.getElementById('predictSubjectId').innerHTML = subjectHtml;
-    }
-    
-    function switchTab(tab) {
-      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
-      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
-      if (tab === 'student') { 
-        document.getElementById('tabStudent').classList.add('active'); 
-        document.querySelector('.tab-btn:nth-child(1)').classList.add('active'); 
+      
+      var avg2 = 0;
+      if (seq2Grades.length > 0) {
+        var sum2 = 0;
+        for (var j = 0; j < seq2Grades.length; j++) sum2 += seq2Grades[j].value;
+        avg2 = sum2 / seq2Grades.length;
       }
-      if (tab === 'subject') { 
-        document.getElementById('tabSubject').classList.add('active'); 
-        document.querySelector('.tab-btn:nth-child(2)').classList.add('active'); 
-      }
-      if (tab === 'predict') { 
-        document.getElementById('tabPredict').classList.add('active'); 
-        document.querySelector('.tab-btn:nth-child(3)').classList.add('active'); 
-      }
-      if (tab === 'target') { 
-        document.getElementById('tabTarget').classList.add('active'); 
-        document.querySelector('.tab-btn:nth-child(4)').classList.add('active'); 
-      }
-    }
-    
-    function getSelectedStudentId(selectId) {
-      var val = document.getElementById(selectId).value;
-      return val ? parseInt(val) : null;
+      
+      return parseFloat(((avg1 + avg2) / 2).toFixed(2));
     }
     
     function getGradeLetter(a) {
@@ -560,11 +663,112 @@
       return 'F';
     }
     
+    // ============================================
+    // INITIALISATION DES SÉLECTEURS
+    // ============================================
+    function initCustomSelects() {
+      var students = getAllStudents();
+      
+      // Générer les options HTML
+      var optionsHtml = '<div class="custom-select-option" data-value="">-- Select Student --</div>';
+      for (var i = 0; i < students.length; i++) {
+        optionsHtml += '<div class="custom-select-option" data-value="' + students[i].id + '">' + students[i].name + ' (ID: ' + students[i].id + ')</div>';
+      }
+      
+      var subjectHtml = '<div class="custom-select-option" data-value="">-- Select Subject --</div>';
+      for (var i = 0; i < DEFAULT_SUBJECTS.length; i++) {
+        subjectHtml += '<div class="custom-select-option" data-value="' + DEFAULT_SUBJECTS[i].id + '">' + DEFAULT_SUBJECTS[i].name + '</div>';
+      }
+      
+      // Student select
+      var studentSelect = document.getElementById('studentSelectCustom');
+      if (studentSelect) {
+        document.getElementById('studentOptions').innerHTML = optionsHtml;
+        setupCustomSelect(studentSelect, 'selectedStudentText', function(val) { selectedStudentId = val; });
+      }
+      
+      // Subject student select
+      var subjectStudentSelect = document.getElementById('subjectStudentSelectCustom');
+      if (subjectStudentSelect) {
+        document.getElementById('subjectStudentOptions').innerHTML = optionsHtml;
+        setupCustomSelect(subjectStudentSelect, 'selectedSubjectStudentText', function(val) { selectedSubjectStudentId = val; });
+      }
+      
+      // Subject ID select
+      var subjectIdSelect = document.getElementById('subjectIdCustom');
+      if (subjectIdSelect) {
+        document.getElementById('subjectIdOptions').innerHTML = subjectHtml;
+        setupCustomSelect(subjectIdSelect, 'selectedSubjectText', function(val) { selectedSubjectId = val; });
+      }
+      
+      // Predict student select
+      var predictStudentSelect = document.getElementById('predictStudentSelectCustom');
+      if (predictStudentSelect) {
+        document.getElementById('predictStudentOptions').innerHTML = optionsHtml;
+        setupCustomSelect(predictStudentSelect, 'selectedPredictStudentText', function(val) { selectedPredictStudentId = val; });
+      }
+      
+      // Predict subject select
+      var predictSubjectSelect = document.getElementById('predictSubjectIdCustom');
+      if (predictSubjectSelect) {
+        document.getElementById('predictSubjectOptions').innerHTML = subjectHtml;
+        setupCustomSelect(predictSubjectSelect, 'selectedPredictSubjectText', function(val) { selectedPredictSubjectId = val; });
+      }
+      
+      // Target student select
+      var targetStudentSelect = document.getElementById('targetStudentSelectCustom');
+      if (targetStudentSelect) {
+        document.getElementById('targetStudentOptions').innerHTML = optionsHtml;
+        setupCustomSelect(targetStudentSelect, 'selectedTargetStudentText', function(val) { selectedTargetStudentId = val; });
+      }
+      
+      // Term select
+      var termSelect = document.getElementById('subjectTermCustom');
+      if (termSelect) {
+        setupCustomSelect(termSelect, 'selectedSubjectTermText', function(val) { selectedSubjectTerm = val; });
+      }
+    }
+    
+    function setupCustomSelect(container, textSpanId, onSelectCallback) {
+      var trigger = container.querySelector('.custom-select-trigger');
+      var options = container.querySelectorAll('.custom-select-option');
+      
+      trigger.addEventListener('click', function(e) {
+        e.stopPropagation();
+        document.querySelectorAll('.custom-select').forEach(function(s) {
+          if (s !== container) s.classList.remove('open');
+        });
+        container.classList.toggle('open');
+      });
+      
+      options.forEach(function(opt) {
+        opt.addEventListener('click', function() {
+          var value = this.dataset.value;
+          var text = this.textContent;
+          document.getElementById(textSpanId).innerHTML = text;
+          if (onSelectCallback) {
+            onSelectCallback(value ? parseInt(value) : null);
+          }
+          container.classList.remove('open');
+        });
+      });
+    }
+    
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.custom-select').forEach(function(s) {
+        s.classList.remove('open');
+      });
+    });
+    
+    // ============================================
+    // FONCTIONS DE CALCUL
+    // ============================================
     function calculateStudentAverages() {
-      var studentId = getSelectedStudentId('studentSelect');
+      var studentId = selectedStudentId;
       var students = getAllStudents();
       var student = students.find(function(s) { return s.id === studentId; });
       var resultDiv = document.getElementById('studentResult');
+      
       if (!student) { 
         resultDiv.innerHTML = '<div class="result-box error"><i class="fas fa-exclamation-triangle"></i> Please select a student</div>'; 
         return; 
@@ -580,9 +784,9 @@
     }
     
     function calculateSubjectAnalysis() {
-      var studentId = getSelectedStudentId('subjectStudentSelect');
-      var subjectId = parseInt(document.getElementById('subjectId').value);
-      var term = document.getElementById('subjectTerm').value;
+      var studentId = selectedSubjectStudentId;
+      var subjectId = selectedSubjectId;
+      var term = selectedSubjectTerm;
       var students = getAllStudents();
       var student = students.find(function(s) { return s.id === studentId; });
       var resultDiv = document.getElementById('subjectResult');
@@ -595,22 +799,22 @@
       
       var grades = getStudentGrades(studentId);
       if (term === 'yearly') {
-        var t1 = calculateSubjectTermAverage(subjectId, 1, grades);
-        var t2 = calculateSubjectTermAverage(subjectId, 2, grades);
-        var t3 = calculateSubjectTermAverage(subjectId, 3, grades);
+        var t1 = calculateSubjectTermAverageCalc(subjectId, 1, grades);
+        var t2 = calculateSubjectTermAverageCalc(subjectId, 2, grades);
+        var t3 = calculateSubjectTermAverageCalc(subjectId, 3, grades);
         var yearly = (t1 + t2 + t3) / 3;
         resultDiv.innerHTML = '<div class="result-box"><div style="font-weight:700; margin-bottom:12px;">' + subject.name + ' - ' + student.name + '</div><div class="stats-grid"><div class="stat-card"><div class="stat-value">' + t1.toFixed(2) + '</div><div class="stat-label">Term 1</div></div><div class="stat-card"><div class="stat-value">' + t2.toFixed(2) + '</div><div class="stat-label">Term 2</div></div><div class="stat-card"><div class="stat-value">' + t3.toFixed(2) + '</div><div class="stat-label">Term 3</div></div><div class="stat-card"><div class="stat-value">' + yearly.toFixed(2) + '</div><div class="stat-label">Yearly</div></div></div><div class="result-value">' + getGradeLetter(yearly) + '</div><div class="result-label">Overall Grade</div></div>';
       } else {
         var termNum = parseInt(term);
-        var avg = calculateSubjectTermAverage(subjectId, termNum, grades);
+        var avg = calculateSubjectTermAverageCalc(subjectId, termNum, grades);
         var coeff = getSubjectCoefficient(studentId, subjectId);
         resultDiv.innerHTML = '<div class="result-box"><div style="font-weight:700; margin-bottom:12px;">' + subject.name + ' - ' + student.name + '</div><div class="result-value">' + avg.toFixed(2) + ' / 20</div><div class="result-label">Term ' + termNum + ' Average (Coefficient: ' + coeff + ')</div><div class="result-label" style="margin-top:8px;">Grade: ' + getGradeLetter(avg) + '</div></div>';
       }
     }
     
     function calculateNeededGrade() {
-      var studentId = getSelectedStudentId('predictStudentSelect');
-      var subjectId = parseInt(document.getElementById('predictSubjectId').value);
+      var studentId = selectedPredictStudentId;
+      var subjectId = selectedPredictSubjectId;
       var currentAvg = parseFloat(document.getElementById('currentAvg').value);
       var targetAvg = parseFloat(document.getElementById('targetAvg').value);
       var examCoeff = parseFloat(document.getElementById('examCoeff').value);
@@ -646,7 +850,7 @@
     }
     
     function calculateRequiredGrade() {
-      var studentId = getSelectedStudentId('targetStudentSelect');
+      var studentId = selectedTargetStudentId;
       var desiredAvg = parseFloat(document.getElementById('desiredAvg').value);
       var remainingCoeff = parseFloat(document.getElementById('remainingCoeff').value);
       var resultDiv = document.getElementById('targetResult');
@@ -711,21 +915,43 @@
       document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
     }
     
-    checkDevAccess();
-    populateStudentSelects();
-    updateHeaderAvatar();
-    initMobileMenu();
-    initThemeSelector();
-    applyDevFont();
+    function initAppAfterLogin() {
+      initCustomSelects();
+      updateHeaderAvatar();
+      initMobileMenu();
+      initThemeSelector();
+      applyDevFont();
+    }
     
-    window.switchTab = switchTab;
+    // ============================================
+    // SWITCH ONGLETS
+    // ============================================
+    window.switchTab = function(tab) {
+      document.querySelectorAll('.tab-content').forEach(function(c) { c.classList.remove('active'); });
+      document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+      if (tab === 'student') { 
+        document.getElementById('tabStudent').classList.add('active'); 
+        document.querySelector('.tab-btn:nth-child(1)').classList.add('active'); 
+      }
+      if (tab === 'subject') { 
+        document.getElementById('tabSubject').classList.add('active'); 
+        document.querySelector('.tab-btn:nth-child(2)').classList.add('active'); 
+      }
+      if (tab === 'predict') { 
+        document.getElementById('tabPredict').classList.add('active'); 
+        document.querySelector('.tab-btn:nth-child(3)').classList.add('active'); 
+      }
+      if (tab === 'target') { 
+        document.getElementById('tabTarget').classList.add('active'); 
+        document.querySelector('.tab-btn:nth-child(4)').classList.add('active'); 
+      }
+    };
+    
     window.calculateStudentAverages = calculateStudentAverages;
     window.calculateSubjectAnalysis = calculateSubjectAnalysis;
     window.calculateNeededGrade = calculateNeededGrade;
     window.calculateRequiredGrade = calculateRequiredGrade;
-    
-    var fontObserver = new MutationObserver(function() { applyDevFont(); });
-    fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    window.checkAdminLogin = checkAdminLogin;
   </script>
 </body>
 </html>

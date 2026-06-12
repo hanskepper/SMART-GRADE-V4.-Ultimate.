@@ -46,7 +46,6 @@
     .model-selector { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
     .model-option-btn { background: rgba(0,0,0,0.05); border: 1px solid var(--border); border-radius: 30px; padding: 8px 16px; font-size: 0.7rem; cursor: pointer; transition: all 0.2s; color: var(--text); }
     .model-option-btn.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
-    .model-option-btn.disabled { opacity: 0.5; cursor: not-allowed; }
     .model-warning { font-size: 0.55rem; color: #f39c12; margin-top: 6px; display: flex; align-items: center; gap: 4px; }
     
     .conv-list-container { max-height: 280px; overflow-y: auto; }
@@ -105,10 +104,49 @@
     .prompt-input:focus { outline: none; border-color: var(--primary); }
     
     .mermaid-wrapper { background: rgba(0,0,0,0.03); padding: 16px; border-radius: 16px; margin: 12px 0; text-align: center; overflow-x: auto; }
-    .table-wrapper { overflow-x: auto; margin: 12px 0; }
-    .message-bubble table { width: 100%; border-collapse: collapse; background: var(--card-bg); border-radius: 12px; }
-    .message-bubble th, .message-bubble td { padding: 8px 12px; border: 1px solid var(--border); font-size: 0.7rem; }
-    .message-bubble th { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
+    
+    /* Tableaux - style identique à timetable */
+    .table-wrapper {
+      overflow-x: auto;
+      margin: 16px 0;
+      border-radius: 16px;
+    }
+    .message-bubble table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.7rem;
+      background: var(--card-bg);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .message-bubble th {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 10px 8px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 0.65rem;
+    }
+    .message-bubble td {
+      padding: 8px 8px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .message-bubble tr:last-child td {
+      border-bottom: none;
+    }
+    
+    /* MathJax */
+    .MathJax {
+      overflow-x: auto;
+      overflow-y: hidden;
+      max-width: 100%;
+    }
+    mjx-container {
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding: 8px 0;
+    }
     
     .action-modal-content { background: var(--card-bg); border-radius: 24px; padding: 8px; max-width: 280px; width: 85%; border: 1px solid var(--border); }
     .action-modal-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; cursor: pointer; border-radius: 16px; transition: all 0.2s; color: var(--text); }
@@ -170,7 +208,6 @@
             <input type="text" id="searchConvInput" placeholder="Search conversations..." onkeyup="filterConversations()">
           </div>
           
-          <!-- Model selection - can be changed until first message -->
           <div class="model-section">
             <div class="model-label"><i class="fas fa-microchip"></i> AI Model</div>
             <div class="model-badge" id="currentModelBadge"><i class="fas fa-bolt"></i> <span id="currentModelName">Groq (Ultra Fast)</span></div>
@@ -180,7 +217,7 @@
               <button class="model-option-btn" data-model="mistral-codestral" onclick="selectModel('mistral-codestral')"><i class="fas fa-code"></i> Codestral</button>
             </div>
             <div class="model-warning" id="modelWarning">
-              <i class="fas fa-info-circle"></i> Model can be changed until first message is sent
+              <i class="fas fa-info-circle"></i> Model can be changed freely while conversation is empty
             </div>
           </div>
           
@@ -228,7 +265,7 @@
   
   <script>
     // ============================================
-    // CONFIGURATION - MODELS (ALL WORKING)
+    // CONFIGURATION
     // ============================================
     const MISTRAL_API_KEY = 'TQatuY13B8TdBEz09H2BPU22lfbSsbae';
     
@@ -334,6 +371,18 @@ NEVER use emojis in your responses. Use plain text only.
       return text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
     }
     
+    function applyFontToAll() {
+      const savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      const fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    
     // ============================================
     // MODALES
     // ============================================
@@ -358,8 +407,7 @@ NEVER use emojis in your responses. Use plain text only.
         </div>
       `;
       
-      
-document.body.appendChild(modal);
+      document.body.appendChild(modal);
       
       modal.querySelector('.confirm-cancel-btn').onclick = () => { modal.remove(); if (options.onCancel) options.onCancel(); };
       modal.querySelector('.confirm-ok-btn').onclick = () => { modal.remove(); if (options.onConfirm) options.onConfirm(); };
@@ -436,7 +484,7 @@ document.body.appendChild(modal);
     }
     
     // ============================================
-    // MODEL SELECTION (allowed until first message)
+    // MODEL SELECTION - CHANGEMENT VISIBLE
     // ============================================
     function selectModel(model) {
       if (!MODELS[model].available) { 
@@ -446,20 +494,24 @@ document.body.appendChild(modal);
       
       const conv = conversations.find(c => c.id === currentConvId);
       
-      // Check if conversation already has messages
       if (conv && conv.messages && conv.messages.length > 0) {
-        showToast(`Model cannot be changed after first message. Create a new conversation to switch models.`);
+        showToast(`Cannot change model after conversation has started. Create a new conversation.`);
         return;
       }
       
       currentModel = model;
+      
+      // Mise à jour VISIBLE de l'UI
       document.getElementById('currentModelName').innerHTML = MODELS[model].name;
       document.getElementById('currentModelBadge').innerHTML = `<i class="fas ${model === 'groq' ? 'fa-bolt' : (model === 'mistral-devstral' ? 'fa-rocket' : 'fa-code')}"></i> ${MODELS[model].name}`;
       document.getElementById('activeModelInfo').innerHTML = MODELS[model].name;
       
       document.querySelectorAll('.model-option-btn').forEach(btn => {
-        if (btn.dataset.model === model) btn.classList.add('active');
-        else btn.classList.remove('active');
+        if (btn.dataset.model === model) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
       });
       
       showToast(`Switched to ${MODELS[model].name}`);
@@ -488,15 +540,9 @@ document.body.appendChild(modal);
       const warningDiv = document.getElementById('modelWarning');
       if (warningDiv) {
         if (conv && conv.messages && conv.messages.length > 0) {
-          warningDiv.innerHTML = '<i class="fas fa-lock"></i> Model is locked (conversation has messages)';
-          document.querySelectorAll('.model-option-btn').forEach(btn => {
-            btn.classList.add('disabled');
-          });
+          warningDiv.innerHTML = '<i class="fas fa-lock"></i> Model locked (conversation has messages). Create new conversation to change model.';
         } else {
-          warningDiv.innerHTML = '<i class="fas fa-info-circle"></i> Model can be changed until first message is sent';
-          document.querySelectorAll('.model-option-btn').forEach(btn => {
-            btn.classList.remove('disabled');
-          });
+          warningDiv.innerHTML = '<i class="fas fa-exchange-alt"></i> Model can be changed freely. Click any model button above.';
         }
       }
     }
@@ -652,7 +698,7 @@ document.body.appendChild(modal);
     }
     
     // ============================================
-    // MESSAGE RENDERING
+    // MESSAGE RENDERING - VERSION ORIGINALE QUI FONCTIONNE
     // ============================================
     function getSystemPrompt(userName) {
       return `You are SMART GRADE AI, a helpful homework assistant for ${userName}, a Form 4B Science student at GBHS Foumban, Cameroon.
@@ -690,20 +736,33 @@ Always start with a friendly greeting using the student's name.`;
       return { full: text, truncated: truncated + '...', isTruncated: true };
     }
     
+    // VERSION ORIGINALE DE formatMessage - CELLE QUI MARCHAIT
     function formatMessage(text) {
       if (!text) return '';
+      
       let fixedText = text.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
       fixedText = fixedText.replace(/<(\w+)[^>]*>\s*<\/\1>/gi, '');
-      fixedText = fixedText.replace(/<table([\s\S]*?)<\/table>/gi, match => `<div class="table-wrapper">${match}</div>`);
+      
+      fixedText = fixedText.replace(/<table([\s\S]*?)<\/table>/gi, function(match) {
+        return `<div class="table-wrapper">${match}</div>`;
+      });
       
       marked.setOptions({ breaks: true, gfm: true, tables: true });
       let html = marked.parse(fixedText);
+      
       html = html.replace(/<a href=/g, '<a class="markdown-link" target="_blank" rel="noopener noreferrer" href=');
-      html = html.replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, (match, lang, code) => {
+      html = html.replace(/<pre><code class="language-(\w+)">([\s\S]*?)<\/code><\/pre>/g, function(match, lang, code) {
         const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return `<div class="code-block-wrapper"><button class="copy-code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button><pre><code class="language-${lang}">${escapedCode}</code></pre></div>`;
+        return `<div class="code-block-wrapper">
+          <button class="copy-code-btn" onclick="copyCode(this)"><i class="fas fa-copy"></i> Copy</button>
+          <pre><code class="language-${lang}">${escapedCode}</code></pre>
+        </div>`;
       });
-      html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, (match, code) => `<div class="mermaid-wrapper"><div class="mermaid">${code}</div></div>`);
+      
+      html = html.replace(/<pre><code class="language-mermaid">([\s\S]*?)<\/code><\/pre>/g, function(match, code) {
+        return `<div class="mermaid-wrapper"><div class="mermaid">${code}</div></div>`;
+      });
+      
       return html;
     }
     
@@ -765,7 +824,7 @@ Always start with a friendly greeting using the student's name.`;
       }
       container.innerHTML = html;
       container.scrollTop = container.scrollHeight;
-      setTimeout(() => { renderMathAndMermaid(); if (window.MathJax) MathJax.typesetPromise(); }, 200);
+      setTimeout(() => { renderMathAndMermaid(); if (window.MathJax) MathJax.typesetPromise(); applyFontToAll(); }, 200);
     }
     
     window.toggleFullMessage = function(messageId) {
@@ -863,22 +922,57 @@ Always start with a friendly greeting using the student's name.`;
     function editUserMessage(messageId, oldText) {
       showPromptDialog({
         title: 'Edit Message',
-        message: 'Modify your message',
+        message: 'Modify your message. The AI will generate a new response.',
         defaultValue: oldText,
-        confirmText: 'Save',
-        onConfirm: (newText) => {
-          if (newText && newText.trim() && newText !== oldText) {
-            const conv = conversations.find(c => c.id === currentConvId);
-            if (conv) {
-              const msgIndex = conv.messages.findIndex(m => m.id === messageId);
-              if (msgIndex !== -1) {
-                conv.messages[msgIndex].content = newText.trim();
-                saveConversations();
-                renderCurrentChat();
-                showToast('Message updated');
-              }
-            }
+        confirmText: 'Save & Regenerate',
+        onConfirm: async (newText) => {
+          if (!newText || !newText.trim()) return;
+          if (newText === oldText) return;
+          
+          const conv = conversations.find(c => c.id === currentConvId);
+          if (!conv) return;
+          
+          const msgIndex = conv.messages.findIndex(m => m.id === messageId);
+          if (msgIndex === -1) return;
+          
+          conv.messages = conv.messages.slice(0, msgIndex);
+          conv.messages[msgIndex].content = newText.trim();
+          conv.messages[msgIndex].timestamp = new Date().toISOString();
+          
+          saveConversations();
+          renderCurrentChat();
+          
+          if (isLoading) return;
+          isLoading = true;
+          
+          const sendBtn = document.querySelector('.chat-input-area button');
+          if (sendBtn) sendBtn.style.opacity = '0.5';
+          
+          const thinkingDiv = showProgressiveThinking();
+          
+          const historyMessages = conv.messages.slice(-10).map(msg => ({ role: msg.role, content: msg.role === 'user' ? msg.content : cleanAIResponse(msg.content) }));
+          const apiMessages = [{ role: 'system', content: getSystemPrompt(currentUser?.name || 'student') }, ...historyMessages];
+          
+          const result = await sendMessageWithFallback(apiMessages);
+          
+          if (thinkingDiv) thinkingDiv.remove();
+          if (sendBtn) sendBtn.style.opacity = '1';
+          
+          const assistantId = Date.now().toString() + '_' + Math.random().toString(36).substr(2, 6);
+          if (result.success) {
+            let response = cleanAIResponse(result.response);
+            conv.messages.push({ id: assistantId, role: 'assistant', content: response, timestamp: new Date().toISOString() });
+            if (result.model !== currentModel) showToast(`Used fallback: ${MODELS[result.model]?.name}`);
+          } else {
+            conv.messages.push({ id: assistantId, role: 'assistant', content: `[ERROR] ${result.error}\n\nPlease try again later.`, timestamp: new Date().toISOString() });
+            showToast(result.error);
           }
+          
+          saveConversations();
+          renderConvList();
+          renderCurrentChat();
+          isLoading = false;
+          showToast('Message updated with new AI response');
         }
       });
     }
@@ -1047,35 +1141,25 @@ Always start with a friendly greeting using the student's name.`;
     }
     
     // ============================================
-    // FONT & THEME & INIT
+    // INITIALISATION
     // ============================================
-    function applyGlobalFontChat() {
-      const savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-      const fontMap = {
-        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
-        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
-        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
-        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
-        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
-      };
-      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
-    }
-    
     function initChatPage() {
       currentUser = getCurrentStudent();
       if (!currentUser) { window.location.href = 'login.html'; return; }
       updateHeaderAvatar();
       initMobileMenu();
       initThemeSelector();
-      applyGlobalFontChat();
+      applyFontToAll();
       loadConversations();
       
-      const observer = new MutationObserver(() => { renderMathAndMermaid(); });
+      const observer = new MutationObserver(() => { renderMathAndMermaid(); applyFontToAll(); });
       observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
       
       const textarea = document.getElementById('messageInput');
       textarea.addEventListener('keydown', e => { if (e.key === 'Enter' && e.ctrlKey) { e.preventDefault(); sendMessage(); } });
       textarea.addEventListener('input', function() { this.style.height = 'auto'; this.style.height = Math.min(this.scrollHeight, 120) + 'px'; });
+      
+      applyFontToAll();
     }
     
     window.selectConversation = selectConversation;

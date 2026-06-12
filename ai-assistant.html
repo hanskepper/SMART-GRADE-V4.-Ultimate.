@@ -358,7 +358,8 @@ NEVER use emojis in your responses. Use plain text only.
         </div>
       `;
       
-      document.body.appendChild(modal);
+      
+document.body.appendChild(modal);
       
       modal.querySelector('.confirm-cancel-btn').onclick = () => { modal.remove(); if (options.onCancel) options.onCancel(); };
       modal.querySelector('.confirm-ok-btn').onclick = () => { modal.remove(); if (options.onConfirm) options.onConfirm(); };

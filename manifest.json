@@ -1,17 +1,18 @@
 {
-  "name": "SMART GRADE - GBHS Foumban",
+  "name": "SMART GRADE - SIN GBHS FOUMBAN",
   "short_name": "SMART GRADE",
-  "description": "Ultimate Grade Management System for SIN GBHS FOUMBAN Form 4B Science",
+  "description": "Ultimate Grade Management System for Form 4B Science",
   "version": "4.0.3",
   "start_url": "./splash.html",
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#0f3b48",
-  "theme_color": "#0f3b48",
+  "background_color": "#073442",
+  "theme_color": "#073442",
   "lang": "en",
   "scope": "./",
   "categories": ["education", "productivity"],
+  
   "shortcuts": [
     {
       "name": "Dashboard",
@@ -29,12 +30,19 @@
       "icons": [{ "src": "./icons/pwa/icon-96x96.png", "sizes": "96x96" }]
     }
   ],
+  
   "icons": [
+    {
+      "src": "./icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
     {
       "src": "./icons/pwa/icon-72x72.png",
       "sizes": "72x72",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./icons/pwa/icon-96x96.png",
@@ -46,7 +54,7 @@
       "src": "./icons/pwa/icon-128x128.png",
       "sizes": "128x128",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./icons/pwa/icon-144x144.png",
@@ -58,7 +66,7 @@
       "src": "./icons/pwa/icon-152x152.png",
       "sizes": "152x152",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./icons/pwa/icon-192x192.png",
@@ -70,10 +78,16 @@
       "src": "./icons/pwa/icon-384x384.png",
       "sizes": "384x384",
       "type": "image/png",
-      "purpose": "any"
+      "purpose": "any maskable"
     },
     {
       "src": "./icons/pwa/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "./icons/android/play-store-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

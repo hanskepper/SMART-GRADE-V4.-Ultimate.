@@ -3,68 +3,26 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>ADMIN - Homework Manager</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <title>SMART GRADE - Admin Homework</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
   <link rel="stylesheet" href="css/components.css">
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0f3b48">
   <style>
-    .admin-container { max-width: 1200px; margin: 0 auto; }
-    
-    .login-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-    }
-    .login-overlay .glass-card { max-width: 350px; width: 90%; text-align: center; }
-    .login-overlay .glass-card i { font-size: 50px; color: var(--primary); margin-bottom: 16px; display: block; }
-    .login-overlay .glass-card input {
-      width: 100%;
-      padding: 14px;
-      margin: 16px 0;
-      border: 2px solid var(--border);
-      border-radius: 12px;
-      background: var(--card-bg);
-      color: var(--text);
-      text-align: center;
-    }
-    .login-overlay .glass-card button { width: 100%; }
-    
+    /* Styles spécifiques à l'admin */
     .admin-header {
-      background: var(--card-bg);
-      border-radius: 20px;
-      padding: 20px;
-      margin-bottom: 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
       gap: 16px;
-      border: 1px solid var(--border);
+      margin-bottom: 20px;
     }
-    .admin-header h1 { font-size: 1.3rem; color: var(--primary); display: flex; align-items: center; gap: 10px; }
-    .sync-status {
-      font-size: 0.7rem;
-      padding: 6px 14px;
-      border-radius: 30px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .sync-status.success { background: rgba(46,204,113,0.12); color: #2ecc71; }
-    .sync-status.error { background: rgba(231,76,60,0.12); color: #e74c3c; }
-    .sync-status.syncing { background: rgba(52,152,219,0.12); color: #3498db; }
-    
     .homework-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
@@ -73,20 +31,52 @@
       margin-bottom: 16px;
       transition: all 0.2s;
     }
-    .homework-card:hover { transform: translateY(-2px); border-color: var(--primary); }
-    .homework-title { font-weight: 700; font-size: 1rem; color: var(--primary); margin-bottom: 8px; }
+    .homework-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--primary);
+    }
+    .homework-title {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
     .homework-subject {
       display: inline-block;
-      background: rgba(15,59,72,0.08);
+      background: rgba(15,59,72,0.1);
       padding: 4px 12px;
       border-radius: 20px;
       font-size: 0.7rem;
+      color: var(--primary);
       margin-bottom: 12px;
     }
-    .homework-description { color: var(--text-light); margin-bottom: 12px; font-size: 0.85rem; }
-    .homework-meta { font-size: 0.7rem; color: var(--text-light); margin-bottom: 16px; }
-    .homework-actions { display: flex; gap: 12px; justify-content: flex-end; }
+    .homework-description {
+      color: var(--text-light);
+      margin-bottom: 12px;
+      font-size: 0.85rem;
+    }
+    .homework-meta {
+      font-size: 0.7rem;
+      color: var(--text-light);
+      margin-bottom: 16px;
+    }
+    .homework-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+    .file-badge {
+      background: rgba(0,0,0,0.05);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
     
+    /* Modal styles */
     .modal {
       display: none;
       position: fixed;
@@ -110,9 +100,10 @@
       max-height: 85%;
       overflow-y: auto;
       border: 1px solid var(--border);
+      animation: fadeInUp 0.3s ease;
     }
     .modal-content h3 { color: var(--primary); margin-bottom: 20px; }
-    .modal-content input, .modal-content textarea {
+    .modal-content input, .modal-content textarea, .modal-content select {
       width: 100%;
       padding: 12px;
       margin-bottom: 16px;
@@ -120,50 +111,85 @@
       border-radius: 12px;
       background: var(--card-bg);
       color: var(--text);
+      font-family: inherit;
     }
     .modal-content textarea { min-height: 100px; resize: vertical; }
-    .modal-buttons { display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; }
-    
-    .custom-select {
-      position: relative;
-      width: 100%;
-      margin-bottom: 16px;
+    .modal-content input:focus, .modal-content textarea:focus, .modal-content select:focus {
+      outline: none;
+      border-color: var(--primary);
     }
-    .custom-select-trigger {
+    .file-input-area {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 16px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .file-input-area:hover { border-color: var(--primary); background: rgba(0,0,0,0.02); }
+    .file-list { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .file-tag {
+      background: rgba(0,0,0,0.05);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .modal-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 16px;
+    }
+    
+    /* Login overlay */
+    .login-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 12px 16px;
+      height: 100%;
+      background: linear-gradient(135deg, var(--bg-start), var(--bg-end));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+    }
+    .login-card {
       background: var(--card-bg);
+      border-radius: 24px;
+      padding: 32px;
+      width: 90%;
+      max-width: 350px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+    .login-card h2 { color: var(--primary); margin-bottom: 20px; }
+    .login-card input {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 16px;
       border: 2px solid var(--border);
       border-radius: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-    }
-    .custom-select-options {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
       background: var(--card-bg);
-      border: 2px solid var(--primary);
-      border-top: none;
-      border-radius: 0 0 12px 12px;
-      max-height: 200px;
-      overflow-y: auto;
-      z-index: 100;
-      display: none;
+      color: var(--text);
+      text-align: center;
     }
-    .custom-select.open .custom-select-options { display: block; }
-    .custom-select-option {
-      padding: 10px 16px;
+    .login-card button {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border: none;
+      border-radius: 40px;
+      font-weight: 600;
       cursor: pointer;
-      border-bottom: 1px solid var(--border);
     }
-    .custom-select-option:hover { background: rgba(15,59,72,0.08); }
-    .custom-select-option.selected { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
     
-    .toast {
+    .status-msg {
       position: fixed;
       bottom: 20px;
       right: 20px;
@@ -173,30 +199,45 @@
       border-radius: 30px;
       font-size: 0.8rem;
       z-index: 100;
-      animation: fadeOut 3s 2s forwards;
+      animation: fadeOut 3s forwards;
     }
-    .toast.error { background: #e74c3c; }
-    @keyframes fadeOut { to { opacity: 0; visibility: hidden; } }
+    .status-msg.error { background: #e74c3c; }
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      70% { opacity: 1; }
+      100% { opacity: 0; visibility: hidden; }
+    }
   </style>
 </head>
 <body>
+  <!-- Login Overlay -->
   <div class="login-overlay" id="loginOverlay">
-    <div class="glass-card">
-      <i class="fas fa-lock"></i>
+    <div class="login-card">
+      <i class="fas fa-lock" style="font-size: 50px; color: var(--primary);"></i>
       <h2>Admin Access</h2>
       <input type="password" id="adminPassword" placeholder="Enter password">
-      <button class="btn btn-primary" onclick="checkAdminLogin()">Login</button>
+      <button onclick="checkAdminLogin()">Login</button>
       <div id="loginError" style="color: #e74c3c; margin-top: 12px; display: none;">Wrong password</div>
     </div>
   </div>
 
+  <!-- Application Container -->
   <div class="app-container" id="appContainer" style="display: none;">
     <div class="mobile-header">
       <button class="menu-btn" id="menuBtn"><i class="fas fa-bars"></i></button>
-      <div class="header-logo"><i class="fas fa-tasks"></i><span>ADMIN</span></div>
+      <div class="header-logo"><i class="fas fa-tasks"></i><span>HOMEWORK ADMIN</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
         <a href="profile.html"><div id="headerAvatar" style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;"><i class="fas fa-user-graduate"></i></div></a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
+      </div>
+    </div>
+    
+    <div class="sheet-overlay" id="sheetOverlay"></div>
+    <div class="bottom-sheet" id="bottomSheet">
+      <div class="bottom-sheet-header"><h3><i class="fas fa-brush"></i> Theme</h3><button class="close-sheet" id="closeSheet"><i class="fas fa-times"></i></button></div>
+      <div class="bottom-sheet-content">
+        <div class="theme-grid-rect" id="themeGrid"></div>
+        <div class="font-row-sheet"><div class="font-sheet" data-font="small">A<sup>-</sup></div><div class="font-sheet" data-font="medium">A</div><div class="font-sheet" data-font="large">A<sup>+</sup></div></div>
       </div>
     </div>
     
@@ -204,19 +245,28 @@
       <div class="sidebar-header"><h3><i class="fas fa-graduation-cap"></i> SMART-GRADE MENU</h3><button class="close-sidebar" id="closeSidebar"><i class="fas fa-times"></i></button></div>
       <nav class="sidebar-nav">
         <a href="dashboard.html" class="nav-item"><i class="fas fa-chalkboard-user"></i> Dashboard</a>
-        <a href="admin-homework.html" class="nav-item active"><i class="fas fa-tasks"></i> Admin</a>
+        <a href="admin-homework.html" class="nav-item active"><i class="fas fa-tasks"></i> Homework Admin</a>
+        <div id="devSidebarContainer" style="margin-top:16px; padding-top:16px; border-top:2px solid var(--primary);">
+          <div style="font-size:0.7rem; font-weight:700; color:var(--primary); margin-bottom:8px;"><i class="fas fa-code"></i> Developer Tools</div>
+          <a href="dev-calculator.html" class="nav-item"><i class="fas fa-calculator"></i> Calculator</a>
+          <a href="dev-database.html" class="nav-item"><i class="fas fa-database"></i> Database</a>
+          <a href="dev-stats.html" class="nav-item"><i class="fas fa-chart-pie"></i> Advanced Stats</a>
+          <a href="dev-logs.html" class="nav-item"><i class="fas fa-history"></i> System Logs</a>
+          <a href="dev-backup.html" class="nav-item"><i class="fas fa-cloud-upload-alt"></i> Cloud Backup</a>
+          <a href="dev-config.html" class="nav-item"><i class="fas fa-cog"></i> System Config</a>
+        </div>
         <a href="#" class="nav-item" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
     
     <main class="main-content">
-      <div class="admin-container">
+      <div class="glass-card">
         <div class="admin-header">
-          <h1><i class="fas fa-tasks"></i> Homework Manager</h1>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <span id="syncStatus" class="sync-status success"><i class="fas fa-check-circle"></i> Ready</span>
-            <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Add</button>
+          <h3><i class="fas fa-tasks"></i> Homework Manager</h3>
+          <div style="display: flex; gap: 10px;">
+            <button class="btn btn-secondary" onclick="loadHomeworks()"><i class="fas fa-sync-alt"></i> Refresh</button>
+            <button class="btn btn-primary" onclick="openAddModal()"><i class="fas fa-plus"></i> Add Homework</button>
           </div>
         </div>
         <div id="homeworksList"></div>
@@ -224,36 +274,35 @@
     </main>
   </div>
 
+  <!-- Modal Add/Edit -->
   <div class="modal" id="homeworkModal">
     <div class="modal-content">
       <h3 id="modalTitle">Add Homework</h3>
       <input type="text" id="hwTitle" placeholder="Title">
-      
-      <div class="custom-select" id="subjectSelect">
-        <div class="custom-select-trigger">
-          <span><i class="fas fa-book"></i> <span id="selectedSubjectText">COMPUTER SCIENCES</span></span>
-          <i class="fas fa-chevron-down"></i>
-        </div>
-        <div class="custom-select-options">
-          <div class="custom-select-option" data-value="COMPUTER SCIENCES">COMPUTER SCIENCES</div>
-          <div class="custom-select-option" data-value="MATHEMATICS">MATHEMATICS</div>
-          <div class="custom-select-option" data-value="CHEMISTRY">CHEMISTRY</div>
-          <div class="custom-select-option" data-value="PHYSICS">PHYSICS</div>
-          <div class="custom-select-option" data-value="BIOLOGY">BIOLOGY</div>
-          <div class="custom-select-option" data-value="ENGLISH LANGUAGE">ENGLISH LANGUAGE</div>
-          <div class="custom-select-option" data-value="FRENCH">FRENCH</div>
-          <div class="custom-select-option" data-value="GEOGRAPHY">GEOGRAPHY</div>
-          <div class="custom-select-option" data-value="ECONOMICS">ECONOMICS</div>
-          <div class="custom-select-option" data-value="HUMAN BIOLOGY">HUMAN BIOLOGY</div>
-          <div class="custom-select-option" data-value="GEOLOGY">GEOLOGY</div>
-          <div class="custom-select-option" data-value="ADDITIONAL MATHEMATICS">ADDITIONAL MATHEMATICS</div>
-          <div class="custom-select-option" data-value="CITIZENSHIP">CITIZENSHIP</div>
-          <div class="custom-select-option" data-value="FOOD AND NUTRITION">FOOD AND NUTRITION</div>
-        </div>
-      </div>
-      
+      <select id="hwSubject">
+        <option value="COMPUTER SCIENCES">COMPUTER SCIENCES</option>
+        <option value="MATHEMATICS">MATHEMATICS</option>
+        <option value="CHEMISTRY">CHEMISTRY</option>
+        <option value="PHYSICS">PHYSICS</option>
+        <option value="BIOLOGY">BIOLOGY</option>
+        <option value="ENGLISH LANGUAGE">ENGLISH LANGUAGE</option>
+        <option value="FRENCH">FRENCH</option>
+        <option value="GEOGRAPHY">GEOGRAPHY</option>
+        <option value="ECONOMICS">ECONOMICS</option>
+        <option value="HUMAN BIOLOGY">HUMAN BIOLOGY</option>
+        <option value="GEOLOGY">GEOLOGY</option>
+        <option value="ADDITIONAL MATHEMATICS">ADDITIONAL MATHEMATICS</option>
+        <option value="CITIZENSHIP">CITIZENSHIP</option>
+        <option value="FOOD AND NUTRITION">FOOD AND NUTRITION</option>
+      </select>
       <input type="date" id="hwDueDate">
       <textarea id="hwDescription" placeholder="Description"></textarea>
+      
+      <div class="file-input-area" onclick="document.getElementById('fileInput').click()">
+        <i class="fas fa-cloud-upload-alt"></i> Click to add files (max 5MB per file)
+      </div>
+      <input type="file" id="fileInput" multiple style="display:none" accept="image/*,video/*,audio/*,application/pdf,.doc,.docx,.txt">
+      <div id="fileList" class="file-list"></div>
       
       <input type="hidden" id="editId">
       <div class="modal-buttons">
@@ -269,221 +318,236 @@
   <script src="js/app.js"></script>
 
   <script>
-    // ============================================
-    // CONFIGURATION GITHUB
-    // ============================================
+    // Configuration
+    const GIST_ID = '84e9a1478cdb943f24792cca9bc77878';
     const GITHUB_TOKEN = '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';
-    const REPO_OWNER = 'hanskepper';
-    const REPO_NAME = 'SMART-GRADE-V4.-Ultimate.';
-    const FILE_PATH = 'homeworks.json';
     const ADMIN_PASSWORD = 'SmartGradeAdmin2026';
     
+    let currentFiles = [];
     let editingId = null;
-    let selectedSubject = 'COMPUTER SCIENCES';
     
-    // ============================================
-    // LECTURE DU FICHIER DEPUIS GITHUB
-    // ============================================
-    async function getFileFromGitHub() {
+    function compressImage(dataUrl, maxWidth, callback) {
+      const img = new Image();
+      img.onload = function() {
+        let width = img.width, height = img.height;
+        if (width > maxWidth) {
+          height = (height * maxWidth) / width;
+          width = maxWidth;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        callback(canvas.toDataURL('image/jpeg', 0.7));
+      };
+      img.src = dataUrl;
+    }
+    
+    async function getGistContent() {
       try {
-        const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+        const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
           headers: { 'Authorization': `token ${GITHUB_TOKEN}` }
         });
-        if (!response.ok) throw new Error('File not found');
-        const data = await response.json();
-        const content = atob(data.content);
-        return { content: JSON.parse(content), sha: data.sha };
+        if (!response.ok) throw new Error();
+        const gist = await response.json();
+        return JSON.parse(gist.files['homeworks.json'].content);
       } catch(e) {
-        return { content: { homeworks: [] }, sha: null };
+        return { homeworks: [] };
       }
     }
     
-    // ============================================
-    // SAUVEGARDE VERS GITHUB
-    // ============================================
-    async function saveToGitHub(homeworks, sha) {
-      const statusEl = document.getElementById('syncStatus');
-      statusEl.className = 'sync-status syncing';
-      statusEl.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
-      
-      const content = btoa(JSON.stringify({ homeworks: homeworks }, null, 2));
-      
-      const response = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${GITHUB_TOKEN}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          message: 'Update homeworks via admin panel',
-          content: content,
-          sha: sha
-        })
-      });
-      
-      if (response.ok) {
-        statusEl.className = 'sync-status success';
-        statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Saved to GitHub';
-        showToast('Saved successfully!');
-        setTimeout(() => {
-          statusEl.innerHTML = '<i class="fas fa-check-circle"></i> Ready';
-        }, 2000);
-        return true;
-      } else {
-        statusEl.className = 'sync-status error';
-        statusEl.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error';
-        showToast('Error saving', 'error');
+    async function updateGistContent(data) {
+      try {
+        const response = await fetch(`https://api.github.com/gists/${GIST_ID}`, {
+          method: 'PATCH',
+          headers: {
+            'Authorization': `token ${GITHUB_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ files: { 'homeworks.json': { content: JSON.stringify(data) } } })
+        });
+        return response.ok;
+      } catch(e) {
         return false;
       }
     }
     
-    // ============================================
-    // CHARGEMENT ET AFFICHAGE
-    // ============================================
     async function loadHomeworks() {
-      const { content } = await getFileFromGitHub();
-      displayHomeworks(content.homeworks || []);
+      showStatus('Loading...');
+      const data = await getGistContent();
+      const homeworks = data.homeworks || [];
+      displayHomeworks(homeworks);
     }
     
     function displayHomeworks(homeworks) {
       const container = document.getElementById('homeworksList');
-      if (!homeworks || homeworks.length === 0) {
-        container.innerHTML = '<div class="glass-card text-center" style="padding:40px;"><i class="fas fa-tasks" style="font-size:50px;opacity:0.2;"></i><p>No homeworks yet. Click "Add" to create one.</p></div>';
+      if (homeworks.length === 0) {
+        container.innerHTML = '<div class="text-center" style="padding:40px;"><i class="fas fa-tasks" style="font-size:50px;opacity:0.2;"></i><p>No homeworks yet. Click "Add Homework" to create one.</p></div>';
         return;
       }
-      
       homeworks.sort((a, b) => b.id - a.id);
       let html = '';
       for (let h of homeworks) {
         const dueDate = h.dueDate ? new Date(h.dueDate).toLocaleDateString() : 'No date';
-        html += `
-          <div class="homework-card">
-            <div class="homework-title">${escapeHtml(h.title)}</div>
-            <div class="homework-subject">${h.subject}</div>
-            <div class="homework-description">${escapeHtml((h.description || '').substring(0, 150))}${(h.description || '').length > 150 ? '...' : ''}</div>
-            <div class="homework-meta"><i class="fas fa-calendar"></i> Due: ${dueDate}</div>
-            <div class="homework-actions">
-              <button class="btn btn-secondary" onclick="openEditModal(${h.id})"><i class="fas fa-edit"></i> Edit</button>
-              <button class="btn btn-danger" onclick="deleteHomework(${h.id})"><i class="fas fa-trash"></i> Delete</button>
-            </div>
+        const fileCount = (h.files || []).length;
+        html += `<div class="homework-card">
+          <div class="homework-title">${escapeHtml(h.title)}</div>
+          <div class="homework-subject">${h.subject}</div>
+          <div class="homework-description">${escapeHtml((h.description || '').substring(0, 150))}${(h.description || '').length > 150 ? '...' : ''}</div>
+          <div class="homework-meta"><i class="fas fa-calendar"></i> Due: ${dueDate}</div>
+          ${fileCount > 0 ? `<div><span class="file-badge"><i class="fas fa-paperclip"></i> ${fileCount} file(s)</span></div>` : ''}
+          <div class="homework-actions">
+            <button class="btn btn-secondary" onclick="openEditModal(${h.id})"><i class="fas fa-edit"></i> Edit</button>
+            <button class="btn btn-danger" onclick="deleteHomework(${h.id})"><i class="fas fa-trash"></i> Delete</button>
           </div>
-        `;
+        </div>`;
       }
       container.innerHTML = html;
     }
     
-    // ============================================
-    // CRUD
-    // ============================================
     function openAddModal() {
       editingId = null;
       document.getElementById('modalTitle').innerHTML = 'Add Homework';
       document.getElementById('hwTitle').value = '';
-      document.getElementById('hwDescription').value = '';
+      document.getElementById('hwSubject').value = 'COMPUTER SCIENCES';
       document.getElementById('hwDueDate').value = '';
+      document.getElementById('hwDescription').value = '';
       document.getElementById('editId').value = '';
-      selectedSubject = 'COMPUTER SCIENCES';
-      document.getElementById('selectedSubjectText').innerHTML = 'COMPUTER SCIENCES';
+      currentFiles = [];
+      updateFileList();
       document.getElementById('homeworkModal').classList.add('active');
     }
     
     async function openEditModal(id) {
-      const { content } = await getFileFromGitHub();
-      const hw = content.homeworks.find(h => h.id === id);
+      const data = await getGistContent();
+      const hw = data.homeworks.find(h => h.id === id);
       if (!hw) return;
-      
       editingId = id;
       document.getElementById('modalTitle').innerHTML = 'Edit Homework';
       document.getElementById('hwTitle').value = hw.title;
-      document.getElementById('hwDescription').value = hw.description || '';
+      document.getElementById('hwSubject').value = hw.subject;
       document.getElementById('hwDueDate').value = hw.dueDate || '';
+      document.getElementById('hwDescription').value = hw.description || '';
       document.getElementById('editId').value = id;
-      selectedSubject = hw.subject;
-      document.getElementById('selectedSubjectText').innerHTML = selectedSubject;
+      currentFiles = hw.files || [];
+      updateFileList();
       document.getElementById('homeworkModal').classList.add('active');
     }
     
+    function updateFileList() {
+      const container = document.getElementById('fileList');
+      if (currentFiles.length === 0) { container.innerHTML = ''; return; }
+      container.innerHTML = currentFiles.map((f, idx) => `
+        <div class="file-tag">
+          <i class="fas ${getFileIcon(f.type)}"></i> ${f.name}
+          <i class="fas fa-times" style="cursor:pointer;color:#e74c3c;margin-left:6px;" onclick="removeFile(${idx})"></i>
+        </div>
+      `).join('');
+    }
+    
+    function getFileIcon(type) {
+      if (type.startsWith('image/')) return 'fa-image';
+      if (type.startsWith('video/')) return 'fa-video';
+      if (type.startsWith('audio/')) return 'fa-music';
+      if (type === 'application/pdf') return 'fa-file-pdf';
+      return 'fa-file';
+    }
+    
+    function removeFile(index) {
+      currentFiles.splice(index, 1);
+      updateFileList();
+    }
+    
+    document.getElementById('fileInput').addEventListener('change', async function(e) {
+      const files = Array.from(e.target.files);
+      for (const file of files) {
+        if (file.size > 5 * 1024 * 1024) {
+          showStatus(`${file.name} is too large (max 5MB)`, 'error');
+          continue;
+        }
+        const reader = new FileReader();
+        const fileData = await new Promise((resolve) => {
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(file);
+        });
+        let finalData = fileData;
+        if (file.type.startsWith('image/')) {
+          await new Promise((resolve) => {
+            compressImage(fileData, 800, (compressed) => {
+              finalData = compressed;
+              resolve();
+            });
+          });
+        }
+        currentFiles.push({ name: file.name, type: file.type, data: finalData, url: finalData });
+      }
+      updateFileList();
+      e.target.value = '';
+    });
+    
     async function saveHomework() {
       const title = document.getElementById('hwTitle').value.trim();
-      if (!title) { showToast('Please enter a title', 'error'); return; }
+      if (!title) { showStatus('Please enter a title', 'error'); return; }
       
-      const { content, sha } = await getFileFromGitHub();
-      let homeworks = content.homeworks || [];
+      const data = await getGistContent();
+      let homeworks = data.homeworks || [];
+      const editId = parseInt(document.getElementById('editId').value);
       
-      const homework = {
-        id: editingId || Date.now(),
+      const newHomework = {
+        id: editId || Date.now(),
         title: title,
-        subject: selectedSubject,
+        subject: document.getElementById('hwSubject').value,
         dueDate: document.getElementById('hwDueDate').value,
         description: document.getElementById('hwDescription').value,
+        files: currentFiles,
         createdAt: new Date().toISOString()
       };
       
-      if (editingId) {
-        const index = homeworks.findIndex(h => h.id === editingId);
-        if (index !== -1) homeworks[index] = homework;
+      if (editId) {
+        const index = homeworks.findIndex(h => h.id === editId);
+        if (index !== -1) homeworks[index] = newHomework;
       } else {
-        homeworks.unshift(homework);
+        homeworks.unshift(newHomework);
       }
       
-      const success = await saveToGitHub(homeworks, sha);
+      const success = await updateGistContent({ homeworks: homeworks });
       if (success) {
         closeModal();
         loadHomeworks();
-        showToast(editingId ? 'Homework updated!' : 'Homework added!');
+        showStatus(editId ? 'Homework updated!' : 'Homework added!');
+      } else {
+        showStatus('Error saving', 'error');
       }
     }
     
     async function deleteHomework(id) {
       if (!confirm('Delete this homework?')) return;
-      
-      const { content, sha } = await getFileFromGitHub();
-      let homeworks = content.homeworks || [];
-      homeworks = homeworks.filter(h => h.id !== id);
-      
-      const success = await saveToGitHub(homeworks, sha);
-      if (success) {
-        loadHomeworks();
-        showToast('Homework deleted');
-      }
+      const data = await getGistContent();
+      const homeworks = (data.homeworks || []).filter(h => h.id !== id);
+      const success = await updateGistContent({ homeworks: homeworks });
+      if (success) { loadHomeworks(); showStatus('Homework deleted'); }
     }
     
     function closeModal() { document.getElementById('homeworkModal').classList.remove('active'); }
     
-    function showToast(msg, type = 'success') {
-      const toast = document.createElement('div');
-      toast.className = 'toast ' + (type === 'error' ? 'error' : '');
-      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + msg;
-      document.body.appendChild(toast);
-      setTimeout(() => toast.remove(), 3000);
+    function showStatus(msg, type = 'success') {
+      const existing = document.querySelector('.status-msg');
+      if (existing) existing.remove();
+      const div = document.createElement('div');
+      div.className = 'status-msg' + (type === 'error' ? ' error' : '');
+      div.innerHTML = '<i class="fas fa-info-circle"></i> ' + msg;
+      document.body.appendChild(div);
+      setTimeout(() => div.remove(), 4000);
     }
     
-    function escapeHtml(text) {
-      if (!text) return '';
-      return text.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;'));
-    }
-    
-    function initCustomSelect() {
-      const select = document.getElementById('subjectSelect');
-      const trigger = select.querySelector('.custom-select-trigger');
-      trigger.addEventListener('click', () => select.classList.toggle('open'));
-      document.querySelectorAll('.custom-select-option').forEach(opt => {
-        opt.addEventListener('click', () => {
-          selectedSubject = opt.dataset.value;
-          document.getElementById('selectedSubjectText').innerHTML = selectedSubject;
-          document.querySelectorAll('.custom-select-option').forEach(o => o.classList.remove('selected'));
-          opt.classList.add('selected');
-          select.classList.remove('open');
-        });
-      });
-      document.addEventListener('click', (e) => { if (!select.contains(e.target)) select.classList.remove('open'); });
-    }
+    function escapeHtml(text) { return text ? text.replace(/[&<>]/g, m => m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')) : ''; }
     
     function checkAdminLogin() {
-      if (document.getElementById('adminPassword').value === ADMIN_PASSWORD) {
+      const pwd = document.getElementById('adminPassword').value;
+      if (pwd === ADMIN_PASSWORD) {
         document.getElementById('loginOverlay').style.display = 'none';
         document.getElementById('appContainer').style.display = 'block';
-        initCustomSelect();
         loadHomeworks();
         initMobileMenu();
         initThemeSelector();
@@ -499,12 +563,32 @@
         if (stored) {
           const user = JSON.parse(stored);
           const profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{}');
-          const avatar = document.getElementById('headerAvatar');
+          const headerAvatar = document.getElementById('headerAvatar');
           if (profile.avatarBase64 && profile.avatarBase64.length > 100) {
-            avatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+            headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
           }
         }
       } catch(e) {}
+    }
+    
+    function initMobileMenu() {
+      const menuBtn = document.getElementById('menuBtn');
+      const sidebar = document.getElementById('sidebarMenu');
+      const overlay = document.getElementById('overlay');
+      const closeBtn = document.getElementById('closeSidebar');
+      if (menuBtn && sidebar && overlay) {
+        menuBtn.onclick = () => { sidebar.classList.add('open'); overlay.classList.add('active'); };
+        const close = () => { sidebar.classList.remove('open'); overlay.classList.remove('active'); };
+        if (closeBtn) closeBtn.onclick = close;
+        overlay.onclick = close;
+      }
+    }
+    
+    function initThemeSelector() {
+      const savedTheme = localStorage.getItem('smartgrade_theme') || 'default';
+      document.body.classList.add('theme-' + savedTheme);
+      const isDark = document.body.classList.contains('night-mode');
+      if (isDark) document.body.classList.add('night-mode');
     }
   </script>
 </body>

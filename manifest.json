@@ -7,8 +7,8 @@
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#0f3b48",
-  "theme_color": "#0f3b48",
+  "background_color": "#01171A",
+  "theme_color": "#23A7A3",
   "lang": "en",
   "scope": "./",
   "categories": ["education", "productivity"],
@@ -24,7 +24,8 @@
         {
           "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any maskable"
         }
       ]
     },
@@ -37,7 +38,8 @@
         {
           "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any maskable"
         }
       ]
     },
@@ -50,7 +52,8 @@
         {
           "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any maskable"
         }
       ]
     },
@@ -63,7 +66,36 @@
         {
           "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
-          "type": "image/png"
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    },
+    {
+      "name": "Flashcards",
+      "short_name": "Flashcards",
+      "description": "Study with flashcards",
+      "url": "./flashcards.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any maskable"
+        }
+      ]
+    },
+    {
+      "name": "Timetable",
+      "short_name": "Timetable",
+      "description": "View your class schedule",
+      "url": "./timetable.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png",
+          "purpose": "any maskable"
         }
       ]
     }
@@ -84,8 +116,8 @@
   "launch_handler": {
     "client_mode": ["focus-existing", "auto"]
   },
-  "handle_links": "preferred",
   "edge_side_panel": {
     "preferred_width": 400
-  }
+  },
+  "handle_links": "preferred"
 }

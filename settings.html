@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SMART GRADE - Settings</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -33,7 +33,6 @@
       align-items: center;
       gap: 10px;
     }
-    .subject-beautiful-card:active { transform: scale(0.97); }
     .subject-beautiful-card.selected { border-color: var(--primary); background: rgba(15,59,72,0.04); }
     .subject-beautiful-card.selected .subject-check-circle { background: var(--primary); color: white; border-color: var(--primary); }
     .subject-beautiful-card.selected .subject-check-circle i { display: block; }
@@ -126,10 +125,7 @@
     .danger-zone { border: 1px solid rgba(220,53,69,0.3); background: rgba(220,53,69,0.04); border-radius: 20px; padding: 16px; }
     .update-result-area { margin-top: 16px; display: none; }
     .update-result-message { padding: 12px; border-radius: 12px; font-size: 0.7rem; }
-    .update-progress {
-      margin-top: 12px;
-      display: none;
-    }
+    .update-progress { margin-top: 12px; display: none; }
     .update-progress-bar {
       height: 6px;
       background: rgba(0,0,0,0.1);
@@ -181,9 +177,7 @@
       <div class="header-logo"><i class="fas fa-sliders-h"></i><span>SETTINGS</span></div>
       <div style="display:flex;align-items:center;gap:8px;">
         <a href="profile.html">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar">
-            <i class="fas fa-user-graduate"></i>
-          </div>
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--primary),var(--secondary));display:flex;align-items:center;justify-content:center;color:white;font-size:0.8rem;" id="headerAvatar"><i class="fas fa-user-graduate"></i></div>
         </a>
         <div class="theme-btn-header" id="themeBtn"><i class="fas fa-palette"></i><span>Theme</span></div>
       </div>
@@ -208,12 +202,9 @@
     </div>
     <div class="overlay" id="overlay"></div>
     
-
     <main class="main-content">
       
-      <!-- ============================================ -->
       <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
-      <!-- ============================================ -->
       <div class="glass-card" id="updateCheckSection">
         <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
@@ -237,11 +228,9 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- SUBJECTS BY TERM -->
-      <!-- ============================================ -->
       <div class="glass-card">
-        <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
+        <h3><i class="fas fa-layer-group"></i> Subjects by Term</h3>
         <div class="term-selector-row" id="termSelector">
           <div class="term-btn-modern" data-term="1"><i class="fas fa-1"></i> Term 1</div>
           <div class="term-btn-modern" data-term="2"><i class="fas fa-2"></i> Term 2</div>
@@ -256,9 +245,7 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- PROFILE INFO -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-user"></i> Profile Info</h3>
         <div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div>
@@ -266,26 +253,20 @@
         <div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div>
       </div>
       
-      <!-- ============================================ -->
       <!-- CHANGE PIN -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-key"></i> Change PIN</h3>
         <button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button>
       </div>
       
-      <!-- ============================================ -->
       <!-- FINGERPRINT - VERSION CORRIGÉE -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
         <div id="fingerprintSection"></div>
         <div id="fingerprintStatus" style="margin-top:8px; font-size:0.65rem; color:var(--text-light);"></div>
       </div>
       
-      <!-- ============================================ -->
       <!-- JSON BACKUP -->
-      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-file-code"></i> JSON Backup</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;"><i class="fas fa-info-circle"></i> Export your data as a JSON file or import a previously saved backup.</p>
@@ -296,9 +277,7 @@
         </div>
       </div>
       
-      <!-- ============================================ -->
       <!-- DANGER ZONE -->
-      <!-- ============================================ -->
       <div class="danger-zone">
         <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
         <button class="btn btn-danger" onclick="resetAllGrades()" style="width:100%;margin-bottom:8px;"><i class="fas fa-trash-alt"></i> Reset All Grades</button>
@@ -341,9 +320,23 @@
   
   <script>
     // ============================================
-    // CONFIGURATION GITHUB POUR LES MISES À JOUR
+    // ENGLISH TOASTS - CUSTOM FUNCTION
     // ============================================
+    function showToast(message) {
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
+    }
     
+    // Override any French toasts
+    window.showToast = showToast;
+    
+    // ============================================
+    // CONFIGURATION GITHUB
+    // ============================================
     var GITHUB_USER = 'hanskepper';
     var GITHUB_REPO = 'SMART-GRADE-V4.-Ultimate.';
     var GITHUB_API_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/commits?per_page=1';
@@ -708,21 +701,18 @@
     }
     
     // ============================================
-    // FINGERPRINT - VERSION CORRIGÉE ET STABLE
+    // FINGERPRINT - VERSION CORRIGÉE
     // ============================================
     
-    // Détecter iOS (WebAuthn non supporté)
     function isIOS() {
       return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
     
-    // Vérifier si WebAuthn est supporté
     function isWebAuthnSupported() {
       if (isIOS()) return false;
       return window.PublicKeyCredential !== undefined;
     }
     
-    // Vérifier si l'appareil a un capteur d'empreinte
     async function isBiometricAvailable() {
       if (!isWebAuthnSupported()) return false;
       try {
@@ -733,7 +723,6 @@
       }
     }
     
-    // Convertir Uint8Array en base64 (simplifié)
     function uint8ArrayToBase64(bytes) {
       var binary = '';
       for (var i = 0; i < bytes.length; i++) {
@@ -742,7 +731,6 @@
       return btoa(binary);
     }
     
-    // Convertir base64 en Uint8Array
     function base64ToUint8Array(base64) {
       var binary = atob(base64);
       var bytes = new Uint8Array(binary.length);
@@ -752,36 +740,35 @@
       return bytes;
     }
     
-    // Enregistrer l'empreinte - VERSION CORRIGÉE
     async function registerFingerprint() {
       var statusDiv = document.getElementById('fingerprintStatus');
       
       if (!window.isSecureContext) {
-        showToast('HTTPS requis pour l\'empreinte digitale');
-        statusDiv.innerHTML = '<i class="fas fa-lock"></i> HTTPS requis';
+        showToast('HTTPS is required for fingerprint');
+        statusDiv.innerHTML = '<i class="fas fa-lock"></i> HTTPS required';
         return;
       }
       
       if (isIOS()) {
-        showToast('Empreinte non supportée sur iOS');
-        statusDiv.innerHTML = '<i class="fab fa-apple"></i> Non supporté sur iOS';
+        showToast('Fingerprint not supported on iOS');
+        statusDiv.innerHTML = '<i class="fab fa-apple"></i> Not supported on iOS';
         return;
       }
       
       if (!isWebAuthnSupported()) {
-        showToast('WebAuthn non supporté par ce navigateur');
-        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> WebAuthn non supporté';
+        showToast('WebAuthn not supported by this browser');
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> WebAuthn not supported';
         return;
       }
       
       var available = await isBiometricAvailable();
       if (!available) {
-        showToast('Aucun capteur d\'empreinte trouvé');
-        statusDiv.innerHTML = '<i class="fas fa-fingerprint"></i> Aucun capteur détecté';
+        showToast('No fingerprint sensor detected on this device');
+        statusDiv.innerHTML = '<i class="fas fa-fingerprint"></i> No sensor detected';
         return;
       }
       
-      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Veuillez placer votre doigt...';
+      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Please place your finger...';
       
       try {
         var challenge = new Uint8Array(32);
@@ -831,45 +818,51 @@
           currentUser.fingerprintHash = credentialId;
           setCurrentStudent(currentUser);
           
-          statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Empreinte enregistrée avec succès';
-          showToast('Empreinte enregistrée avec succès');
+          statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Fingerprint registered successfully';
+          showToast('Fingerprint registered successfully');
           loadFingerprintSection();
         } else {
-          throw new Error('Utilisateur non trouvé');
+          throw new Error('User not found');
         }
         
       } catch(err) {
-        console.error('Erreur WebAuthn:', err);
-        var message = 'Erreur lors de l\'enregistrement';
-        if (err.name === 'NotAllowedError') message = 'Vous avez annulé l\'opération';
-        if (err.name === 'NotSupportedError') message = 'Navigateur non supporté';
-        if (err.name === 'SecurityError') message = 'HTTPS requis';
+        console.error('WebAuthn error:', err);
+        var message = 'Failed to register fingerprint';
+        if (err.name === 'NotAllowedError') message = 'You cancelled the operation';
+        if (err.name === 'NotSupportedError') message = 'Browser not supported';
+        if (err.name === 'SecurityError') message = 'HTTPS required';
         statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> ' + message;
         showToast(message);
       }
     }
     
-    // Supprimer l'empreinte
     function removeFingerprint() {
-      if (!confirm('Supprimer l\'empreinte digitale de ce compte ?')) return;
-      
-      var students = getAllStudents();
-      var index = students.findIndex(function(s) { return s.id === currentUser.id; });
-      if (index !== -1) {
-        students[index].hasFingerprint = false;
-        students[index].fingerprintHash = null;
-        saveAllStudents(students);
-        
-        currentUser.hasFingerprint = false;
-        currentUser.fingerprintHash = null;
-        setCurrentStudent(currentUser);
-        
-        showToast('Empreinte supprimée');
-        loadFingerprintSection();
-      }
+      showConfirmDialog({
+        title: 'Remove Fingerprint',
+        message: 'Are you sure you want to remove the fingerprint from this account?',
+        detail: 'You will need to use PIN to login afterwards.',
+        icon: 'fa-fingerprint',
+        iconColor: '#e74c3c',
+        confirmText: 'Remove',
+        onConfirm: function() {
+          var students = getAllStudents();
+          var index = students.findIndex(function(s) { return s.id === currentUser.id; });
+          if (index !== -1) {
+            students[index].hasFingerprint = false;
+            students[index].fingerprintHash = null;
+            saveAllStudents(students);
+            
+            currentUser.hasFingerprint = false;
+            currentUser.fingerprintHash = null;
+            setCurrentStudent(currentUser);
+            
+            showToast('Fingerprint removed');
+            loadFingerprintSection();
+          }
+        }
+      });
     }
     
-    // Afficher la section fingerprint
     function loadFingerprintSection() {
       var container = document.getElementById('fingerprintSection');
       if (!container) return;
@@ -881,12 +874,12 @@
         if (statusDiv) statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Fingerprint enabled';
       } else {
         container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()" style="width:100%;"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>';
-        if (statusDiv) statusDiv.innerHTML = '';
+        if (statusDiv) statusDiv.innerHTML = '<i class="fas fa-info-circle"></i> Register your fingerprint for quick login';
       }
     }
     
     // ============================================
-    // CHANGE PIN (inchangé)
+    // CHANGE PIN
     // ============================================
     function showPinModal() { document.getElementById('pinModal').classList.add('active'); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmNewPin').value = ''; }
     function closePinModal() { document.getElementById('pinModal').classList.remove('active'); }
@@ -913,27 +906,49 @@
     }
     
     // ============================================
-    // RESET GRADES & DELETE ACCOUNT (inchangés)
+    // RESET GRADES & DELETE ACCOUNT - USING showConfirmDialog
     // ============================================
     function resetAllGrades() {
       showConfirmDialog({
-        title: 'Reset All Grades', message: 'This will delete ALL your grades. This cannot be undone!',
-        icon: 'fa-trash-alt', iconColor: '#e74c3c', confirmText: 'Reset',
-        onConfirm: function() { saveStudentGrades(currentUser.id, []); saveStudentAchievements(currentUser.id, []); showToast('All grades deleted'); setTimeout(function() { location.reload(); }, 1000); }
+        title: 'Reset All Grades',
+        message: 'This will delete ALL your grades.',
+        detail: 'This action cannot be undone.',
+        icon: 'fa-trash-alt',
+        iconColor: '#e74c3c',
+        confirmText: 'Reset',
+        onConfirm: function() {
+          saveStudentGrades(currentUser.id, []);
+          saveStudentAchievements(currentUser.id, []);
+          showToast('All grades deleted');
+          setTimeout(function() { location.reload(); }, 1000);
+        }
       });
     }
     
     function deleteAccount() {
       showConfirmDialog({
-        title: 'Delete Account', message: 'This will permanently delete your account.',
-        icon: 'fa-user-slash', iconColor: '#e74c3c', confirmText: 'Delete',
+        title: 'Delete Account',
+        message: 'This will permanently delete your account.',
+        detail: 'All your data will be lost forever.',
+        icon: 'fa-user-slash',
+        iconColor: '#e74c3c',
+        confirmText: 'Delete',
         onConfirm: function() {
           showPromptDialog({
-            title: 'Confirm Deletion', message: 'Enter your PIN to confirm',
-            inputType: 'password', maxlength: '4', placeholder: '****',
+            title: 'Confirm Deletion',
+            message: 'Enter your PIN to confirm account deletion',
+            inputType: 'password',
+            maxlength: '4',
+            placeholder: '****',
             onConfirm: function(pin) {
-              if (pin === currentUser.pin) { deleteStudent(currentUser.id); clearCurrentStudent(); showToast('Account deleted'); setTimeout(function() { location.href = 'index.html'; }, 1500); }
-              else { showToast('Wrong PIN'); }
+              if (pin === currentUser.pin) {
+                deleteStudent(currentUser.id);
+                clearCurrentStudent();
+                showToast('Account deleted');
+                setTimeout(function() { window.location.href = 'index.html'; }, 1500);
+              } else {
+                showToast('Wrong PIN');
+              }
             }
           });
         }
@@ -941,7 +956,7 @@
     }
     
     // ============================================
-    // JSON EXPORT/IMPORT (inchangés)
+    // JSON EXPORT/IMPORT
     // ============================================
     function exportJSONBackup() {
       var user = getCurrentStudent();
@@ -969,8 +984,10 @@
           title: 'Import JSON Backup',
           message: 'This will overwrite your current data.',
           detail: 'This action cannot be undone.',
-          icon: 'fa-exclamation-triangle', iconColor: '#f39c12',
-          confirmText: 'Import', confirmColor: '#f39c12',
+          icon: 'fa-exclamation-triangle',
+          iconColor: '#f39c12',
+          confirmText: 'Import',
+          confirmColor: '#f39c12',
           onConfirm: function() {
             var result = importCompleteUserData(user.id, ev.target.result);
             if (result.success) {

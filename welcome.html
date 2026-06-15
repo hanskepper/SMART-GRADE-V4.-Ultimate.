@@ -52,7 +52,7 @@
     }
     @keyframes sparkle {
       0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-100px) scale(0); opacity: 0; }
+      100% { transform: translateY(-80px) scale(0); opacity: 0; }
     }
     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(30px); }
@@ -69,18 +69,6 @@
     @keyframes stripeMove {
       0% { background-position: 0 0; }
       100% { background-position: 40px 0; }
-    }
-    
-    /* Animation plus longue pour les confettis */
-    @keyframes confettiFallLong {
-      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-    }
-    
-    /* Animation plus longue pour les sparkles */
-    @keyframes sparkleLong {
-      0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-120px) scale(0); opacity: 0; }
     }
     
     .welcome-hero {
@@ -231,7 +219,6 @@
       gap: 10px;
     }
     
-    /* Styles des particules avec animations longues */
     .confetti-piece {
       position: fixed;
       width: 8px;
@@ -239,7 +226,7 @@
       border-radius: 2px;
       z-index: 9999;
       pointer-events: none;
-      animation: confettiFallLong 5s ease-in forwards;
+      animation: confettiFall 5s ease-in forwards;
     }
     
     .sparkle-dot {
@@ -249,7 +236,7 @@
       background: white;
       border-radius: 50%;
       pointer-events: none;
-      animation: sparkleLong 1.2s ease forwards;
+      animation: sparkle 1.2s ease forwards;
       z-index: 9999;
     }
     
@@ -397,6 +384,24 @@
     var cu = null;
     var profile = null;
     
+    // ============================================
+    // FONCTION POUR OBTENIR L'AVATAR (PNG selon genre)
+    // ============================================
+    function getWelcomeAvatar() {
+      if (!cu) return '<i class="fas fa-user-graduate"></i>';
+      
+      // Vérifier si l'utilisateur a une photo personnalisée
+      var profileData = getProfile(cu.id);
+      if (profileData.avatarBase64 && profileData.avatarBase64 !== '' && profileData.avatarBase64.length > 100) {
+        return '<img src="' + profileData.avatarBase64 + '" alt="Avatar">';
+      }
+      
+      // Avatar par défaut selon le genre
+      var gender = cu.gender || 'boy';
+      var avatarPath = gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+      return '<img src="' + avatarPath + '" alt="Avatar">';
+    }
+    
     // Animation des nombres
     function animateNumber(element, final) {
       var current = 0;
@@ -412,7 +417,7 @@
       }, 20);
     }
     
-    // Confettis avec durée plus longue
+    // Confettis
     function launchConfetti() {
       var colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#00bcd4', '#ff6b6b', '#ffd93d'];
       for (var i = 0; i < 80; i++) {
@@ -439,13 +444,9 @@
       
       profile = getProfile(cu.id);
       
-      // Avatar
+      // ⭐⭐⭐ AFFICHER L'AVATAR ⭐⭐⭐
       var avatarContainer = document.getElementById('welcomeAvatar');
-      if (profile.avatarBase64 && profile.avatarBase64 !== '') {
-        avatarContainer.innerHTML = '<div class="ripple-ring"></div><img src="' + profile.avatarBase64 + '" alt="Avatar">';
-      } else {
-        avatarContainer.innerHTML = '<div class="ripple-ring"></div><i class="fas fa-user-graduate"></i>';
-      }
+      avatarContainer.innerHTML = '<div class="ripple-ring"></div>' + getWelcomeAvatar();
       
       document.getElementById('welcomeName').textContent = 'Welcome, ' + cu.name + '!';
       document.getElementById('welcomeInfo').innerHTML = '<i class="fas fa-school"></i> ' + cu.class + ' - #' + cu.number;
@@ -482,9 +483,12 @@
       var headerAvatar = document.getElementById('headerAvatar');
       if (profile.avatarBase64 && profile.avatarBase64 !== '') {
         headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
+      } else {
+        var defaultAvatar = (cu.gender === 'girl') ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+        headerAvatar.innerHTML = '<img src="' + defaultAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       }
       
-      // Effet sparkle au clic sur l'avatar (plus long)
+      // Effet sparkle au clic sur l'avatar
       document.getElementById('welcomeAvatar').addEventListener('click', function(e) {
         var rect = this.getBoundingClientRect();
         var centerX = rect.left + rect.width / 2;

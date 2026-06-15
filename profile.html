@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SMART GRADE - Profile</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -14,6 +14,7 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
+    /* Styles spécifiques au profil - sans écraser les polices */
     .avatar-container {
       position: relative;
       width: 140px;
@@ -107,7 +108,7 @@
       resize: vertical;
       max-width: 100%;
       box-sizing: border-box;
-      font-family: inherit;
+      font-family: inherit !important;
     }
     .btn-primary {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -120,6 +121,7 @@
       width: 100%;
       margin-top: 12px;
       transition: all 0.2s;
+      font-family: inherit !important;
     }
     .btn-primary:active { transform: scale(0.97); }
     
@@ -147,6 +149,7 @@
       transition: all 0.2s ease;
       color: var(--text);
       text-align: left;
+      font-family: inherit !important;
     }
     .suggested-bio-item:hover {
       border-color: var(--primary);
@@ -207,8 +210,8 @@
         </div>
         <div class="upload-hint"><i class="fas fa-info-circle"></i> Tap camera to add photo | Tap photo to zoom | Max 5MB</div>
         <input type="file" id="avatarFileInput" accept="image/jpeg,image/png,image/jpg" style="display:none;">
-        <h2 id="profileName" style="word-break:break-word; margin-top:12px;">--</h2>
-        <p style="color:var(--text-light);font-size:0.75rem;" id="profileInfo"></p>
+        <h2 id="profileName" style="word-break:break-word; margin-top:12px; font-family:inherit;">--</h2>
+        <p style="color:var(--text-light);font-size:0.75rem; font-family:inherit;" id="profileInfo"></p>
         <button class="btn-remove-avatar" onclick="removeAvatar()" style="display:none;" id="removeAvatarBtn"><i class="fas fa-trash"></i> Remove Photo</button>
       </div>
       
@@ -238,8 +241,33 @@
   <script src="js/database.js"></script>
   <script src="js/auth.js"></script>
   <script src="js/app.js"></script>
+  <script src="js/confirm-dialog.js"></script>
   
   <script>
+    // ============================================
+    // APPLICATION DES POLICES GLOBALES
+    // ============================================
+    function applyGlobalFontToProfile() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      var fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+      document.body.style.fontFamily = fontFamily;
+      
+      // Appliquer à tous les éléments
+      var allElements = document.querySelectorAll('body, body *');
+      for (var i = 0; i < allElements.length; i++) {
+        if (allElements[i].style) {
+          allElements[i].style.fontFamily = fontFamily;
+        }
+      }
+    }
+    
     var currentUser = null;
     var currentAvatarBase64 = '';
     var isSaving = false;
@@ -287,22 +315,6 @@
       { id: 58, name: 'Flashcard Beginner', icon: 'fa-clone' },
       { id: 59, name: 'Flashcard Master', icon: 'fa-layer-group' }
     ];
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      var stored = localStorage.getItem('smartgrade_current');
-      if (!stored) {
-        window.location.href = 'login.html';
-        return;
-      }
-      currentUser = JSON.parse(stored);
-      
-      loadProfile();
-      loadBadges();
-      displaySuggestedBios();
-      
-      if (typeof initMobileMenu === 'function') initMobileMenu();
-      if (typeof initThemeSelector === 'function') initThemeSelector();
-    });
     
     function formatFullDate(dateString) {
       if (!dateString) {
@@ -356,6 +368,9 @@
         if (typeof updateHeaderAvatar === 'function') {
           updateHeaderAvatar();
         }
+        
+        // Appliquer la police après chargement
+        applyGlobalFontToProfile();
         
       } catch(e) {
         console.error('Load profile error:', e);
@@ -649,12 +664,43 @@
       }, 3000);
     }
     
+    function init() {
+      var stored = localStorage.getItem('smartgrade_current');
+      if (!stored) {
+        window.location.href = 'login.html';
+        return;
+      }
+      currentUser = JSON.parse(stored);
+      
+      loadProfile();
+      loadBadges();
+      displaySuggestedBios();
+      
+      if (typeof initMobileMenu === 'function') initMobileMenu();
+      if (typeof initThemeSelector === 'function') initThemeSelector();
+      
+      // Observer les changements de thème/police
+      var observer = new MutationObserver(function() {
+        applyGlobalFontToProfile();
+      });
+      observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] });
+      
+      // Écouter les changements de police
+      window.addEventListener('storage', function(e) {
+        if (e.key === 'smartgrade_font_family') {
+          applyGlobalFontToProfile();
+        }
+      });
+    }
+    
     document.getElementById('avatarFileInput').addEventListener('change', handleImageUpload);
     
     window.triggerFileUpload = triggerFileUpload;
     window.removeAvatar = removeAvatar;
     window.saveProfileData = saveProfileData;
     window.useSuggestedBio = window.useSuggestedBio;
+    
+    init();
   </script>
 </body>
 </html>

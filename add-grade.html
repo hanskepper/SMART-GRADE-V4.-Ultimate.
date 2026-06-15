@@ -55,12 +55,12 @@
       font-size: 0.7rem;
     }
     .grade-table input {
-      width: 80px;
-      padding: 8px;
-      border-radius: 8px;
+      width: 85px;
+      padding: 10px 6px;
+      border-radius: 10px;
       border: 2px solid var(--border);
       text-align: center;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: 600;
       background: var(--card-bg);
       color: var(--text);
@@ -136,9 +136,9 @@
     }
     @media (max-width: 600px) {
       .grade-table input {
-        width: 65px;
-        padding: 6px;
-        font-size: 0.7rem;
+        width: 70px;
+        padding: 8px 4px;
+        font-size: 0.8rem;
       }
     }
   </style>
@@ -220,19 +220,38 @@
     var currentTerm = 1;
     var subjectColors = ['#3498db','#e74c3c','#9b59b6','#2ecc71','#e67e22','#00bcd4','#f39c12','#1abc9c','#27ae60','#2980b9','#c0392b','#8e44ad','#16a085','#d35400'];
     
+    // ============================================
+    // UNIQUE TOAST FUNCTION (supprime les doublons)
+    // ============================================
+    var lastToastMessage = '';
+    var lastToastTime = 0;
+    
+    function showUniqueToast(message) {
+      var now = Date.now();
+      if (message === lastToastMessage && now - lastToastTime < 3000) return;
+      lastToastMessage = message;
+      lastToastTime = now;
+      
+      var container = document.getElementById('toastContainer');
+      var toast = document.createElement('div');
+      toast.className = 'toast';
+      toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+      container.appendChild(toast);
+      setTimeout(function() {
+        toast.style.opacity = '0';
+        setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+      }, 3000);
+    }
+    
     // Convertir virgule en point et valider
     function validateAndConvertGrade(value) {
       if (value === '' || value === null || value === undefined) return '';
-      
       var strValue = String(value).trim();
       strValue = strValue.replace(',', '.');
-      
       var num = parseFloat(strValue);
-      
       if (isNaN(num)) return '';
       if (num < 0) return '0';
       if (num > 20) return '20';
-      
       return Math.round(num * 100) / 100;
     }
     
@@ -243,251 +262,56 @@
     }
     
     // ============================================
-    // BADGE 25: COMEBACK KING
-    // Condition simple: amélioration de 5 points à n'importe quel moment
+    // BADGE VÉRIFICATIONS
     // ============================================
-    function checkComebackKingBadge() {
-      if (!currentUser || !currentUser.id) return false;
-      
-      var grades = getStudentGrades(currentUser.id);
-      if (grades.length < 2) return false;
-      
-      var comebackDetected = false;
-      var subjects = {};
-      
-      // Grouper les notes par matière
-      for (var i = 0; i < grades.length; i++) {
-        var g = grades[i];
-        if (!subjects[g.subjectId]) subjects[g.subjectId] = [];
-        subjects[g.subjectId].push({
-          sequenceId: g.sequenceId,
-          value: g.value
-        });
-      }
-      
-      // Pour chaque matière, vérifier toutes les paires de notes
-      for (var subjId in subjects) {
-        var notes = subjects[subjId];
-        
-        // Trier par séquence
-        notes.sort(function(a, b) {
-          return a.sequenceId - b.sequenceId;
-        });
-        
-        // Vérifier chaque paire de séquences (l'une après l'autre)
-        for (var i = 1; i < notes.length; i++) {
-          var prevValue = notes[i-1].value;
-          var currentValue = notes[i].value;
-          var improvement = currentValue - prevValue;
-          
-          // Si amélioration d'au moins 5 points
-          if (improvement >= 5) {
-            comebackDetected = true;
-            console.log('[Comeback King] Détecté! Matière:', subjId, 'Amélioration:', prevValue, '→', currentValue, '(+' + improvement + ')');
-            break;
-          }
-        }
-        if (comebackDetected) break;
-      }
-      
-      if (comebackDetected) {
-        if (unlockBadgeById(currentUser.id, 25)) {
-          showBadgeNotification(['Comeback King']);
-          return true;
-        }
-      }
-      return false;
-    }
-    
-    // Fonction pour vérifier et débloquer TOUS les badges liés aux notes
-    function checkAllGradeBadges() {
+    function checkAndUnlockAllBadges() {
       if (!currentUser || !currentUser.id) return;
       
-      var allGrades = getStudentGrades(currentUser.id);
-      var totalGrades = allGrades.length;
-      var badgesUnlocked = [];
-      
-      console.log('[Badges] Vérification après sauvegarde - Total grades:', totalGrades);
-      
-      // BADGE 1: First Grade
-      if (totalGrades >= 1) {
-        if (unlockBadgeById(currentUser.id, 1)) badgesUnlocked.push('First Grade');
+      if (typeof checkAndUnlockAllNewBadges === 'function') {
+        checkAndUnlockAllNewBadges(currentUser.id);
       }
       
-      // BADGE 2: Perfect Score
-      var hasPerfectScore = false;
-      for (var i = 0; i < allGrades.length; i++) {
-        if (allGrades[i].value >= 19.95) {
-          hasPerfectScore = true;
+      // Vérifier Comeback King spécifiquement
+      if (typeof checkComebackBadge === 'function') {
+        checkComebackBadge(currentUser.id);
+      }
+      
+      // Vérifier les badges de notes
+      var grades = getStudentGrades(currentUser.id);
+      var totalGrades = grades.length;
+      
+      if (totalGrades >= 1 && typeof unlockBadgeById === 'function') {
+        unlockBadgeById(currentUser.id, 1);
+      }
+      if (totalGrades >= 10 && typeof unlockBadgeById === 'function') {
+        unlockBadgeById(currentUser.id, 4);
+      }
+      if (totalGrades >= 25 && typeof unlockBadgeById === 'function') {
+        unlockBadgeById(currentUser.id, 12);
+      }
+      if (totalGrades >= 30 && typeof unlockBadgeById === 'function') {
+        unlockBadgeById(currentUser.id, 5);
+      }
+      
+      // Vérifier Perfect Score
+      for (var i = 0; i < grades.length; i++) {
+        if (grades[i].value >= 19.95 && typeof unlockBadgeById === 'function') {
+          unlockBadgeById(currentUser.id, 2);
+          unlockBadgeById(currentUser.id, 14);
           break;
         }
       }
-      if (hasPerfectScore) {
-        if (unlockBadgeById(currentUser.id, 2)) badgesUnlocked.push('Perfect Score');
-      }
       
-      // BADGE 4: Bookworm
-      if (totalGrades >= 10) {
-        if (unlockBadgeById(currentUser.id, 4)) badgesUnlocked.push('Bookworm');
-      }
-      
-      // BADGE 5: Dedication
-      if (totalGrades >= 30) {
-        if (unlockBadgeById(currentUser.id, 5)) badgesUnlocked.push('Dedication');
-      }
-      
-      // BADGE 12: Study Progress
-      if (totalGrades >= 25) {
-        if (unlockBadgeById(currentUser.id, 12)) badgesUnlocked.push('Study Progress');
-      }
-      
-      // BADGE 14: Excellent Result
-      if (hasPerfectScore) {
-        if (unlockBadgeById(currentUser.id, 14)) badgesUnlocked.push('Excellent Result');
-      }
-      
-      // BADGE 3: High Average
+      // Vérifier High Average
       var yearlyAvg = calculateYearlyAverage(currentUser.id);
-      if (yearlyAvg >= 12) {
-        if (unlockBadgeById(currentUser.id, 3)) badgesUnlocked.push('High Average');
+      if (yearlyAvg >= 12 && typeof unlockBadgeById === 'function') {
+        unlockBadgeById(currentUser.id, 3);
       }
-      
-      // BADGE 6: Scholar
-      var achievements = getStudentAchievements(currentUser.id);
-      var unlockedCount = 0;
-      for (var i = 0; i < achievements.length; i++) {
-        if (achievements[i].unlocked) unlockedCount++;
-      }
-      if (unlockedCount >= 8) {
-        if (unlockBadgeById(currentUser.id, 6)) badgesUnlocked.push('Scholar');
-      }
-      
-      // BADGE 7: Rising Star
-      var t1 = calculateStudentTermAverage(currentUser.id, 1);
-      var t2 = calculateStudentTermAverage(currentUser.id, 2);
-      var t3 = calculateStudentTermAverage(currentUser.id, 3);
-      if ((t2 - t1 >= 1) || (t3 - t2 >= 1)) {
-        if (unlockBadgeById(currentUser.id, 7)) badgesUnlocked.push('Rising Star');
-      }
-      
-      // BADGE 8: Unstoppable
-      if (t1 > 0 && t2 > 0 && t3 > 0) {
-        if (unlockBadgeById(currentUser.id, 8)) badgesUnlocked.push('Unstoppable');
-      }
-      
-      // BADGE 9: Subject Completion
-      for (var term = 1; term <= 3; term++) {
-        var selected = getStudentSelectedSubjects(currentUser.id, term);
-        var allHaveGrades = true;
-        for (var j = 0; j < selected.length; j++) {
-          var hasGrade = false;
-          for (var k = 0; k < allGrades.length; k++) {
-            if (allGrades[k].subjectId === selected[j]) {
-              hasGrade = true;
-              break;
-            }
-          }
-          if (!hasGrade) {
-            allHaveGrades = false;
-            break;
-          }
-        }
-        if (allHaveGrades && selected.length > 0) {
-          if (unlockBadgeById(currentUser.id, 9)) badgesUnlocked.push('Subject Completion');
-          break;
-        }
-      }
-      
-      // BADGE 10: Active Semester
-      for (var term = 1; term <= 3; term++) {
-        var selected = getStudentSelectedSubjects(currentUser.id, term);
-        var allComplete = true;
-        var seq1 = (term - 1) * 2 + 1;
-        var seq2 = seq1 + 1;
-        for (var j = 0; j < selected.length; j++) {
-          var hasSeq1 = false;
-          var hasSeq2 = false;
-          for (var k = 0; k < allGrades.length; k++) {
-            if (allGrades[k].subjectId === selected[j] && allGrades[k].sequenceId === seq1) hasSeq1 = true;
-            if (allGrades[k].subjectId === selected[j] && allGrades[k].sequenceId === seq2) hasSeq2 = true;
-          }
-          if (!hasSeq1 || !hasSeq2) {
-            allComplete = false;
-            break;
-          }
-        }
-        if (allComplete && selected.length > 0) {
-          if (unlockBadgeById(currentUser.id, 10)) badgesUnlocked.push('Active Semester');
-          break;
-        }
-      }
-      
-      // BADGE 11: Discipline Mastery
-      var subjectAverages = {};
-      for (var i = 0; i < allGrades.length; i++) {
-        if (!subjectAverages[allGrades[i].subjectId]) subjectAverages[allGrades[i].subjectId] = [];
-        subjectAverages[allGrades[i].subjectId].push(allGrades[i].value);
-      }
-      for (var subjId in subjectAverages) {
-        var sum = 0;
-        for (var j = 0; j < subjectAverages[subjId].length; j++) sum += subjectAverages[subjId][j];
-        var avg = sum / subjectAverages[subjId].length;
-        if (avg >= 15) {
-          if (unlockBadgeById(currentUser.id, 11)) badgesUnlocked.push('Discipline Mastery');
-          break;
-        }
-      }
-      
-      // BADGE 13: Full Achievement
-      var allRequiredUnlocked = true;
-      for (var badgeId = 1; badgeId <= 14; badgeId++) {
-        var found = false;
-        for (var i = 0; i < achievements.length; i++) {
-          if (achievements[i].id === badgeId && achievements[i].unlocked) {
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          allRequiredUnlocked = false;
-          break;
-        }
-      }
-      if (allRequiredUnlocked) {
-        if (unlockBadgeById(currentUser.id, 13)) badgesUnlocked.push('Full Achievement');
-      }
-      
-      // BADGE 25: COMEBACK KING (appel séparé)
-      checkComebackKingBadge();
-      
-      // Afficher les notifications pour les badges débloqués
-      if (badgesUnlocked.length > 0) {
-        showBadgeNotification(badgesUnlocked);
-      }
-      
-      // Recharger l'affichage
-      loadAddGrade();
     }
     
-    function showBadgeNotification(badges) {
-      var container = document.getElementById('toastContainer');
-      if (!container) return;
-      
-      var toast = document.createElement('div');
-      toast.className = 'badge-notification';
-      if (badges.length === 1) {
-        toast.innerHTML = '<i class="fas fa-medal"></i> Badge unlocked: ' + badges[0] + '!';
-      } else {
-        toast.innerHTML = '<i class="fas fa-medal"></i> Badges unlocked: ' + badges.join(', ');
-      }
-      container.appendChild(toast);
-      setTimeout(function() {
-        toast.style.opacity = '0';
-        toast.style.transition = 'opacity 0.3s';
-        setTimeout(function() { if (toast.parentNode) toast.remove(); }, 4000);
-      }, 4000);
-    }
-    
+    // ============================================
+    // CHARGEMENT DE LA PAGE
+    // ============================================
     function loadAddGrade() {
       currentUser = requireAuth();
       if (!currentUser) return;
@@ -503,15 +327,14 @@
       var bodyHtml = '';
       for (var i = 0; i < subjects.length; i++) {
         var s = subjects[i];
-        var g1 = null;
-        var g2 = null;
+        var g1 = null, g2 = null;
         for (var k = 0; k < grades.length; k++) {
           if (grades[k].subjectId === s.id && grades[k].sequenceId === seq1) g1 = grades[k];
           if (grades[k].subjectId === s.id && grades[k].sequenceId === seq2) g2 = grades[k];
         }
         var v1 = g1 ? g1.value : '';
         var v2 = g2 ? g2.value : '';
-        var avg = (v1 !== '' && v2 !== '') ? formatNumber((parseFloat(v1) + parseFloat(v2)) / 2) : '--';
+        var avg = (v1 !== '' && v2 !== '') ? ((parseFloat(v1) + parseFloat(v2)) / 2).toFixed(2) : '--';
         
         bodyHtml += '<tr>' +
           '<td class="subject-name">' +
@@ -521,39 +344,26 @@
             '<span>' + s.name + '</span>' +
           '</td>' +
           '<td class="coeff-col">' + s.coefficient + '</td>' +
-          '<td><input type="text" step="any" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq1 + '" value="' + (v1 !== '' ? v1 : '') + '" placeholder="0-20"></td>' +
-          '<td><input type="text" step="any" min="0" max="20" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq2 + '" value="' + (v2 !== '' ? v2 : '') + '" placeholder="0-20"></td>' +
+          '<td><input type="number" step="any" min="0" max="20" inputmode="decimal" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq1 + '" value="' + (v1 !== '' ? v1 : '') + '" placeholder="0-20"></td>' +
+          '<td><input type="number" step="any" min="0" max="20" inputmode="decimal" class="grade-input" data-subj="' + s.id + '" data-seq="' + seq2 + '" value="' + (v2 !== '' ? v2 : '') + '" placeholder="0-20"></td>' +
           '<td class="avg-col" id="avg-' + s.id + '">' + avg + '</td>' +
         '</tr>';
       }
       document.getElementById('tableBody').innerHTML = bodyHtml;
       
+      // Ajouter les événements
       document.querySelectorAll('.grade-input').forEach(function(input) {
         input.addEventListener('input', function() {
           var rawValue = this.value;
           var converted = validateAndConvertGrade(rawValue);
-          if (converted !== '' && converted !== rawValue) {
-            this.value = converted;
-          }
-          if (isValidGrade(this.value)) {
-            this.classList.remove('invalid');
-          } else if (this.value !== '') {
-            this.classList.add('invalid');
-          } else {
-            this.classList.remove('invalid');
-          }
+          if (converted !== '' && converted != rawValue) this.value = converted;
+          if (isValidGrade(this.value)) this.classList.remove('invalid');
+          else if (this.value !== '') this.classList.add('invalid');
+          else this.classList.remove('invalid');
           updateAverageForSubject(parseInt(this.dataset.subj));
         });
-        
         input.addEventListener('blur', function() {
-          var rawValue = this.value;
-          var converted = validateAndConvertGrade(rawValue);
-          if (converted !== '' && converted !== rawValue) {
-            this.value = converted;
-          }
-          if (this.value === '') {
-            this.classList.remove('invalid');
-          }
+          if (this.value === '') this.classList.remove('invalid');
           updateAverageForSubject(parseInt(this.dataset.subj));
         });
       });
@@ -564,7 +374,6 @@
     function updateAverageForSubject(subjectId) {
       var seq1 = (currentTerm - 1) * 2 + 1;
       var seq2 = seq1 + 1;
-      
       var input1 = document.querySelector('.grade-input[data-subj="' + subjectId + '"][data-seq="' + seq1 + '"]');
       var input2 = document.querySelector('.grade-input[data-subj="' + subjectId + '"][data-seq="' + seq2 + '"]');
       var avgCell = document.getElementById('avg-' + subjectId);
@@ -573,17 +382,15 @@
       var val2 = input2 && isValidGrade(input2.value) ? parseFloat(String(input2.value).replace(',', '.')) : NaN;
       
       var avg = '--';
-      if (!isNaN(val1) && !isNaN(val2)) {
-        avg = ((val1 + val2) / 2).toFixed(2);
-      } else if (!isNaN(val1)) {
-        avg = val1.toFixed(2);
-      } else if (!isNaN(val2)) {
-        avg = val2.toFixed(2);
-      }
-      
+      if (!isNaN(val1) && !isNaN(val2)) avg = ((val1 + val2) / 2).toFixed(2);
+      else if (!isNaN(val1)) avg = val1.toFixed(2);
+      else if (!isNaN(val2)) avg = val2.toFixed(2);
       if (avgCell) avgCell.innerHTML = avg;
     }
     
+    // ============================================
+    // SAUVEGARDE AVEC VÉRIFICATION DES BADGES
+    // ============================================
     function saveAllGrades() {
       var grades = getStudentGrades(currentUser.id);
       var inputs = document.querySelectorAll('.grade-input');
@@ -635,26 +442,24 @@
         saveStudentGrades(currentUser.id, grades);
         addHistory(currentUser.id, 'Grades updated for Term ' + currentTerm);
         playActionFeedback();
-        showToast('Grades saved successfully! (' + savedCount + ' grade(s) updated)');
+        showUniqueToast(savedCount + ' grade(s) saved successfully!');
         
-        // VÉRIFIER TOUS LES BADGES APRÈS SAUVEGARDE
-        checkAllGradeBadges();
+        // ✅ VÉRIFICATION DES BADGES APRÈS SAUVEGARDE
+        checkAndUnlockAllBadges();
         
-        // Vérifier aussi les badges généraux
-        if (typeof checkAndUnlockAllNewBadges === 'function') {
-          checkAndUnlockAllNewBadges(currentUser.id);
-        }
-        
+        // Mettre à jour l'affichage des moyennes
+        setTimeout(function() { loadAddGrade(); }, 100);
       } else {
-        showToast('No valid grades to save');
+        showUniqueToast('No valid grades to save');
       }
     }
     
+    // ============================================
+    // INITIALISATION
+    // ============================================
     document.querySelectorAll('.term-tab-btn').forEach(function(tab, index) {
       tab.addEventListener('click', function() {
-        document.querySelectorAll('.term-tab-btn').forEach(function(t) {
-          t.classList.remove('active');
-        });
+        document.querySelectorAll('.term-tab-btn').forEach(function(t) { t.classList.remove('active'); });
         tab.classList.add('active');
         currentTerm = index + 1;
         loadAddGrade();
@@ -664,6 +469,25 @@
     loadAddGrade();
     initMobileMenu();
     initThemeSelector();
+    
+    // Appliquer la police
+    function applyFont() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    applyFont();
+    
+    var fontObserver = new MutationObserver(function() { applyFont(); });
+    fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    
+    window.saveAllGrades = saveAllGrades;
   </script>
 </body>
 </html>

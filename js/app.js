@@ -1,11 +1,11 @@
 // ============================================
 // SMART GRADE v4.0 - APP.JS COMPLET
-// VERSION CORRIGÉE - SANS TAILLE DE POLICE
 // ============================================
 
 // ============================================
 // VARIABLES GLOBALES
 // ============================================
+
 var THEMES = [
   { name: 'default', color: '#0f3b48', label: 'Deep Teal' },
   { name: 'crimson', color: '#c0392b', label: 'Crimson' },
@@ -49,6 +49,7 @@ var manualThemeFlag = localStorage.getItem('smartgrade_manual_theme');
 // ============================================
 // FONCTION PRINCIPALE : METTRE À JOUR L'AVATAR
 // ============================================
+
 function updateHeaderAvatar() {
   var headerAvatar = document.getElementById('headerAvatar');
   if (!headerAvatar) return;
@@ -77,14 +78,18 @@ function updateHeaderAvatar() {
     }
     
     var user = JSON.parse(stored);
-    var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{"avatarBase64":""}');
+    var profile = JSON.parse(localStorage.getItem('smartgrade_profile_' + user.id) || '{}');
     
     if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
       headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     } else {
-      headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
+      // Utiliser l'image PNG pour l'en-tête
+      var gender = user.gender || 'boy';
+      var defaultAvatarPNG = gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+      headerAvatar.innerHTML = '<img src="' + defaultAvatarPNG + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
     }
   } catch(e) {
+    console.error('Update header avatar error:', e);
     headerAvatar.innerHTML = '<i class="fas fa-user-graduate"></i>';
   }
 }
@@ -92,6 +97,7 @@ function updateHeaderAvatar() {
 // ============================================
 // AUTRES FONCTIONS UTILITAIRES
 // ============================================
+
 function fixMobileHeight() {
   var vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', vh + 'px');
@@ -777,7 +783,10 @@ function refreshAvatarInHeader() {
       }
     }
     
-    avatarElement.innerHTML = '<i class="fas fa-user-graduate"></i>';
+    // Avatar par défaut selon le genre
+    var gender = user.gender || 'boy';
+    var defaultAvatar = gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+    avatarElement.innerHTML = '<img src="' + defaultAvatar + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
   } catch(e) {
     avatarElement.innerHTML = '<i class="fas fa-user-graduate"></i>';
   }
@@ -812,5 +821,6 @@ window.incrementTimetableView = incrementTimetableView;
 window.checkFlashcardBadges = checkFlashcardBadges;
 window.checkPhotoBadge = checkPhotoBadge;
 window.checkWelcomeBadge = checkWelcomeBadge;
+window.installApp = installApp;
 
 console.log('SMART GRADE v4.0 - App initialized');

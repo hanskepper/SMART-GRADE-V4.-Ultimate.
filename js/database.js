@@ -1,7 +1,102 @@
 // ============================================
 // SMART GRADE v4.0 - DATABASE.JS
-// VERSION COMPLÈTE AVEC STREAK INFINI
-// 22 BADGES ACHIEVEMENT + STREAK INFINI
+// AVEC AVATARS EN BASE64 (JSON)
+// ============================================
+
+// ============================================
+// AVATARS PAR DÉFAUT (chargés depuis JSON)
+// ============================================
+
+var DEFAULT_AVATAR_BOY_BASE64 = null;
+var DEFAULT_AVATAR_GIRL_BASE64 = null;
+var avatarsLoaded = false;
+
+// Charger les avatars depuis les fichiers JSON
+async function loadDefaultAvatars() {
+  if (avatarsLoaded) return;
+  
+  try {
+    // Charger avatar garçon
+    var boyResponse = await fetch('./icons/avatar-boy.json');
+    if (boyResponse.ok) {
+      var boyData = await boyResponse.json();
+      DEFAULT_AVATAR_BOY_BASE64 = boyData.avatar || boyData.image || boyData.data;
+    }
+    
+    // Charger avatar fille
+    var girlResponse = await fetch('./icons/avatar-girl.json');
+    if (girlResponse.ok) {
+      var girlData = await girlResponse.json();
+      DEFAULT_AVATAR_GIRL_BASE64 = girlData.avatar || girlData.image || girlData.data;
+    }
+    
+    avatarsLoaded = true;
+    console.log('[Avatars] Chargés depuis JSON');
+  } catch(e) {
+    console.error('[Avatars] Erreur:', e);
+  }
+}
+
+// Obtenir l'avatar par défaut en Base64
+function getDefaultAvatarBase64(gender) {
+  if (gender === 'girl' && DEFAULT_AVATAR_GIRL_BASE64) {
+    return DEFAULT_AVATAR_GIRL_BASE64;
+  }
+  if (gender === 'boy' && DEFAULT_AVATAR_BOY_BASE64) {
+    return DEFAULT_AVATAR_BOY_BASE64;
+  }
+  return null;
+}
+
+// Obtenir le chemin PNG pour l'affichage (plus rapide)
+function getDefaultAvatarPNG(gender) {
+  return gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+}
+
+// ============================================
+// NOTIFICATION SYSTEM
+// ============================================
+
+function addNotification(type, title, body) {
+  try {
+    var stored = localStorage.getItem('smartgrade_current');
+    var user = stored ? JSON.parse(stored) : null;
+    if (!user || !user.id) return;
+    
+    var notifs = JSON.parse(localStorage.getItem('smartgrade_notifications_' + user.id) || '[]');
+    notifs.unshift({
+      id: Date.now(),
+      type: type,
+      title: title,
+      body: body,
+      date: new Date().toISOString(),
+      read: false
+    });
+    if (notifs.length > 200) notifs = notifs.slice(0, 200);
+    localStorage.setItem('smartgrade_notifications_' + user.id, JSON.stringify(notifs));
+  } catch(e) {}
+}
+
+function showToast(message) {
+  var container = document.getElementById('toastContainer');
+  if (!container) {
+    container = document.createElement('div');
+    container.id = 'toastContainer';
+    container.className = 'toast-container';
+    document.body.appendChild(container);
+  }
+  var toast = document.createElement('div');
+  toast.className = 'toast';
+  toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
+  container.appendChild(toast);
+  setTimeout(function() {
+    toast.style.opacity = '0';
+    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
+  }, 3000);
+}
+
+// ============================================
+// SUBJECTS CONSTANTS
 // ============================================
 
 var SUBJECT_ICONS = {
@@ -58,7 +153,7 @@ var ACHIEVEMENTS = [
   { id: 12, name: "Study Progress", desc: "Record 25+ grades" },
   { id: 13, name: "Full Achievement", desc: "Unlock ALL 22 achievement badges" },
   { id: 14, name: "Excellent Result", desc: "Get 20/20 in a subject" },
-  { id: 25, name: "Comeback King", desc: "Improve by 5+ points in any subject" },
+  { id: 25, name: "Comeback King", desc: "Improve by 5+ points between sequences" },
   { id: 34, name: "Theme Collector", desc: "Try 10 different themes" },
   { id: 50, name: "Font Collector", desc: "Try 6 different fonts" },
   { id: 57, name: "Timetable Viewer", desc: "View timetable 10 times" },
@@ -67,105 +162,7 @@ var ACHIEVEMENTS = [
 ];
 
 // ============================================
-// STREAK INFINI - CYCLES DE BADGES
-// ============================================
-
-var STREAK_CYCLES = [
-  { prefix: "Beginner", colors: ["#2ecc71", "#f39c12", "#e74c3c", "#3498db"] },
-  { prefix: "Elite", colors: ["#cd7f32", "#c0c0c0", "#ffd700", "#e5e4e2"] },
-  { prefix: "Royal", colors: ["#50c878", "#e0115f", "#0f52ba", "#b9f2ff"] },
-  { prefix: "Legendary", colors: ["#000000", "#ffffff", "#9966cc", "#f8f9fa"] },
-  { prefix: "Mythic", colors: ["#ff4500", "#8b00ff", "#00ced1", "#ffd700"] },
-  { prefix: "Elemental", colors: ["#ff6600", "#a0522d", "#191970", "#ff69b4"] },
-  { prefix: "Dark", colors: ["#2c3e50", "#34495e", "#1a252f", "#0d141e"] },
-  { prefix: "Fire", colors: ["#ff4d4d", "#ff6b6b", "#ff8c8c", "#ffaaaa"] },
-  { prefix: "Frozen", colors: ["#4d79ff", "#6b8cff", "#8ca6ff", "#aabfff"] },
-  { prefix: "Serpent", colors: ["#00b894", "#55efc4", "#00cec9", "#81ecec"] },
-  { prefix: "Sky", colors: ["#0984e3", "#74b9ff", "#a29bfe", "#dfe6e9"] },
-  { prefix: "Beast", colors: ["#d63031", "#e17055", "#fdcb6e", "#ffeaa7"] },
-  { prefix: "Magic", colors: ["#6c5ce7", "#a29bfe", "#fd79a8", "#e84393"] },
-  { prefix: "Metal", colors: ["#7f8c8d", "#95a5a6", "#bdc3c7", "#ecf0f1"] },
-  { prefix: "Space", colors: ["#2d3436", "#636e72", "#b2bec3", "#dfe6e9"] }
-];
-
-var STREAK_MILESTONES = [3, 7, 15, 30];
-
-function getStreakBadgeName(days) {
-  var cycleNumber = Math.floor((days - 1) / 30);
-  var cycleIndex = cycleNumber % STREAK_CYCLES.length;
-  var milestoneIndex = -1;
-  
-  for (var i = 0; i < STREAK_MILESTONES.length; i++) {
-    var target = (cycleNumber * 30) + STREAK_MILESTONES[i];
-    if (days === target) {
-      milestoneIndex = i;
-      break;
-    }
-  }
-  
-  var prefix = STREAK_CYCLES[cycleIndex].prefix;
-  var milestoneNames = ["Starter", "Rising", "Advanced", "Master"];
-  var name = prefix + " " + (milestoneIndex >= 0 ? milestoneNames[milestoneIndex] : "Streak");
-  var color = STREAK_CYCLES[cycleIndex].colors[milestoneIndex >= 0 ? milestoneIndex : 0];
-  
-  return { name: name, color: color };
-}
-
-// ============================================
-// NOTIFICATION SYSTEM
-// ============================================
-
-function addNotification(type, title, body) {
-  try {
-    var stored = localStorage.getItem('smartgrade_current');
-    var user = stored ? JSON.parse(stored) : null;
-    if (!user || !user.id) return;
-    
-    var notifs = JSON.parse(localStorage.getItem('smartgrade_notifications_' + user.id) || '[]');
-    notifs.unshift({
-      id: Date.now(),
-      type: type,
-      title: title,
-      body: body,
-      date: new Date().toISOString(),
-      read: false
-    });
-    if (notifs.length > 200) notifs = notifs.slice(0, 200);
-    localStorage.setItem('smartgrade_notifications_' + user.id, JSON.stringify(notifs));
-  } catch(e) {}
-  
-  showToast(title + ': ' + body);
-}
-
-function showToast(message) {
-  var container = document.getElementById('toastContainer');
-  if (!container) {
-    container = document.createElement('div');
-    container.id = 'toastContainer';
-    container.className = 'toast-container';
-    document.body.appendChild(container);
-  }
-  var toast = document.createElement('div');
-  toast.className = 'toast';
-  toast.innerHTML = '<i class="fas fa-info-circle"></i> ' + message;
-  container.appendChild(toast);
-  setTimeout(function() {
-    toast.style.opacity = '0';
-    setTimeout(function() { if (toast.parentNode) toast.remove(); }, 300);
-  }, 3000);
-}
-
-function sendLocalNotification(title, body) {
-  if ('Notification' in window && Notification.permission === 'granted') {
-    try {
-      new Notification(title, { body: body, icon: 'icon.svg', vibrate: [200, 100, 200] });
-    } catch (e) {}
-  }
-  addNotification('badge', title, body);
-}
-
-// ============================================
-// STUDENTS
+// STUDENTS MANAGEMENT
 // ============================================
 
 function getAllStudents() {
@@ -186,37 +183,48 @@ function getStudentById(id) {
   return null;
 }
 
-function createStudentAccount(name, number, className, pin) {
+function createStudentAccount(name, number, className, pin, gender) {
   var s = getAllStudents();
   for (var i = 0; i < s.length; i++) {
     if (s[i].class === className && s[i].number === number) {
       return { success: false, message: 'Number ' + number + ' already taken in ' + className };
     }
   }
+  
   var nid = s.length > 0 ? Math.max.apply(null, s.map(function(x) { return x.id; })) + 1 : 1;
+  
   var st = {
     id: nid,
     name: name,
     number: number,
     class: className,
     pin: pin,
+    gender: gender || 'boy',
     createdAt: new Date().toISOString(),
     hasFingerprint: false,
     fingerprintHash: null
   };
+  
   s.push(st);
   saveAllStudents(s);
   saveStudentGrades(nid, []);
   saveStudentAchievements(nid, []);
+  
   for (var t = 1; t <= 3; t++) {
     saveStudentSelectedSubjects(nid, t, DEFAULT_SUBJECTS.map(function(x) { return x.id; }));
   }
+  
   var c = {};
   DEFAULT_SUBJECTS.forEach(function(x) { c[x.id] = 5; });
   saveSubjectCoefficients(nid, c);
   saveStudentGoal(nid, 12);
   saveStudentStreak(nid, { days: 0, lastLogin: null });
-  saveProfile(nid, { avatarBase64: '', bio: '', favorites: [] });
+  
+  saveProfile(nid, { 
+    avatarBase64: '', 
+    bio: '', 
+    gender: gender
+  });
   
   addNotification('account', 'Account Created', 'Welcome ' + name + '! Your account has been created');
   
@@ -264,7 +272,8 @@ function setCurrentStudent(s) {
     id: s.id,
     name: s.name,
     number: s.number,
-    class: s.class
+    class: s.class,
+    gender: s.gender || 'boy'
   }));
 }
 
@@ -273,7 +282,16 @@ function clearCurrentStudent() {
 }
 
 // ============================================
-// GRADES
+// GENDER FUNCTIONS
+// ============================================
+
+function getStudentGender(studentId) {
+  var student = getStudentById(studentId);
+  return student ? (student.gender || 'boy') : 'boy';
+}
+
+// ============================================
+// GRADES MANAGEMENT
 // ============================================
 
 function getStudentGrades(id) {
@@ -288,7 +306,7 @@ function saveStudentGrades(id, g) {
 }
 
 // ============================================
-// SUBJECTS
+// SUBJECTS MANAGEMENT
 // ============================================
 
 function getStudentSelectedSubjects(id, term) {
@@ -404,7 +422,7 @@ function saveStudentGoal(id, g) {
 }
 
 // ============================================
-// STREAK INFINI - FONCTIONS PRINCIPALES
+// STREAK MANAGEMENT
 // ============================================
 
 function getStudentStreak(id) {
@@ -417,57 +435,6 @@ function saveStudentStreak(id, s) {
   localStorage.setItem('smartgrade_streak_' + id, JSON.stringify(s));
 }
 
-function checkAndUnlockStreakBadge(studentId, days) {
-  if (!studentId || days < 3) return false;
-  
-  var milestones = [3, 7, 15, 30];
-  var cycleNumber = Math.floor((days - 1) / 30);
-  var cycleStart = cycleNumber * 30;
-  
-  for (var i = 0; i < milestones.length; i++) {
-    var target = cycleStart + milestones[i];
-    if (days === target) {
-      var badgeKey = 'streak_' + cycleNumber + '_' + milestones[i];
-      var unlockedBadges = JSON.parse(localStorage.getItem('smartgrade_streak_unlocked_' + studentId) || '[]');
-      
-      var alreadyUnlocked = false;
-      for (var j = 0; j < unlockedBadges.length; j++) {
-        if (unlockedBadges[j] === badgeKey) {
-          alreadyUnlocked = true;
-          break;
-        }
-      }
-      
-      if (!alreadyUnlocked) {
-        unlockedBadges.push(badgeKey);
-        localStorage.setItem('smartgrade_streak_unlocked_' + studentId, JSON.stringify(unlockedBadges));
-        
-        var badgeInfo = getStreakBadgeName(days);
-        
-        var achievements = getStudentAchievements(studentId);
-        achievements.push({
-          id: badgeKey,
-          name: badgeInfo.name,
-          desc: "Reach " + days + " days streak",
-          unlocked: true,
-          unlockDate: new Date().toLocaleDateString(),
-          notified: false,
-          streakDays: days
-        });
-        saveStudentAchievements(studentId, achievements);
-        
-        var msg = 'Streak Badge Unlocked: ' + badgeInfo.name + ' (' + days + ' days)!';
-        console.log(msg);
-        showToast(msg);
-        addNotification('streak', msg, 'You reached a ' + days + ' day streak!');
-        
-        return true;
-      }
-    }
-  }
-  return false;
-}
-
 function updateStreakOnVisit(id) {
   if (!id) return;
   var s = getStudentStreak(id);
@@ -476,7 +443,6 @@ function updateStreakOnVisit(id) {
   if (!s.lastLogin) {
     s = { days: 1, lastLogin: today };
     saveStudentStreak(id, s);
-    checkAndUnlockStreakBadge(id, s.days);
     addNotification('streak', 'Streak Started!', 'Day 1 - Keep logging in daily!');
     return s;
   }
@@ -491,12 +457,6 @@ function updateStreakOnVisit(id) {
     s.days += 1;
     s.lastLogin = today;
     saveStudentStreak(id, s);
-    checkAndUnlockStreakBadge(id, s.days);
-    
-    var nextMilestone = getNextStreakMilestone(s.days);
-    if (nextMilestone) {
-      addNotification('streak', 'Streak: ' + s.days + ' Days!', 'Next badge at ' + nextMilestone + ' days');
-    }
     return s;
   }
   
@@ -505,65 +465,7 @@ function updateStreakOnVisit(id) {
   }
   s = { days: 1, lastLogin: today };
   saveStudentStreak(id, s);
-  checkAndUnlockStreakBadge(id, s.days);
   return s;
-}
-
-function getNextStreakMilestone(currentDays) {
-  var milestones = [3, 7, 15, 30];
-  var cycleNumber = Math.floor(currentDays / 30);
-  var cycleStart = cycleNumber * 30;
-  
-  for (var i = 0; i < milestones.length; i++) {
-    var target = cycleStart + milestones[i];
-    if (target > currentDays) {
-      return target;
-    }
-  }
-  return (cycleNumber + 1) * 30 + 3;
-}
-
-function getUnlockedStreakBadgesList(studentId) {
-  return JSON.parse(localStorage.getItem('smartgrade_streak_unlocked_' + studentId) || '[]');
-}
-
-function getActiveStreakMilestones(currentDays) {
-  var milestones = [3, 7, 15, 30];
-  var cycleNumber = Math.floor(currentDays / 30);
-  var cycleStart = cycleNumber * 30;
-  var active = [];
-  
-  for (var i = 0; i < milestones.length; i++) {
-    var target = cycleStart + milestones[i];
-    if (target > currentDays) {
-      var badgeInfo = getStreakBadgeName(target);
-      active.push({
-        daysRequired: target,
-        name: badgeInfo.name,
-        color: badgeInfo.color,
-        currentDays: currentDays,
-        progress: Math.min(100, Math.round((currentDays / target) * 100))
-      });
-    }
-  }
-  
-  if (active.length === 0) {
-    cycleNumber++;
-    cycleStart = cycleNumber * 30;
-    for (var i = 0; i < milestones.length; i++) {
-      var target = cycleStart + milestones[i];
-      var badgeInfo = getStreakBadgeName(target);
-      active.push({
-        daysRequired: target,
-        name: badgeInfo.name,
-        color: badgeInfo.color,
-        currentDays: currentDays,
-        progress: Math.min(100, Math.round((currentDays / target) * 100))
-      });
-    }
-  }
-  
-  return active;
 }
 
 // ============================================
@@ -647,12 +549,23 @@ function saveAllComps(studentId, comps) {
 }
 
 // ============================================
-// PROFILE
+// PROFILE - AVEC AVATARS EN BASE64 (JSON)
 // ============================================
 
 function getProfile(studentId) {
   var d = localStorage.getItem('smartgrade_profile_' + studentId);
-  if (!d) return { avatarBase64: '', bio: '', favorites: [] };
+  var student = getStudentById(studentId);
+  var gender = (student && student.gender) || 'boy';
+  
+  if (!d) {
+    var defaultProfile = { 
+      avatarBase64: '', 
+      bio: '', 
+      favorites: []
+    };
+    saveProfile(studentId, defaultProfile);
+    return defaultProfile;
+  }
   try {
     var p = JSON.parse(d);
     return {
@@ -667,6 +580,25 @@ function getProfile(studentId) {
 
 function saveProfile(studentId, profile) {
   localStorage.setItem('smartgrade_profile_' + studentId, JSON.stringify(profile));
+}
+
+// Obtenir l'avatar par défaut (PNG pour affichage rapide)
+function getDefaultAvatarPNG(gender) {
+  return gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+}
+
+// Obtenir l'avatar par défaut en Base64 depuis JSON
+async function getDefaultAvatarBase64Async(gender) {
+  if (!avatarsLoaded) {
+    await loadDefaultAvatars();
+  }
+  if (gender === 'girl' && DEFAULT_AVATAR_GIRL_BASE64) {
+    return DEFAULT_AVATAR_GIRL_BASE64;
+  }
+  if (gender === 'boy' && DEFAULT_AVATAR_BOY_BASE64) {
+    return DEFAULT_AVATAR_BOY_BASE64;
+  }
+  return null;
 }
 
 // ============================================
@@ -909,25 +841,27 @@ function checkComebackBadge(studentId) {
   for (var i = 0; i < grades.length; i++) {
     var g = grades[i];
     if (!subjects[g.subjectId]) subjects[g.subjectId] = [];
-    subjects[g.subjectId].push(g.value);
+    subjects[g.subjectId].push({
+      sequenceId: g.sequenceId,
+      value: g.value
+    });
   }
   
   for (var subjId in subjects) {
-    var values = subjects[subjId];
-    if (values.length < 2) continue;
+    var notes = subjects[subjId];
+    notes.sort(function(a, b) {
+      return a.sequenceId - b.sequenceId;
+    });
     
-    var firstAvg = 0;
-    for (var j = 0; j < Math.min(values.length, 2); j++) firstAvg += values[j];
-    firstAvg = firstAvg / Math.min(values.length, 2);
-    
-    var lastAvg = 0;
-    var lastStart = Math.max(0, values.length - 2);
-    for (var k = lastStart; k < values.length; k++) lastAvg += values[k];
-    lastAvg = lastAvg / Math.min(values.length, 2);
-    
-    if (lastAvg - firstAvg >= 5) {
-      unlockBadgeById(studentId, 25);
-      break;
+    for (var i = 1; i < notes.length; i++) {
+      var prevValue = notes[i-1].value;
+      var currentValue = notes[i].value;
+      var improvement = currentValue - prevValue;
+      
+      if (improvement >= 5) {
+        unlockBadgeById(studentId, 25);
+        return true;
+      }
     }
   }
 }
@@ -1058,8 +992,6 @@ function unlockBadgeById(studentId, badgeId) {
 function checkAndUnlockAllNewBadges(studentId) {
   if (!studentId) return;
   
-  console.log('[Badges] Checking all badges for student:', studentId);
-  
   unlockWelcomeBadge(studentId);
   checkFirstGradeBadge(studentId);
   checkPerfectScoreBadge(studentId);
@@ -1079,8 +1011,6 @@ function checkAndUnlockAllNewBadges(studentId) {
   checkFlashcardBadges(studentId);
   
   checkFullAchievementBadge(studentId);
-  
-  console.log('[Badges] Check complete');
 }
 
 // ============================================
@@ -1096,6 +1026,47 @@ function roundToTwo(num) {
   if (isNaN(num) || !isFinite(num)) return 0;
   return Math.round((num + Number.EPSILON) * 100) / 100;
 }
+
+// ============================================
+// MIGRATION DES UTILISATEURS EXISTANTS
+// ============================================
+
+function migrateExistingUsersGender() {
+  var students = getAllStudents();
+  var modified = false;
+  
+  for (var i = 0; i < students.length; i++) {
+    if (!students[i].gender) {
+      var name = students[i].name.toLowerCase();
+      var girlIndicators = ['a', 'e', 'ia', 'na', 'la', 'ma', 'elle', 'ina', 'ette'];
+      var isGirl = false;
+      for (var g = 0; g < girlIndicators.length; g++) {
+        if (name.endsWith(girlIndicators[g])) {
+          isGirl = true;
+          break;
+        }
+      }
+      students[i].gender = isGirl ? 'girl' : 'boy';
+      modified = true;
+      console.log('[Migration]', students[i].name, '→', students[i].gender);
+    }
+  }
+  
+  if (modified) {
+    saveAllStudents(students);
+    console.log('[Migration] Migration des genres terminée');
+  }
+}
+
+// ============================================
+// INITIALISATION
+// ============================================
+
+// Charger les avatars au démarrage
+loadDefaultAvatars();
+
+// Migrer les utilisateurs existants
+migrateExistingUsersGender();
 
 // ============================================
 // EXPORT GLOBAL FUNCTIONS
@@ -1146,12 +1117,8 @@ window.saveFontSize = saveFontSize;
 window.getSequencesForTerm = getSequencesForTerm;
 window.roundToTwo = roundToTwo;
 window.showToast = showToast;
+window.getStudentGender = getStudentGender;
+window.getDefaultAvatarPNG = getDefaultAvatarPNG;
+window.getDefaultAvatarBase64Async = getDefaultAvatarBase64Async;
 
-// Streak infini exports
-window.getActiveStreakMilestones = getActiveStreakMilestones;
-window.getUnlockedStreakBadgesList = getUnlockedStreakBadgesList;
-window.getNextStreakMilestone = getNextStreakMilestone;
-window.getStreakBadgeName = getStreakBadgeName;
-window.checkAndUnlockStreakBadge = checkAndUnlockStreakBadge;
-
-console.log('Database.js chargé - Version avec streak infini');
+console.log('Database.js chargé - Version avec avatars PNG + JSON');

@@ -207,10 +207,13 @@
       </nav>
     </div>
     <div class="overlay" id="overlay"></div>
+    
 
     <main class="main-content">
       
-      <!-- SECTION VERSION ET MISE À JOUR -->
+      <!-- ============================================ -->
+      <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
+      <!-- ============================================ -->
       <div class="glass-card" id="updateCheckSection">
         <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
@@ -234,7 +237,9 @@
         </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- SUBJECTS BY TERM -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3 style="display:flex;align-items:center;gap:8px;"><i class="fas fa-layer-group"></i> Subjects by Term</h3>
         <div class="term-selector-row" id="termSelector">
@@ -251,7 +256,9 @@
         </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- PROFILE INFO -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-user"></i> Profile Info</h3>
         <div class="info-row"><div class="info-label">Name</div><div class="info-value" id="profileName">--</div></div>
@@ -259,19 +266,26 @@
         <div class="info-row"><div class="info-label">Class</div><div class="info-value" id="profileClass">--</div></div>
       </div>
       
+      <!-- ============================================ -->
       <!-- CHANGE PIN -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-key"></i> Change PIN</h3>
         <button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button>
       </div>
       
-      <!-- FINGERPRINT -->
+      <!-- ============================================ -->
+      <!-- FINGERPRINT - VERSION CORRIGÉE -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
         <div id="fingerprintSection"></div>
+        <div id="fingerprintStatus" style="margin-top:8px; font-size:0.65rem; color:var(--text-light);"></div>
       </div>
       
+      <!-- ============================================ -->
       <!-- JSON BACKUP -->
+      <!-- ============================================ -->
       <div class="glass-card">
         <h3><i class="fas fa-file-code"></i> JSON Backup</h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;"><i class="fas fa-info-circle"></i> Export your data as a JSON file or import a previously saved backup.</p>
@@ -282,7 +296,9 @@
         </div>
       </div>
       
+      <!-- ============================================ -->
       <!-- DANGER ZONE -->
+      <!-- ============================================ -->
       <div class="danger-zone">
         <h3><i class="fas fa-exclamation-triangle"></i> Danger Zone</h3>
         <button class="btn btn-danger" onclick="resetAllGrades()" style="width:100%;margin-bottom:8px;"><i class="fas fa-trash-alt"></i> Reset All Grades</button>
@@ -691,16 +707,187 @@
       playActionFeedback(); showToast('Compensation applied!'); closeCompModal(); loadSubjects();
     }
     
-    function loadFingerprintSection() {
-      var container = document.getElementById('fingerprintSection');
-      if (currentUser.hasFingerprint) {
-        container.innerHTML = '<div style="background:rgba(46,204,113,0.1);padding:12px;border-radius:12px;margin-bottom:8px;"><i class="fas fa-check-circle"></i> Fingerprint enabled</div><div style="display:flex;gap:8px;"><button class="btn btn-secondary" onclick="registerFingerprint()">Change</button><button class="btn btn-danger" onclick="removeFingerprint()">Remove</button></div>';
-      } else { container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()" style="width:100%;"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>'; }
+    // ============================================
+    // FINGERPRINT - VERSION CORRIGÉE ET STABLE
+    // ============================================
+    
+    // Détecter iOS (WebAuthn non supporté)
+    function isIOS() {
+      return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
     
-    function registerFingerprint() { registerFingerprint(currentUser.id, currentUser.name, function(result) { if (result.success) { currentUser = getStudentById(currentUser.id); setCurrentStudent(currentUser); loadFingerprintSection(); showToast(result.message); } else { showToast(result.message); } }); }
-    function removeFingerprint() { if (confirm('Remove fingerprint from this account?')) { removeFingerprint(currentUser.id); currentUser = getStudentById(currentUser.id); setCurrentStudent(currentUser); loadFingerprintSection(); showToast('Fingerprint removed'); } }
+    // Vérifier si WebAuthn est supporté
+    function isWebAuthnSupported() {
+      if (isIOS()) return false;
+      return window.PublicKeyCredential !== undefined;
+    }
     
+    // Vérifier si l'appareil a un capteur d'empreinte
+    async function isBiometricAvailable() {
+      if (!isWebAuthnSupported()) return false;
+      try {
+        var available = await PublicKeyCredential.isUserVerifyingPlatformAuthenticatorAvailable();
+        return available;
+      } catch(e) {
+        return false;
+      }
+    }
+    
+    // Convertir Uint8Array en base64 (simplifié)
+    function uint8ArrayToBase64(bytes) {
+      var binary = '';
+      for (var i = 0; i < bytes.length; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+    
+    // Convertir base64 en Uint8Array
+    function base64ToUint8Array(base64) {
+      var binary = atob(base64);
+      var bytes = new Uint8Array(binary.length);
+      for (var i = 0; i < binary.length; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return bytes;
+    }
+    
+    // Enregistrer l'empreinte - VERSION CORRIGÉE
+    async function registerFingerprint() {
+      var statusDiv = document.getElementById('fingerprintStatus');
+      
+      if (!window.isSecureContext) {
+        showToast('HTTPS requis pour l\'empreinte digitale');
+        statusDiv.innerHTML = '<i class="fas fa-lock"></i> HTTPS requis';
+        return;
+      }
+      
+      if (isIOS()) {
+        showToast('Empreinte non supportée sur iOS');
+        statusDiv.innerHTML = '<i class="fab fa-apple"></i> Non supporté sur iOS';
+        return;
+      }
+      
+      if (!isWebAuthnSupported()) {
+        showToast('WebAuthn non supporté par ce navigateur');
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle"></i> WebAuthn non supporté';
+        return;
+      }
+      
+      var available = await isBiometricAvailable();
+      if (!available) {
+        showToast('Aucun capteur d\'empreinte trouvé');
+        statusDiv.innerHTML = '<i class="fas fa-fingerprint"></i> Aucun capteur détecté';
+        return;
+      }
+      
+      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Veuillez placer votre doigt...';
+      
+      try {
+        var challenge = new Uint8Array(32);
+        crypto.getRandomValues(challenge);
+        
+        var userId = new Uint8Array(16);
+        crypto.getRandomValues(userId);
+        
+        var createOptions = {
+          publicKey: {
+            challenge: challenge,
+            rp: {
+              id: window.location.hostname,
+              name: 'SMART GRADE'
+            },
+            user: {
+              id: userId,
+              name: currentUser.name.toLowerCase().replace(/\s/g, ''),
+              displayName: currentUser.name
+            },
+            pubKeyCredParams: [
+              { type: 'public-key', alg: -7 },
+              { type: 'public-key', alg: -257 }
+            ],
+            authenticatorSelection: {
+              authenticatorAttachment: 'platform',
+              userVerification: 'required',
+              requireResidentKey: false
+            },
+            timeout: 60000,
+            attestation: 'none'
+          }
+        };
+        
+        var credential = await navigator.credentials.create(createOptions);
+        
+        var credentialId = uint8ArrayToBase64(new Uint8Array(credential.rawId));
+        
+        var students = getAllStudents();
+        var index = students.findIndex(function(s) { return s.id === currentUser.id; });
+        if (index !== -1) {
+          students[index].hasFingerprint = true;
+          students[index].fingerprintHash = credentialId;
+          saveAllStudents(students);
+          
+          currentUser.hasFingerprint = true;
+          currentUser.fingerprintHash = credentialId;
+          setCurrentStudent(currentUser);
+          
+          statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Empreinte enregistrée avec succès';
+          showToast('Empreinte enregistrée avec succès');
+          loadFingerprintSection();
+        } else {
+          throw new Error('Utilisateur non trouvé');
+        }
+        
+      } catch(err) {
+        console.error('Erreur WebAuthn:', err);
+        var message = 'Erreur lors de l\'enregistrement';
+        if (err.name === 'NotAllowedError') message = 'Vous avez annulé l\'opération';
+        if (err.name === 'NotSupportedError') message = 'Navigateur non supporté';
+        if (err.name === 'SecurityError') message = 'HTTPS requis';
+        statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> ' + message;
+        showToast(message);
+      }
+    }
+    
+    // Supprimer l'empreinte
+    function removeFingerprint() {
+      if (!confirm('Supprimer l\'empreinte digitale de ce compte ?')) return;
+      
+      var students = getAllStudents();
+      var index = students.findIndex(function(s) { return s.id === currentUser.id; });
+      if (index !== -1) {
+        students[index].hasFingerprint = false;
+        students[index].fingerprintHash = null;
+        saveAllStudents(students);
+        
+        currentUser.hasFingerprint = false;
+        currentUser.fingerprintHash = null;
+        setCurrentStudent(currentUser);
+        
+        showToast('Empreinte supprimée');
+        loadFingerprintSection();
+      }
+    }
+    
+    // Afficher la section fingerprint
+    function loadFingerprintSection() {
+      var container = document.getElementById('fingerprintSection');
+      if (!container) return;
+      
+      var statusDiv = document.getElementById('fingerprintStatus');
+      
+      if (currentUser.hasFingerprint && currentUser.fingerprintHash) {
+        container.innerHTML = '<div style="display:flex;gap:10px;"><button class="btn btn-danger" onclick="removeFingerprint()" style="flex:1;"><i class="fas fa-trash"></i> Remove Fingerprint</button></div>';
+        if (statusDiv) statusDiv.innerHTML = '<i class="fas fa-check-circle" style="color:#2ecc71;"></i> Fingerprint enabled';
+      } else {
+        container.innerHTML = '<button class="btn btn-primary" onclick="registerFingerprint()" style="width:100%;"><i class="fas fa-fingerprint"></i> Add Fingerprint</button>';
+        if (statusDiv) statusDiv.innerHTML = '';
+      }
+    }
+    
+    // ============================================
+    // CHANGE PIN (inchangé)
+    // ============================================
     function showPinModal() { document.getElementById('pinModal').classList.add('active'); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmNewPin').value = ''; }
     function closePinModal() { document.getElementById('pinModal').classList.remove('active'); }
     
@@ -725,6 +912,9 @@
       closePinModal();
     }
     
+    // ============================================
+    // RESET GRADES & DELETE ACCOUNT (inchangés)
+    // ============================================
     function resetAllGrades() {
       showConfirmDialog({
         title: 'Reset All Grades', message: 'This will delete ALL your grades. This cannot be undone!',
@@ -750,6 +940,9 @@
       });
     }
     
+    // ============================================
+    // JSON EXPORT/IMPORT (inchangés)
+    // ============================================
     function exportJSONBackup() {
       var user = getCurrentStudent();
       if (!user) { showToast('Please login first'); return; }

@@ -1,11 +1,9 @@
 {
   "name": "SMART GRADE - SIN GBHS FOUMBAN",
   "short_name": "SMART GRADE",
-  "description": "Ultimate Grade Management System for Form 4B Science - Track grades, achievements, flashcards, and more",
-  "version": "4.0.3",
+  "description": "Ultimate Grade Management System for Form 4B Science",
   "start_url": "./splash.html",
   "display": "standalone",
-  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
   "background_color": "#073442",
   "theme_color": "#073442",
@@ -17,59 +15,15 @@
   "shortcuts": [
     {
       "name": "Dashboard",
-      "short_name": "Dashboard",
-      "description": "View your academic dashboard and statistics",
-      "url": "./dashboard.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
+      "url": "./dashboard.html"
     },
     {
       "name": "Add Grade",
-      "short_name": "Add Grade",
-      "description": "Add new grades for any subject",
-      "url": "./add-grade.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
+      "url": "./add-grade.html"
     },
     {
       "name": "Statistics",
-      "short_name": "Stats",
-      "description": "View detailed statistics and charts",
-      "url": "./statistics.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
-    },
-    {
-      "name": "Achievements",
-      "short_name": "Badges",
-      "description": "View your unlocked badges and achievements",
-      "url": "./achievements.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
+      "url": "./statistics.html"
     }
   ],
   
@@ -80,16 +34,5 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ],
-  
-  "prefer_related_applications": false,
-  "related_applications": [],
-  "dir": "ltr",
-  "launch_handler": {
-    "client_mode": ["focus-existing", "auto"]
-  },
-  "edge_side_panel": {
-    "preferred_width": 400
-  },
-  "handle_links": "preferred"
+  ]
 }

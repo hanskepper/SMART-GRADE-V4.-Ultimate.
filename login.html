@@ -13,7 +13,6 @@
   <link rel="stylesheet" href="css/night-mode.css">
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
-  <link rel="apple-touch-icon" href="icon.svg">
   <style>
     .login-container{display:flex;align-items:center;justify-content:center;min-height:80vh;padding:16px;}
     .login-card{width:100%;max-width:400px;text-align:center;}
@@ -66,7 +65,6 @@
       width:40px;
       height:40px;
       border-radius:50%;
-      background:linear-gradient(135deg,var(--primary),var(--secondary));
       display:flex;
       align-items:center;
       justify-content:center;
@@ -77,6 +75,7 @@
       width:100%;
       height:100%;
       object-fit:cover;
+      border-radius:50%;
     }
     .student-item-row .sa-avatar i{
       font-size:1.2rem;
@@ -176,12 +175,17 @@
   <script>
     var selectedUserId=null,pinVisible=false,allStudents=[];
     
+    // Obtenir l'avatar de l'étudiant (PNG selon genre)
     function getStudentAvatarHtml(studentId) {
+      var student = getStudentById(studentId);
+      var gender = student ? (student.gender || 'boy') : 'boy';
+      var avatarPath = gender === 'girl' ? './icons/avatar-girl.png' : './icons/avatar-boy.png';
+      
       var profile = getProfile(studentId);
-      if (profile.avatarBase64 && profile.avatarBase64 !== '') {
+      if (profile.avatarBase64 && profile.avatarBase64 !== '' && profile.avatarBase64.length > 100) {
         return '<img src="' + profile.avatarBase64 + '" alt="Avatar">';
       }
-      return '<i class="fas fa-user-graduate"></i>';
+      return '<img src="' + avatarPath + '" alt="Avatar">';
     }
     
     function buildStudentList(){
@@ -272,13 +276,31 @@
       else{input.type='password';input.style.webkitTextSecurity='disc';toggle.innerHTML='<i class="fas fa-eye"></i>';}
     }
     
-    document.getElementById('pinInput').addEventListener('focus',function(){
-      document.getElementById('studentList').classList.add('collapsed');
-    });
+    // CORRECTION : Les messages disparaissent après 5 secondes
+    function showError(m){
+      var d=document.getElementById('errorMsg');
+      d.innerHTML='<i class="fas fa-circle-exclamation"></i> '+m;
+      d.style.display='block';
+      document.getElementById('successMsg').style.display='none';
+      setTimeout(function(){
+        d.style.display='none';
+      }, 5000);
+    }
     
-    function showError(m){var d=document.getElementById('errorMsg');d.innerHTML='<i class="fas fa-circle-exclamation"></i> '+m;d.style.display='block';document.getElementById('successMsg').style.display='none';}
-    function showSuccess(m){var d=document.getElementById('successMsg');d.innerHTML='<i class="fas fa-check-circle"></i> '+m;d.style.display='block';document.getElementById('errorMsg').style.display='none';}
-    function hideMessages(){document.getElementById('errorMsg').style.display='none';document.getElementById('successMsg').style.display='none';}
+    function showSuccess(m){
+      var d=document.getElementById('successMsg');
+      d.innerHTML='<i class="fas fa-check-circle"></i> '+m;
+      d.style.display='block';
+      document.getElementById('errorMsg').style.display='none';
+      setTimeout(function(){
+        d.style.display='none';
+      }, 5000);
+    }
+    
+    function hideMessages(){
+      document.getElementById('errorMsg').style.display='none';
+      document.getElementById('successMsg').style.display='none';
+    }
     
     function goWelcome(st){
       setCurrentStudent(st);
@@ -290,33 +312,6 @@
         unlockWelcomeBadge(st.id);
       } else if (typeof checkWelcomeBadge === 'function') {
         checkWelcomeBadge(st.id);
-      } else {
-        var achievements = JSON.parse(localStorage.getItem('smartgrade_achievements_' + st.id) || '[]');
-        var alreadyUnlocked = false;
-        for (var i = 0; i < achievements.length; i++) {
-          if (achievements[i].id === 38 && achievements[i].unlocked) {
-            alreadyUnlocked = true;
-            break;
-          }
-        }
-        if (!alreadyUnlocked) {
-          var loginCount = localStorage.getItem('smartgrade_login_count_' + st.id);
-          if (!loginCount) {
-            localStorage.setItem('smartgrade_login_count_' + st.id, '1');
-            achievements.push({
-              id: 38,
-              name: "Welcome Aboard",
-              desc: "First login after installation",
-              unlocked: true,
-              unlockDate: new Date().toLocaleDateString(),
-              notified: false
-            });
-            localStorage.setItem('smartgrade_achievements_' + st.id, JSON.stringify(achievements));
-            showToast('Badge unlocked: Welcome Aboard!');
-          } else {
-            localStorage.setItem('smartgrade_login_count_' + st.id, parseInt(loginCount) + 1);
-          }
-        }
       }
       
       if (typeof checkAndUnlockAllNewBadges === 'function') {

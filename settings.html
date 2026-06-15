@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>SMART GRADE - Settings</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Roboto:wght@300;400;500;700&family=Cinzel:wght@400;700&family=Quicksand:wght@400;600;700&family=Courier+Prime:wght@400;700&family=Fredoka:wght@400;600;700&family=Pacifico&family=Bangers&family=Lobster&family=Permanent+Marker&family=Comfortaa:wght@300;400;700&family=Righteous&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/base.css">
   <link rel="stylesheet" href="css/layout.css">
@@ -123,45 +123,15 @@
     .term-btn-modern.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
     .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .danger-zone { border: 1px solid rgba(220,53,69,0.3); background: rgba(220,53,69,0.04); border-radius: 20px; padding: 16px; }
-    .update-result-area { margin-top: 16px; display: none; }
-    .update-result-message { padding: 12px; border-radius: 12px; font-size: 0.7rem; }
-    .update-progress { margin-top: 12px; display: none; }
-    .update-progress-bar {
-      height: 6px;
-      background: rgba(0,0,0,0.1);
-      border-radius: 3px;
-      overflow: hidden;
-      margin-top: 8px;
+    .fingerprint-info {
+      background: rgba(52,152,219,0.1);
+      border-left: 3px solid #3498db;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      font-size: 0.65rem;
+      color: var(--text-light);
     }
-    .update-progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      transition: width 0.3s;
-    }
-    .version-tag {
-      display: inline-block;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.6rem;
-      margin-left: 8px;
-    }
-    .sc-1 { background: linear-gradient(135deg,#3498db,#2980b9); }
-    .sc-2 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
-    .sc-3 { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
-    .sc-4 { background: linear-gradient(135deg,#2ecc71,#27ae60); }
-    .sc-5 { background: linear-gradient(135deg,#e67e22,#d35400); }
-    .sc-6 { background: linear-gradient(135deg,#00bcd4,#0097a7); }
-    .sc-7 { background: linear-gradient(135deg,#f39c12,#e67e22); }
-    .sc-8 { background: linear-gradient(135deg,#1abc9c,#16a085); }
-    .sc-9 { background: linear-gradient(135deg,#27ae60,#1e8449); }
-    .sc-10 { background: linear-gradient(135deg,#3498db,#2471a3); }
-    .sc-11 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
-    .sc-12 { background: linear-gradient(135deg,#8e44ad,#7d3c98); }
-    .sc-13 { background: linear-gradient(135deg,#2980b9,#1a5276); }
-    .sc-14 { background: linear-gradient(135deg,#f39c12,#d68910); }
     @media (max-width: 550px) {
       .subjects-beautiful-grid { grid-template-columns: 1fr; }
       .term-btn-modern { min-width: 80px; padding: 10px 12px; font-size: 0.7rem; }
@@ -204,7 +174,7 @@
     
     <main class="main-content">
       
-      <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
+      <!-- SECTION VERSION -->
       <div class="glass-card" id="updateCheckSection">
         <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
@@ -218,8 +188,7 @@
             Current: <strong id="currentAppVersion">--</strong>
           </div>
         </div>
-        
-        <div id="updateResultArea" class="update-result-area">
+        <div id="updateResultArea" class="update-result-area" style="display:none;">
           <div id="updateResultMessage" class="update-result-message"></div>
           <div id="updateProgress" class="update-progress">
             <div style="font-size:0.6rem; margin-bottom:4px;"><i class="fas fa-download"></i> <span id="updateProgressText">Downloading...</span></div>
@@ -259,9 +228,14 @@
         <button class="btn btn-secondary" onclick="showPinModal()" style="width:100%;"><i class="fas fa-key"></i> Change PIN</button>
       </div>
       
-      <!-- FINGERPRINT - VERSION CORRIGÉE -->
+      <!-- FINGERPRINT -->
       <div class="glass-card">
-        <h3><i class="fas fa-fingerprint"></i> Fingerprint</h3>
+        <h3><i class="fas fa-fingerprint"></i> Fingerprint Login</h3>
+        <div class="fingerprint-info">
+          <i class="fas fa-info-circle"></i> 
+          <strong>How it works:</strong> Your browser will ask you to create a passkey (fingerprint). 
+          This is a one-time setup. After that, you can login with just your fingerprint.
+        </div>
         <div id="fingerprintSection"></div>
         <div id="fingerprintStatus" style="margin-top:8px; font-size:0.65rem; color:var(--text-light);"></div>
       </div>
@@ -320,7 +294,7 @@
   
   <script>
     // ============================================
-    // ENGLISH TOASTS - CUSTOM FUNCTION
+    // ENGLISH TOASTS
     // ============================================
     function showToast(message) {
       var container = document.getElementById('toastContainer');
@@ -330,18 +304,31 @@
       container.appendChild(toast);
       setTimeout(function() { if (toast.parentNode) toast.remove(); }, 3000);
     }
-    
-    // Override any French toasts
     window.showToast = showToast;
     
     // ============================================
-    // CONFIGURATION GITHUB
+    // APPLY GLOBAL FONT
+    // ============================================
+    function applyGlobalFont() {
+      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+      var fontMap = {
+        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+      };
+      document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+    }
+    applyGlobalFont();
+    
+    // ============================================
+    // GITHUB UPDATE FUNCTIONS
     // ============================================
     var GITHUB_USER = 'hanskepper';
     var GITHUB_REPO = 'SMART-GRADE-V4.-Ultimate.';
     var GITHUB_API_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/commits?per_page=1';
     var GITHUB_RELEASES_URL = 'https://api.github.com/repos/' + GITHUB_USER + '/' + GITHUB_REPO + '/releases/latest';
-    
     var pendingUpdate = null;
     var currentAppVersion = '4.0.3';
     
@@ -516,21 +503,16 @@
           } catch(e) {}
           
           progressFill.style.width = '30%';
-          
           setTimeout(function() {
             progressFill.style.width = '60%';
             progressText.innerHTML = 'Preparing installation...';
-            
             setTimeout(function() {
               progressFill.style.width = '90%';
               progressText.innerHTML = 'Almost ready...';
-              
               setTimeout(function() {
                 progressFill.style.width = '100%';
                 progressText.innerHTML = 'Update ready! Opening GitHub...';
-                
                 setLocalVersion(pendingUpdate.version);
-                
                 if ('caches' in window) {
                   caches.keys().then(function(names) {
                     names.forEach(function(name) {
@@ -540,7 +522,6 @@
                     });
                   });
                 }
-                
                 setTimeout(function() {
                   window.open('https://github.com/' + GITHUB_USER + '/' + GITHUB_REPO, '_blank');
                   showToast('Visit GitHub to download the latest version');
@@ -555,7 +536,6 @@
     // ============================================
     // SETTINGS CORE FUNCTIONS
     // ============================================
-    
     var currentUser = null;
     var currentTerm = 1;
     var subjectToRemove = null;
@@ -701,9 +681,8 @@
     }
     
     // ============================================
-    // FINGERPRINT - VERSION CORRIGÉE
+    // FINGERPRINT - CRÉATION DIRECTE DE PASSKEY
     // ============================================
-    
     function isIOS() {
       return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
     }
@@ -729,15 +708,6 @@
         binary += String.fromCharCode(bytes[i]);
       }
       return btoa(binary);
-    }
-    
-    function base64ToUint8Array(base64) {
-      var binary = atob(base64);
-      var bytes = new Uint8Array(binary.length);
-      for (var i = 0; i < binary.length; i++) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-      return bytes;
     }
     
     async function registerFingerprint() {
@@ -768,7 +738,7 @@
         return;
       }
       
-      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Please place your finger...';
+      statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Please place your finger on the sensor...';
       
       try {
         var challenge = new Uint8Array(32);
@@ -796,7 +766,7 @@
             authenticatorSelection: {
               authenticatorAttachment: 'platform',
               userVerification: 'required',
-              requireResidentKey: false
+              requireResidentKey: true
             },
             timeout: 60000,
             attestation: 'none'
@@ -831,6 +801,7 @@
         if (err.name === 'NotAllowedError') message = 'You cancelled the operation';
         if (err.name === 'NotSupportedError') message = 'Browser not supported';
         if (err.name === 'SecurityError') message = 'HTTPS required';
+        if (err.name === 'InvalidStateError') message = 'Fingerprint already registered';
         statusDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color:#e74c3c;"></i> ' + message;
         showToast(message);
       }
@@ -851,11 +822,9 @@
             students[index].hasFingerprint = false;
             students[index].fingerprintHash = null;
             saveAllStudents(students);
-            
             currentUser.hasFingerprint = false;
             currentUser.fingerprintHash = null;
             setCurrentStudent(currentUser);
-            
             showToast('Fingerprint removed');
             loadFingerprintSection();
           }
@@ -866,7 +835,6 @@
     function loadFingerprintSection() {
       var container = document.getElementById('fingerprintSection');
       if (!container) return;
-      
       var statusDiv = document.getElementById('fingerprintStatus');
       
       if (currentUser.hasFingerprint && currentUser.fingerprintHash) {
@@ -881,7 +849,7 @@
     // ============================================
     // CHANGE PIN
     // ============================================
-    function showPinModal() { document.getElementById('pinModal').classList.add('active'); document.getElementById('oldPin').value = ''; document.getElementById('newPin').value = ''; document.getElementById('confirmNewPin').value = ''; }
+    function showPinModal() { document.getElementById('pinModal').classList.add('active'); }
     function closePinModal() { document.getElementById('pinModal').classList.remove('active'); }
     
     function changePin() {
@@ -906,7 +874,7 @@
     }
     
     // ============================================
-    // RESET GRADES & DELETE ACCOUNT - USING showConfirmDialog
+    // RESET & DELETE
     // ============================================
     function resetAllGrades() {
       showConfirmDialog({
@@ -956,7 +924,7 @@
     }
     
     // ============================================
-    // JSON EXPORT/IMPORT
+    // JSON BACKUP
     // ============================================
     function exportJSONBackup() {
       var user = getCurrentStudent();
@@ -1003,6 +971,7 @@
       event.target.value = '';
     }
     
+    // TERM SELECTOR
     document.querySelectorAll('.term-btn-modern').forEach(function(btn, index) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.term-btn-modern').forEach(function(b) { b.classList.remove('active'); });
@@ -1019,7 +988,9 @@
     loadSettings();
     initMobileMenu();
     initThemeSelector();
-    setTimeout(function() { if (typeof applyGlobalFont === 'function') applyGlobalFont(); }, 100);
+    
+    var fontObserver = new MutationObserver(function() { applyGlobalFont(); });
+    fontObserver.observe(document.body, { attributes: true, attributeFilter: ['class'] });
   </script>
 </body>
 </html>

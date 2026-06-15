@@ -21,6 +21,7 @@
     @keyframes popIn {
       0% { transform: scale(0); opacity: 0; }
       60% { transform: scale(1.15); }
+      80% { transform: scale(0.95); }
       100% { transform: scale(1); opacity: 1; }
     }
     @keyframes slideRight {
@@ -34,10 +35,6 @@
     @keyframes slideUp {
       0% { transform: translateY(50px); opacity: 0; }
       100% { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes fadeInScale {
-      0% { opacity: 0; transform: scale(0.8); }
-      100% { opacity: 1; transform: scale(1); }
     }
     @keyframes glowPulse {
       0%, 100% { box-shadow: 0 0 10px rgba(0,255,255,0.2); }
@@ -55,7 +52,7 @@
     }
     @keyframes sparkle {
       0% { transform: translateY(0) scale(1); opacity: 1; }
-      100% { transform: translateY(-80px) scale(0); opacity: 0; }
+      100% { transform: translateY(-100px) scale(0); opacity: 0; }
     }
     @keyframes fadeInUp {
       0% { opacity: 0; transform: translateY(30px); }
@@ -73,20 +70,17 @@
       0% { background-position: 0 0; }
       100% { background-position: 40px 0; }
     }
-    @keyframes buttonReveal {
-      0% { opacity: 0; transform: translateY(30px); }
-      100% { opacity: 1; transform: translateY(0); }
+    
+    /* Animation plus longue pour les confettis */
+    @keyframes confettiFallLong {
+      0% { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
     }
     
-    /* Animation d'entrée de 5 secondes */
-    .welcome-container {
-      animation: fadeInScale 0.8s ease-out;
-    }
-    
-    .welcome-buttons {
-      opacity: 0;
-      animation: buttonReveal 0.6s ease forwards;
-      animation-delay: 0.5s;
+    /* Animation plus longue pour les sparkles */
+    @keyframes sparkleLong {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-120px) scale(0); opacity: 0; }
     }
     
     .welcome-hero {
@@ -96,8 +90,6 @@
       position: relative;
       overflow: hidden;
       margin-bottom: 20px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      animation: floatUp 0.8s ease forwards;
     }
     .welcome-hero::before {
       content: '';
@@ -108,16 +100,6 @@
       height: 200%;
       background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px);
       animation: stripeMove 3s linear infinite;
-      z-index: 0;
-    }
-    .welcome-hero::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: radial-gradient(circle at 50% 30%, rgba(255,255,255,0.1), transparent 70%);
       z-index: 0;
     }
     .welcome-hero > * { position: relative; z-index: 1; }
@@ -162,7 +144,6 @@
       color: white;
       margin-bottom: 8px;
       text-shadow: 0 3px 12px rgba(0,0,0,0.2);
-      animation: popIn 0.6s ease forwards;
     }
     .welcome-class {
       font-size: 0.9rem;
@@ -170,10 +151,6 @@
       color: white;
       font-weight: 500;
       margin-bottom: 12px;
-      animation: floatUp 0.8s ease forwards;
-      animation-delay: 0.1s;
-      opacity: 0;
-      animation-fill-mode: forwards;
     }
     .welcome-badge {
       display: inline-block;
@@ -182,10 +159,6 @@
       border-radius: 20px;
       font-size: 0.7rem;
       backdrop-filter: blur(10px);
-      animation: floatUp 0.8s ease forwards;
-      animation-delay: 0.2s;
-      opacity: 0;
-      animation-fill-mode: forwards;
     }
     
     .stats-grid-welcome {
@@ -204,15 +177,7 @@
       position: relative;
       overflow: hidden;
       cursor: pointer;
-      animation: slideUp 0.6s ease forwards;
-      opacity: 0;
-      animation-fill-mode: forwards;
     }
-    .stat-card-welcome:nth-child(1) { animation-delay: 0.3s; }
-    .stat-card-welcome:nth-child(2) { animation-delay: 0.4s; }
-    .stat-card-welcome:nth-child(3) { animation-delay: 0.5s; }
-    .stat-card-welcome:nth-child(4) { animation-delay: 0.6s; }
-    
     .stat-card-welcome:hover {
       transform: translateY(-5px);
       box-shadow: 0 12px 30px rgba(0,0,0,0.15);
@@ -246,10 +211,6 @@
       background: var(--card-bg);
       border: 1px solid var(--border);
       margin-bottom: 20px;
-      animation: slideUp 0.6s ease forwards;
-      animation-delay: 0.7s;
-      opacity: 0;
-      animation-fill-mode: forwards;
     }
     .quote-card-welcome .quote-text {
       font-style: italic;
@@ -269,14 +230,8 @@
       flex-direction: column;
       gap: 10px;
     }
-    .welcome-buttons .btn {
-      animation: slideUp 0.6s ease forwards;
-      opacity: 0;
-    }
-    .welcome-buttons .btn:first-child { animation-delay: 0.8s; }
-    .welcome-buttons .btn:last-child { animation-delay: 0.9s; }
     
-    /* Confettis */
+    /* Styles des particules avec animations longues */
     .confetti-piece {
       position: fixed;
       width: 8px;
@@ -284,7 +239,7 @@
       border-radius: 2px;
       z-index: 9999;
       pointer-events: none;
-      animation: confettiFall 3s ease-in forwards;
+      animation: confettiFallLong 5s ease-in forwards;
     }
     
     .sparkle-dot {
@@ -294,33 +249,8 @@
       background: white;
       border-radius: 50%;
       pointer-events: none;
-      animation: sparkle 0.8s ease forwards;
+      animation: sparkleLong 1.2s ease forwards;
       z-index: 9999;
-    }
-    
-    /* Loader d'attente avant l'apparition des boutons */
-    .welcome-loader {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 8px;
-      margin: 20px 0;
-      animation: fadeInScale 0.4s ease;
-    }
-    .loader-dot {
-      width: 10px;
-      height: 10px;
-      background: var(--primary);
-      border-radius: 50%;
-      animation: loaderBounce 1.4s ease-in-out infinite;
-    }
-    .loader-dot:nth-child(1) { animation-delay: 0s; }
-    .loader-dot:nth-child(2) { animation-delay: 0.2s; }
-    .loader-dot:nth-child(3) { animation-delay: 0.4s; }
-    
-    @keyframes loaderBounce {
-      0%, 80%, 100% { transform: scale(0.6); opacity: 0.3; }
-      40% { transform: scale(1.2); opacity: 1; }
     }
     
     @media (min-width: 600px) {
@@ -332,7 +262,6 @@
 </head>
 <body>
   <div class="particles" id="particles"></div>
-  
   <div class="app-container">
     
     <div class="mobile-header">
@@ -369,9 +298,9 @@
     </div>
     <div class="overlay" id="overlay"></div>
     
-    <main class="main-content welcome-container">
+    <main class="main-content">
       
-      <div class="welcome-hero">
+      <div class="welcome-hero" style="background:linear-gradient(135deg,var(--primary),var(--secondary));color:white;">
         <div class="welcome-avatar" id="welcomeAvatar">
           <div class="ripple-ring"></div>
           <i class="fas fa-user-graduate"></i>
@@ -383,14 +312,7 @@
         </div>
       </div>
       
-      <!-- Loader animé (disparaît après 5 secondes) -->
-      <div class="welcome-loader" id="welcomeLoader">
-        <div class="loader-dot"></div>
-        <div class="loader-dot"></div>
-        <div class="loader-dot"></div>
-      </div>
-      
-      <div class="stats-grid-welcome" id="statsGrid" style="display:none;">
+      <div class="stats-grid-welcome">
         <div class="stat-card-welcome" onclick="location='dashboard.html'">
           <div class="stat-icon"><i class="fas fa-chart-line"></i></div>
           <div class="stat-number" id="wOverall">0.00</div>
@@ -413,13 +335,13 @@
         </div>
       </div>
       
-      <div class="quote-card-welcome" id="quoteCard" style="display:none;">
+      <div class="quote-card-welcome">
         <div class="quote-icon"><i class="fas fa-quote-right"></i></div>
         <p class="quote-text" id="wQuote"></p>
         <p class="quote-author" id="wAuthor"></p>
       </div>
       
-      <div class="welcome-buttons" id="welcomeButtons" style="display:none;">
+      <div class="welcome-buttons">
         <a href="dashboard.html" class="btn btn-primary"><i class="fas fa-chalkboard-user"></i> Go to Dashboard</a>
         <a href="notifications.html" class="btn btn-secondary"><i class="fas fa-bell"></i> Notifications</a>
       </div>
@@ -437,27 +359,40 @@
   
   <script>
     // ============================================
-    // APPLICATION DES POLICES GLOBALES
+    // LISTE DES CITATIONS (MÊME QUE DASHBOARD)
     // ============================================
-    function applyGlobalFontToWelcome() {
-      var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
-      var fontMap = {
-        'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
-        'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
-        'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
-        'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
-        'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
-      };
-      var fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
-      document.body.style.fontFamily = fontFamily;
-      
-      var allElements = document.querySelectorAll('body, body *');
-      for (var i = 0; i < allElements.length; i++) {
-        if (allElements[i].style) {
-          allElements[i].style.fontFamily = fontFamily;
-        }
-      }
-    }
+    var MQ = [
+      {q:"Success is not final, failure is not fatal. It is the courage to continue that counts.", a:"Winston Churchill"},
+      {q:"Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", a:"Malcolm X"},
+      {q:"Believe you can and you're halfway there.", a:"Theodore Roosevelt"},
+      {q:"Strive for progress, not perfection.", a:"Unknown"},
+      {q:"The secret of getting ahead is getting started.", a:"Mark Twain"},
+      {q:"Fall seven times, stand up eight.", a:"Japanese Proverb"},
+      {q:"You don't have to be great to start, but you have to start to be great.", a:"Zig Ziglar"},
+      {q:"Make today so awesome that yesterday gets jealous.", a:"Unknown"},
+      {q:"Consistency is more important than perfection.", a:"Unknown"},
+      {q:"Every day is a new opportunity to improve yourself.", a:"Unknown"},
+      {q:"The future belongs to those who believe in the beauty of their dreams.", a:"Eleanor Roosevelt"},
+      {q:"It does not matter how slowly you go as long as you do not stop.", a:"Confucius"},
+      {q:"The expert in anything was once a beginner.", a:"Helen Hayes"},
+      {q:"The beautiful thing about learning is that no one can take it away from you.", a:"B.B. King"},
+      {q:"Education is not the filling of a pail, but the lighting of a fire.", a:"W.B. Yeats"},
+      {q:"Start where you are. Use what you have. Do what you can.", a:"Arthur Ashe"},
+      {q:"Little by little, one travels far.", a:"J.R.R. Tolkien"},
+      {q:"Small progress is still progress.", a:"Unknown"},
+      {q:"Never give up on a dream.", a:"Unknown"},
+      {q:"You are stronger than you think.", a:"A.A. Milne"},
+      {q:"The only limit to our realization of tomorrow is our doubts of today.", a:"Franklin D. Roosevelt"},
+      {q:"Don't watch the clock; do what it does. Keep going.", a:"Sam Levenson"},
+      {q:"The harder you work for something, the greater you'll feel when you achieve it.", a:"Unknown"},
+      {q:"Dream it. Wish it. Do it.", a:"Unknown"},
+      {q:"Success doesn't come to you, you go to it.", a:"Marva Collins"},
+      {q:"The only way to do great work is to love what you do.", a:"Steve Jobs"},
+      {q:"Your limitation—it's only your imagination.", a:"Unknown"},
+      {q:"Push yourself, because no one else is going to do it for you.", a:"Unknown"},
+      {q:"Great things never come from comfort zones.", a:"Unknown"},
+      {q:"Study while others are sleeping; work while others are loafing.", a:"William A. Ward"}
+    ];
     
     var cu = null;
     var profile = null;
@@ -477,7 +412,7 @@
       }, 20);
     }
     
-    // Lancer les confettis
+    // Confettis avec durée plus longue
     function launchConfetti() {
       var colors = ['#3498db', '#2ecc71', '#e74c3c', '#f39c12', '#9b59b6', '#1abc9c', '#e67e22', '#00bcd4', '#ff6b6b', '#ffd93d'];
       for (var i = 0; i < 80; i++) {
@@ -486,34 +421,12 @@
         piece.style.left = Math.random() * 100 + '%';
         piece.style.top = '-20px';
         piece.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-        piece.style.animationDelay = Math.random() * 1 + 's';
-        piece.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        piece.style.width = (Math.random() * 6 + 4) + 'px';
-        piece.style.height = (Math.random() * 6 + 4) + 'px';
+        piece.style.animationDelay = Math.random() * 1.5 + 's';
+        piece.style.animationDuration = (Math.random() * 3 + 4) + 's';
+        piece.style.width = (Math.random() * 8 + 4) + 'px';
+        piece.style.height = (Math.random() * 8 + 4) + 'px';
         document.body.appendChild(piece);
-        setTimeout(function(p) { if(p && p.parentNode) p.parentNode.removeChild(p); }, 4000);
-      }
-    }
-    
-    // Effet sparkle au clic
-    function createSparkle(e) {
-      var rect = this.getBoundingClientRect();
-      var centerX = rect.left + rect.width / 2;
-      var centerY = rect.top + rect.height / 2;
-      var sparkColors = ['#fff', '#ffd93d', '#ff6b6b', '#00ffff', '#ff69b4'];
-      for (var i = 0; i < 25; i++) {
-        var dot = document.createElement('div');
-        dot.className = 'sparkle-dot';
-        var angle = Math.random() * Math.PI * 2;
-        var radius = Math.random() * 70;
-        dot.style.left = (centerX + Math.cos(angle) * radius - 3) + 'px';
-        dot.style.top = (centerY + Math.sin(angle) * radius - 3) + 'px';
-        dot.style.backgroundColor = sparkColors[Math.floor(Math.random() * sparkColors.length)];
-        dot.style.width = (Math.random() * 6 + 2) + 'px';
-        dot.style.height = dot.style.width;
-        dot.style.animationDuration = (Math.random() * 0.5 + 0.6) + 's';
-        document.body.appendChild(dot);
-        setTimeout(function(d) { if(d && d.parentNode) d.parentNode.removeChild(d); }, 800);
+        setTimeout(function(p) { if(p && p.parentNode) p.parentNode.removeChild(p); }, 7000);
       }
     }
     
@@ -546,52 +459,24 @@
       var t3 = calculateStudentTermAverage ? calculateStudentTermAverage(cu.id, 3) : 0;
       var overall = Math.round(((t1 + t2 + t3) / 3) * 100) / 100;
       
-      // Citations
-      var quotes = [
-        { q: "Success is not final, failure is not fatal. It is the courage to continue that counts.", a: "Winston Churchill" },
-        { q: "The future belongs to those who believe in the beauty of their dreams.", a: "Eleanor Roosevelt" },
-        { q: "Education is the passport to the future, for tomorrow belongs to those who prepare for it today.", a: "Malcolm X" },
-        { q: "It does not matter how slowly you go as long as you do not stop.", a: "Confucius" },
-        { q: "The expert in anything was once a beginner.", a: "Helen Hayes" },
-        { q: "Education is not the filling of a pail, but the lighting of a fire.", a: "W.B. Yeats" },
-        { q: "Believe you can and you're halfway there.", a: "Theodore Roosevelt" }
-      ];
-      var randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-      document.getElementById('wQuote').textContent = '"' + randomQuote.q + '"';
-      document.getElementById('wAuthor').textContent = '- ' + randomQuote.a;
+      // Remplir les valeurs
+      document.getElementById('wOverall').innerHTML = overall.toFixed(2);
+      document.getElementById('wGrades').innerHTML = grades.length;
+      var unlockedCount = 0;
+      for (var i = 0; i < ach.length; i++) if (ach[i].unlocked) unlockedCount++;
+      document.getElementById('wBadges').innerHTML = unlockedCount;
+      document.getElementById('wStreak').innerHTML = streak.days || 0;
       
-      // Timer de 5 secondes avant d'afficher le contenu
-      var loader = document.getElementById('welcomeLoader');
-      var statsGrid = document.getElementById('statsGrid');
-      var quoteCard = document.getElementById('quoteCard');
-      var buttons = document.getElementById('welcomeButtons');
-      
+      // Animation des nombres
       setTimeout(function() {
-        loader.style.display = 'none';
-        statsGrid.style.display = 'grid';
-        quoteCard.style.display = 'block';
-        buttons.style.display = 'flex';
-        
-        // Remplir les valeurs
-        document.getElementById('wOverall').textContent = overall.toFixed(2);
-        document.getElementById('wGrades').textContent = grades.length;
-        var unlockedCount = 0;
-        for (var i = 0; i < ach.length; i++) if (ach[i].unlocked) unlockedCount++;
-        document.getElementById('wBadges').textContent = unlockedCount;
-        document.getElementById('wStreak').textContent = streak.days || 0;
-        
-        // Animation des nombres
-        setTimeout(function() {
-          animateNumber(document.getElementById('wOverall'), overall);
-        }, 100);
-        
-        // Lancer les confettis
-        launchConfetti();
-        
-        // Appliquer la police
-        applyGlobalFontToWelcome();
-        
-      }, 2500); // 2.5 secondes d'attente avant l'affichage
+        animateNumber(document.getElementById('wOverall'), overall);
+      }, 100);
+      
+      // Citation aléatoire
+      var randomIndex = Math.floor(Math.random() * MQ.length);
+      var q = MQ[randomIndex];
+      document.getElementById('wQuote').innerHTML = '"' + q.q + '"';
+      document.getElementById('wAuthor').innerHTML = '- ' + q.a;
       
       // Header avatar
       var headerAvatar = document.getElementById('headerAvatar');
@@ -599,28 +484,64 @@
         headerAvatar.innerHTML = '<img src="' + profile.avatarBase64 + '" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">';
       }
       
-      // Effet sparkle au clic sur l'avatar
-      document.getElementById('welcomeAvatar').addEventListener('click', createSparkle);
+      // Effet sparkle au clic sur l'avatar (plus long)
+      document.getElementById('welcomeAvatar').addEventListener('click', function(e) {
+        var rect = this.getBoundingClientRect();
+        var centerX = rect.left + rect.width / 2;
+        var centerY = rect.top + rect.height / 2;
+        var sparkColors = ['#fff', '#ffd93d', '#ff6b6b', '#00ffff', '#ff69b4'];
+        for (var i = 0; i < 30; i++) {
+          var dot = document.createElement('div');
+          dot.className = 'sparkle-dot';
+          var angle = Math.random() * Math.PI * 2;
+          var radius = Math.random() * 80;
+          dot.style.left = (centerX + Math.cos(angle) * radius - 3) + 'px';
+          dot.style.top = (centerY + Math.sin(angle) * radius - 3) + 'px';
+          dot.style.backgroundColor = sparkColors[Math.floor(Math.random() * sparkColors.length)];
+          dot.style.width = (Math.random() * 6 + 3) + 'px';
+          dot.style.height = dot.style.width;
+          dot.style.animationDuration = (Math.random() * 0.8 + 0.8) + 's';
+          document.body.appendChild(dot);
+          setTimeout(function(d) { if(d && d.parentNode) d.parentNode.removeChild(d); }, 1500);
+        }
+      });
+      
+      // Confettis (démarrage immédiat + durée longue)
+      setTimeout(launchConfetti, 300);
+      
+      // Deuxième vague de confettis après 2 secondes
+      setTimeout(function() {
+        launchConfetti();
+      }, 2000);
       
       initThemeSelector();
       initMobileMenu();
       
-      // Notifications
+      // Application des polices
+      if (typeof applyGlobalFont === 'function') {
+        applyGlobalFont();
+      }
+      
+      setTimeout(function() {
+        if (typeof applyGlobalFont === 'function') {
+          applyGlobalFont();
+        }
+        var savedFont = localStorage.getItem('smartgrade_font_family') || 'inter';
+        var fontMap = {
+          'inter': 'Inter, sans-serif', 'roboto': 'Roboto, sans-serif', 'cinzel': 'Cinzel, serif',
+          'quicksand': 'Quicksand, sans-serif', 'courier-prime': '"Courier Prime", monospace',
+          'fredoka': 'Fredoka, sans-serif', 'pacifico': 'Pacifico, cursive', 'bangers': 'Bangers, cursive',
+          'lobster': 'Lobster, cursive', 'permanent-marker': '"Permanent Marker", cursive',
+          'comfortaa': 'Comfortaa, sans-serif', 'righteous': 'Righteous, sans-serif'
+        };
+        document.body.style.fontFamily = fontMap[savedFont] || 'Inter, sans-serif';
+      }, 50);
+      
       requestNotificationPermission();
       if (typeof checkStreakMilestone === 'function') checkStreakMilestone(cu.id);
       if (typeof checkAndNotifyAchievements === 'function') checkAndNotifyAchievements(cu.id);
       
-      // Observer les changements de thème/police
-      var observer = new MutationObserver(function() {
-        applyGlobalFontToWelcome();
-      });
-      observer.observe(document.body, { attributes: true, attributeFilter: ['class', 'style'] });
-      
-      window.addEventListener('storage', function(e) {
-        if (e.key === 'smartgrade_font_family') {
-          applyGlobalFontToWelcome();
-        }
-      });
+      localStorage.setItem('smartgrade_last_page', 'welcome.html');
     }
     
     initWelcome();

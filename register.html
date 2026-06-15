@@ -14,17 +14,78 @@
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f3b48">
   <style>
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; margin-bottom: 6px; font-weight: 500; color: var(--text-light); font-size: 0.75rem; }
-    .form-group label i { width: 20px; color: var(--primary); }
-    .form-group input { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: var(--card-bg); color: var(--text); font-size: 0.9rem; transition: all 0.2s; box-sizing: border-box; }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; margin-bottom: 8px; font-weight: 500; color: var(--text-light); font-size: 0.75rem; }
+    .form-group label i { width: 20px; color: var(--primary); margin-right: 6px; }
+    .form-group input { width: 100%; padding: 14px; border-radius: 14px; border: 2px solid var(--border); background: var(--card-bg); color: var(--text); font-size: 0.9rem; transition: all 0.2s; box-sizing: border-box; }
     .form-group input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,59,72,0.1); }
-    .flex { display: flex; gap: 10px; }
-    .btn-class { flex: 1; padding: 12px; border-radius: 12px; border: 2px solid var(--border); background: transparent; font-weight: 600; cursor: pointer; transition: all 0.2s; }
-    .btn-class.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
+    .flex-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    
+    /* CORRECTION MODE SOMBRE POUR LES BOUTONS DE CLASSE */
+    .btn-class { 
+      flex: 1; 
+      padding: 12px; 
+      border-radius: 14px; 
+      border: 2px solid var(--border); 
+      background: transparent; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: all 0.2s; 
+      text-align: center; 
+      color: var(--text) !important;
+    }
+    .btn-class.active { 
+      background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+      color: white !important; 
+      border-color: transparent; 
+    }
+    
+    /* Style pour les options de genre */
+    .gender-group {
+      display: flex;
+      gap: 16px;
+      margin-top: 8px;
+    }
+    .gender-card {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      padding: 14px 16px;
+      border-radius: 16px;
+      border: 2px solid var(--border);
+      background: var(--card-bg);
+      cursor: pointer;
+      transition: all 0.2s;
+      color: var(--text);
+    }
+    .gender-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+    .gender-card.selected {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-color: transparent;
+      color: white;
+    }
+    .gender-card.selected .gender-name {
+      color: white;
+    }
+    .gender-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .gender-name {
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    
     .error-msg { background: rgba(231,76,60,0.1); color: #e74c3c; padding: 12px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 0.8rem; border-left: 3px solid #e74c3c; }
     .success-msg { background: rgba(46,204,113,0.1); color: #27ae60; padding: 12px; border-radius: 12px; margin-bottom: 15px; display: none; font-size: 0.8rem; border-left: 3px solid #27ae60; }
-    .number-hint { font-size: 0.6rem; color: var(--text-light); margin-top: 4px; display: block; }
+    .number-hint { font-size: 0.6rem; color: var(--text-light); margin-top: 6px; display: block; }
     .btn { padding: 14px 20px; border-radius: 40px; border: none; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 0.85rem; width: 100%; transition: all 0.2s ease; }
     .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; }
     .btn-primary:active { transform: scale(0.96); }
@@ -75,11 +136,26 @@
         
         <div class="form-group">
           <label><i class="fas fa-school"></i> Class</label>
-          <div class="flex">
+          <div class="flex-row">
             <button type="button" id="classB1" class="btn-class active">B1</button>
             <button type="button" id="classB2" class="btn-class">B2</button>
           </div>
           <input type="hidden" id="userClass" value="B1">
+        </div>
+        
+        <div class="form-group">
+          <label><i class="fas fa-venus-mars"></i> Profile Avatar</label>
+          <div class="gender-group">
+            <div class="gender-card selected" data-gender="boy" onclick="selectGender('boy')">
+              <img src="./icons/avatar-boy.png" class="gender-avatar" alt="Boy">
+              <span class="gender-name">Boy</span>
+            </div>
+            <div class="gender-card" data-gender="girl" onclick="selectGender('girl')">
+              <img src="./icons/avatar-girl.png" class="gender-avatar" alt="Girl">
+              <span class="gender-name">Girl</span>
+            </div>
+          </div>
+          <input type="hidden" id="userGender" value="boy">
         </div>
         
         <div class="form-group">
@@ -117,6 +193,14 @@
   <script>
     var selectedClass = 'B1';
     
+    function selectGender(gender) {
+      document.querySelectorAll('.gender-card').forEach(function(card) {
+        card.classList.remove('selected');
+      });
+      document.querySelector('.gender-card[data-gender="' + gender + '"]').classList.add('selected');
+      document.getElementById('userGender').value = gender;
+    }
+    
     document.getElementById('classB1').onclick = function() {
       selectedClass = 'B1';
       document.getElementById('classB1').classList.add('active');
@@ -151,6 +235,7 @@
       var pin = document.getElementById('userPin').value;
       var confirmPin = document.getElementById('confirmPin').value;
       var className = selectedClass;
+      var gender = document.getElementById('userGender').value;
       
       if (!name) { showError('Please enter your full name'); return; }
       if (isNaN(number) || number < 1) { showError('Number must be at least 1'); return; }
@@ -163,7 +248,7 @@
       if (!/^\d+$/.test(pin)) { showError('PIN must contain only numbers'); return; }
       if (pin !== confirmPin) { showError('PINs do not match'); return; }
       
-      var result = createStudentAccount(name, number, className, pin);
+      var result = createStudentAccount(name, number, className, pin, gender);
       
       if (result.success) {
         showSuccess('Account created successfully! Redirecting...');

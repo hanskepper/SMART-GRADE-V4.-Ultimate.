@@ -1,121 +1,249 @@
 // ============================================
-// SMART GRADE v4.0 - SERVICE WORKER AUTO-UPDATE
-// Version gérée automatiquement
+// SMART GRADE v4.0 - SERVICE WORKER
+// OFFLINE SUPPORT WITH LOTTIE ANIMATION
 // ============================================
 
-// La version est auto-générée à partir de la date
-var VERSION_DATE = '20250519'; // Mettez à jour ce nombre à chaque mise à jour (format YYYYMMDD)
-var CACHE_NAME = 'smartgrade-v4-' + VERSION_DATE;
+const CACHE_NAME = 'smartgrade-v4-offline-v2';
+const OFFLINE_URL = './offline.html';
 
-// Détecter automatiquement le chemin de base
-var BASE_PATH = self.location.pathname.replace(/\/sw\.js$/, '');
-
-var ASSETS = [
-  BASE_PATH + '/',
-  BASE_PATH + '/index.html',
-  BASE_PATH + '/login.html',
-  BASE_PATH + '/register.html',
-  BASE_PATH + '/dashboard.html',
-  BASE_PATH + '/welcome.html',
-  BASE_PATH + '/add-grade.html',
-  BASE_PATH + '/subjects.html',
-  BASE_PATH + '/subject-detail.html',
-  BASE_PATH + '/term1.html',
-  BASE_PATH + '/term2.html',
-  BASE_PATH + '/term3.html',
-  BASE_PATH + '/yearly.html',
-  BASE_PATH + '/statistics.html',
-  BASE_PATH + '/achievements.html',
-  BASE_PATH + '/settings.html',
-  BASE_PATH + '/profile.html',
-  BASE_PATH + '/notifications.html',
-  BASE_PATH + '/history.html',
-  BASE_PATH + '/export.html',
-  BASE_PATH + '/shortcuts.html',
-  BASE_PATH + '/flashcards.html',
-  BASE_PATH + '/goals.html',
-  BASE_PATH + '/timetable.html',
-  BASE_PATH + '/guide.html',
-  BASE_PATH + '/guide-user.html',
-  BASE_PATH + '/about.html',
-  BASE_PATH + '/about-user.html',
-  BASE_PATH + '/transfer.html',
-  BASE_PATH + '/404.html',
-  BASE_PATH + '/css/base.css',
-  BASE_PATH + '/css/layout.css',
-  BASE_PATH + '/css/components.css',
-  BASE_PATH + '/css/themes.css',
-  BASE_PATH + '/css/night-mode.css',
-  BASE_PATH + '/js/utils.js',
-  BASE_PATH + '/js/database.js',
-  BASE_PATH + '/js/auth.js',
-  BASE_PATH + '/js/app.js',
-  BASE_PATH + '/js/pwa.js',
-  BASE_PATH + '/js/transfer.js',
-  BASE_PATH + '/js/transfer-local.js',
-  BASE_PATH + '/js/install-handler.js',
-  BASE_PATH + '/js/storage.js',
-  BASE_PATH + '/manifest.json',
-  BASE_PATH + '/icon.svg'
+// Files to cache for offline access
+const STATIC_ASSETS = [
+  './',
+  './index.html',
+  './offline.html',
+  './dashboard.html',
+  './login.html',
+  './register.html',
+  './profile.html',
+  './settings.html',
+  './statistics.html',
+  './achievements.html',
+  './flashcards.html',
+  './goals.html',
+  './timetable.html',
+  './history.html',
+  './notifications.html',
+  './transfer.html',
+  './backup.html',
+  './export.html',
+  './css/base.css',
+  './css/layout.css',
+  './css/components.css',
+  './css/themes.css',
+  './css/night-mode.css',
+  './js/utils.js',
+  './js/database.js',
+  './js/auth.js',
+  './js/app.js',
+  './js/confirm-dialog.js',
+  './manifest.json',
+  './icons/icon-512.png',
+  './icons/avatar-boy.png',
+  './icons/avatar-girl.png'
 ];
 
-// INSTALLATION
-self.addEventListener('install', function(event) {
-  console.log('[SW] Installation:', CACHE_NAME);
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(ASSETS);
-    }).then(function() {
-      return self.skipWaiting();
-    })
-  );
-});
+// External resources (CDN) to cache
+const EXTERNAL_ASSETS = [
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+  'https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js'
+];
 
-// ACTIVATION - Nettoie l'ancien cache
-self.addEventListener('activate', function(event) {
-  console.log('[SW] Activation:', CACHE_NAME);
-  event.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(cacheName) {
-          if (cacheName !== CACHE_NAME && cacheName.startsWith('smartgrade')) {
-            console.log('[SW] Suppression ancien cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(function() {
-      return self.clients.claim();
-    })
-  );
-});
+// Combine all assets
+const ALL_ASSETS = [...STATIC_ASSETS, ...EXTERNAL_ASSETS];
 
-// FETCH - Network first
-self.addEventListener('fetch', function(event) {
-  if (event.request.method !== 'GET') return;
-  if (event.request.url.includes('analytics')) return;
-  if (event.request.url.includes('firebase')) return;
+// ============================================
+// INSTALLATION - Cache all assets
+// ============================================
+self.addEventListener('install', (event) => {
+  console.log('[SW] Installing...');
   
-  event.respondWith(
-    fetch(event.request).then(function(networkResponse) {
-      var responseToCache = networkResponse.clone();
-      caches.open(CACHE_NAME).then(function(cache) {
-        cache.put(event.request, responseToCache);
-      });
-      return networkResponse;
-    }).catch(function() {
-      return caches.match(event.request).then(function(cachedResponse) {
-        if (cachedResponse) return cachedResponse;
-        if (event.request.mode === 'navigate') {
-          return caches.match(BASE_PATH + '/index.html');
-        }
-        return new Response('Offline', { status: 503 });
-      });
-    })
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('[SW] Caching static assets');
+        return cache.addAll(ALL_ASSETS);
+      })
+      .then(() => {
+        console.log('[SW] Installation complete');
+        return self.skipWaiting();
+      })
+      .catch((error) => {
+        console.error('[SW] Installation failed:', error);
+      })
   );
 });
 
-// Vérifier les mises à jour périodiquement
-setInterval(function() {
-  self.registration.update();
-}, 60 * 60 * 1000);
+// ============================================
+// ACTIVATION - Clean up old caches
+// ============================================
+self.addEventListener('activate', (event) => {
+  console.log('[SW] Activating...');
+  
+  event.waitUntil(
+    caches.keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME && cacheName.startsWith('smartgrade')) {
+              console.log('[SW] Deleting old cache:', cacheName);
+              return caches.delete(cacheName);
+            }
+          })
+        );
+      })
+      .then(() => {
+        console.log('[SW] Activation complete');
+        return self.clients.claim();
+      })
+  );
+});
+
+// ============================================
+// FETCH - Network first, fallback to cache
+// ============================================
+self.addEventListener('fetch', (event) => {
+  const request = event.request;
+  const url = new URL(request.url);
+  
+  // Skip non-GET requests
+  if (request.method !== 'GET') {
+    return;
+  }
+  
+  // Skip GitHub API and analytics
+  if (url.hostname.includes('api.github.com') ||
+      url.hostname.includes('analytics') ||
+      url.hostname.includes('firebase')) {
+    return;
+  }
+  
+  // HTML navigation requests - Special handling for offline
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Cache the fetched page
+          const responseToCache = response.clone();
+          caches.open(CACHE_NAME)
+            .then((cache) => {
+              cache.put(request, responseToCache);
+            });
+          return response;
+        })
+        .catch(() => {
+          // If offline, return the offline page
+          return caches.match(OFFLINE_URL);
+        })
+    );
+    return;
+  }
+  
+  // For static assets: Cache first, then network
+  event.respondWith(
+    caches.match(request)
+      .then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse;
+        }
+        
+        return fetch(request)
+          .then((networkResponse) => {
+            // Cache the fetched resource for future offline use
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME)
+              .then((cache) => {
+                cache.put(request, responseToCache);
+              });
+            return networkResponse;
+          })
+          .catch(() => {
+            // For images and fonts, return a fallback
+            if (request.url.match(/\.(jpg|jpeg|png|gif|svg)$/)) {
+              return caches.match('./icons/icon-512.png');
+            }
+            return new Response('Resource not available offline', {
+              status: 503,
+              statusText: 'Service Unavailable'
+            });
+          });
+      })
+  );
+});
+
+// ============================================
+// BACKGROUND SYNC - For offline grade submissions
+// ============================================
+self.addEventListener('sync', (event) => {
+  console.log('[SW] Background sync:', event.tag);
+  if (event.tag === 'sync-grades') {
+    event.waitUntil(syncGrades());
+  }
+});
+
+async function syncGrades() {
+  console.log('[SW] Syncing pending grades...');
+  // This would send pending grades to server when back online
+  // Currently placeholder for future implementation
+}
+
+// ============================================
+// MESSAGE HANDLING - For client communication
+// ============================================
+self.addEventListener('message', (event) => {
+  console.log('[SW] Message received:', event.data);
+  
+  if (event.data === 'skipWaiting') {
+    self.skipWaiting();
+  }
+  
+  if (event.data === 'getVersion') {
+    event.ports[0].postMessage({ version: '4.0.3', cache: CACHE_NAME });
+  }
+});
+
+// ============================================
+// PUSH NOTIFICATIONS - For future use
+// ============================================
+self.addEventListener('push', (event) => {
+  const options = {
+    body: event.data ? event.data.text() : 'New update available',
+    icon: './icons/icon-512.png',
+    badge: './icons/icon-512.png',
+    vibrate: [200, 100, 200],
+    data: {
+      url: './dashboard.html'
+    }
+  };
+  
+  event.waitUntil(
+    self.registration.showNotification('SMART GRADE', options)
+  );
+});
+
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+  event.waitUntil(
+    clients.openWindow(event.notification.data.url || './dashboard.html')
+  );
+});
+
+// ============================================
+// PERIODIC BACKGROUND SYNC (if supported)
+// ============================================
+self.addEventListener('periodicsync', (event) => {
+  console.log('[SW] Periodic sync:', event.tag);
+  if (event.tag === 'update-cache') {
+    event.waitUntil(updateCache());
+  }
+});
+
+async function updateCache() {
+  console.log('[SW] Updating cache...');
+  const cache = await caches.open(CACHE_NAME);
+  const requests = STATIC_ASSETS.map(asset => new Request(asset));
+  await cache.addAll(requests);
+}
+
+// Log successful registration
+console.log('[SW] Service Worker initialized');

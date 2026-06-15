@@ -33,6 +33,7 @@
       align-items: center;
       gap: 10px;
     }
+    .subject-beautiful-card:active { transform: scale(0.97); }
     .subject-beautiful-card.selected { border-color: var(--primary); background: rgba(15,59,72,0.04); }
     .subject-beautiful-card.selected .subject-check-circle { background: var(--primary); color: white; border-color: var(--primary); }
     .subject-beautiful-card.selected .subject-check-circle i { display: block; }
@@ -123,6 +124,45 @@
     .term-btn-modern.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; }
     .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); }
     .danger-zone { border: 1px solid rgba(220,53,69,0.3); background: rgba(220,53,69,0.04); border-radius: 20px; padding: 16px; }
+    .update-result-area { margin-top: 16px; display: none; }
+    .update-result-message { padding: 12px; border-radius: 12px; font-size: 0.7rem; }
+    .update-progress { margin-top: 12px; display: none; }
+    .update-progress-bar {
+      height: 6px;
+      background: rgba(0,0,0,0.1);
+      border-radius: 3px;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+    .update-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      transition: width 0.3s;
+    }
+    .version-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.6rem;
+      margin-left: 8px;
+    }
+    .sc-1 { background: linear-gradient(135deg,#3498db,#2980b9); }
+    .sc-2 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
+    .sc-3 { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
+    .sc-4 { background: linear-gradient(135deg,#2ecc71,#27ae60); }
+    .sc-5 { background: linear-gradient(135deg,#e67e22,#d35400); }
+    .sc-6 { background: linear-gradient(135deg,#00bcd4,#0097a7); }
+    .sc-7 { background: linear-gradient(135deg,#f39c12,#e67e22); }
+    .sc-8 { background: linear-gradient(135deg,#1abc9c,#16a085); }
+    .sc-9 { background: linear-gradient(135deg,#27ae60,#1e8449); }
+    .sc-10 { background: linear-gradient(135deg,#3498db,#2471a3); }
+    .sc-11 { background: linear-gradient(135deg,#e74c3c,#c0392b); }
+    .sc-12 { background: linear-gradient(135deg,#8e44ad,#7d3c98); }
+    .sc-13 { background: linear-gradient(135deg,#2980b9,#1a5276); }
+    .sc-14 { background: linear-gradient(135deg,#f39c12,#d68910); }
     .fingerprint-info {
       background: rgba(52,152,219,0.1);
       border-left: 3px solid #3498db;
@@ -174,7 +214,7 @@
     
     <main class="main-content">
       
-      <!-- SECTION VERSION -->
+      <!-- SECTION VERSION ET MISE À JOUR GITHUB -->
       <div class="glass-card" id="updateCheckSection">
         <h3><i class="fab fa-github"></i> Version & Updates <span class="version-tag" id="currentVersionTag">v4.0.3</span></h3>
         <p style="font-size:0.65rem;color:var(--text-light);margin-bottom:12px;">
@@ -188,7 +228,7 @@
             Current: <strong id="currentAppVersion">--</strong>
           </div>
         </div>
-        <div id="updateResultArea" class="update-result-area" style="display:none;">
+        <div id="updateResultArea" class="update-result-area">
           <div id="updateResultMessage" class="update-result-message"></div>
           <div id="updateProgress" class="update-progress">
             <div style="font-size:0.6rem; margin-bottom:4px;"><i class="fas fa-download"></i> <span id="updateProgressText">Downloading...</span></div>
@@ -233,8 +273,7 @@
         <h3><i class="fas fa-fingerprint"></i> Fingerprint Login</h3>
         <div class="fingerprint-info">
           <i class="fas fa-info-circle"></i> 
-          <strong>How it works:</strong> Your browser will ask you to create a passkey (fingerprint). 
-          This is a one-time setup. After that, you can login with just your fingerprint.
+          <strong>How to setup:</strong> Click "Add Fingerprint", then follow your browser's instructions to create a passkey. After setup, you can login with your fingerprint.
         </div>
         <div id="fingerprintSection"></div>
         <div id="fingerprintStatus" style="margin-top:8px; font-size:0.65rem; color:var(--text-light);"></div>
@@ -323,7 +362,7 @@
     applyGlobalFont();
     
     // ============================================
-    // GITHUB UPDATE FUNCTIONS
+    // CONFIGURATION GITHUB
     // ============================================
     var GITHUB_USER = 'hanskepper';
     var GITHUB_REPO = 'SMART-GRADE-V4.-Ultimate.';
@@ -681,7 +720,7 @@
     }
     
     // ============================================
-    // FINGERPRINT - CRÉATION DIRECTE DE PASSKEY
+    // FINGERPRINT - VERSION STABLE
     // ============================================
     function isIOS() {
       return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -971,7 +1010,7 @@
       event.target.value = '';
     }
     
-    // TERM SELECTOR
+    // TERM SELECTOR INIT
     document.querySelectorAll('.term-btn-modern').forEach(function(btn, index) {
       btn.addEventListener('click', function() {
         document.querySelectorAll('.term-btn-modern').forEach(function(b) { b.classList.remove('active'); });

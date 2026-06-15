@@ -1,12 +1,14 @@
 {
-  "name": "SMART GRADE - SIN GBHS FOUMBAN",
+  "name": "SMART GRADE - GBHS Foumban",
   "short_name": "SMART GRADE",
-  "description": "Ultimate Grade Management System for Form 4B Science",
+  "description": "Ultimate Grade Management System for SIN GBHS FOUMBAN Form 4B Science",
+  "version": "4.0.3",
   "start_url": "./splash.html",
   "display": "standalone",
+  "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#073442",
-  "theme_color": "#073442",
+  "background_color": "#0f3b48",
+  "theme_color": "#0f3b48",
   "lang": "en",
   "scope": "./",
   "categories": ["education", "productivity"],
@@ -15,15 +17,55 @@
   "shortcuts": [
     {
       "name": "Dashboard",
-      "url": "./dashboard.html"
+      "short_name": "Dashboard",
+      "description": "View your academic dashboard",
+      "url": "./dashboard.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Add Grade",
-      "url": "./add-grade.html"
+      "short_name": "Add Grade",
+      "description": "Add new grades",
+      "url": "./add-grade.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     },
     {
       "name": "Statistics",
-      "url": "./statistics.html"
+      "short_name": "Stats",
+      "description": "View statistics and charts",
+      "url": "./statistics.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Achievements",
+      "short_name": "Badges",
+      "description": "View your unlocked badges",
+      "url": "./achievements.html",
+      "icons": [
+        {
+          "src": "./icons/pwa/icon-512x512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   
@@ -34,5 +76,16 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  
+  "prefer_related_applications": false,
+  "related_applications": [],
+  "dir": "ltr",
+  "launch_handler": {
+    "client_mode": ["focus-existing", "auto"]
+  },
+  "handle_links": "preferred",
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }

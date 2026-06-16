@@ -22,7 +22,7 @@
       "url": "./dashboard.html",
       "icons": [
         {
-          "src": "./icons/icon-512.png",
+          "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -35,7 +35,7 @@
       "url": "./add-grade.html",
       "icons": [
         {
-          "src": "./icons/icon-512.png",
+          "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -48,7 +48,7 @@
       "url": "./statistics.html",
       "icons": [
         {
-          "src": "./icons/icon-512.png",
+          "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -61,7 +61,7 @@
       "url": "./achievements.html",
       "icons": [
         {
-          "src": "./icons/icon-512.png",
+          "src": "./icons/pwa/icon-512x512.png",
           "sizes": "512x512",
           "type": "image/png"
         }
@@ -71,7 +71,7 @@
   
   "icons": [
     {
-      "src": "./icons/icon-512.png",
+      "src": "./icons/pwa/icon-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"

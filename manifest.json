@@ -7,8 +7,8 @@
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#01171A",
-  "theme_color": "#23A7A3",
+  "background_color": "#ffff",
+  "theme_color": "#ffffff",
   "lang": "en",
   "scope": "./",
   "categories": ["education", "productivity"],
@@ -22,10 +22,9 @@
       "url": "./dashboard.html",
       "icons": [
         {
-          "src": "./icons/pwa/icon-512x512.png",
+          "src": "./icons/icon-512.png",
           "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
+          "type": "image/png"
         }
       ]
     },
@@ -36,10 +35,9 @@
       "url": "./add-grade.html",
       "icons": [
         {
-          "src": "./icons/pwa/icon-512x512.png",
+          "src": "./icons/icon-512.png",
           "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
+          "type": "image/png"
         }
       ]
     },
@@ -50,52 +48,9 @@
       "url": "./statistics.html",
       "icons": [
         {
-          "src": "./icons/pwa/icon-512x512.png",
+          "src": "./icons/icon-512.png",
           "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
-    },
-    {
-      "name": "Achievements",
-      "short_name": "Badges",
-      "description": "View your unlocked badges",
-      "url": "./achievements.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
-    },
-    {
-      "name": "Flashcards",
-      "short_name": "Flashcards",
-      "description": "Study with flashcards",
-      "url": "./flashcards.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
-        }
-      ]
-    },
-    {
-      "name": "Timetable",
-      "short_name": "Timetable",
-      "description": "View your class schedule",
-      "url": "./timetable.html",
-      "icons": [
-        {
-          "src": "./icons/pwa/icon-512x512.png",
-          "sizes": "512x512",
-          "type": "image/png",
-          "purpose": "any maskable"
+          "type": "image/png"
         }
       ]
     }
@@ -103,7 +58,7 @@
   
   "icons": [
     {
-      "src": "./icons/pwa/icon-512x512.png",
+      "src": "./icons/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -115,9 +70,6 @@
   "dir": "ltr",
   "launch_handler": {
     "client_mode": ["focus-existing", "auto"]
-  },
-  "edge_side_panel": {
-    "preferred_width": 400
   },
   "handle_links": "preferred"
 }

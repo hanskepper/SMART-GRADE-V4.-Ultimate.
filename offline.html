@@ -69,6 +69,11 @@
       margin-bottom: 28px;
     }
     
+    .message .highlight {
+      color: var(--primary);
+      font-weight: 600;
+    }
+    
     .retry-btn {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       color: white;
@@ -89,6 +94,10 @@
     
     .retry-btn:active {
       transform: scale(0.97);
+    }
+    
+    .retry-btn i {
+      font-size: 1rem;
     }
     
     .hint {
@@ -118,21 +127,44 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
+    
+    .progress-bar {
+      margin-top: 20px;
+      height: 3px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 3px;
+      animation: loading 3s ease-in-out infinite;
+    }
+    
+    @keyframes loading {
+      0% { width: 0%; }
+      50% { width: 70%; }
+      100% { width: 100%; }
+    }
   </style>
 </head>
 <body>
   <div class="particles" id="particles"></div>
   
-  <div class="offline-card" id="offlineCard">
+  <div class="offline-card">
     
-    <!-- Animation Lottie (sera injectée par JS) -->
+    <!-- Animation Lottie aléatoire -->
     <div id="lottieContainer"></div>
     
-    <h1>No Internet</h1>
+    <h1>No Internet Connection</h1>
     
     <div class="message">
-      <span class="status-dot"></span> No connection detected<br>
-      Please enable Wi-Fi or mobile data to continue.
+      <span class="status-dot"></span> 
+      It looks like you're <span class="highlight">offline</span>.<br>
+      Please check your connection and try again.
     </div>
     
     <button class="retry-btn" onclick="checkConnection()">
@@ -142,18 +174,17 @@
     
     <div class="hint">
       <i class="fas fa-lightbulb"></i>
-      <span>Check your network settings</span>
+      <span>Enable Wi-Fi or mobile data to continue</span>
+    </div>
+    
+    <div class="progress-bar">
+      <div class="progress-fill"></div>
     </div>
   </div>
 
-  <script src="js/utils.js"></script>
-  <script src="js/database.js"></script>
-  <script src="js/auth.js"></script>
-  <script src="js/app.js"></script>
-  
   <script>
     // ============================================
-    // ANIMATIONS LOTTIE (3 animations différentes)
+    // 5 ANIMATIONS LOTTIE POUR OFFLINE
     // ============================================
     
     var LOTTIE_ANIMATIONS = [
@@ -200,7 +231,6 @@
     function applyRandomTheme() {
       var selectedTheme = getRandomItemWithoutRepeat(THEMES_LIST, lastTheme);
       
-      // Remove existing theme classes
       document.body.className = document.body.className.replace(/theme-\w+/g, '').trim();
       document.body.classList.add('theme-' + selectedTheme);
       

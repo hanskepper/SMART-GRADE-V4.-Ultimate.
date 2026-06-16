@@ -7,8 +7,8 @@
   "display": "standalone",
   "display_override": ["standalone", "fullscreen", "minimal-ui"],
   "orientation": "portrait",
-  "background_color": "#ffff",
-  "theme_color": "#ffffff",
+  "background_color": "#FFFFFF",
+  "theme_color": "#0f3b48",
   "lang": "en",
   "scope": "./",
   "categories": ["education", "productivity"],
@@ -53,6 +53,19 @@
           "type": "image/png"
         }
       ]
+    },
+    {
+      "name": "Achievements",
+      "short_name": "Badges",
+      "description": "View your unlocked badges",
+      "url": "./achievements.html",
+      "icons": [
+        {
+          "src": "./icons/icon-512.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
     }
   ],
   
@@ -71,5 +84,8 @@
   "launch_handler": {
     "client_mode": ["focus-existing", "auto"]
   },
-  "handle_links": "preferred"
+  "handle_links": "preferred",
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
 }

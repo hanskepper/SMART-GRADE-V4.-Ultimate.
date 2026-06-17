@@ -889,6 +889,52 @@ document.addEventListener('visibilitychange', function() {
   // Vérifier au chargement
   checkMaintenance();
 })();
+
+// ============================================
+// SMART GRADE v4.0 - APP.JS COMPLET
+// ============================================
+
+// ... (ton code existant) ...
+
+// ============================================
+// SERVICE WORKER - FORCE REGISTRATION
+// ============================================
+(function forceSWRegistration() {
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then(function(registration) {
+          console.log('[SW] Registered successfully');
+          registration.update();
+          if (navigator.serviceWorker.controller) {
+            console.log('[SW] Controls this page');
+          } else {
+            console.log('[SW] Waiting to control page...');
+            setTimeout(function() {
+              if (!navigator.serviceWorker.controller) {
+                window.location.reload();
+              }
+            }, 2000);
+          }
+        })
+        .catch(function(error) {
+          console.error('[SW] Registration failed:', error);
+        });
+    });
+  } else {
+    console.warn('[SW] Not supported');
+  }
+})();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.addEventListener('message', function(event) {
+    console.log('[SW] Message received:', event.data);
+  });
+}
+
+// ============================================
+// FIN DE APP.JS
+// =========================================
 window.updateHeaderAvatar = refreshAvatarInHeader;
 window.initHeaderProfile = refreshAvatarInHeader;
 

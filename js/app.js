@@ -803,7 +803,92 @@ window.addEventListener('storage', function(e) {
 document.addEventListener('visibilitychange', function() {
   if (!document.hidden) refreshAvatarInHeader();
 });
+// ============================================
+// OFFLINE DETECTION - REDIRECTION VERS OFFLINE.HTML
+// ============================================
 
+(function() {
+  // Ne pas s'exécuter sur la page offline elle-même
+  if (window.location.pathname.includes('offline.html')) {
+    return;
+  }
+  
+  // Vérifier si la page est déjà chargée (évite les boucles)
+  if (sessionStorage.getItem('offline_redirecting') === 'true') {
+    return;
+  }
+  
+  function checkConnectionAndRedirect() {
+    if (!navigator.onLine) {
+      console.log('[Offline] No connection detected, redirecting to offline.html');
+      sessionStorage.setItem('offline_redirecting', 'true');
+      window.location.href = 'offline.html';
+    }
+  }
+  
+  // Vérifier au chargement
+  checkConnectionAndRedirect();
+  
+  // Vérifier quand la connexion change
+  window.addEventListener('offline', function() {
+    console.log('[Offline] Connection lost');
+    sessionStorage.removeItem('offline_redirecting');
+    setTimeout(function() {
+      checkConnectionAndRedirect();
+    }, 500);
+  });
+  
+  // Quand la connexion revient, recharger la page
+  window.addEventListener('online', function() {
+    console.log('[Offline] Connection restored');
+    sessionStorage.removeItem('offline_redirecting');
+    if (window.location.pathname.includes('offline.html')) {
+      window.location.href = 'index.html';
+    } else {
+      window.location.reload();
+    }
+  });
+  
+  // Vérifier périodiquement (toutes les 10 secondes)
+  setInterval(function() {
+    if (!navigator.onLine && !window.location.pathname.includes('offline.html')) {
+      checkConnectionAndRedirect();
+    }
+  }, 10000);
+})();
+
+// ============================================
+// MAINTENANCE DETECTION - REDIRECTION VERS MAINTENANCE.HTML
+// ============================================
+
+(function() {
+  // Ne pas s'exécuter sur la page maintenance elle-même
+  if (window.location.pathname.includes('maintenance.html')) {
+    return;
+  }
+  
+  // Vérifier si la maintenance est activée
+  function checkMaintenance() {
+    // Charger la configuration
+    var maintenanceConfig = { MAINTENANCE_MODE: false };
+    
+    try {
+      // Essayer de charger depuis le fichier de config (chargé avant app.js)
+      if (typeof MAINTENANCE_MODE !== 'undefined') {
+        maintenanceConfig.MAINTENANCE_MODE = MAINTENANCE_MODE;
+      }
+    } catch(e) {}
+    
+    if (maintenanceConfig.MAINTENANCE_MODE === true) {
+      console.log('[Maintenance] Active - Redirecting to maintenance.html');
+      sessionStorage.setItem('maintenance_redirecting', 'true');
+      window.location.href = 'maintenance.html';
+    }
+  }
+  
+  // Vérifier au chargement
+  checkMaintenance();
+})();
 window.updateHeaderAvatar = refreshAvatarInHeader;
 window.initHeaderProfile = refreshAvatarInHeader;
 

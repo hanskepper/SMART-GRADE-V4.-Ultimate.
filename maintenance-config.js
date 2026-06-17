@@ -5,4 +5,4 @@
 // Mettez false pour désactiver la maintenance
 // ============================================
 
-var MAINTENANCE_MODE = false; // false = désactivé (par défaut)
+var MAINTENANCE_MODE = true; // false = désactivé (par défaut)

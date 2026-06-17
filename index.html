@@ -289,6 +289,18 @@
   </style>
 </head>
 <body>
+  <script src="maintenance-config.js"></script>
+<script>
+  (function() {
+    // Vérifier si la maintenance est activée
+    if (typeof MAINTENANCE_MODE !== 'undefined' && MAINTENANCE_MODE === true) {
+      // Vérifier si on n'est pas déjà sur la page maintenance
+      if (!window.location.pathname.includes('maintenance.html')) {
+        window.location.href = 'maintenance.html';
+      }
+    }
+  })();
+</script>
   <div class="particles" id="particles"></div>
   <div class="app-container">
     <div class="mobile-header">

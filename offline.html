@@ -12,7 +12,6 @@
   <link rel="stylesheet" href="css/themes.css">
   <link rel="stylesheet" href="css/night-mode.css">
   
-  <!-- Lottie Player -->
   <script src="https://unpkg.com/@lottiefiles/dotlottie-wc@0.9.14/dist/dotlottie-wc.js" type="module"></script>
   
   <meta name="theme-color" content="#0f3b48">
@@ -31,8 +30,8 @@
     .offline-card {
       background: var(--card-bg);
       border-radius: 32px;
-      padding: 32px 28px;
-      max-width: 380px;
+      padding: 40px 28px;
+      max-width: 400px;
       width: 100%;
       text-align: center;
       border: 1px solid var(--border);
@@ -45,6 +44,28 @@
       to { opacity: 1; transform: translateY(0); }
     }
     
+    .offline-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(0, 255, 255, 0.03) 10px, rgba(0, 255, 255, 0.03) 20px);
+      animation: stripeMove 3s linear infinite;
+      z-index: 0;
+    }
+    
+    @keyframes stripeMove {
+      0% { background-position: 0 0; }
+      100% { background-position: 40px 0; }
+    }
+    
+    .offline-card > * {
+      position: relative;
+      z-index: 1;
+    }
+    
     dotlottie-wc {
       width: 180px;
       height: 180px;
@@ -55,7 +76,7 @@
     h1 {
       font-size: 1.6rem;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       background: linear-gradient(135deg, var(--primary), var(--secondary));
       -webkit-background-clip: text;
       background-clip: text;
@@ -65,13 +86,8 @@
     .message {
       font-size: 0.85rem;
       color: var(--text-light);
-      line-height: 1.5;
-      margin-bottom: 28px;
-    }
-    
-    .message .highlight {
-      color: var(--primary);
-      font-weight: 600;
+      line-height: 1.6;
+      margin-bottom: 24px;
     }
     
     .retry-btn {
@@ -94,10 +110,6 @@
     
     .retry-btn:active {
       transform: scale(0.97);
-    }
-    
-    .retry-btn i {
-      font-size: 1rem;
     }
     
     .hint {
@@ -127,28 +139,6 @@
       0%, 100% { opacity: 1; }
       50% { opacity: 0.3; }
     }
-    
-    .progress-bar {
-      margin-top: 20px;
-      height: 3px;
-      background: rgba(0, 0, 0, 0.05);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    
-    .progress-fill {
-      width: 0%;
-      height: 100%;
-      background: linear-gradient(90deg, var(--primary), var(--secondary));
-      border-radius: 3px;
-      animation: loading 3s ease-in-out infinite;
-    }
-    
-    @keyframes loading {
-      0% { width: 0%; }
-      50% { width: 70%; }
-      100% { width: 100%; }
-    }
   </style>
 </head>
 <body>
@@ -156,35 +146,28 @@
   
   <div class="offline-card">
     
-    <!-- Animation Lottie aléatoire -->
     <div id="lottieContainer"></div>
     
-    <h1>No Internet Connection</h1>
+    <h1>No Internet</h1>
     
     <div class="message">
-      <span class="status-dot"></span> 
-      It looks like you're <span class="highlight">offline</span>.<br>
-      Please check your connection and try again.
+      <span class="status-dot"></span> No connection detected<br>
+      Please enable Wi-Fi or mobile data to continue.
     </div>
     
     <button class="retry-btn" onclick="checkConnection()">
-      <i class="fas fa-sync-alt"></i>
-      Try Again
+      <i class="fas fa-sync-alt"></i> Try Again
     </button>
     
     <div class="hint">
       <i class="fas fa-lightbulb"></i>
-      <span>Enable Wi-Fi or mobile data to continue</span>
-    </div>
-    
-    <div class="progress-bar">
-      <div class="progress-fill"></div>
+      <span>Check your network settings</span>
     </div>
   </div>
 
   <script>
     // ============================================
-    // 5 ANIMATIONS LOTTIE POUR OFFLINE
+    // 3 ANIMATIONS LOTTIE POUR OFFLINE
     // ============================================
     
     var LOTTIE_ANIMATIONS = [
@@ -194,7 +177,7 @@
     ];
     
     // ============================================
-    // THÈMES (20 thèmes comme splash.html)
+    // 20 THÈMES (comme splash.html)
     // ============================================
     
     var THEMES_LIST = [
@@ -268,26 +251,6 @@
     }
     
     // ============================================
-    // CHARGEMENT DE LA PAGE
-    // ============================================
-    
-    // Restaurer les derniers choix (si existants)
-    var savedTheme = localStorage.getItem('smartgrade_last_offline_theme');
-    var savedAnimation = localStorage.getItem('smartgrade_last_offline_animation');
-    
-    if (savedTheme && THEMES_LIST.indexOf(savedTheme) !== -1) {
-      lastTheme = savedTheme;
-    }
-    
-    if (savedAnimation && LOTTIE_ANIMATIONS.indexOf(savedAnimation) !== -1) {
-      lastAnimation = savedAnimation;
-    }
-    
-    // Appliquer thème et animation
-    applyRandomTheme();
-    applyRandomAnimation();
-    
-    // ============================================
     // CONNEXION CHECK
     // ============================================
     
@@ -313,7 +276,6 @@
       }, 1500);
     }
     
-    // Animation shake
     var style = document.createElement('style');
     style.textContent = `
       @keyframes shake {
@@ -324,12 +286,29 @@
     `;
     document.head.appendChild(style);
     
+    // ============================================
+    // CHARGEMENT DE LA PAGE
+    // ============================================
+    
+    var savedTheme = localStorage.getItem('smartgrade_last_offline_theme');
+    var savedAnimation = localStorage.getItem('smartgrade_last_offline_animation');
+    
+    if (savedTheme && THEMES_LIST.indexOf(savedTheme) !== -1) {
+      lastTheme = savedTheme;
+    }
+    
+    if (savedAnimation && LOTTIE_ANIMATIONS.indexOf(savedAnimation) !== -1) {
+      lastAnimation = savedAnimation;
+    }
+    
+    applyRandomTheme();
+    applyRandomAnimation();
+    
     // Reconnexion automatique
     window.addEventListener('online', function() {
       window.location.href = 'index.html';
     });
     
-    // Appliquer la police et les particules
     if (typeof initParticles === 'function') initParticles();
     if (typeof applyGlobalFont === 'function') applyGlobalFont();
   </script>

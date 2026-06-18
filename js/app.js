@@ -1,4 +1,4 @@
-I'm// ============================================
+// ============================================
 // SMART GRADE v4.0 - APP.JS COMPLET
 // ============================================
 
@@ -890,7 +890,15 @@ document.addEventListener('visibilitychange', function() {
   checkMaintenance();
 })();
 
- ============================================
+// ============================================
+// SMART GRADE v4.0 - APP.JS COMPLET
+// ============================================
+
+// ... (ton code existant) ...
+
+// ============================================
+// SERVICE WORKER - FORCE REGISTRATION
+// ============================================
 (function forceSWRegistration() {
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
@@ -926,7 +934,7 @@ if ('serviceWorker' in navigator) {
 
 // ============================================
 // FIN DE APP.JS
-// =========================================
+// ============================================
 window.updateHeaderAvatar = refreshAvatarInHeader;
 window.initHeaderProfile = refreshAvatarInHeader;
 
